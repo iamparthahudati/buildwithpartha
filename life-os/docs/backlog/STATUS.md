@@ -79,5 +79,6 @@ Last updated: 2026-08-17
 | LOS-0333 | Done gate     | `feature/LOS-0331-atom-audits-gate`             | Atom phase gate passed; `@components/ui`, `hooks/useAnnouncer` and `lib/localDateTime` frozen as the public contract for Epic 04.                                               |
 | LOS-0401 | Done          | `feature/LOS-0401-form-field`                   | FormField composed as a render prop (not a clone) so each atom's own required `label` stays real; FormErrorSummary/FormFieldGroup add error-summary linkage; `groupFieldProblems` maps server field errors. |
 | LOS-0402 | Done          | `feature/LOS-0402-search-field`                 | SearchField composes TextInput with debounced/submit timing (`useSearchField`), IME-safe composition handling, a focus shortcut, a decoupled loading announcement and a recent/no-results panel.            |
+| LOS-0403 | Done          | `feature/LOS-0403-combobox`                     | Combobox: ARIA 1.2 combobox+listbox pattern, focus stays on the input, multi-select stays open with removable chips, honest non-virtualized threshold row, `fieldIds` additively exported from `components/ui`. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

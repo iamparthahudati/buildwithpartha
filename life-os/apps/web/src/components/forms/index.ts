@@ -8,3 +8,4 @@ export {
 } from "./formFieldRegistry";
 export { SearchField, type SearchFieldProps } from "./SearchField";
 export { useSearchField, type SearchFieldMode, type UseSearchFieldOptions } from "./useSearchField";
+export { Combobox, type ComboboxOption, type ComboboxProps } from "./Combobox";

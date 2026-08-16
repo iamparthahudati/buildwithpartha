@@ -44,6 +44,7 @@ export { TextInput, type TextInputProps } from "./TextInput";
 export { PasswordInput, type PasswordInputProps } from "./PasswordInput";
 export { Textarea, type TextareaProps } from "./Textarea";
 export { Field, type FieldProps } from "./Field";
+export { fieldIds, type FieldIds } from "./fieldIds";
 export { Select, type SelectOption, type SelectProps } from "./Select";
 export { DateInput, type DateInputProps } from "./DateInput";
 export { TimeInput, type TimeInputProps } from "./TimeInput";
