@@ -17,6 +17,7 @@ Last updated: 2026-08-16
 | LOS-0101 | Done baseline | `feature/LOS-0101-personas-top-jobs` | Owner-centered jobs/personas documented; revalidation scheduled after usable releases. |
 | LOS-0102 | Done | `feature/LOS-0102-freeze-v1-scope` | Required, gated optional and future scope frozen. |
 | LOS-0103 | Done | `feature/LOS-0103-information-architecture` | Canonical groups, entities, relationships and naming approved. |
-| LOS-0104 | Ready | — | Approve responsive navigation and route map. |
+| LOS-0104 | Done | `feature/LOS-0104-navigation-routes` | Canonical routes, URL state, responsive/back/auth/dirty behavior approved. |
+| LOS-0105 | Ready | — | Map the critical journeys and failure recovery. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
