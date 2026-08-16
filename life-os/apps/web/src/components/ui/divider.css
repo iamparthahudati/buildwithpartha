@@ -1,0 +1,95 @@
+/* Divider (LOS-0325). */
+
+.lifeos-divider {
+  border: 0;
+  background: var(--lifeos-color-border);
+}
+
+.lifeos-divider--horizontal {
+  width: 100%;
+  height: var(--lifeos-border-width-hairline);
+}
+
+.lifeos-divider--vertical {
+  align-self: stretch;
+  width: var(--lifeos-border-width-hairline);
+  /* Falls back to a sensible height when the parent is not stretching it. */
+  min-height: var(--lifeos-space-4);
+}
+
+/* ---------------------------------------------------------------- */
+/* Spacing                                                           */
+/* ---------------------------------------------------------------- */
+
+.lifeos-divider--spacing-none {
+  margin: 0;
+}
+
+.lifeos-divider--horizontal.lifeos-divider--spacing-sm {
+  margin-block: var(--lifeos-space-2);
+}
+
+.lifeos-divider--horizontal.lifeos-divider--spacing-md {
+  margin-block: var(--lifeos-space-4);
+}
+
+.lifeos-divider--horizontal.lifeos-divider--spacing-lg {
+  margin-block: var(--lifeos-space-6);
+}
+
+.lifeos-divider--vertical.lifeos-divider--spacing-sm {
+  margin-inline: var(--lifeos-space-2);
+}
+
+.lifeos-divider--vertical.lifeos-divider--spacing-md {
+  margin-inline: var(--lifeos-space-4);
+}
+
+.lifeos-divider--vertical.lifeos-divider--spacing-lg {
+  margin-inline: var(--lifeos-space-6);
+}
+
+/* ---------------------------------------------------------------- */
+/* Labelled break                                                    */
+/* ---------------------------------------------------------------- */
+
+.lifeos-divider--labelled {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  height: auto;
+  background: none;
+}
+
+.lifeos-divider__rule {
+  flex: 1;
+  height: var(--lifeos-border-width-hairline);
+  background: var(--lifeos-color-border);
+}
+
+.lifeos-divider__label {
+  flex: none;
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  letter-spacing: var(--lifeos-letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+/*
+ * A hairline drawn with a background disappears in forced-colors mode, because
+ * backgrounds are replaced. A border survives.
+ */
+@media (forced-colors: active) {
+  .lifeos-divider--horizontal,
+  .lifeos-divider--vertical,
+  .lifeos-divider__rule {
+    border-top: var(--lifeos-border-width-hairline) solid CanvasText;
+    background: none;
+  }
+
+  .lifeos-divider--vertical {
+    border-top: 0;
+    border-inline-start: var(--lifeos-border-width-hairline) solid CanvasText;
+  }
+}

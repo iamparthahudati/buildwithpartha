@@ -82,9 +82,15 @@ Phase 1 — Foundations and component library.
 - LOS-0319 — TimeInput added. The platform renders a 12- or 24-hour field according to its own locale setting while exchanging canonical `HH:mm` either way, so display can be as local as the user likes without the stored value ever becoming ambiguous.
 - LOS-0320 — NumberInput added with bounds, step and an announced unit rather than a silently visual one. Scrolling the page over a focused number field silently changes its value in most browsers; a non-passive wheel listener removes that without stealing focus, which is what the usual `blur()` workaround costs.
 
+- LOS-0321 — ProgressBar added. It reports a real measurement or none at all: an indeterminate bar carries no `aria-valuenow`, because reporting zero would say the work has not started rather than that its end is unknown. The shared reading rounds so that only a true zero reads as 0% and only a true one reads as 100%, so a bar never claims a list is finished while work remains in it.
+- LOS-0322 — ProgressRing added on the same reading, so a ring and a bar showing one metric cannot disagree. The arc is a single conic gradient driven by one custom property, with zero and full handled explicitly so an empty ring shows no arc and a complete one closes without a seam.
+- LOS-0323 — Spinner added with a required label carried as live-region content. A spinner says only that something is happening, so it never replaces the waiting copy a region needs, and an unlabelled one is a type error.
+- LOS-0324 — Skeleton added for text, card and table shapes. Its job is to stop the page moving under the user's pointer when data arrives; every shape is hidden from assistive technology, because announcing a dozen placeholders buries the one message that matters.
+- LOS-0325 — Divider added, silent by default. Most rules repeat a grouping that headings and list structure already carry, so the separator role is taken only when the line itself is the boundary.
+
 ## Next recommended ticket
 
-`LOS-0321 — Build ProgressBar`.
+`LOS-0326 — Build Tooltip`.
 
 ## Known decisions requiring implementation-time values
 

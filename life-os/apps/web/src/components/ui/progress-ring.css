@@ -1,0 +1,140 @@
+/* ProgressRing (LOS-0322). */
+
+.lifeos-progress-ring {
+  display: inline-grid;
+  justify-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+/*
+ * The dial is one conic gradient turned into a ring by a radial mask. Sizes
+ * are in rem, so the ring grows with the user's text settings rather than
+ * staying a fixed pixel box beside scaled-up type.
+ */
+.lifeos-progress-ring__dial {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border-radius: var(--lifeos-radius-pill);
+  background: conic-gradient(
+    var(--lifeos-progress-ring-arc) calc(var(--lifeos-progress-ratio) * 360deg),
+    var(--lifeos-chart-track) 0
+  );
+  /* The mask reads alpha, not hue, so any fully opaque token works as its ink. */
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - var(--lifeos-progress-ring-thickness)),
+    var(--lifeos-color-text) 0
+  );
+  transition: background var(--lifeos-motion-duration-normal) var(--lifeos-motion-ease-standard);
+}
+
+/*
+ * The masked ring cannot host readable text — the mask would cut it out too —
+ * so the value sits above it in its own layer.
+ */
+.lifeos-progress-ring__value {
+  position: absolute;
+  color: var(--lifeos-color-text);
+  font-weight: var(--lifeos-font-weight-semibold);
+  font-variant-numeric: var(--lifeos-font-numeric);
+  mask: none;
+}
+
+.lifeos-progress-ring__label {
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- */
+/* Sizes and thickness                                               */
+/* ---------------------------------------------------------------- */
+
+.lifeos-progress-ring--sm .lifeos-progress-ring__dial {
+  width: var(--lifeos-space-10); /* 40px */
+}
+
+.lifeos-progress-ring--sm .lifeos-progress-ring__value {
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.lifeos-progress-ring--md .lifeos-progress-ring__dial {
+  width: var(--lifeos-space-16); /* 64px */
+}
+
+.lifeos-progress-ring--md .lifeos-progress-ring__value {
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-progress-ring--lg .lifeos-progress-ring__dial {
+  width: calc(var(--lifeos-space-16) * 1.75); /* 112px */
+}
+
+.lifeos-progress-ring--lg .lifeos-progress-ring__value {
+  font-size: var(--lifeos-font-size-xl);
+}
+
+.lifeos-progress-ring--thin .lifeos-progress-ring__dial {
+  --lifeos-progress-ring-thickness: var(--lifeos-space-1);
+}
+
+.lifeos-progress-ring--regular .lifeos-progress-ring__dial {
+  --lifeos-progress-ring-thickness: var(--lifeos-space-2);
+}
+
+.lifeos-progress-ring--thick .lifeos-progress-ring__dial {
+  --lifeos-progress-ring-thickness: var(--lifeos-space-3);
+}
+
+/* ---------------------------------------------------------------- */
+/* Tones                                                             */
+/* ---------------------------------------------------------------- */
+
+.lifeos-progress-ring--primary .lifeos-progress-ring__dial {
+  --lifeos-progress-ring-arc: var(--lifeos-color-primary);
+}
+
+.lifeos-progress-ring--success .lifeos-progress-ring__dial {
+  --lifeos-progress-ring-arc: var(--lifeos-color-success);
+}
+
+.lifeos-progress-ring--warning .lifeos-progress-ring__dial {
+  --lifeos-progress-ring-arc: var(--lifeos-color-warning);
+}
+
+.lifeos-progress-ring--danger .lifeos-progress-ring__dial {
+  --lifeos-progress-ring-arc: var(--lifeos-color-danger);
+}
+
+/*
+ * At zero the arc must be genuinely absent rather than a hairline that reads
+ * as "just started", and at full it must close without a seam.
+ */
+.lifeos-progress-ring__dial.is-empty {
+  background: var(--lifeos-chart-track);
+}
+
+.lifeos-progress-ring__dial.is-complete {
+  background: var(--lifeos-progress-ring-arc);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-progress-ring__dial {
+    transition: none;
+  }
+}
+
+/*
+ * Forced-colors mode discards the gradient entirely, so the ring would carry
+ * no information. The percentage in the middle already states the value, and a
+ * plain bordered dial keeps the shape legible.
+ */
+@media (forced-colors: active) {
+  .lifeos-progress-ring__dial {
+    border: var(--lifeos-border-width-thick) solid CanvasText;
+    background: Canvas;
+    mask: none;
+  }
+}

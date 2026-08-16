@@ -1,0 +1,63 @@
+/* Spinner (LOS-0323). */
+
+.lifeos-spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  color: var(--lifeos-color-primary);
+}
+
+.lifeos-spinner__disc {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  border: var(--lifeos-border-width-thick) solid currentcolor;
+  border-radius: var(--lifeos-radius-pill);
+  border-top-color: transparent;
+  animation: lifeos-spinner-turn var(--lifeos-motion-duration-deliberate)
+    var(--lifeos-motion-ease-linear) infinite;
+}
+
+.lifeos-spinner__label {
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+}
+
+/* Sized in em so the disc matches whatever text it sits beside. */
+.lifeos-spinner--sm {
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-spinner--md {
+  font-size: var(--lifeos-font-size-lg);
+}
+
+.lifeos-spinner--lg {
+  font-size: var(--lifeos-font-size-2xl);
+}
+
+@keyframes lifeos-spinner-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+ * Reduced motion stops the rotation and leaves a complete, quieter ring. The
+ * busy state is announced through role="status", so nothing depended on the
+ * movement.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-spinner__disc {
+    border-top-color: currentcolor;
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-spinner__disc {
+    border-color: CanvasText;
+    border-top-color: transparent;
+  }
+}
