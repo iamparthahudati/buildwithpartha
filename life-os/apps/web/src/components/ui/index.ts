@@ -31,3 +31,7 @@ export {
   type TextTone,
   type TextWeight,
 } from "./Typography";
+export { Checkbox, type CheckboxProps } from "./Checkbox";
+export { RadioGroup, type RadioGroupProps, type RadioOption } from "./Radio";
+export { Switch, type SwitchProps } from "./Switch";
+export { TextInput, type TextInputProps } from "./TextInput";

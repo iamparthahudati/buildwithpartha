@@ -54,5 +54,9 @@ Last updated: 2026-08-17
 | LOS-0308 | Done          | `feature/LOS-0308-link-badge-avatar`            | Navigation-only `Link` with current/external/quiet variants; no disabled link, because a disabled anchor loses its role and tab stop.                                          |
 | LOS-0309 | Done          | `feature/LOS-0308-link-badge-avatar`            | Badge, StatusDot and CountBadge always render text; canonical status/priority tones come from the product vocabulary.                                                          |
 | LOS-0310 | Done          | `feature/LOS-0308-link-badge-avatar`            | Avatar with image/initial/fallback/group states and a deterministic name-derived accent; broken images fall back to initials.                                                  |
+| LOS-0311 | Done          | `feature/LOS-0311-form-controls`                | Native checkbox with a real label, indeterminate set as a DOM property, and linked description/error.                                                                          |
+| LOS-0312 | Done          | `feature/LOS-0311-form-controls`                | Fieldset/legend radio group; arrow-key movement and the single tab stop come from the browser, not from script.                                                                |
+| LOS-0313 | Done          | `feature/LOS-0311-form-controls`                | Switch for immediate settings, announced as on/off, refusing a second toggle while a change is in flight.                                                                      |
+| LOS-0314 | Done          | `feature/LOS-0311-form-controls`                | TextInput with a real label, affixes, keyboard-only clear, error/success/read-only states and password-manager attributes.                                                     |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

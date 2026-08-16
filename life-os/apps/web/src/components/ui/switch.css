@@ -1,0 +1,82 @@
+/* Switch (LOS-0313). */
+
+.lifeos-switch__row {
+  display: flex;
+  align-items: center;
+  min-height: var(--lifeos-target-min-size);
+  gap: var(--lifeos-space-3);
+  cursor: pointer;
+}
+
+/*
+ * The input is visually hidden but still the real control: it stays in the tab
+ * order, receives the focus ring through the track, and carries role="switch".
+ */
+.lifeos-switch__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.lifeos-switch__track {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  width: var(--lifeos-space-10);
+  height: var(--lifeos-space-6);
+  padding: var(--lifeos-space-1);
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-color-border-interactive);
+  transition: background-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-switch__thumb {
+  width: var(--lifeos-space-4);
+  height: var(--lifeos-space-4);
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-color-surface);
+  box-shadow: var(--lifeos-shadow-sm);
+  transition: transform var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-switch__input:checked + .lifeos-switch__track {
+  background: var(--lifeos-color-primary);
+}
+
+.lifeos-switch__input:checked + .lifeos-switch__track .lifeos-switch__thumb {
+  transform: translateX(var(--lifeos-space-4));
+}
+
+/* The hidden input cannot show a ring itself, so the track carries it. */
+.lifeos-switch__input:focus-visible + .lifeos-switch__track {
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: var(--lifeos-focus-ring-offset);
+}
+
+.lifeos-switch__label {
+  font-size: var(--lifeos-font-size-xs);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+.lifeos-switch.is-disabled,
+.lifeos-switch.is-saving {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.lifeos-switch__messages:not(:empty) {
+  display: grid;
+  gap: var(--lifeos-space-1);
+  margin-left: calc(var(--lifeos-space-10) + var(--lifeos-space-3));
+}
+
+@media (forced-colors: active) {
+  .lifeos-switch__track {
+    border: var(--lifeos-border-width-hairline) solid CanvasText;
+  }
+
+  .lifeos-switch__input:checked + .lifeos-switch__track {
+    background: Highlight;
+  }
+}
