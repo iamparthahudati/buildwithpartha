@@ -22,6 +22,7 @@ Last updated: 2026-08-16
 | LOS-0106 | Done | `feature/LOS-0106-onboarding` | Four-step resumable onboarding with required/optional boundaries approved. |
 | LOS-0107 | Done | `feature/LOS-0107-dashboard-priority` | Today priorities, sources, metrics and responsive order approved. |
 | LOS-0108 | Done | `feature/LOS-0108-review-rituals` | Review prompts, snapshots, skip/resume and neutral copy approved. |
-| LOS-0109 | Ready | — | Create responsive low-fidelity wireframes. |
+| LOS-0109 | Done | `feature/LOS-0109-low-fidelity-wireframes` | Responsive route-complete wireframes and shared UI state patterns approved. |
+| LOS-0110 | Ready | — | Prototype and test the critical low-fidelity interactions. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
