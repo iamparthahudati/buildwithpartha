@@ -5,13 +5,22 @@ import process from "node:process";
 const repoRoot = path.resolve(import.meta.dirname, "../..");
 const lifeOsRoot = path.join(repoRoot, "life-os");
 const failures = [];
+const generatedDirectoryNames = new Set([
+  ".gradle",
+  "build",
+  "coverage",
+  "dist",
+  "node_modules",
+  "target",
+]);
 
 function walk(directory, predicate) {
   const files = [];
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     const filePath = path.join(directory, entry.name);
-    if (entry.isDirectory()) files.push(...walk(filePath, predicate));
-    else if (predicate(filePath)) files.push(filePath);
+    if (entry.isDirectory() && !generatedDirectoryNames.has(entry.name)) {
+      files.push(...walk(filePath, predicate));
+    } else if (predicate(filePath)) files.push(filePath);
   }
   return files;
 }
@@ -81,4 +90,3 @@ if (failures.length > 0) {
 console.log(
   `LifeOS docs valid: ${markdownFiles.length} Markdown files, ${ticketDefinitions.size} unique tickets, no broken local links.`,
 );
-
