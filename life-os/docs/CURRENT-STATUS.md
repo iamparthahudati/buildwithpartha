@@ -61,9 +61,11 @@ Phase 1 — Foundations and component library.
 
 - No authentication implementation, product domain tables, product components/screens, VPS configuration, Cloudflare configuration, or production resources have been created.
 
+- LOS-0302 — Token-driven CSS reset and global foundations added: normalized box sizing, form typography and media without erasing native list, heading or control semantics; a single `:focus-visible` ring; selection, reduced-motion, forced-colors and increased-contrast hooks; and a skip link that stays focusable, is the first tab stop and moves real focus to a `tabindex="-1"` main landmark.
+
 ## Next recommended ticket
 
-`LOS-0302 — Add CSS reset and global foundations`.
+`LOS-0303 — Create component catalog`.
 
 ## Known decisions requiring implementation-time values
 

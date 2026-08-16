@@ -1,0 +1,208 @@
+/*
+ * LifeOS CSS reset — LOS-0302.
+ *
+ * Normalizes inconsistent defaults without erasing native semantics. List
+ * markers, heading levels, form control roles and focus behavior are left
+ * intact; only the styling browsers disagree about is normalized.
+ *
+ * Colors and scales come from tokens.css. This file declares no color literal.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/*
+ * Remove default margins only. Vertical rhythm is owned by components so that
+ * spacing is explicit rather than inherited from a browser default.
+ */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+dl,
+dd,
+pre {
+  margin: 0;
+}
+
+/*
+ * Lists keep their markers. Removing them globally strips list semantics in
+ * some screen reader and browser combinations, so components opt out instead.
+ */
+ol,
+ul {
+  padding-inline-start: 0;
+  margin-block: 0;
+}
+
+html {
+  /* Honors the user's browser font-size setting; never set a px root size. */
+  font-size: 100%;
+  /* Keeps text readable when the device rotates, without disabling zoom. */
+  text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+body {
+  min-height: 100vh;
+  line-height: var(--lifeos-line-height-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Anchored targets are not hidden behind sticky headers. */
+:target {
+  scroll-margin-block-start: var(--lifeos-space-16);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+  /* Long titles, project names and note headings must not overflow. */
+  overflow-wrap: break-word;
+}
+
+p,
+li,
+dd,
+dt,
+figcaption {
+  overflow-wrap: break-word;
+}
+
+/* Media never overflows its container and keeps its intrinsic ratio. */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+}
+
+svg {
+  /* Decorative and labelled icons alike inherit the text color by default. */
+  fill: currentcolor;
+}
+
+/* Form controls inherit typography instead of falling back to the OS font. */
+input,
+button,
+textarea,
+select,
+optgroup {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  margin: 0;
+}
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  cursor: pointer;
+  /* Prevents a double-tap zoom delay on touch devices. */
+  touch-action: manipulation;
+}
+
+button:disabled,
+[type="button"]:disabled,
+[type="reset"]:disabled,
+[type="submit"]:disabled,
+select:disabled,
+input:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+textarea {
+  /* Horizontal resize breaks responsive layouts; vertical is still available. */
+  resize: vertical;
+}
+
+/*
+ * Search inputs keep the native clear affordance and rounded shape decisions to
+ * their component ticket; only the inconsistent appearance is normalized.
+ */
+[type="search"] {
+  appearance: textfield;
+  outline-offset: 0;
+}
+
+fieldset {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+label {
+  /* Labels stay clickable targets; components own their layout. */
+  cursor: pointer;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+th {
+  text-align: start;
+}
+
+hr {
+  height: var(--lifeos-border-width-hairline);
+  border: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: max(0.08em, 1px);
+  text-underline-offset: 0.15em;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--lifeos-font-mono);
+  font-size: 1em;
+}
+
+pre {
+  overflow: auto;
+}
+
+/*
+ * `hidden` must win over a component's display rule; otherwise conditionally
+ * hidden content stays visible and reachable by assistive technology.
+ */
+[hidden] {
+  display: none !important;
+}
