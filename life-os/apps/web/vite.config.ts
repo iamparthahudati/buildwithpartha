@@ -32,6 +32,7 @@ export function createViteConfig({ mode }: ConfigEnv): UserConfig {
       alias: {
         "@app": new URL("./src/app", import.meta.url).pathname,
         "@assets": new URL("./src/assets", import.meta.url).pathname,
+        "@catalog": new URL("./src/catalog", import.meta.url).pathname,
         "@components": new URL("./src/components", import.meta.url).pathname,
         "@features": new URL("./src/features", import.meta.url).pathname,
         "@hooks": new URL("./src/hooks", import.meta.url).pathname,
@@ -60,6 +61,11 @@ export function createViteConfig({ mode }: ConfigEnv): UserConfig {
       outDir: "dist",
       emptyOutDir: true,
       sourcemap: false,
+      rollupOptions: {
+        // Named explicitly so `catalog.html` can never become a build input.
+        // The component catalog is a development tool and must not ship.
+        input: new URL("./index.html", import.meta.url).pathname,
+      },
     },
   };
 }

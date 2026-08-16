@@ -62,10 +62,11 @@ Phase 1 — Foundations and component library.
 - No authentication implementation, product domain tables, product components/screens, VPS configuration, Cloudflare configuration, or production resources have been created.
 
 - LOS-0302 — Token-driven CSS reset and global foundations added: normalized box sizing, form typography and media without erasing native list, heading or control semantics; a single `:focus-visible` ring; selection, reduced-motion, forced-colors and increased-contrast hooks; and a skip link that stays focusable, is the first tab stop and moves real focus to a `tabindex="-1"` main landmark.
+- LOS-0303 — Development-only component catalog added: a registry that fails loudly on duplicate or stateless entries, per-state specimens for the frozen foundations, and viewport controls that start at the 320px minimum. It is excluded from every production build rather than protected at runtime, with a runtime guard as a second line of defense.
 
 ## Next recommended ticket
 
-`LOS-0303 — Create component catalog`.
+`LOS-0304 — Build Icon primitive`.
 
 ## Known decisions requiring implementation-time values
 

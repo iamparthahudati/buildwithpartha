@@ -1,0 +1,216 @@
+/* Catalog chrome. Development-only; never part of a production build. */
+
+.catalog {
+  min-height: 100vh;
+  padding: var(--lifeos-space-6);
+}
+
+.catalog__eyebrow {
+  color: var(--lifeos-color-on-primary-soft);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+  letter-spacing: var(--lifeos-letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.catalog__header h1 {
+  margin-block: var(--lifeos-space-1) var(--lifeos-space-2);
+  font-size: var(--lifeos-font-size-2xl);
+  font-weight: var(--lifeos-font-weight-bold);
+  letter-spacing: var(--lifeos-letter-spacing-tight);
+}
+
+.catalog__note,
+.catalog__summary {
+  max-width: var(--lifeos-layout-reading-max);
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.catalog__body {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  gap: var(--lifeos-space-8);
+  margin-top: var(--lifeos-space-6);
+}
+
+.catalog__group {
+  margin-bottom: var(--lifeos-space-2);
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+  letter-spacing: var(--lifeos-letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.catalog__list {
+  margin-bottom: var(--lifeos-space-6);
+  list-style: none;
+}
+
+.catalog__link {
+  width: 100%;
+  min-height: var(--lifeos-target-min-size);
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  border-radius: var(--lifeos-radius-md);
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+  text-align: start;
+}
+
+.catalog__link:hover {
+  background: var(--lifeos-color-surface-muted);
+}
+
+.catalog__link[aria-current="true"] {
+  color: var(--lifeos-color-on-primary-soft);
+  background: var(--lifeos-color-primary-soft);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.catalog__viewports {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-4);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-lg);
+  margin-bottom: var(--lifeos-space-6);
+  background: var(--lifeos-color-surface);
+}
+
+.catalog__viewports legend {
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+  letter-spacing: var(--lifeos-letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.catalog__viewport {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  min-height: var(--lifeos-target-min-size);
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.catalog__viewports .catalog__note {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.catalog__main h2 {
+  font-size: var(--lifeos-font-size-xl);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.catalog__state {
+  padding-top: var(--lifeos-space-6);
+  border-top: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  margin-top: var(--lifeos-space-6);
+}
+
+.catalog__state h3 {
+  margin-bottom: var(--lifeos-space-1);
+  font-size: var(--lifeos-font-size-lg);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+/* The stage is where a specimen is constrained to the selected viewport. */
+.catalog__stage {
+  overflow-x: auto;
+  width: var(--catalog-stage-width, 100%);
+  padding: var(--lifeos-space-5);
+  border: var(--lifeos-border-width-hairline) dashed var(--lifeos-color-border-strong);
+  border-radius: var(--lifeos-radius-lg);
+  margin-top: var(--lifeos-space-4);
+  background: var(--lifeos-color-surface);
+}
+
+.specimen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--lifeos-space-4);
+}
+
+.specimen-stack {
+  display: grid;
+  gap: var(--lifeos-space-3);
+  list-style: none;
+}
+
+.specimen-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-3);
+}
+
+.specimen-swatch code,
+.specimen-measure code {
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.specimen-swatch__chip {
+  height: var(--lifeos-space-12);
+  border-radius: var(--lifeos-radius-md);
+  margin-bottom: var(--lifeos-space-2);
+}
+
+.specimen-swatch__chip--bordered {
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border-strong);
+}
+
+.specimen-swatch__value {
+  display: block;
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  font-variant-numeric: var(--lifeos-font-numeric);
+}
+
+.specimen-pill {
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  border-radius: var(--lifeos-radius-pill);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.specimen-tile {
+  display: grid;
+  width: var(--lifeos-space-16);
+  height: var(--lifeos-space-16);
+  place-items: center;
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  background: var(--lifeos-color-surface);
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.specimen-measure {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+}
+
+.specimen-measure__bar {
+  height: var(--lifeos-space-3);
+  min-width: var(--lifeos-space-1);
+  border-radius: var(--lifeos-radius-xs);
+  background: var(--lifeos-color-primary);
+}
+
+.specimen-measure__bar--animated {
+  width: var(--lifeos-space-8);
+  transition-property: width;
+  transition-timing-function: var(--lifeos-motion-ease-standard);
+}
+
+.specimen-measure:hover .specimen-measure__bar--animated {
+  width: var(--lifeos-space-16);
+}
+
+@media (max-width: 48rem) {
+  .catalog__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
