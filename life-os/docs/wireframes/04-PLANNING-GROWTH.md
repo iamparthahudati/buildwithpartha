@@ -33,7 +33,7 @@ Small stacks cards; selected sprint opens canonical route. Complete Sprint dialo
 └───────────────────────────────────────────────────────────────────┘
 ```
 
-Small: selectable WeekStrip day -> outcomes -> that day's plan -> unscheduled queue -> capacity/conflicts. Move action opens day/time selector; no drag dependency.
+Small: selectable WeekStrip day -> outcomes -> that day's plan -> unscheduled queue -> capacity/conflicts. Move action opens day/time selector; no drag dependency. Each draft mutation exposes Saving/Saved/Failed independently; Finalize runs a separate capacity/conflict/version preflight before creating the plan snapshot.
 
 ## Goals — `/app/goals` and `/:goalId`
 

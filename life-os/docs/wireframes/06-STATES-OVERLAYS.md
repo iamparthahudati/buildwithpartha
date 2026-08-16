@@ -68,8 +68,8 @@ Hard/high-impact deletion may require typed confirmation or recent authenticatio
 ```text
 ┌──────────────────────────────────────┐
 │ Quick Add                       [x] │
-│ Task | Project | Time block | Note  │
-│ Brain Dump | Habit entry | Check-in │
+│ Task | Brain Dump | Time block | Note│
+│ More: Project / Habit / Check-in    │
 ├──────────────────────────────────────┤
 │ compact type-specific fields        │
 │ more options -> canonical form      │
@@ -77,7 +77,7 @@ Hard/high-impact deletion may require typed confirmation or recent authenticatio
 └──────────────────────────────────────┘
 ```
 
-Keyboard shortcut does not fire while typing. Failure preserves fields; success closes/restores context and names the created record.
+Initial focus goes to the type chooser. Each type keeps temporary fields while the overlay remains open. Keyboard shortcut does not fire while typing. Failure preserves fields; success clears only the submitted type, closes/restores context and names the created record.
 
 ## Filter drawer
 

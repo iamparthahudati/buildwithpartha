@@ -98,7 +98,7 @@ Partial results keep failed selections and show exact reasons.
 └─────────────────────────────────────────────────────┘
 ```
 
-Wide list uses a 380–480px DetailPanel; canonical detail route may use full content. Small always uses full route. Close/Back restores list query/page/scroll/focus.
+Wide list uses a 380–480px DetailPanel; canonical detail route may use full content. Small always uses full route. Close/Back restores list query/page/scroll and originating-row focus, falling back to the list heading if the row no longer exists.
 
 Dependency editor:
 
@@ -125,7 +125,7 @@ selected blocker + status          open/remove
 └───────────────────────────────────────────┴────────────────────────┘
 ```
 
-Small replaces the timeline grid with chronological TimeBlockRows and date navigation; Add is sticky-safe. Week view uses daily columns on large and selectable day strip + list on small.
+Small replaces the timeline grid with chronological TimeBlockRows and date navigation; Add is sticky-safe. Week view uses daily columns on large and selectable day strip + list on small. Pointer drag/resize is provisional until server acknowledgement; rejection restores the prior block while retaining proposed values in the Move/Resize form. Touch uses that form as the primary path.
 
 Conflict resolution dialog:
 
