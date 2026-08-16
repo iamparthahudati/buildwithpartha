@@ -104,9 +104,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0403 — Combobox added, following the ARIA 1.2 combobox-with-listbox pattern where focus never leaves the input and `aria-activedescendant` tracks the keyboard's current option instead. Two real accessibility bugs surfaced and were fixed during the axe sweep: a listbox with zero option children (the loading and no-results states) fails `aria-required-children`, so `role="listbox"` is now applied only once the list actually owns an option; and once it stopped being a listbox in that state, its status rows could no longer carry `role="presentation"` either, since that breaks a *plain* list's own required content just as badly. Multi-select stays open after each pick — closing would undo the point of choosing more than one — and each chip's dismiss button is a normal tab stop, because there is no keyboard equivalent for removing one arbitrary chip the way there is for clearing a whole text field. `fieldIds` was additively exported from `components/ui` so `Combobox` did not have to rebuild the same id-generation helper every other field-shaped atom already uses.
 
+- LOS-0404 — DateRangeField added, grouping two DateInputs under one fieldset and legend the way RadioGroup groups related radio inputs. The end-before-start check is computed by the component itself rather than left to every caller to word — the rule is universal to any date range, unlike a required-field message — and is enforced structurally too: each side constrains the other's native `min`/`max` on top of the message. Presets stay a mechanism (`{ label, range }`) rather than a hard-coded policy, matching the "no domain columns hardcoded" principle DataTable's ticket already states; `buildCommonDateRangePresets` ships a ready-made set in its own module so the plain function doesn't break Fast Refresh by sharing a file with the component.
+
 ## Next recommended ticket
 
-`LOS-0404 — Build DateRangeField`.
+`LOS-0405 — Build DateTimeField`.
 
 ## Known decisions requiring implementation-time values
 

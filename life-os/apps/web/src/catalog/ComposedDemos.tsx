@@ -2,8 +2,11 @@ import { useRef, useState, type FormEvent } from "react";
 
 import { Button, Select, Text, TextInput } from "@components/ui";
 import {
+  buildCommonDateRangePresets,
   Combobox,
   type ComboboxOption,
+  DateRangeField,
+  type DateRangeValue,
   FormErrorSummary,
   FormField,
   FormFieldGroup,
@@ -190,6 +193,41 @@ export function ComboboxMultiCreateDemo() {
         setOptions((current) => [...current, option]);
         setValue((current) => [...current, option.value]);
       }}
+    />
+  );
+}
+
+const DATE_RANGE_PRESETS = buildCommonDateRangePresets();
+
+export function DateRangeFieldDemo() {
+  const [value, setValue] = useState<DateRangeValue>({ start: null, end: null });
+
+  return (
+    <div className="specimen-stack">
+      <DateRangeField
+        legend="Reporting period"
+        description="Shown in your current timezone: Asia/Kolkata."
+        timeZone="Asia/Kolkata"
+        value={value}
+        onValueChange={setValue}
+        presets={DATE_RANGE_PRESETS}
+      />
+      <Text tone="secondary" size="sm">
+        Stored value: <code>{JSON.stringify(value)}</code>
+      </Text>
+    </div>
+  );
+}
+
+export function DateRangeFieldInvalidOrderDemo() {
+  const [value, setValue] = useState<DateRangeValue>({ start: "2026-08-20", end: "2026-08-10" });
+
+  return (
+    <DateRangeField
+      legend="Reporting period"
+      timeZone="Asia/Kolkata"
+      value={value}
+      onValueChange={setValue}
     />
   );
 }

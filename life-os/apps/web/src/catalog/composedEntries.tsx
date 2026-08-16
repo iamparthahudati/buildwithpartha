@@ -5,6 +5,8 @@ import {
   ComboboxMultiCreateDemo,
   ComboboxSingleDemo,
   CreateTaskFormDemo,
+  DateRangeFieldDemo,
+  DateRangeFieldInvalidOrderDemo,
   SearchFieldDebouncedDemo,
   SearchFieldSubmitDemo,
 } from "./ComposedDemos";
@@ -96,6 +98,27 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Selecting keeps the listbox open. Typing a name with no match offers to create it.",
         render: () => <ComboboxMultiCreateDemo />,
+      },
+    ],
+  },
+  {
+    id: "date-range-field",
+    name: "DateRangeField",
+    group: "Composed",
+    summary:
+      "Two DateInputs under one fieldset and legend. Each side constrains the other's native picker, and an end date before the start is named automatically, without the caller supplying anything.",
+    states: [
+      {
+        id: "date-range-field-presets",
+        name: "With presets",
+        description: "Every preset is computed from today in the field's own timezone.",
+        render: () => <DateRangeFieldDemo />,
+      },
+      {
+        id: "date-range-field-invalid-order",
+        name: "Invalid order",
+        description: "The built-in check, not a message the caller had to write.",
+        render: () => <DateRangeFieldInvalidOrderDemo />,
       },
     ],
   },
