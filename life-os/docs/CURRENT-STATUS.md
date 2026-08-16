@@ -23,6 +23,7 @@ Phase 0 — Planning and repository readiness.
 - LOS-0103 — Connected LifeOS loop, canonical destinations, relationships and naming approved.
 - LOS-0104 — Canonical route map and desktop/tablet/mobile navigation, auth return, Back and unsaved-change behavior approved.
 - LOS-0105 — Main-site/LifeOS isolation accepted and eight critical journeys mapped with recovery behavior.
+- LOS-0106 — Resumable four-step onboarding defined with required timezone, optional preferences and no fake starter data.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -37,7 +38,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0106 — Define onboarding`.
+`LOS-0107 — Specify dashboard information priority`.
 
 ## Known decisions requiring implementation-time values
 

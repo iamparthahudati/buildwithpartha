@@ -19,6 +19,7 @@ Last updated: 2026-08-16
 | LOS-0103 | Done | `feature/LOS-0103-information-architecture` | Canonical groups, entities, relationships and naming approved. |
 | LOS-0104 | Done | `feature/LOS-0104-navigation-routes` | Canonical routes, URL state, responsive/back/auth/dirty behavior approved. |
 | LOS-0105 | Done | `feature/LOS-0105-critical-journeys` | Eight critical journeys plus main-site/LifeOS boundary ADR completed. |
-| LOS-0106 | Ready | — | Define resumable, skippable onboarding. |
+| LOS-0106 | Done | `feature/LOS-0106-onboarding` | Four-step resumable onboarding with required/optional boundaries approved. |
+| LOS-0107 | Ready | — | Rank Today information, sources and responsive collapse order. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
