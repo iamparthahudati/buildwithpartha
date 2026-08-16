@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { RadioGroup, TextInput } from "@components/ui";
+import { RadioGroup, Textarea, TextInput } from "@components/ui";
 
 import { PRIORITY_OPTIONS } from "./formFixtures";
 
@@ -35,6 +35,21 @@ export function ClearableDemo() {
       onChange={(event) => setValue(event.target.value)}
       onClear={() => setValue("")}
       description="Clearing is also possible from the keyboard, so the button is not a tab stop."
+    />
+  );
+}
+
+export function NotesDemo() {
+  const [value, setValue] = useState("");
+
+  return (
+    <Textarea
+      label="Notes"
+      value={value}
+      onChange={(event) => setValue(event.target.value)}
+      counterMax={140}
+      autoGrow
+      description="Grows with its content; the counter warns rather than truncating a paste."
     />
   );
 }

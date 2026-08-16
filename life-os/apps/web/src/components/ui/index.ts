@@ -35,3 +35,5 @@ export { Checkbox, type CheckboxProps } from "./Checkbox";
 export { RadioGroup, type RadioGroupProps, type RadioOption } from "./Radio";
 export { Switch, type SwitchProps } from "./Switch";
 export { TextInput, type TextInputProps } from "./TextInput";
+export { PasswordInput, type PasswordInputProps } from "./PasswordInput";
+export { Textarea, type TextareaProps } from "./Textarea";

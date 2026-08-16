@@ -58,5 +58,7 @@ Last updated: 2026-08-17
 | LOS-0312 | Done          | `feature/LOS-0311-form-controls`                | Fieldset/legend radio group; arrow-key movement and the single tab stop come from the browser, not from script.                                                                |
 | LOS-0313 | Done          | `feature/LOS-0311-form-controls`                | Switch for immediate settings, announced as on/off, refusing a second toggle while a change is in flight.                                                                      |
 | LOS-0314 | Done          | `feature/LOS-0311-form-controls`                | TextInput with a real label, affixes, keyboard-only clear, error/success/read-only states and password-manager attributes.                                                     |
+| LOS-0315 | Done          | `feature/LOS-0315-password-textarea`            | PasswordInput with reveal toggle, Caps Lock hint, correct autocomplete values and a help slot that never receives the value.                                                   |
+| LOS-0316 | Done          | `feature/LOS-0315-password-textarea`            | Textarea with CSS-driven auto-grow, code-point character counter that warns rather than truncates, and preserved whitespace.                                                   |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
