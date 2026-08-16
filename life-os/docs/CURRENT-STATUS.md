@@ -20,6 +20,7 @@ Phase 0 — Planning and repository readiness.
 - LOS-0010 — Epic 00 governance gate passed locally; remote enforcement remains a pre-publish prerequisite.
 - LOS-0101 — Owner-centered personas, accessibility situations and ranked jobs-to-be-done established with a usage-validation plan.
 - LOS-0102 — Required v1, optional gated capabilities and explicit future scope frozen.
+- LOS-0103 — Connected LifeOS loop, canonical destinations, relationships and naming approved.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -34,7 +35,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0103 — Approve information architecture`.
+`LOS-0104 — Approve navigation and route map`.
 
 ## Known decisions requiring implementation-time values
 

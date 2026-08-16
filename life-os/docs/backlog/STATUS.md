@@ -16,6 +16,7 @@ Last updated: 2026-08-16
 | LOS-0010 | Done locally | `feature/LOS-0010-phase-zero-gate` | Governance gate passed locally; remote enforcement remains pre-publish. |
 | LOS-0101 | Done baseline | `feature/LOS-0101-personas-top-jobs` | Owner-centered jobs/personas documented; revalidation scheduled after usable releases. |
 | LOS-0102 | Done | `feature/LOS-0102-freeze-v1-scope` | Required, gated optional and future scope frozen. |
-| LOS-0103 | Ready | — | Approve information architecture. |
+| LOS-0103 | Done | `feature/LOS-0103-information-architecture` | Canonical groups, entities, relationships and naming approved. |
+| LOS-0104 | Ready | — | Approve responsive navigation and route map. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
