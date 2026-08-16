@@ -43,8 +43,7 @@ test("rejects access to feature internals", async (context) => {
   const sourceRoot = await createFixture(context, {
     "components/ui/index.ts": "export {};",
     "features/tasks/index.ts": "export {};",
-    "features/tasks/components/TaskCard.tsx":
-      "export function TaskCard() { return <article />; }",
+    "features/tasks/components/TaskCard.tsx": "export function TaskCard() { return <article />; }",
     "routes/TasksRoute.tsx": [
       'import { TaskCard } from "@features/tasks/components/TaskCard";',
       "export function TasksRoute() { return <TaskCard />; }",

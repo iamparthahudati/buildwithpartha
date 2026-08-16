@@ -9,6 +9,8 @@
 - End to end: Playwright against the composed stack for critical journeys.
 - Non-functional: dependency/secret/container scans, performance budgets, accessibility automation, backup/restore scripts.
 
+The frontend unit baseline enforces 80% statements, branches, functions and lines through Vitest's V8 provider. Shared Testing Library render/user-event support and the axe helper live under `apps/web/src/test`. JSDOM cannot calculate layout-dependent color contrast, so that axe rule is disabled only in unit tests and must be covered by later browser automation plus manual WCAG 2.2 AA review.
+
 ## Required test dimensions
 
 - User: anonymous, unverified, verified, expired/revoked session, second user attempting cross-account access.
@@ -21,4 +23,3 @@
 ## Release evidence
 
 Each phase gate stores: test run summary, known accepted risks, migration rehearsal, screenshots only where useful, accessibility notes, performance result, security scan result, and rollback steps. Production smoke tests must not mutate real user data beyond a dedicated test account.
-
