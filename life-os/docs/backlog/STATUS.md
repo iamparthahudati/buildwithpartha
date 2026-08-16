@@ -34,6 +34,7 @@ Last updated: 2026-08-16
 | LOS-0204 | Done | `feature/LOS-0204-postgresql-local-service` | PostgreSQL 18.4 local Compose definition, loopback binding, named volume, private network, health check, separate app role and scoped reset contract pass static verification. |
 | LOS-0205 | Done | `feature/LOS-0205-flyway-baseline` | Private Flyway history, safe migration settings, pgcrypto V1, separate migrator/runtime roles and clean/existing PostgreSQL verification pass. |
 | LOS-0206 | Done | `feature/LOS-0206-backend-package-boundaries` | Domain packages, shared error/pagination types and executable dependency rules pass positive and negative architecture tests. |
-| LOS-0207 | Ready | — | Establish enforceable frontend folders, aliases and import boundaries. |
+| LOS-0207 | Done | `feature/LOS-0207-frontend-module-boundaries` | Public entrypoints, synchronized aliases and negative-tested import/route composition rules pass. |
+| LOS-0208 | Ready | — | Add frontend formatting, linting, unit/accessibility test tooling and coverage baseline. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
