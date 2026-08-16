@@ -1,0 +1,39 @@
+/* Select (LOS-0317). */
+
+.lifeos-select__control {
+  position: relative;
+}
+
+.lifeos-select__element {
+  /*
+   * Removes the platform arrow so the control matches every other field, while
+   * keeping the native element — and therefore the native dropdown, type-ahead
+   * and the device's own touch picker.
+   */
+  appearance: none;
+  /* Room for the chevron, which is positioned over the padding. */
+  padding-inline-end: var(--lifeos-space-6);
+  cursor: pointer;
+}
+
+.lifeos-select__element:disabled {
+  cursor: not-allowed;
+}
+
+.lifeos-select__indicator {
+  position: absolute;
+  inset-inline-end: var(--lifeos-space-3);
+  color: var(--lifeos-color-text-secondary);
+  /* The chevron is decoration; clicks belong to the select underneath it. */
+  pointer-events: none;
+}
+
+/*
+ * Options are painted by the platform, not the page, so they do not inherit
+ * the field colours. Naming both stops a dark-mode platform menu from
+ * rendering the list as unreadable dark-on-dark.
+ */
+.lifeos-select__element option {
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-surface);
+}

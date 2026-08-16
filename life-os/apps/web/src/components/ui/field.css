@@ -1,4 +1,82 @@
-/* Shared field messaging (LOS-0311 onward). */
+/* Shared field frame and messaging (LOS-0311 onward; frame added by LOS-0317). */
+
+.lifeos-field {
+  display: grid;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-field__label {
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+/*
+ * The bordered shell around the native element. The focus ring is drawn here
+ * rather than on the element so it surrounds any adornment sitting beside it.
+ */
+.lifeos-field__control {
+  display: flex;
+  align-items: center;
+  min-height: var(--lifeos-density-control-height);
+  gap: var(--lifeos-space-2);
+  padding-inline: var(--lifeos-space-3);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border-interactive);
+  border-radius: var(--lifeos-radius-md);
+  background: var(--lifeos-color-surface);
+}
+
+.lifeos-field__control:focus-within {
+  border-color: var(--lifeos-color-primary);
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: var(--lifeos-focus-ring-offset);
+}
+
+/* The native element inside the shell; the shell owns the border and the ring. */
+.lifeos-field__element {
+  width: 100%;
+  min-width: 0;
+  padding-block: var(--lifeos-space-2);
+  color: var(--lifeos-color-text);
+  font: inherit;
+  font-size: var(--lifeos-font-size-xs);
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.lifeos-field__element::placeholder {
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-field__element:read-only {
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-field__element:disabled {
+  color: var(--lifeos-color-text-muted);
+  cursor: not-allowed;
+  /* Safari fades disabled controls below the contrast floor on its own. */
+  opacity: 1;
+  -webkit-text-fill-color: var(--lifeos-color-text-muted);
+}
+
+/* A static unit or symbol beside the value. */
+.lifeos-field__affix {
+  flex: none;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+  white-space: nowrap;
+}
+
+.lifeos-field.has-error .lifeos-field__control {
+  border-color: var(--lifeos-color-danger);
+}
+
+.lifeos-field.is-disabled .lifeos-field__control {
+  background: var(--lifeos-color-surface-muted);
+  cursor: not-allowed;
+}
 
 .lifeos-field__description {
   display: block;
@@ -22,4 +100,11 @@
   color: var(--lifeos-color-success);
   font-size: var(--lifeos-font-size-3xs);
   line-height: var(--lifeos-line-height-snug);
+}
+
+/* A coarse pointer needs the full 44px target, whatever the density setting. */
+@media (pointer: coarse) {
+  .lifeos-field__control {
+    min-height: var(--lifeos-target-min-size);
+  }
 }

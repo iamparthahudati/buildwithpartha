@@ -77,9 +77,14 @@ Phase 1 — Foundations and component library.
 - LOS-0315 — PasswordInput added with a reveal toggle that reports itself as pressed and returns to concealed on every mount, a politely announced Caps Lock hint, `new-password` versus `current-password` autocomplete so password managers offer to generate or fill correctly, and a help slot for a strength meter that never receives the value and therefore cannot leak it.
 - LOS-0316 — Textarea added. Auto-growing uses the `field-sizing` CSS property instead of measuring scroll height on every keystroke, so there is no resize observer to keep in sync. The character counter counts code points, so an emoji is one character, and it warns rather than setting `maxLength` — silently truncating a paste would lose the user's text without telling them.
 
+- LOS-0317 — Select added as a real native `select`. A custom listbox would re-implement type-ahead, Home/End and the platform's touch picker and still not be the control the device knows how to render, so it stays deferred. The placeholder is selectable on an optional field, so a choice can be undone, and disabled on a required one, because "no answer" is not one of the answers. A shared `Field` frame now owns label, description, error and success wiring for the new controls.
+- LOS-0318 — DateInput added. The value is a calendar date and stays a `YYYY-MM-DD` string end to end; putting it through a `Date` would attach a time of day and move the deadline a day for anyone whose timezone differs from their browser's. `lib/localDateTime.ts` is the only place allowed to read today from a timezone, do calendar arithmetic, or format a date-only value.
+- LOS-0319 — TimeInput added. The platform renders a 12- or 24-hour field according to its own locale setting while exchanging canonical `HH:mm` either way, so display can be as local as the user likes without the stored value ever becoming ambiguous.
+- LOS-0320 — NumberInput added with bounds, step and an announced unit rather than a silently visual one. Scrolling the page over a focused number field silently changes its value in most browsers; a non-passive wheel listener removes that without stealing focus, which is what the usual `blur()` workaround costs.
+
 ## Next recommended ticket
 
-`LOS-0317 — Build Select`.
+`LOS-0321 — Build ProgressBar`.
 
 ## Known decisions requiring implementation-time values
 

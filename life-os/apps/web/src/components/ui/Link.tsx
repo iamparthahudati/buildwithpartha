@@ -3,6 +3,7 @@ import { ExternalLink } from "lucide-react";
 
 import { Icon } from "./Icon";
 import "./link.css";
+import "./visually-hidden.css";
 
 /**
  * Link (LOS-0308).

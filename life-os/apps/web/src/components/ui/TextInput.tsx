@@ -5,6 +5,7 @@ import { FieldMessages } from "./FieldMessages";
 import { IconButton } from "./IconButton";
 import { fieldIds } from "./fieldIds";
 import "./text-input.css";
+import "./visually-hidden.css";
 
 /**
  * TextInput (LOS-0314).

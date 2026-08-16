@@ -60,5 +60,9 @@ Last updated: 2026-08-17
 | LOS-0314 | Done          | `feature/LOS-0311-form-controls`                | TextInput with a real label, affixes, keyboard-only clear, error/success/read-only states and password-manager attributes.                                                     |
 | LOS-0315 | Done          | `feature/LOS-0315-password-textarea`            | PasswordInput with reveal toggle, Caps Lock hint, correct autocomplete values and a help slot that never receives the value.                                                   |
 | LOS-0316 | Done          | `feature/LOS-0315-password-textarea`            | Textarea with CSS-driven auto-grow, code-point character counter that warns rather than truncates, and preserved whitespace.                                                   |
+| LOS-0317 | Done          | `feature/LOS-0317-select-date-time-number`      | Native Select with a placeholder that stays selectable only while the field is optional; custom listbox deferred; shared `Field` frame added.                                   |
+| LOS-0318 | Done          | `feature/LOS-0317-select-date-time-number`      | DateInput carrying a `YYYY-MM-DD` calendar date end to end, with `lib/localDateTime.ts` as the only conversion and formatting boundary.                                         |
+| LOS-0319 | Done          | `feature/LOS-0317-select-date-time-number`      | TimeInput holding canonical 24-hour `HH:mm` whatever the platform displays, with five-minute default granularity and clear/error states.                                        |
+| LOS-0320 | Done          | `feature/LOS-0317-select-date-time-number`      | NumberInput with bounds, step, an announced unit and a non-passive wheel guard that cannot silently change a value.                                                             |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
