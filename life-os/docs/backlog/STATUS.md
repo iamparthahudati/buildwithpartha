@@ -6,14 +6,14 @@ Last updated: 2026-08-16
 | --- | --- | --- | --- |
 | LOS-0001 | Done | `feature/LOS-0001-approve-project-charter` | Merged to `develop`. |
 | LOS-0002 | Done | `feature/LOS-0002-approve-product-context` | Merged to `develop`. |
-| LOS-0003 | Done locally | `feature/LOS-0003-establish-git-branches` | Permanent local branches established; remote protection pending remote connection. |
-| LOS-0004 | Done locally | `feature/LOS-0004-contribution-rules` | Templates/ownership added; host enforcement pending remote connection. |
+| LOS-0003 | Done | `feature/LOS-0003-establish-git-branches` | Permanent branches exist locally/remotely; LOS-0212 added host protection. |
+| LOS-0004 | Done | `feature/LOS-0004-contribution-rules` | Templates/ownership and host pull-request enforcement are active. |
 | LOS-0005 | Done | `feature/LOS-0005-backlog-workflow` | Status, priority, estimate, readiness and ledger rules defined. |
 | LOS-0006 | Done | `feature/LOS-0006-adr-workflow` | ADR template, triggers, review and supersession rules defined. |
 | LOS-0007 | Done | `feature/LOS-0007-versioning-changelog` | Version tags, changelog and release-note template defined. |
 | LOS-0008 | Done | `feature/LOS-0008-environment-inventory` | Environment/data/secrets ownership and separation documented. |
-| LOS-0009 | Done locally | `feature/LOS-0009-doc-freshness` | Local validator added; hosted CI awaits a compatible remote. |
-| LOS-0010 | Done locally | `feature/LOS-0010-phase-zero-gate` | Governance gate passed locally; remote enforcement remains pre-publish. |
+| LOS-0009 | Done | `feature/LOS-0009-doc-freshness` | Local validator is included in the required hosted documentation check. |
+| LOS-0010 | Done | `feature/LOS-0010-phase-zero-gate` | Governance gate passed and permanent-branch enforcement is configured. |
 | LOS-0101 | Done baseline | `feature/LOS-0101-personas-top-jobs` | Owner-centered jobs/personas documented; revalidation scheduled after usable releases. |
 | LOS-0102 | Done | `feature/LOS-0102-freeze-v1-scope` | Required, gated optional and future scope frozen. |
 | LOS-0103 | Done | `feature/LOS-0103-information-architecture` | Canonical groups, entities, relationships and naming approved. |
@@ -39,6 +39,7 @@ Last updated: 2026-08-16
 | LOS-0209 | Done | `feature/LOS-0209-backend-quality-tools` | Formatting, static analysis, unit/architecture tests, Testcontainers support and an 80% line/branch coverage gate pass. |
 | LOS-0210 | Done | `feature/LOS-0210-local-full-stack-gateway` | Vite dev/preview proxy preserves same-origin API paths and cannot conflict with the nested SPA fallback. |
 | LOS-0211 | Done | `feature/LOS-0211-environment-validation` | Frontend and backend startup validate required keys and safe shapes while errors expose key names only. |
-| LOS-0212 | Ready | — | Add the cross-stack CI foundation, secret scan, caching and remote enforcement. |
+| LOS-0212 | Done | `feature/LOS-0212-ci-foundation` | Four required pinned-action checks, safe caches, secret scanning and permanent-branch protection are configured. |
+| LOS-0213 | Ready | — | Add safe API Problem Details, correlation IDs and public/restricted health behavior. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

@@ -16,6 +16,12 @@ This directory is the isolated LifeOS product area inside the existing `buildwit
 - Git: `master` is production, `develop` is integration, and every ticket uses a `feature/LOS-####-short-name` branch.
 - Build order: foundations -> atomic components -> composed components -> feature flows -> full screens -> integrations -> release.
 
+## Continuous integration
+
+Every pull request to `develop` or `master` runs four required LifeOS checks: documentation/dependency integrity, frontend quality/build, backend quality/build, and full-history secret scanning. Actions are pinned to immutable commits, dependency caches are lockfile-scoped, and pull-request Gradle caches are read-only. `develop` and `master` require an up-to-date pull request with all four checks passing; direct/force pushes, deletion and unresolved review conversations are blocked.
+
+Validate the workflow policy locally with `node life-os/scripts/validate-ci-workflow.mjs`. Repository owners can reproduce the protected-branch settings with `life-os/scripts/configure-branch-protection.sh` after authenticating `gh` for the intended repository.
+
 ## Start here on every ticket
 
 1. Read [AGENTS.md](./AGENTS.md).

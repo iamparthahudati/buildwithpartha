@@ -17,6 +17,8 @@ The local gateway contract starts disposable Vite and mock-upstream servers. It 
 
 Environment tests exercise successful startup parsing plus missing, blank, malformed and sensitive-looking values. They assert that failures name every affected key without reproducing any value. Frontend test mode and the backend `test` profile supply deterministic public/non-secret values so the quality gates remain self-contained.
 
+The hosted `LifeOS CI` workflow runs for every pull request and push targeting a permanent branch. Its required jobs validate documentation/dependency/CI policy, execute the complete frontend gate plus a production environment build, execute the clean backend build (including formatting, static analysis, unit/architecture tests and coverage), and scan complete Git history for secrets. Third-party actions are pinned to full commit SHAs; npm caching is lockfile-scoped and Gradle cache writes are limited to permanent-branch runs.
+
 ## Required test dimensions
 
 - User: anonymous, unverified, verified, expired/revoked session, second user attempting cross-account access.
