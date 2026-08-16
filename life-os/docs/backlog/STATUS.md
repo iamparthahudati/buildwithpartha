@@ -13,6 +13,7 @@ Last updated: 2026-08-16
 | LOS-0007 | Done | `feature/LOS-0007-versioning-changelog` | Version tags, changelog and release-note template defined. |
 | LOS-0008 | Done | `feature/LOS-0008-environment-inventory` | Environment/data/secrets ownership and separation documented. |
 | LOS-0009 | Done locally | `feature/LOS-0009-doc-freshness` | Local validator added; hosted CI awaits a compatible remote. |
-| LOS-0010 | Ready | — | All governance tickets are locally complete. |
+| LOS-0010 | Done locally | `feature/LOS-0010-phase-zero-gate` | Governance gate passed locally; remote enforcement remains pre-publish. |
+| LOS-0101 | Ready | — | Begin product/UX readiness. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
