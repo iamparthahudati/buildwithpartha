@@ -51,5 +51,8 @@ Last updated: 2026-08-17
 | LOS-0305 | Done          | `feature/LOS-0304-icon-primitive`               | Heading, Text, Caption, Metric and TruncatedText; visual size is independent of heading level and truncation keeps the full string in the DOM.                                 |
 | LOS-0306 | Done          | `feature/LOS-0304-icon-primitive`               | Five variants, three sizes, icon slots; loading preserves width, stays focusable and blocks a duplicate submit.                                                                |
 | LOS-0307 | Done          | `feature/LOS-0304-icon-primitive`               | Icon-only control with a required `label`, so a missing accessible name is a type error; 44px targets on touch.                                                                |
+| LOS-0308 | Done          | `feature/LOS-0308-link-badge-avatar`            | Navigation-only `Link` with current/external/quiet variants; no disabled link, because a disabled anchor loses its role and tab stop.                                          |
+| LOS-0309 | Done          | `feature/LOS-0308-link-badge-avatar`            | Badge, StatusDot and CountBadge always render text; canonical status/priority tones come from the product vocabulary.                                                          |
+| LOS-0310 | Done          | `feature/LOS-0308-link-badge-avatar`            | Avatar with image/initial/fallback/group states and a deterministic name-derived accent; broken images fall back to initials.                                                  |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

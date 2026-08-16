@@ -1,0 +1,103 @@
+/* Avatar (LOS-0310). Accent colors are derived from the name, never stored. */
+
+.lifeos-avatar {
+  display: inline-flex;
+  overflow: hidden;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-color-surface-muted);
+  font-weight: var(--lifeos-font-weight-semibold);
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.lifeos-avatar--xs {
+  width: var(--lifeos-space-5);
+  height: var(--lifeos-space-5);
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.lifeos-avatar--sm {
+  width: var(--lifeos-space-6);
+  height: var(--lifeos-space-6);
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.lifeos-avatar--md {
+  width: var(--lifeos-space-8);
+  height: var(--lifeos-space-8);
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.lifeos-avatar--lg {
+  width: var(--lifeos-space-12);
+  height: var(--lifeos-space-12);
+  font-size: var(--lifeos-font-size-md);
+}
+
+.lifeos-avatar__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * Six accents, each a soft background paired with its own AA-passing text
+ * color, so initials stay legible whichever accent a name resolves to.
+ */
+.lifeos-avatar--accent-0 {
+  color: var(--lifeos-color-on-primary-soft);
+  background: var(--lifeos-color-primary-soft);
+}
+
+.lifeos-avatar--accent-1 {
+  color: var(--lifeos-color-success);
+  background: var(--lifeos-color-success-soft);
+}
+
+.lifeos-avatar--accent-2 {
+  color: var(--lifeos-color-warning);
+  background: var(--lifeos-color-warning-soft);
+}
+
+.lifeos-avatar--accent-3 {
+  color: var(--lifeos-color-danger);
+  background: var(--lifeos-color-danger-soft);
+}
+
+.lifeos-avatar--accent-4 {
+  color: var(--lifeos-color-info);
+  background: var(--lifeos-color-info-soft);
+}
+
+.lifeos-avatar--accent-5 {
+  color: var(--lifeos-color-accent);
+  background: var(--lifeos-color-accent-soft);
+}
+
+.lifeos-avatar--overflow {
+  color: var(--lifeos-color-text-secondary);
+  background: var(--lifeos-color-surface-muted);
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.lifeos-avatar-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+/*
+ * Overlapping avatars need a ring in the surface color to stay separable. A
+ * border on the avatar itself would not work, because the ring must read as
+ * the background showing through.
+ */
+.lifeos-avatar-group .lifeos-avatar {
+  box-shadow: 0 0 0 var(--lifeos-border-width-thick) var(--lifeos-color-surface);
+}
+
+.lifeos-avatar-group .lifeos-avatar + .lifeos-avatar {
+  margin-left: calc(-1 * var(--lifeos-space-2));
+}

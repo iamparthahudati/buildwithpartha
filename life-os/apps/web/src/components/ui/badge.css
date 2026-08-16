@@ -1,0 +1,115 @@
+/* Badge and StatusDot (LOS-0309). Text always carries the meaning. */
+
+.lifeos-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  padding: var(--lifeos-space-1) var(--lifeos-space-2);
+  border: var(--lifeos-border-width-hairline) solid transparent;
+  border-radius: var(--lifeos-radius-sm);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+  line-height: var(--lifeos-line-height-tight);
+  white-space: nowrap;
+}
+
+.lifeos-badge__dot {
+  width: var(--lifeos-space-2);
+  height: var(--lifeos-space-2);
+  border-radius: var(--lifeos-radius-pill);
+  background: currentcolor;
+}
+
+.lifeos-badge--count {
+  min-width: var(--lifeos-space-5);
+  justify-content: center;
+  border-radius: var(--lifeos-radius-pill);
+  font-variant-numeric: var(--lifeos-font-numeric);
+}
+
+.lifeos-badge--neutral {
+  border-color: var(--lifeos-color-border-strong);
+  color: var(--lifeos-color-text-secondary);
+  background: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-badge--primary {
+  color: var(--lifeos-color-on-primary-soft);
+  background: var(--lifeos-color-primary-soft);
+}
+
+.lifeos-badge--success {
+  color: var(--lifeos-color-success);
+  background: var(--lifeos-color-success-soft);
+}
+
+.lifeos-badge--warning {
+  color: var(--lifeos-color-warning);
+  background: var(--lifeos-color-warning-soft);
+}
+
+.lifeos-badge--danger {
+  color: var(--lifeos-color-danger);
+  background: var(--lifeos-color-danger-soft);
+}
+
+.lifeos-badge--info {
+  color: var(--lifeos-color-info);
+  background: var(--lifeos-color-info-soft);
+}
+
+.lifeos-badge--accent {
+  color: var(--lifeos-color-accent);
+  background: var(--lifeos-color-accent-soft);
+}
+
+.lifeos-status-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lifeos-status-dot__mark {
+  width: var(--lifeos-space-2);
+  height: var(--lifeos-space-2);
+  border-radius: var(--lifeos-radius-pill);
+  background: currentcolor;
+}
+
+.lifeos-status-dot--neutral {
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-status-dot--primary {
+  color: var(--lifeos-color-primary);
+}
+
+.lifeos-status-dot--success {
+  color: var(--lifeos-color-success-accent);
+}
+
+.lifeos-status-dot--warning {
+  color: var(--lifeos-color-warning-accent);
+}
+
+.lifeos-status-dot--danger {
+  color: var(--lifeos-color-danger-accent);
+}
+
+.lifeos-status-dot--info {
+  color: var(--lifeos-color-info-accent);
+}
+
+.lifeos-status-dot--accent {
+  color: var(--lifeos-color-accent);
+}
+
+/*
+ * Under forced colors the tone colors are replaced by the user's palette, so a
+ * badge needs a real border to stay distinguishable from its surroundings.
+ */
+@media (forced-colors: active) {
+  .lifeos-badge {
+    border-color: currentcolor;
+  }
+}

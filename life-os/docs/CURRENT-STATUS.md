@@ -67,10 +67,13 @@ Phase 1 — Foundations and component library.
 - LOS-0305 — Heading, Text, Caption, Metric and TruncatedText added. Visual size is a separate prop from heading level so appearance never forces a broken outline; tabular numerals are opt-in for values that change in place; truncation clips visually while leaving the full string in the DOM.
 - LOS-0306 — Button added with primary/secondary/ghost/danger/link variants, three sizes and decorative icon slots. Loading keeps the button's width and its place in the tab order, announces itself through `aria-busy`, and blocks a duplicate submit.
 - LOS-0307 — IconButton added on top of Button with a required `label`, so an icon-only control without an accessible name fails typechecking rather than review; touch targets stay at 44px at every size.
+- LOS-0308 — `Link` added for navigation only, with current-destination, external and quiet variants. It has no `disabled` prop by design: a disabled anchor loses its link role and its tab stop without explaining why, so an unavailable destination renders as text and an action renders as a button.
+- LOS-0309 — Badge, StatusDot and CountBadge added. Every badge renders text, so colour accompanies meaning rather than carrying it; canonical Task status and Product priority tones are mapped from the vocabulary instead of chosen per call site, and a count badge names what it counts while announcing the exact number it visually clamps.
+- LOS-0310 — Avatar and AvatarGroup added with image, initials, broken-image fallback and overflow states. The accent colour is hashed from the name, so a person keeps the same colour everywhere without anything being stored, and initials are taken by code point so emoji and astral characters are never split.
 
 ## Next recommended ticket
 
-`LOS-0308 — Build Link`.
+`LOS-0311 — Build Checkbox`.
 
 ## Known decisions requiring implementation-time values
 
