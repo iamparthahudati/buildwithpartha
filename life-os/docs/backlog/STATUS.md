@@ -46,5 +46,6 @@ Last updated: 2026-08-17
 | LOS-0216 | Done gate     | `feature/LOS-0216-engineering-foundation-gate`  | A 34-second fresh-clone gate passed install, docs/CI policy, frontend, uncached backend, migration, API readiness and nested-route smoke; two defects were fixed.              |
 | LOS-0301 | Done          | `feature/LOS-0301-freeze-design-tokens`         | Two-layer token contract frozen with proven WCAG 2.2 AA pairings and an enforced no-raw-color rule.                                                                            |
 | LOS-0302 | Done          | `feature/LOS-0302-css-reset-global-foundations` | Token-driven reset, focus-visible ring, selection, reduced-motion, forced-colors/contrast hooks and a focusable skip link, with native semantics preserved.                    |
+| LOS-0303 | Done          | `feature/LOS-0303-component-catalog`            | Development-only catalog with registry, per-state specimens and viewport controls; excluded from every production build.                                                       |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

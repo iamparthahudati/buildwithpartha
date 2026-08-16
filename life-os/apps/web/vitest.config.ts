@@ -14,7 +14,13 @@ export default defineConfig((configEnvironment) =>
         coverage: {
           provider: "v8",
           include: ["src/**/*.{ts,tsx}"],
-          exclude: ["src/**/*.test.{ts,tsx}", "src/**/index.ts", "src/main.tsx", "src/test/**"],
+          exclude: [
+            "src/**/*.test.{ts,tsx}",
+            "src/**/index.ts",
+            "src/main.tsx",
+            "src/catalog/main.tsx",
+            "src/test/**",
+          ],
           reporter: ["text", "html", "json-summary", "lcov"],
           thresholds: {
             branches: 80,

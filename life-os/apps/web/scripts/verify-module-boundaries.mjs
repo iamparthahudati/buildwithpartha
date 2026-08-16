@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 export const MODULE_ALIASES = Object.freeze({
   "@app": "app",
   "@assets": "assets",
+  "@catalog": "catalog",
   "@components": "components",
   "@features": "features",
   "@hooks": "hooks",

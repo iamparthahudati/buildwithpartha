@@ -4,6 +4,7 @@
 src/
   app/                 application bootstrap, providers, error boundaries
   assets/              imported fonts/images only
+  catalog/             development-only component catalog; never built
   components/
     ui/                 atoms: button, input, badge, progress, surface
     forms/              composed fields and form patterns
@@ -41,6 +42,7 @@ Inside one feature or component category, use relative imports. Relative imports
 | --------------- | ------------------ |
 | `@app/*`        | `src/app/*`        |
 | `@assets/*`     | `src/assets/*`     |
+| `@catalog/*`    | `src/catalog/*`    |
 | `@components/*` | `src/components/*` |
 | `@features/*`   | `src/features/*`   |
 | `@hooks/*`      | `src/hooks/*`      |
@@ -66,6 +68,8 @@ Aliases are declared in both TypeScript and Vite so typechecking and production 
 - a route file declares anything other than one exported component whose name ends in `Route`.
 
 Route modules compose imported feature/shared components. They do not declare local atoms or reach into feature internals. ESLint and the general quality gate supplement this architecture contract; the boundary verifier remains a separate required check.
+
+`src/catalog` is a development-only module. It may import shared components and styles so it can display them, but nothing imports `src/catalog`: it is reachable only through `catalog.html`, which is never a build input.
 
 `npm run verify:tokens` checks every stylesheet and source file under `src/` and fails when a file other than `styles/tokens.css` contains a raw hex, `rgb()`, `hsl()` or `color()` value, sets a color property to a named CSS color, or reads the private `--palette-*` layer. Components consume the semantic `--lifeos-*` tokens only.
 
