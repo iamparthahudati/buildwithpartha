@@ -37,6 +37,7 @@ Last updated: 2026-08-16
 | LOS-0207 | Done | `feature/LOS-0207-frontend-module-boundaries` | Public entrypoints, synchronized aliases and negative-tested import/route composition rules pass. |
 | LOS-0208 | Done | `feature/LOS-0208-frontend-quality-tools` | Formatting, lint, types, component/accessibility tests and an 80% coverage gate pass. |
 | LOS-0209 | Done | `feature/LOS-0209-backend-quality-tools` | Formatting, static analysis, unit/architecture tests, Testcontainers support and an 80% line/branch coverage gate pass. |
-| LOS-0210 | Ready | — | Add the local same-origin full-stack gateway and routing contract. |
+| LOS-0210 | Done | `feature/LOS-0210-local-full-stack-gateway` | Vite dev/preview proxy preserves same-origin API paths and cannot conflict with the nested SPA fallback. |
+| LOS-0211 | Ready | — | Add safe startup validation for frontend and backend environment configuration. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
