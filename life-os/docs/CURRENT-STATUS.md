@@ -38,6 +38,7 @@ Phase 1 — Foundations and component library.
 - LOS-0204 — Disposable local PostgreSQL 18.4 Compose service defined with loopback-only port `55432`, a named volume, private network, health check, separate non-superuser application role and scoped reset guidance.
 - LOS-0205 — Forward-only Flyway baseline added with private checksum history, disabled automatic baseline/clean, the trusted `pgcrypto` extension, separate migration/runtime roles and clean/existing PostgreSQL verification.
 - LOS-0206 — Enforceable backend boundaries added for approved domain packages, inward `api`/`application`/`domain`/`infrastructure` dependencies, domain-neutral error/pagination contracts and negative architecture-test fixtures.
+- LOS-0207 — Frontend module boundaries established with public feature/component entrypoints, synchronized TypeScript/Vite aliases, restricted feature layouts and a test gate that rejects private feature imports and route-local UI components.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -52,7 +53,7 @@ Phase 1 — Foundations and component library.
 
 ## Next recommended ticket
 
-`LOS-0207 — Add frontend module boundaries`.
+`LOS-0208 — Configure frontend quality tools`.
 
 ## Known decisions requiring implementation-time values
 

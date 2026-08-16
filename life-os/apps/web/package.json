@@ -13,8 +13,9 @@
     "build": "npm run typecheck && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
+    "verify:boundaries": "node scripts/verify-module-boundaries.mjs",
     "verify:dependencies": "node ../../scripts/validate-dependency-locks.mjs",
-    "test": "npm run build && node --test tests/*.test.mjs"
+    "test": "npm run verify:boundaries && npm run build && node --test tests/*.test.mjs"
   },
   "dependencies": {
     "react": "19.2.8",

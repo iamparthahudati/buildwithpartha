@@ -72,6 +72,7 @@ life-os/
 - Zod validates environment/config and boundary payloads. React Hook Form may coordinate non-trivial forms.
 - Use CSS variables for tokens and CSS Modules or a single agreed component styling approach. Do not mix multiple styling systems.
 - Route files compose feature components and contain minimal business logic.
+- TypeScript/Vite aliases identify top-level source boundaries. Features and shared component categories expose public `index.ts` entrypoints; external modules cannot import their internals, and relative imports cannot cross boundaries. Route files may declare only one exported `*Route` composition component, preventing route-local UI atoms. The boundary verifier runs before every web test build.
 
 ## Backend rules
 
