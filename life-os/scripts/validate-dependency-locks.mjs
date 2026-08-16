@@ -16,6 +16,7 @@ const apiLockPath = "life-os/apps/api/gradle.lockfile";
 const wrapperPath =
   "life-os/apps/api/gradle/wrapper/gradle-wrapper.properties";
 const dependabotPath = ".github/dependabot.yml";
+const localComposePath = "life-os/infra/compose/compose.local.yml";
 
 const exactSemver = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 const errors = [];
@@ -81,6 +82,8 @@ for (const requiredText of [
   'directory: "/life-os/apps/web"',
   'package-ecosystem: "gradle"',
   'directory: "/life-os/apps/api"',
+  'package-ecosystem: "docker"',
+  'directory: "/life-os/infra/compose"',
   'target-branch: "develop"',
   'interval: "weekly"',
 ]) {
@@ -89,11 +92,20 @@ for (const requiredText of [
   }
 }
 
+const localCompose = await read(localComposePath);
+if (
+  !/^\s*image:\s+postgres:\d+\.\d+-(?:alpine\d+\.\d+|bookworm|trixie)\s*$/m.test(
+    localCompose,
+  )
+) {
+  errors.push(`${localComposePath}: PostgreSQL image must use an exact patch/base tag.`);
+}
+
 if (errors.length > 0) {
   console.error(errors.join("\n"));
   process.exitCode = 1;
 } else {
   console.log(
-    `LifeOS dependency locks valid: ${Object.keys(directDependencies).length} direct web packages, npm lockfile v3, strict Gradle lock, checksummed wrapper, weekly update proposals.`,
+    `LifeOS dependency locks valid: ${Object.keys(directDependencies).length} direct web packages, npm lockfile v3, strict Gradle lock, checksummed wrapper, exact PostgreSQL image, weekly update proposals.`,
   );
 }

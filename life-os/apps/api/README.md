@@ -24,7 +24,7 @@ JAVA_HOME=$(/usr/libexec/java_home -v 21) ./gradlew test
 
 ## Configuration boundary
 
-Tests use an isolated in-memory database and require no external secret or service. Running the application outside tests expects the non-secret and secret environment values listed in `.env.example`; PostgreSQL and full local-stack behavior arrive in LOS-0204/LOS-0210.
+Tests use an isolated in-memory database and require no external secret or service. Local PostgreSQL startup, health and reset instructions are in [`infra/compose/README.md`](../../infra/compose/README.md). Running the application outside tests uses the safe local defaults in `.env.example`; full same-origin local-stack behavior arrives in LOS-0210.
 
 The generated executable archive is `build/libs/life-os-api.jar`. No product endpoint is introduced by this bootstrap ticket; API health, Problem Details and OpenAPI are owned by LOS-0213/LOS-0214.
 

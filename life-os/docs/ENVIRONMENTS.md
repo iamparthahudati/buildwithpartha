@@ -52,7 +52,8 @@ These values are not secrets and may appear in the client bundle.
 | Area | Owner | Must be resolved by |
 | --- | --- | --- |
 | Stable dependency versions | Engineering owner | Resolved by LOS-0203; future changes follow `DEPENDENCY-POLICY.md` |
-| Local ports and compose names | Engineering owner | LOS-0204/LOS-0210 |
+| Local PostgreSQL port and Compose names | Engineering owner | Resolved by LOS-0204: loopback `55432`, project `life-os-local` |
+| Local same-origin UI/API gateway ports | Engineering owner | LOS-0210 |
 | Staging hostname and access | Partha | LOS-1605 |
 | VPS OS/resources/deploy user | Partha | LOS-1601 |
 | Cloudflare zone/API/origin path | Partha | LOS-1606 |

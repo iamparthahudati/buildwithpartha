@@ -31,6 +31,7 @@ Last updated: 2026-08-16
 | LOS-0201 | Done | `feature/LOS-0201-bootstrap-react-app` | React 19/TypeScript/Vite foundation, strict config, `/life-os/` base, browser target, starter view and nested production-asset test pass. |
 | LOS-0202 | Done | `feature/LOS-0202-bootstrap-spring-boot-api` | Java 21/Spring Boot 4.1 API, checksummed Gradle wrapper, required starters/drivers, safe configuration and self-contained context test pass. |
 | LOS-0203 | Done | `feature/LOS-0203-dependency-locking-policy` | Exact npm state, strict Gradle lock, checksummed wrapper, weekly update proposals, validator and security override policy pass. |
-| LOS-0204 | Ready | — | Add an isolated, health-checked PostgreSQL local service with safe reset guidance. |
+| LOS-0204 | Done | `feature/LOS-0204-postgresql-local-service` | PostgreSQL 18.4 local Compose definition, loopback binding, named volume, private network, health check, separate app role and scoped reset contract pass static verification. |
+| LOS-0205 | Ready | — | Add the first Flyway migration and prove clean/existing database behavior. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

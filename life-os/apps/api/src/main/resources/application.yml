@@ -2,9 +2,9 @@ spring:
   application:
     name: life-os-api
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/lifeos}
-    username: ${DATABASE_USERNAME:lifeos}
-    password: ${DATABASE_PASSWORD:replace-locally}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:55432/lifeos_local}
+    username: ${DATABASE_USERNAME:lifeos_local_app}
+    password: ${DATABASE_PASSWORD:lifeos_local_app_only}
     hikari:
       pool-name: LifeOsPool
   flyway:

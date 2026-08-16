@@ -35,6 +35,7 @@ Phase 1 — Foundations and component library.
 - LOS-0201 — Standalone React 19.2.8/TypeScript 7.0.2/Vite 8.2.1 application bootstrapped with strict typing, `/life-os/` development/production base, explicit browser target, temporary readiness view and nested-asset build test.
 - LOS-0202 — Java 21/Spring Boot 4.1.0 API bootstrapped with a checksummed Gradle 9.5.1 wrapper, required web/security/JPA/Flyway/mail/actuator/PostgreSQL dependencies, safe external configuration and a self-contained context test.
 - LOS-0203 — Cross-stack dependency resolution locked with exact npm declarations/lockfile, strict Gradle transitive lock state, a checksummed wrapper, automated weekly update proposals, validation and a controlled security override path.
+- LOS-0204 — Disposable local PostgreSQL 18.4 Compose service defined with loopback-only port `55432`, a named volume, private network, health check, separate non-superuser application role and scoped reset guidance.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -49,7 +50,7 @@ Phase 1 — Foundations and component library.
 
 ## Next recommended ticket
 
-`LOS-0204 — Create PostgreSQL local service`.
+`LOS-0205 — Add Flyway baseline`.
 
 ## Known decisions requiring implementation-time values
 
