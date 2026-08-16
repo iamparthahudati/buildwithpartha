@@ -1,0 +1,124 @@
+name: LifeOS CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+  push:
+    branches:
+      - develop
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: lifeos-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  documentation:
+    name: LifeOS / Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22.12.0
+          cache: npm
+          cache-dependency-path: life-os/apps/web/package-lock.json
+      - name: Check pull-request whitespace
+        if: github.event_name == 'pull_request'
+        run: git diff --check "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}"
+      - name: Check pushed whitespace
+        if: github.event_name == 'push'
+        run: git diff --check "${{ github.event.before }}" "${{ github.sha }}"
+      - name: Check dispatched whitespace
+        if: github.event_name == 'workflow_dispatch'
+        run: git diff --check HEAD^ HEAD
+      - name: Validate documentation
+        run: node life-os/scripts/validate-docs.mjs
+      - name: Validate dependency locks
+        run: node life-os/scripts/validate-dependency-locks.mjs
+      - name: Validate CI policy
+        run: node life-os/scripts/validate-ci-workflow.mjs
+
+  frontend:
+    name: LifeOS / Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VITE_APP_BASE_PATH: /life-os/
+      VITE_API_BASE_PATH: /life-os/api/v1
+    defaults:
+      run:
+        working-directory: life-os/apps/web
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22.12.0
+          cache: npm
+          cache-dependency-path: life-os/apps/web/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+      - name: Run frontend quality, tests, and test build
+        run: npm test
+      - name: Verify production environment build
+        run: npm run build
+
+  backend:
+    name: LifeOS / Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: life-os/apps/api
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Set up Java
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@ed408507eac070d1f99cc633dbcf757c94c7933a # v4.4.3
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4.4.3
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/develop' && github.ref != 'refs/heads/master' }}
+      - name: Compile, test, and build backend
+        run: ./gradlew clean build --no-daemon
+      - name: Upload validated OpenAPI contract
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: life-os-openapi
+          path: life-os/apps/api/build/openapi/life-os-openapi.json
+          if-no-files-found: error
+          retention-days: 14
+
+  secret-scan:
+    name: LifeOS / Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out complete history
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+      - name: Scan committed history for secrets
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: "false"
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"

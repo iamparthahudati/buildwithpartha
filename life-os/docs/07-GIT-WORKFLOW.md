@@ -12,7 +12,7 @@
 
 On 2026-08-16, LOS-0003 created `master` and `develop` from the existing `main` commit without renaming or deleting `main`. This preserves the existing website history and establishes the requested LifeOS flow. Initial planning tickets were then merged into `develop`; `master` remains the production baseline until the first completed phase release.
 
-The repository currently has no configured Git remote. Remote default-branch selection, pull-request enforcement, required checks, deletion protection, and force-push restrictions must be enabled when the repository is connected. Until then, these rules are mandatory by convention and local work must not advance `master` directly.
+LOS-0212 connected the documented workflow to the GitHub remote. `develop` is the default branch during active development. Both `develop` and `master` require up-to-date pull requests, the four LifeOS CI checks and resolved conversations; administrators are included, while direct/force pushes and branch deletion are blocked. The reproducible settings live in `scripts/configure-branch-protection.sh`.
 
 ## Names
 
@@ -32,12 +32,13 @@ Only `Ready` tickets may start. A ticket becomes Ready when its description, con
 
 - Pull the latest `develop` before opening the PR and resolve conflicts on the feature branch.
 - Required checks: formatting, lint, typecheck, unit tests, relevant integration/contract tests, build, secret scan.
+- Required hosted contexts: `LifeOS / Documentation`, `LifeOS / Frontend`, `LifeOS / Backend`, and `LifeOS / Secret scan`.
 - At least one approval when another reviewer exists.
 - Squash merge feature branches; the squash message keeps the ticket ID.
 - Delete merged feature branches.
 - Never combine unrelated cleanup or another ticket in the PR.
 
-When remote protection is configured:
+Remote protection is configured to:
 
 - block direct pushes and force pushes to `master` and `develop`;
 - require pull requests, required CI checks, resolved conversations, and up-to-date branches;

@@ -16,6 +16,24 @@ This directory is the isolated LifeOS product area inside the existing `buildwit
 - Git: `master` is production, `develop` is integration, and every ticket uses a `feature/LOS-####-short-name` branch.
 - Build order: foundations -> atomic components -> composed components -> feature flows -> full screens -> integrations -> release.
 
+## Continuous integration
+
+Every pull request to `develop` or `master` runs four required LifeOS checks: documentation/dependency integrity, frontend quality/build, backend quality/build, and full-history secret scanning. Actions are pinned to immutable commits, dependency caches are lockfile-scoped, and pull-request Gradle caches are read-only. `develop` and `master` require an up-to-date pull request with all four checks passing; direct/force pushes, deletion and unresolved review conversations are blocked.
+
+Validate the workflow policy locally with `node life-os/scripts/validate-ci-workflow.mjs`. Repository owners can reproduce the protected-branch settings with `life-os/scripts/configure-branch-protection.sh` after authenticating `gh` for the intended repository.
+
+## Engineering foundation gate
+
+From a clean clone with Node/npm, Java 21 and native PostgreSQL command-line tools available, run:
+
+```bash
+JAVA_HOME=$(/usr/libexec/java_home -v 21) ./life-os/scripts/run-foundation-gate.sh
+```
+
+The gate installs the locked frontend tree, runs the complete frontend and uncached backend checks/builds, verifies Flyway against a disposable PostgreSQL cluster, then starts a disposable database, the production API JAR and the built web preview on isolated loopback ports. It requires API readiness and a nested `/life-os/app/today` SPA response, prints per-step timings and removes its database/process state on exit. The gate uses synthetic credentials/data only and does not touch the normal local Compose volume.
+
+The accepted LOS-0216 evidence is in [the engineering foundation gate report](./docs/gates/ENGINEERING-FOUNDATION-GATE.md).
+
 ## Start here on every ticket
 
 1. Read [AGENTS.md](./AGENTS.md).
@@ -48,4 +66,5 @@ No implementation work should begin until the relevant ticket is marked `Ready` 
 - [Content and tone guide](./docs/30-CONTENT-AND-TONE-GUIDE.md)
 - [Privacy and data lifecycle](./docs/31-PRIVACY-DATA-LIFECYCLE.md)
 - [Product and UX phase gate](./docs/gates/PRODUCT-UX-PHASE-GATE.md)
+- [Engineering foundation gate](./docs/gates/ENGINEERING-FOUNDATION-GATE.md)
 - [Backlog index](./docs/backlog/README.md)

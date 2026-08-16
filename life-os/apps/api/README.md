@@ -32,7 +32,7 @@ Apply deterministic Java formatting before committing:
 ./gradlew spotlessApply
 ```
 
-The HTML reports are generated under `build/reports/checkstyle/`, `build/reports/tests/test/`, and `build/reports/jacoco/test/html/`. The reusable PostgreSQL Testcontainers factory is in test support and pins the same PostgreSQL image as local Compose. A test that starts it requires a Docker-compatible runtime; ordinary unit and architecture tests remain self-contained.
+The HTML reports are generated under `build/reports/checkstyle/`, `build/reports/tests/test/`, and `build/reports/jacoco/test/html/`. Test support contains a reusable PostgreSQL Testcontainers factory pinned to the local Compose image and deterministic User, Project, Task and time builders. Builder defaults use fixed UUIDs/instants, reserved `example.test` identity data, approved neutral copy and explicit IANA timezone conversion. A test that starts PostgreSQL requires a Docker-compatible runtime; ordinary unit and architecture tests remain self-contained.
 
 ## Configuration boundary
 
@@ -42,9 +42,13 @@ The API validates its active profile, port, database application/Flyway credenti
 
 For browser development, keep the API on loopback port `8080` and open LifeOS through `http://localhost:5173/life-os/`. The Vite gateway forwards `/life-os/api/` requests to this service without rewriting the path; browser code must use the relative `/life-os/api/v1` base rather than calling this port directly.
 
-The normal `test` profile disables Flyway because H2 cannot execute PostgreSQL extension SQL. `verify-flyway-postgres.sh` starts an isolated temporary PostgreSQL cluster, applies the forward-only migration to a clean database, applies it again to the already-migrated database, verifies the private history table and required extension, then removes only its temporary cluster.
+The normal `test` profile disables Flyway because H2 cannot execute PostgreSQL extension SQL. `verify-flyway-postgres.sh` starts an isolated temporary PostgreSQL cluster, applies the forward-only migration to a clean database, applies it again to the already-migrated database, verifies the private history table and required extension, then removes only its temporary cluster. It supplies the complete safe test environment required by startup validation and prints the bounded application log when startup fails.
 
-The generated executable archive is `build/libs/life-os-api.jar`. No product endpoint is introduced by this bootstrap ticket; API health, Problem Details and OpenAPI are owned by LOS-0213/LOS-0214.
+The generated executable archive is `build/libs/life-os-api.jar`. The only public backend endpoints at this stage are `GET /actuator/health/liveness` and `GET /actuator/health/readiness`; they return aggregate status without component or environment details. Other actuator endpoints are unavailable or denied.
+
+Every HTTP response includes `X-Correlation-ID`. A caller-provided value is reused only when it matches the documented safe format; otherwise the API creates a UUID. API failures use `application/problem+json` and the versioned contract in [`docs/05-API-CONVENTIONS.md`](../../docs/05-API-CONVENTIONS.md). No exception message, rejected field value, stack trace or query string is included. Product endpoints begin in later tickets.
+
+The authenticated OpenAPI 3.1 document is served at `/life-os/api/v1/openapi`; interactive Swagger UI is intentionally disabled. The baseline has no product paths yet and defines the shared `/life-os/api/v1` server, browser session and CSRF schemes, reusable Problem Details responses, and pagination schema. Backend tests validate it and write `build/openapi/life-os-openapi.json`, which the hosted backend check uploads as the `life-os-openapi` artifact for 14 days.
 
 Dependency resolution is strict and uses the committed `gradle.lockfile`. Only a dedicated dependency update ticket may refresh it:
 

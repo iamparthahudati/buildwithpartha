@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-16
+Last updated: 2026-08-17
 
 ## Phase
 
@@ -10,14 +10,14 @@ Phase 1 — Foundations and component library.
 
 - LOS-0001 — Project charter approved by the owner on 2026-08-16.
 - LOS-0002 — Permanent product context approved on 2026-08-16.
-- LOS-0003 — Local `master`/`develop` branch foundation established without changing or deleting `main`; remote protection awaits a configured remote.
+- LOS-0003 — Local/remote `master` and `develop` branch foundation established without changing or deleting `main`; LOS-0212 completed remote protection.
 - LOS-0004 — Contribution guide, pull-request/ticket templates and LifeOS ownership rules added.
 - LOS-0005 — Backlog workflow, readiness gate, priorities/estimates and status ledger established.
 - LOS-0006 — ADR template, decision triggers, review and supersession workflow established.
 - LOS-0007 — Semantic version tags, changelog and release-note/rollback evidence template established.
 - LOS-0008 — Local, CI, staging and production environment/data/secrets separation and ownership documented.
-- LOS-0009 — Local documentation/link/ticket/freshness validator and hosted-CI workflow added.
-- LOS-0010 — Epic 00 governance gate passed locally; remote enforcement remains a pre-publish prerequisite.
+- LOS-0009 — Documentation/link/ticket/freshness validator is enforced by the hosted CI foundation.
+- LOS-0010 — Epic 00 governance gate passed and its permanent-branch enforcement prerequisite is complete.
 - LOS-0101 — Owner-centered personas, accessibility situations and ranked jobs-to-be-done established with a usage-validation plan.
 - LOS-0102 — Required v1, optional gated capabilities and explicit future scope frozen.
 - LOS-0103 — Connected LifeOS loop, canonical destinations, relationships and naming approved.
@@ -43,6 +43,11 @@ Phase 1 — Foundations and component library.
 - LOS-0209 — Backend quality baseline added with Spotless/google-java-format, Checkstyle, explicit JUnit/AssertJ/Testcontainers support, existing ArchUnit enforcement and an 80% JaCoCo line/branch coverage gate.
 - LOS-0210 — Vite development/preview same-origin gateway added with exact `/life-os/api` proxy matching, unchanged API paths and live tests proving API routing precedes nested SPA fallback.
 - LOS-0211 — Frontend and backend startup validation added for required public/runtime configuration, with deterministic test profiles, safe local examples and errors limited to missing/invalid key names.
+- LOS-0212 — Four-check GitHub Actions foundation added with pinned actions, safe lock-scoped caches, frontend/backend builds, full-history secret scanning and enforced protection/default-branch settings for `develop` and `master`.
+- LOS-0213 — Versioned safe API Problem Details, validated response correlation IDs, aggregate liveness/readiness and deny-by-default actuator access added with tests proving diagnostic and rejected-value data cannot leak.
+- LOS-0214 — Authenticated OpenAPI 3.1 baseline added with the versioned server, session/CSRF notes, reusable safe problems and pagination schema; backend tests validate and publish the empty-first contract as a retained CI artifact.
+- LOS-0215 — Deterministic frontend/backend User, Project, Task and time builders added with fixed safe identities/instants, immutable or isolated overrides, canonical statuses and tested IANA timezone date boundaries.
+- LOS-0216 — Engineering foundation gate passed from a fresh clone in 34 seconds: locked install, documentation/CI policy, frontend, uncached backend, PostgreSQL migration, API readiness and nested SPA route passed after fixing two clean-environment regressions.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -57,7 +62,7 @@ Phase 1 — Foundations and component library.
 
 ## Next recommended ticket
 
-`LOS-0212 — Add CI foundation`.
+`LOS-0301 — Freeze design tokens`.
 
 ## Known decisions requiring implementation-time values
 

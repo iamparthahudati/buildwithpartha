@@ -71,16 +71,26 @@ LIFEOS_APP_PASSWORD="$test_postgres_app_password" \
   ../../infra/postgres/init/001-create-local-app-role.sh >/dev/null
 
 run_migration() {
-  DATABASE_URL="jdbc:postgresql://127.0.0.1:$test_postgres_port/$test_postgres_database" \
-  DATABASE_USERNAME="$test_postgres_app" \
-  DATABASE_PASSWORD="$test_postgres_app_password" \
-  FLYWAY_DATABASE_URL="jdbc:postgresql://127.0.0.1:$test_postgres_port/$test_postgres_database" \
-  FLYWAY_DATABASE_USERNAME="$test_postgres_migrator" \
-  FLYWAY_DATABASE_PASSWORD="$test_postgres_migrator_password" \
-  SPRING_MAIN_BANNER_MODE=off \
-    "$test_java_command" -jar build/libs/life-os-api.jar \
-      --spring.profiles.active=postgres-test \
-      >>"$test_postgres_root/application.log" 2>&1
+  if ! DATABASE_URL="jdbc:postgresql://127.0.0.1:$test_postgres_port/$test_postgres_database" \
+    DATABASE_USERNAME="$test_postgres_app" \
+    DATABASE_PASSWORD="$test_postgres_app_password" \
+    FLYWAY_DATABASE_URL="jdbc:postgresql://127.0.0.1:$test_postgres_port/$test_postgres_database" \
+    FLYWAY_DATABASE_USERNAME="$test_postgres_migrator" \
+    FLYWAY_DATABASE_PASSWORD="$test_postgres_migrator_password" \
+    SPRING_PROFILES_ACTIVE=postgres-test \
+    SPRING_MAIN_BANNER_MODE=off \
+    SERVER_PORT=18081 \
+    APP_PUBLIC_URL=http://localhost:5173/life-os \
+    APP_SESSION_COOKIE_SECURE=false \
+    APP_MAIL_FROM=lifeos@example.test \
+    SMTP_HOST=localhost \
+    SMTP_PORT=1025 \
+      "$test_java_command" -jar build/libs/life-os-api.jar \
+        >>"$test_postgres_root/application.log" 2>&1; then
+    echo "Flyway verification application startup failed." >&2
+    tail -80 "$test_postgres_root/application.log" >&2
+    return 1
+  fi
 }
 
 run_migration

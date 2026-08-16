@@ -12,6 +12,19 @@ Strongly parent-owned resources use nested collections where the parent identity
 
 Authentication endpoints: `/auth/signup`, `/auth/login`, `/auth/logout`, `/auth/session`, `/auth/verify-email`, `/auth/resend-verification`, `/auth/forgot-password`, `/auth/reset-password`.
 
+## OpenAPI contract
+
+The authenticated OpenAPI 3.1 JSON document is available at `/life-os/api/v1/openapi`. Swagger UI is disabled. Until product controllers are introduced, a valid baseline intentionally contains an empty `paths` object and these reusable components:
+
+- the relative same-origin server `/life-os/api/v1`;
+- `sessionCookie`, an opaque HttpOnly `lifeos_session` API-key cookie used by browser requests;
+- `csrfToken`, the `X-CSRF-TOKEN` header required with the session for state-changing requests;
+- `Problem` and `FieldProblem` schemas matching the safe failure contract below;
+- reusable `BadRequest`, `Unauthorized`, `Forbidden`, `NotFound`, `Conflict`, and `InternalError` responses using `application/problem+json`;
+- `PageResponse`, the zero-based envelope with `items`, `page`, `size`, `totalItems`, and `totalPages`.
+
+Every later controller ticket must annotate or customize its operations without redefining these shared components. The backend gate validates the document and writes `build/openapi/life-os-openapi.json`; CI publishes that exact validated file as the `life-os-openapi` artifact for contract review.
+
 ## Request and response rules
 
 - JSON uses camelCase. IDs are UUID strings. Date-only values use `YYYY-MM-DD`; instants use RFC 3339 UTC.
@@ -21,6 +34,43 @@ Authentication endpoints: `/auth/signup`, `/auth/login`, `/auth/logout`, `/auth/
 - Expected backend failures carry a stable upper-snake-case `ErrorCode`; exception messages are never returned directly. LOS-0213 maps these codes to RFC Problem Details with `type`, `title`, `status`, `detail`, `instance`, `code`, `correlationId`, and optional field `errors`.
 - Use `If-Match`/version or an equivalent explicit version field for collision-sensitive updates.
 - Never expose entity classes directly from controllers; use request/response records.
+
+## Problem Details
+
+Failures use `application/problem+json` and this versioned shape:
+
+```json
+{
+  "type": "https://buildwithpartha.tech/life-os/problems/v1/validation-failed",
+  "title": "Validation failed",
+  "status": 400,
+  "detail": "One or more fields are invalid.",
+  "instance": "/life-os/api/v1/tasks",
+  "code": "VALIDATION_FAILED",
+  "correlationId": "c91cdba4-1d9f-4c5e-afcf-945ebca78a72",
+  "errors": [{"field": "title", "code": "NotBlank"}]
+}
+```
+
+- `type` is a stable absolute URI beneath `/life-os/problems/v1/`; changing its meaning requires a new problem version or type.
+- `title` and `detail` are safe API-owned summaries, not raw exception or validation messages.
+- `instance` contains only the request path, never its query string.
+- `code` is the stable machine-readable `ErrorCode` value.
+- `correlationId` matches the response `X-Correlation-ID` header.
+- `errors` is omitted when empty and otherwise contains only safe field names and validator codes. It never includes rejected values.
+- Authentication and authorization failures use the same shape. Unexpected failures use `INTERNAL_ERROR` and never expose an exception class, cause, message or stack trace.
+
+## Correlation IDs
+
+Every response includes `X-Correlation-ID`. The server reuses an incoming value only when it begins with an ASCII letter or digit, contains only ASCII letters, digits, `.`, `_` or `-`, and is at most 64 characters. Missing or unsafe values are replaced by a generated UUID. The selected value is available to server logging context as `correlationId`; request bodies, query strings, credentials and private record content remain prohibited from logs.
+
+## Health endpoints
+
+- `GET /actuator/health/liveness` is public and reports only aggregate liveness status.
+- `GET /actuator/health/readiness` is public and reports only aggregate readiness status, including database readiness internally.
+- Component names and details are hidden from both responses.
+- The health root and all other actuator paths are not public. Configuration leaves non-health capabilities unexposed, and security denies every actuator path except the two probes.
+- Health endpoints are operational exceptions to the versioned product API base and do not create a product resource contract.
 
 ## Security
 

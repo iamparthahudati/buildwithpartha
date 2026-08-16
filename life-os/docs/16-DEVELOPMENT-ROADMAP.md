@@ -1,6 +1,6 @@
 # Development roadmap
 
-Current position: Phase 1 / Release 0.1 foundations. The LOS-0114 product/UX gate passed on 2026-08-16; no application code or production release exists yet.
+Current position: Phase 1 / Release 0.1 design-system foundations. The LOS-0114 product/UX gate passed on 2026-08-16 and the LOS-0216 engineering foundation gate passed on 2026-08-17. Begin design implementation with LOS-0301; no product feature or production release exists yet.
 
 ## Release 0.1 — Foundations
 

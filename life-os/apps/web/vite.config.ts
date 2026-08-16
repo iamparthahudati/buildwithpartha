@@ -9,7 +9,8 @@ const testEnvironment = {
 };
 
 export function createViteConfig({ mode }: ConfigEnv): UserConfig {
-  const source = mode === "test" ? testEnvironment : loadEnv(mode, process.cwd(), "VITE_");
+  const projectRoot = decodeURIComponent(new URL(".", import.meta.url).pathname);
+  const source = mode === "test" ? testEnvironment : loadEnv(mode, projectRoot, "VITE_");
   const environment = validatePublicEnvironment(source);
   const apiRootPath = `${environment.appBasePath.replace(/\/$/, "")}/api`;
   const apiProxy = {

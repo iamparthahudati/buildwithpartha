@@ -15,12 +15,13 @@ LifeOS dependency changes are deliberate, reviewable work. Application tickets c
 | API build tool | Gradle wrapper properties and wrapper JAR | Exact distribution URL plus published SHA-256 checksum |
 | Local infrastructure image | Exact patch and base-distribution tag in `infra/compose/compose.local.yml` | Weekly Docker update proposal plus Compose configuration test |
 | Runtime families | Node 22.12+, Java 21 | Major/runtime changes require a dedicated architecture decision and dependency ticket |
+| CI actions | Full commit SHAs in `.github/workflows/lifeos-ci.yml` | Dependabot proposes reviewed weekly updates; mutable action tags are rejected by the CI policy validator |
 
 No wildcard, range, caret, tilde, `latest`, changing module or snapshot version is allowed in a production dependency declaration. Generated lockfiles and wrapper binaries are reviewed, committed and never edited by hand.
 
 ## Normal update cadence
 
-Dependabot checks the isolated LifeOS npm, Gradle and local Compose directories every Monday in `Asia/Kolkata` and proposes changes against `develop`. Minor and patch application updates are grouped per ecosystem; major and container-image changes remain separately visible for explicit compatibility and architecture review. Automation may open a proposal but cannot merge or deploy it.
+Dependabot checks the isolated LifeOS npm, Gradle, local Compose and GitHub Actions definitions every Monday in `Asia/Kolkata` and proposes changes against `develop`. Minor and patch application updates are grouped per ecosystem; major, container-image and CI-action changes remain separately visible for explicit compatibility, permission and architecture review. Automation may open a proposal but cannot merge or deploy it.
 
 A Dependabot branch is a triage proposal, not a workflow exception: open a LOS ticket, reproduce the accepted update on its `feature/LOS-####-*` branch, and close the bot proposal. The resulting reviewed commit keeps the required LOS ticket reference.
 

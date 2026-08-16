@@ -56,6 +56,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.flywaydb:flyway-database-postgresql")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:3.0.3")
 
     runtimeOnly("org.postgresql:postgresql")
 
@@ -78,6 +79,10 @@ dependencies {
 tasks.withType<Test> {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.test {
+    outputs.file(layout.buildDirectory.file("openapi/life-os-openapi.json"))
 }
 
 val coverageClasses = sourceSets.main.get().output.asFileTree.matching {
