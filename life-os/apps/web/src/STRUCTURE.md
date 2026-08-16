@@ -37,19 +37,19 @@ import { Button } from "@components/ui";
 
 Inside one feature or component category, use relative imports. Relative imports must not cross a module boundary. Cross-boundary imports use one of the configured aliases:
 
-| Alias | Source boundary |
-| --- | --- |
-| `@app/*` | `src/app/*` |
-| `@assets/*` | `src/assets/*` |
+| Alias           | Source boundary    |
+| --------------- | ------------------ |
+| `@app/*`        | `src/app/*`        |
+| `@assets/*`     | `src/assets/*`     |
 | `@components/*` | `src/components/*` |
-| `@features/*` | `src/features/*` |
-| `@hooks/*` | `src/hooks/*` |
-| `@lib/*` | `src/lib/*` |
-| `@routes/*` | `src/routes/*` |
-| `@state/*` | `src/state/*` |
-| `@styles/*` | `src/styles/*` |
-| `@test/*` | `src/test/*` |
-| `@types/*` | `src/types/*` |
+| `@features/*`   | `src/features/*`   |
+| `@hooks/*`      | `src/hooks/*`      |
+| `@lib/*`        | `src/lib/*`        |
+| `@routes/*`     | `src/routes/*`     |
+| `@state/*`      | `src/state/*`      |
+| `@styles/*`     | `src/styles/*`     |
+| `@test/*`       | `src/test/*`       |
+| `@types/*`      | `src/types/*`      |
 
 Aliases are declared in both TypeScript and Vite so typechecking and production bundling resolve the same modules.
 
@@ -63,4 +63,13 @@ Aliases are declared in both TypeScript and Vite so typechecking and production 
 - a feature or shared component category has no public `index.ts`/`index.tsx`;
 - a route file declares anything other than one exported component whose name ends in `Route`.
 
-Route modules compose imported feature/shared components. They do not declare local atoms or reach into feature internals. Full ESLint rules and general code-quality tooling arrive in LOS-0208; the boundary verifier remains a required test gate.
+Route modules compose imported feature/shared components. They do not declare local atoms or reach into feature internals. ESLint and the general quality gate supplement this architecture contract; the boundary verifier remains a separate required check.
+
+## Quality and test boundary
+
+- Prettier owns deterministic source/document formatting; ESLint owns JavaScript/TypeScript correctness, React Hooks, Vite refresh and static JSX accessibility rules.
+- The TypeScript compiler remains the authoritative type checker. Babel parses TypeScript syntax for ESLint without replacing `tsc` semantic checks.
+- Vitest and Testing Library own unit/component tests in `src/**/*.test.{ts,tsx}`.
+- Shared setup, render helpers, user-event setup and the axe helper live in `src/test` and are imported through `@test/*`.
+- The V8 coverage gate requires at least 80% statements, branches, functions and lines. Generated entrypoints, test support and the application bootstrap are excluded from the component-unit baseline.
+- Axe runs WCAG rules supported by JSDOM. Color contrast still requires browser automation and manual review because JSDOM does not calculate layout or rendered colors.

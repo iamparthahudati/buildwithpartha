@@ -35,6 +35,7 @@ Last updated: 2026-08-16
 | LOS-0205 | Done | `feature/LOS-0205-flyway-baseline` | Private Flyway history, safe migration settings, pgcrypto V1, separate migrator/runtime roles and clean/existing PostgreSQL verification pass. |
 | LOS-0206 | Done | `feature/LOS-0206-backend-package-boundaries` | Domain packages, shared error/pagination types and executable dependency rules pass positive and negative architecture tests. |
 | LOS-0207 | Done | `feature/LOS-0207-frontend-module-boundaries` | Public entrypoints, synchronized aliases and negative-tested import/route composition rules pass. |
-| LOS-0208 | Ready | — | Add frontend formatting, linting, unit/accessibility test tooling and coverage baseline. |
+| LOS-0208 | Done | `feature/LOS-0208-frontend-quality-tools` | Formatting, lint, types, component/accessibility tests and an 80% coverage gate pass. |
+| LOS-0209 | Ready | — | Add backend formatting, static analysis, integration testing and coverage tooling. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

@@ -73,6 +73,7 @@ life-os/
 - Use CSS variables for tokens and CSS Modules or a single agreed component styling approach. Do not mix multiple styling systems.
 - Route files compose feature components and contain minimal business logic.
 - TypeScript/Vite aliases identify top-level source boundaries. Features and shared component categories expose public `index.ts` entrypoints; external modules cannot import their internals, and relative imports cannot cross boundaries. Route files may declare only one exported `*Route` composition component, preventing route-local UI atoms. The boundary verifier runs before every web test build.
+- Frontend quality uses Prettier, ESLint flat config, strict `tsc`, Vitest, Testing Library, user-event, axe-core and V8 coverage. `npm test` enforces formatting, zero-warning lint, types, boundaries, an 80% unit-coverage floor, the production build and build-output contracts. JSDOM axe checks complement rather than replace browser/manual accessibility testing.
 
 ## Backend rules
 
