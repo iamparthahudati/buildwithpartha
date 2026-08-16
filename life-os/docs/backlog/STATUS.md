@@ -77,5 +77,6 @@ Last updated: 2026-08-17
 | LOS-0331 | Done          | `feature/LOS-0331-atom-audits-gate`             | Visual/structural audit; migrated TextInput/PasswordInput/Textarea onto `Field` and Button onto `Spinner`, fixing a loading-button accessible-name bug found in the process.    |
 | LOS-0332 | Done          | `feature/LOS-0331-atom-audits-gate`             | Accessibility audit; added a 64-specimen cross-component axe sweep covering every atom catalog entry with zero violations.                                                      |
 | LOS-0333 | Done gate     | `feature/LOS-0331-atom-audits-gate`             | Atom phase gate passed; `@components/ui`, `hooks/useAnnouncer` and `lib/localDateTime` frozen as the public contract for Epic 04.                                               |
+| LOS-0401 | Done          | `feature/LOS-0401-form-field`                   | FormField composed as a render prop (not a clone) so each atom's own required `label` stays real; FormErrorSummary/FormFieldGroup add error-summary linkage; `groupFieldProblems` maps server field errors. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

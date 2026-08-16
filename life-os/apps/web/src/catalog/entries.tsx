@@ -1,6 +1,7 @@
 import { CHART_SERIES_TOKENS, Z_INDEX } from "@styles/tokens";
 
 import { ATOM_CATALOG_ENTRIES } from "./atomEntries";
+import { COMPOSED_CATALOG_ENTRIES } from "./composedEntries";
 import { FEEDBACK_CATALOG_ENTRIES } from "./feedbackEntries";
 import { FORM_CATALOG_ENTRIES } from "./formEntries";
 import { STRUCTURE_CATALOG_ENTRIES } from "./structureEntries";
@@ -282,4 +283,5 @@ export const CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
   ...FORM_CATALOG_ENTRIES,
   ...FEEDBACK_CATALOG_ENTRIES,
   ...STRUCTURE_CATALOG_ENTRIES,
+  ...COMPOSED_CATALOG_ENTRIES,
 ]);

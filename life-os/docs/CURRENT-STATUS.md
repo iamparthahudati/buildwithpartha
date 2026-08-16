@@ -98,9 +98,11 @@ Phase 1 — Foundations and component library.
 - LOS-0332 — Atom accessibility audit passed. A new 64-specimen sweep runs axe across every registered atom catalog entry composed together, the way the catalog actually renders them, and found zero violations; touch target, reduced-motion and forced-colors coverage were checked stylesheet by stylesheet.
 - LOS-0333 — Atom phase gate passed (`docs/gates/ATOM-PHASE-GATE.md`): full quality suite green in 8.2 seconds (358 Vitest tests, 97%+ coverage, 35 Node assertions), 41 catalog entries covering 106 states, and the public export surface of `components/ui` (plus `hooks/useAnnouncer` and `lib/localDateTime`) is frozen for Epic 04 composed-component work.
 
+- LOS-0401 — FormField added, the first Epic 04 ticket. It composes an atom through a render prop rather than cloning it, because every atom requires its own `label` as a real checked prop and a clone-based wrapper cannot satisfy that without forcing callers to write a throwaway label. `FormFieldGroup`/`FormErrorSummary` add the error-summary pattern the tone guide requires — the summary renders nothing until the caller has something to show it, and takes focus only when the caller's own submit handler calls it, never during ordinary typing. `lib/serverErrors.ts` maps the backend's `{ field, code }` validation shape to a per-field lookup without guessing at a message, since the same code means different approved copy on different fields.
+
 ## Next recommended ticket
 
-`LOS-0401 — Build FormField`.
+`LOS-0402 — Build SearchField`.
 
 ## Known decisions requiring implementation-time values
 
