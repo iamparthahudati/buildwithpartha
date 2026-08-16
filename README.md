@@ -1,4 +1,10 @@
-# vinext-starter
+# buildwithpartha
+
+The existing site runs from this repository root. The new private productivity product is planned in [life-os/README.md](./life-os/README.md) and will be served at `https://buildwithpartha.tech/life-os` from the owner's VPS behind Cloudflare.
+
+The LifeOS area has its own permanent context, architecture, component-first build plan, and epic/ticket backlog. Existing site files remain independent.
+
+## Existing site runtime
 
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
