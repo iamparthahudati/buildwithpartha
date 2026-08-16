@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-16
+Last updated: 2026-08-17
 
 ## Phase
 
@@ -45,6 +45,7 @@ Phase 1 — Foundations and component library.
 - LOS-0211 — Frontend and backend startup validation added for required public/runtime configuration, with deterministic test profiles, safe local examples and errors limited to missing/invalid key names.
 - LOS-0212 — Four-check GitHub Actions foundation added with pinned actions, safe lock-scoped caches, frontend/backend builds, full-history secret scanning and enforced protection/default-branch settings for `develop` and `master`.
 - LOS-0213 — Versioned safe API Problem Details, validated response correlation IDs, aggregate liveness/readiness and deny-by-default actuator access added with tests proving diagnostic and rejected-value data cannot leak.
+- LOS-0214 — Authenticated OpenAPI 3.1 baseline added with the versioned server, session/CSRF notes, reusable safe problems and pagination schema; backend tests validate and publish the empty-first contract as a retained CI artifact.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -59,7 +60,7 @@ Phase 1 — Foundations and component library.
 
 ## Next recommended ticket
 
-`LOS-0214 — Add OpenAPI baseline`.
+`LOS-0215 — Add test data builders`.
 
 ## Known decisions requiring implementation-time values
 

@@ -12,6 +12,19 @@ Strongly parent-owned resources use nested collections where the parent identity
 
 Authentication endpoints: `/auth/signup`, `/auth/login`, `/auth/logout`, `/auth/session`, `/auth/verify-email`, `/auth/resend-verification`, `/auth/forgot-password`, `/auth/reset-password`.
 
+## OpenAPI contract
+
+The authenticated OpenAPI 3.1 JSON document is available at `/life-os/api/v1/openapi`. Swagger UI is disabled. Until product controllers are introduced, a valid baseline intentionally contains an empty `paths` object and these reusable components:
+
+- the relative same-origin server `/life-os/api/v1`;
+- `sessionCookie`, an opaque HttpOnly `lifeos_session` API-key cookie used by browser requests;
+- `csrfToken`, the `X-CSRF-TOKEN` header required with the session for state-changing requests;
+- `Problem` and `FieldProblem` schemas matching the safe failure contract below;
+- reusable `BadRequest`, `Unauthorized`, `Forbidden`, `NotFound`, `Conflict`, and `InternalError` responses using `application/problem+json`;
+- `PageResponse`, the zero-based envelope with `items`, `page`, `size`, `totalItems`, and `totalPages`.
+
+Every later controller ticket must annotate or customize its operations without redefining these shared components. The backend gate validates the document and writes `build/openapi/life-os-openapi.json`; CI publishes that exact validated file as the `life-os-openapi` artifact for contract review.
+
 ## Request and response rules
 
 - JSON uses camelCase. IDs are UUID strings. Date-only values use `YYYY-MM-DD`; instants use RFC 3339 UTC.

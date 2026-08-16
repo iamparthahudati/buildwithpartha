@@ -99,6 +99,13 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/develop' && github.ref != 'refs/heads/master' }}
       - name: Compile, test, and build backend
         run: ./gradlew clean build --no-daemon
+      - name: Upload validated OpenAPI contract
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: life-os-openapi
+          path: life-os/apps/api/build/openapi/life-os-openapi.json
+          if-no-files-found: error
+          retention-days: 14
 
   secret-scan:
     name: LifeOS / Secret scan

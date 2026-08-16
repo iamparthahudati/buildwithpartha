@@ -46,7 +46,9 @@ The normal `test` profile disables Flyway because H2 cannot execute PostgreSQL e
 
 The generated executable archive is `build/libs/life-os-api.jar`. The only public backend endpoints at this stage are `GET /actuator/health/liveness` and `GET /actuator/health/readiness`; they return aggregate status without component or environment details. Other actuator endpoints are unavailable or denied.
 
-Every HTTP response includes `X-Correlation-ID`. A caller-provided value is reused only when it matches the documented safe format; otherwise the API creates a UUID. API failures use `application/problem+json` and the versioned contract in [`docs/05-API-CONVENTIONS.md`](../../docs/05-API-CONVENTIONS.md). No exception message, rejected field value, stack trace or query string is included. Product endpoints and the OpenAPI document begin in later tickets.
+Every HTTP response includes `X-Correlation-ID`. A caller-provided value is reused only when it matches the documented safe format; otherwise the API creates a UUID. API failures use `application/problem+json` and the versioned contract in [`docs/05-API-CONVENTIONS.md`](../../docs/05-API-CONVENTIONS.md). No exception message, rejected field value, stack trace or query string is included. Product endpoints begin in later tickets.
+
+The authenticated OpenAPI 3.1 document is served at `/life-os/api/v1/openapi`; interactive Swagger UI is intentionally disabled. The baseline has no product paths yet and defines the shared `/life-os/api/v1` server, browser session and CSRF schemes, reusable Problem Details responses, and pagination schema. Backend tests validate it and write `build/openapi/life-os-openapi.json`, which the hosted backend check uploads as the `life-os-openapi` artifact for 14 days.
 
 Dependency resolution is strict and uses the committed `gradle.lockfile`. Only a dedicated dependency update ticket may refresh it:
 
