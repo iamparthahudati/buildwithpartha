@@ -74,5 +74,8 @@ Last updated: 2026-08-17
 | LOS-0328 | Done          | `feature/LOS-0326-tooltip-a11y-surface`         | Original LifeOS wordmark, symbol and lockup in currentColor and em units, with a destination-naming label and no reference-product artifacts.                                    |
 | LOS-0329 | Done          | `feature/LOS-0326-tooltip-a11y-surface`         | Surface card primitive; `interactive` is styling that follows the real control's focus rather than a second tab stop, and a section is a landmark only when named.               |
 | LOS-0330 | Done          | `feature/LOS-0326-tooltip-a11y-surface`         | DividerList drawing separators as row borders, so the list stays valid markup and its item count stays truthful.                                                                |
+| LOS-0331 | Done          | `feature/LOS-0331-atom-audits-gate`             | Visual/structural audit; migrated TextInput/PasswordInput/Textarea onto `Field` and Button onto `Spinner`, fixing a loading-button accessible-name bug found in the process.    |
+| LOS-0332 | Done          | `feature/LOS-0331-atom-audits-gate`             | Accessibility audit; added a 64-specimen cross-component axe sweep covering every atom catalog entry with zero violations.                                                      |
+| LOS-0333 | Done gate     | `feature/LOS-0331-atom-audits-gate`             | Atom phase gate passed; `@components/ui`, `hooks/useAnnouncer` and `lib/localDateTime` frozen as the public contract for Epic 04.                                               |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

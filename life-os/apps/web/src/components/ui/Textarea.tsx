@@ -1,6 +1,6 @@
 import { forwardRef, useId, type TextareaHTMLAttributes } from "react";
 
-import { FieldMessages } from "./FieldMessages";
+import { Field } from "./Field";
 import { fieldIds } from "./fieldIds";
 import "./textarea.css";
 
@@ -38,7 +38,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
     autoGrow = false,
     counterMax,
     className,
-    disabled,
+    disabled = false,
     id,
     value,
     rows = 3,
@@ -57,36 +57,15 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   const overLimit = counterMax !== undefined && length > counterMax;
 
   return (
-    <div
-      className={["lifeos-textarea", error && "has-error", disabled && "is-disabled", className]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      <label htmlFor={ids.controlId} className="lifeos-textarea__label">
-        {label}
-      </label>
-
-      <textarea
-        {...rest}
-        ref={ref}
-        id={ids.controlId}
-        rows={rows}
-        className={["lifeos-textarea__field", autoGrow && "is-auto-grow"].filter(Boolean).join(" ")}
-        disabled={disabled}
-        {...(value === undefined ? {} : { value })}
-        aria-describedby={ids.describedBy}
-        aria-invalid={error || overLimit ? true : undefined}
-      />
-
-      <div className="lifeos-textarea__footer">
-        <FieldMessages
-          {...(description ? { description } : {})}
-          descriptionId={ids.descriptionId}
-          {...(error ? { error } : {})}
-          errorId={ids.errorId}
-        />
-
-        {counterMax === undefined ? null : (
+    <Field
+      ids={ids}
+      label={label}
+      {...(description ? { description } : {})}
+      {...(error ? { error } : {})}
+      disabled={disabled}
+      {...(className ? { className } : {})}
+      footer={
+        counterMax === undefined ? undefined : (
           <span
             className={["lifeos-textarea__counter", overLimit && "is-over"]
               .filter(Boolean)
@@ -101,8 +80,28 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
               {length} / {counterMax}
             </span>
           </span>
-        )}
+        )
+      }
+    >
+      <div className="lifeos-field__control lifeos-field__control--multiline">
+        <textarea
+          {...rest}
+          ref={ref}
+          id={ids.controlId}
+          rows={rows}
+          className={[
+            "lifeos-field__element",
+            "lifeos-textarea__element",
+            autoGrow && "is-auto-grow",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          disabled={disabled}
+          {...(value === undefined ? {} : { value })}
+          aria-describedby={ids.describedBy}
+          aria-invalid={error || overLimit ? true : undefined}
+        />
       </div>
-    </div>
+    </Field>
   );
 });

@@ -94,9 +94,13 @@ Phase 1 — Foundations and component library.
 - LOS-0329 — Surface card primitive added. `interactive` is styling only: a clickable `div` reaches no keyboard and a button inside a button is invalid, so the card follows the focus of the real control inside it. A `section` becomes a landmark only when it has a title, because an unnamed region is worse than none.
 - LOS-0330 — DividerList added, drawing separators as a border on each row rather than an element between rows. A list whose children alternate between `li` and a decorative `div` is invalid and makes assistive technology report the wrong item count.
 
+- LOS-0331 — Atom visual/structural audit passed. `TextInput`, `PasswordInput` and `Textarea` were migrated onto the `Field` frame LOS-0317 introduced after they shipped, and `Button` now composes `Spinner` instead of duplicating its animation. Migrating `Button` surfaced a real accessible-name bug — a loading button's name was falling back to its hidden busy text — which was fixed and regression-tested in the same ticket.
+- LOS-0332 — Atom accessibility audit passed. A new 64-specimen sweep runs axe across every registered atom catalog entry composed together, the way the catalog actually renders them, and found zero violations; touch target, reduced-motion and forced-colors coverage were checked stylesheet by stylesheet.
+- LOS-0333 — Atom phase gate passed (`docs/gates/ATOM-PHASE-GATE.md`): full quality suite green in 8.2 seconds (358 Vitest tests, 97%+ coverage, 35 Node assertions), 41 catalog entries covering 106 states, and the public export surface of `components/ui` (plus `hooks/useAnnouncer` and `lib/localDateTime`) is frozen for Epic 04 composed-component work.
+
 ## Next recommended ticket
 
-`LOS-0331 — Audit atom visual identity`.
+`LOS-0401 — Build FormField`.
 
 ## Known decisions requiring implementation-time values
 

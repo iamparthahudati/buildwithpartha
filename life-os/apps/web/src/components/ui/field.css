@@ -32,6 +32,16 @@
   outline-offset: var(--lifeos-focus-ring-offset);
 }
 
+/*
+ * A multi-line control fills its shell instead of sitting on one centred line,
+ * and the element carries the padding so the whole box is a click target.
+ */
+.lifeos-field__control--multiline {
+  align-items: stretch;
+  min-height: 0;
+  padding-inline: 0;
+}
+
 /* The native element inside the shell; the shell owns the border and the ring. */
 .lifeos-field__element {
   width: 100%;
@@ -100,6 +110,12 @@
   color: var(--lifeos-color-success);
   font-size: var(--lifeos-font-size-3xs);
   line-height: var(--lifeos-line-height-snug);
+}
+
+/* Slot for a strength meter or policy list beneath a field. */
+.lifeos-field__help {
+  display: grid;
+  gap: var(--lifeos-space-1);
 }
 
 /* A coarse pointer needs the full 44px target, whatever the density setting. */

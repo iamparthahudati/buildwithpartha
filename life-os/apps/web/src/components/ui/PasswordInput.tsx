@@ -1,15 +1,14 @@
 import { forwardRef, useId, useState, type InputHTMLAttributes, type ReactNode } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-import { FieldMessages } from "./FieldMessages";
+import { Field } from "./Field";
 import { IconButton } from "./IconButton";
 import { fieldIds } from "./fieldIds";
-import "./text-input.css";
 
 /**
  * PasswordInput (LOS-0315).
  *
- * Composed from the same markup as `TextInput` rather than wrapping it,
+ * Composed from the same field frame as `TextInput` rather than wrapping it,
  * because the reveal toggle has to sit inside the control's focus ring and
  * needs its own state.
  */
@@ -50,7 +49,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
       showLabel = "Show password",
       hideLabel = "Hide password",
       className,
-      disabled,
+      disabled = false,
       id,
       onKeyUp,
       ...rest
@@ -67,16 +66,30 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     const [capsLockOn, setCapsLockOn] = useState(false);
 
     return (
-      <div
-        className={["lifeos-text-input", error && "has-error", disabled && "is-disabled", className]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        <label htmlFor={ids.controlId} className="lifeos-text-input__label">
-          {label}
-        </label>
+      <Field
+        ids={ids}
+        label={label}
+        {...(description ? { description } : {})}
+        {...(error ? { error } : {})}
+        disabled={disabled}
+        {...(className ? { className } : {})}
+        footer={
+          <>
+            {capsLockOn ? (
+              /*
+               * Announced politely: it is a hint about what is happening now,
+               * not a validation failure, and it must not interrupt typing.
+               */
+              <span className="lifeos-field__description" role="status">
+                Caps Lock is on.
+              </span>
+            ) : null}
 
-        <div className="lifeos-text-input__control">
+            {help ? <div className="lifeos-field__help">{help}</div> : null}
+          </>
+        }
+      >
+        <div className="lifeos-field__control">
           <input
             {...rest}
             ref={ref}
@@ -87,7 +100,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
              * is why the toggle defaults back to hidden on every mount.
              */
             type={revealed ? "text" : "password"}
-            className="lifeos-text-input__field"
+            className="lifeos-field__element"
             disabled={disabled}
             autoComplete={autoComplete}
             aria-describedby={ids.describedBy}
@@ -109,26 +122,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             onClick={() => setRevealed((current) => !current)}
           />
         </div>
-
-        <FieldMessages
-          {...(description ? { description } : {})}
-          descriptionId={ids.descriptionId}
-          {...(error ? { error } : {})}
-          errorId={ids.errorId}
-        />
-
-        {capsLockOn ? (
-          /*
-           * Announced politely: it is a hint about what is happening now, not
-           * a validation failure, and it must not interrupt typing.
-           */
-          <span className="lifeos-field__description" role="status">
-            Caps Lock is on.
-          </span>
-        ) : null}
-
-        {help ? <div className="lifeos-text-input__help">{help}</div> : null}
-      </div>
+      </Field>
     );
   },
 );
