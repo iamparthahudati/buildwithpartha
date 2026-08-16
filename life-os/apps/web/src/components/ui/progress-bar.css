@@ -1,0 +1,117 @@
+/* ProgressBar (LOS-0321). */
+
+.lifeos-progress-bar {
+  display: grid;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-progress-bar__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-progress-bar__label {
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-progress-bar__value {
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+  /* Tabular figures so the number does not shift width as it counts up. */
+  font-variant-numeric: var(--lifeos-font-numeric);
+}
+
+.lifeos-progress-bar__track {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-chart-track);
+}
+
+.lifeos-progress-bar--sm .lifeos-progress-bar__track {
+  height: var(--lifeos-space-1);
+}
+
+.lifeos-progress-bar--md .lifeos-progress-bar__track {
+  height: var(--lifeos-space-2);
+}
+
+.lifeos-progress-bar--lg .lifeos-progress-bar__track {
+  height: var(--lifeos-space-3);
+}
+
+.lifeos-progress-bar__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--lifeos-color-primary);
+  transition: inline-size var(--lifeos-motion-duration-normal) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-progress-bar--success .lifeos-progress-bar__fill {
+  background: var(--lifeos-color-success);
+}
+
+.lifeos-progress-bar--warning .lifeos-progress-bar__fill {
+  background: var(--lifeos-color-warning);
+}
+
+.lifeos-progress-bar--danger .lifeos-progress-bar__fill {
+  background: var(--lifeos-color-danger);
+}
+
+/*
+ * The indeterminate bar is a short segment travelling the track. It never
+ * grows from left to right, because a growing bar reads as measured progress
+ * and would be a claim the component cannot make.
+ */
+.lifeos-progress-bar__track.is-indeterminate .lifeos-progress-bar__fill {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 35%;
+  transition: none;
+  animation: lifeos-progress-slide var(--lifeos-motion-duration-deliberate)
+    var(--lifeos-motion-ease-standard) infinite alternate;
+}
+
+@keyframes lifeos-progress-slide {
+  from {
+    inset-inline-start: 0;
+  }
+
+  to {
+    inset-inline-start: 65%;
+  }
+}
+
+/*
+ * Reduced motion replaces the travelling segment with a still, quieter track.
+ * Nothing is lost: an indeterminate bar carries no value, and the fact that
+ * work is in progress is announced through the progressbar role.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-progress-bar__track.is-indeterminate .lifeos-progress-bar__fill {
+    inset-inline-start: 0;
+    inline-size: 100%;
+    animation: none;
+    opacity: 0.4;
+  }
+
+  .lifeos-progress-bar__fill {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-progress-bar__track {
+    border: var(--lifeos-border-width-hairline) solid CanvasText;
+  }
+
+  .lifeos-progress-bar__fill {
+    background: Highlight;
+  }
+}

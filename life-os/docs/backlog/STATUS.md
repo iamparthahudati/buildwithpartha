@@ -64,5 +64,10 @@ Last updated: 2026-08-17
 | LOS-0318 | Done          | `feature/LOS-0317-select-date-time-number`      | DateInput carrying a `YYYY-MM-DD` calendar date end to end, with `lib/localDateTime.ts` as the only conversion and formatting boundary.                                         |
 | LOS-0319 | Done          | `feature/LOS-0317-select-date-time-number`      | TimeInput holding canonical 24-hour `HH:mm` whatever the platform displays, with five-minute default granularity and clear/error states.                                        |
 | LOS-0320 | Done          | `feature/LOS-0317-select-date-time-number`      | NumberInput with bounds, step, an announced unit and a non-passive wheel guard that cannot silently change a value.                                                             |
+| LOS-0321 | Done          | `feature/LOS-0321-progress-feedback`            | ProgressBar reporting a real measurement or none at all; rounding that cannot read as 0% once started or 100% before finished.                                                  |
+| LOS-0322 | Done          | `feature/LOS-0321-progress-feedback`            | ProgressRing sharing the same reading, drawn as one conic gradient with no SVG geometry to recompute; zero and full handled explicitly.                                         |
+| LOS-0323 | Done          | `feature/LOS-0321-progress-feedback`            | Spinner with a required label carried as live-region content, so an unlabelled busy indicator is a type error.                                                                  |
+| LOS-0324 | Done          | `feature/LOS-0321-progress-feedback`            | Skeleton text/card/table shapes that reserve space, stay hidden from assistive technology and stop animating under reduced motion.                                              |
+| LOS-0325 | Done          | `feature/LOS-0321-progress-feedback`            | Divider that is silent by default and takes the separator role only when the line itself carries the structure.                                                                 |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

@@ -1,0 +1,101 @@
+/* Skeleton (LOS-0324). */
+
+.lifeos-skeleton {
+  display: block;
+  border-radius: var(--lifeos-radius-sm);
+  background: var(--lifeos-color-surface-muted);
+  /*
+   * The sheen travels across the shape instead of the shape pulsing. A pulse
+   * changes the element's own contrast, which reads as something arriving; a
+   * sheen reads as waiting.
+   */
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--lifeos-color-surface) 50%,
+    transparent 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 40% 100%;
+  animation: lifeos-skeleton-sheen var(--lifeos-motion-duration-deliberate)
+    var(--lifeos-motion-ease-standard) infinite;
+}
+
+.lifeos-skeleton--line {
+  height: var(--lifeos-font-size-md);
+}
+
+.lifeos-skeleton--block {
+  height: var(--lifeos-space-16);
+  border-radius: var(--lifeos-radius-md);
+}
+
+.lifeos-skeleton--circle {
+  aspect-ratio: 1;
+  border-radius: var(--lifeos-radius-pill);
+}
+
+.lifeos-skeleton-text {
+  display: grid;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-skeleton-card {
+  display: grid;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-4);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-lg);
+  background: var(--lifeos-color-surface);
+}
+
+.lifeos-skeleton-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-skeleton-table {
+  display: grid;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-skeleton-table__row {
+  display: grid;
+  grid-template-columns: repeat(var(--lifeos-skeleton-columns), 1fr);
+  gap: var(--lifeos-space-3);
+  min-height: var(--lifeos-density-row-height);
+  align-items: center;
+}
+
+@keyframes lifeos-skeleton-sheen {
+  from {
+    background-position: -60% 0;
+  }
+
+  to {
+    background-position: 160% 0;
+  }
+}
+
+/*
+ * Reduced motion leaves a still placeholder. The shape still reserves the
+ * space, which is the part that actually matters.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-skeleton {
+    background-image: none;
+    animation: none;
+  }
+}
+
+/*
+ * Forced colors flattens the placeholder against the canvas, so an outline is
+ * what keeps the reserved space visible at all.
+ */
+@media (forced-colors: active) {
+  .lifeos-skeleton {
+    border: var(--lifeos-border-width-hairline) solid GrayText;
+    background-image: none;
+  }
+}
