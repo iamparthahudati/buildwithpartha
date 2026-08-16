@@ -47,6 +47,15 @@ These values are not secrets and may appear in the client bundle.
 - job schedules, retention periods and feature flags;
 - logging/metrics endpoints without credentials.
 
+## Startup validation contract
+
+- Frontend development and production builds require `VITE_APP_BASE_PATH` and `VITE_API_BASE_PATH`. Both are public, absolute paths; the API path must remain beneath the application's `/api` boundary.
+- Backend runtime startup requires the active profile, server port, runtime and Flyway database connections/credentials, public URL, secure-cookie decision, mail sender, and SMTP host/port listed in `apps/api/.env.example`.
+- Blank values fail like missing values. Ports, URLs, paths, cookie booleans, JDBC schemes, and sender addresses also receive shape validation before dependent services start.
+- Test profiles use committed deterministic non-secret configuration so unit, context, and build tests do not require developer or production secrets.
+- Validation errors list only missing or invalid key names. They never echo configuration values, credentials, connection strings, or URL contents.
+- `.env.example` files contain local-only safe examples. Developers copy them to ignored local files or source them; staging and production obtain distinct values from their future secret/configuration stores.
+
 ## Ownership and readiness
 
 | Area | Owner | Must be resolved by |
@@ -54,6 +63,7 @@ These values are not secrets and may appear in the client bundle.
 | Stable dependency versions | Engineering owner | Resolved by LOS-0203; future changes follow `DEPENDENCY-POLICY.md` |
 | Local PostgreSQL port and Compose names | Engineering owner | Resolved by LOS-0204: loopback `55432`, project `life-os-local` |
 | Local same-origin UI/API gateway ports | Engineering owner | Resolved by LOS-0210: browser/Vite `5173`, API upstream `8080`, preview `4173` |
+| Frontend/backend startup validation and safe examples | Engineering owner | Resolved by LOS-0211; later feature tickets extend the required-key inventory |
 | Staging hostname and access | Partha | LOS-1605 |
 | VPS OS/resources/deploy user | Partha | LOS-1601 |
 | Cloudflare zone/API/origin path | Partha | LOS-1606 |

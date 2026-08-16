@@ -36,7 +36,9 @@ The HTML reports are generated under `build/reports/checkstyle/`, `build/reports
 
 ## Configuration boundary
 
-Tests use an isolated in-memory database and require no external secret or service. Local PostgreSQL startup, health and reset instructions are in [`infra/compose/README.md`](../../infra/compose/README.md). Running the application outside tests uses the safe local defaults in `.env.example`; the browser-facing same-origin gateway is documented below.
+Tests use an isolated in-memory database and deterministic test configuration, requiring no external secret or service. Local PostgreSQL startup, health and reset instructions are in [`infra/compose/README.md`](../../infra/compose/README.md). Running the application outside tests requires every non-empty key in `.env.example`; copy or source that safe local example before startup.
+
+The API validates its active profile, port, database application/Flyway credentials, public URL, cookie policy, sender and SMTP endpoint before creating service or persistence beans. Missing, blank or malformed configuration stops startup with the affected key names only. Values—including passwords and URL contents—are never included in validation errors. SMTP username/password remain optional for the local unauthenticated mail catcher; later provider tickets make them required where applicable.
 
 For browser development, keep the API on loopback port `8080` and open LifeOS through `http://localhost:5173/life-os/`. The Vite gateway forwards `/life-os/api/` requests to this service without rewriting the path; browser code must use the relative `/life-os/api/v1` base rather than calling this port directly.
 

@@ -55,6 +55,7 @@ test("proxies API requests before applying the LifeOS SPA fallback", async (cont
   gateway = await createViteServer({
     root: webRoot,
     configFile: configPath,
+    mode: "test",
     logLevel: "silent",
     server: {
       host: "127.0.0.1",

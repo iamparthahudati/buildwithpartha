@@ -6,6 +6,8 @@ Domains: `auth`, `user`, `project`, `task`, `calendar`, `timeblock`, `focus`, `s
 
 Cross-cutting packages: `common` for stable domain-neutral primitives/errors and `config` for Spring configuration. Avoid a global controller/service/repository layout.
 
+The `config` package owns early process-environment validation and typed Spring configuration binding. Runtime validation reports key names only and completes before service or persistence beans are created.
+
 Within a domain, add layers only when used:
 
 ```text
