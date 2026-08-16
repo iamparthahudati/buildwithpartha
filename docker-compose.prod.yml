@@ -1,0 +1,20 @@
+name: buildwithpartha
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    labels:
+      caddy: buildwithpartha.tech, www.buildwithpartha.tech, vps.buildwithpartha.tech
+      caddy.reverse_proxy: "{{upstreams 3000}}"
+    networks:
+      - edge
+
+networks:
+  edge:
+    external: true
