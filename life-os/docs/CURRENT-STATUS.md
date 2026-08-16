@@ -15,6 +15,7 @@ Phase 0 — Planning and repository readiness.
 - LOS-0005 — Backlog workflow, readiness gate, priorities/estimates and status ledger established.
 - LOS-0006 — ADR template, decision triggers, review and supersession workflow established.
 - LOS-0007 — Semantic version tags, changelog and release-note/rollback evidence template established.
+- LOS-0008 — Local, CI, staging and production environment/data/secrets separation and ownership documented.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -29,7 +30,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0008 — Define environment inventory`; LOS-0009 is also ready.
+`LOS-0009 — Define documentation freshness checks`.
 
 ## Known decisions requiring implementation-time values
 

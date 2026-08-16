@@ -11,8 +11,8 @@ Last updated: 2026-08-16
 | LOS-0005 | Done | `feature/LOS-0005-backlog-workflow` | Status, priority, estimate, readiness and ledger rules defined. |
 | LOS-0006 | Done | `feature/LOS-0006-adr-workflow` | ADR template, triggers, review and supersession rules defined. |
 | LOS-0007 | Done | `feature/LOS-0007-versioning-changelog` | Version tags, changelog and release-note template defined. |
-| LOS-0008 | Ready | — | Next recommended ticket. |
-| LOS-0009 | Ready | — | May start after LOS-0004. |
+| LOS-0008 | Done | `feature/LOS-0008-environment-inventory` | Environment/data/secrets ownership and separation documented. |
+| LOS-0009 | Ready | — | Next recommended ticket. |
 | LOS-0010 | Backlog | — | Starts after LOS-0001 through LOS-0009 are locally complete. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
