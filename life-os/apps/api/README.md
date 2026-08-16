@@ -11,8 +11,7 @@ Confirm that `JAVA_HOME` points to JDK 21 before running the build:
 
 ```bash
 java -version
-./gradlew test
-./gradlew bootJar
+./gradlew clean build
 ./gradlew dependencies
 ./scripts/verify-flyway-postgres.sh
 ```
@@ -20,8 +19,20 @@ java -version
 On macOS, a one-command check can select an installed JDK 21 without changing the machine default:
 
 ```bash
-JAVA_HOME=$(/usr/libexec/java_home -v 21) ./gradlew test
+JAVA_HOME=$(/usr/libexec/java_home -v 21) ./gradlew clean build
 ```
+
+## Backend quality gate
+
+`./gradlew check` verifies google-java-format through Spotless, Checkstyle static rules, JUnit and AssertJ tests, ArchUnit package boundaries, and JaCoCo line and branch coverage. Both coverage measures must remain at or above 80%.
+
+Apply deterministic Java formatting before committing:
+
+```bash
+./gradlew spotlessApply
+```
+
+The HTML reports are generated under `build/reports/checkstyle/`, `build/reports/tests/test/`, and `build/reports/jacoco/test/html/`. The reusable PostgreSQL Testcontainers factory is in test support and pins the same PostgreSQL image as local Compose. A test that starts it requires a Docker-compatible runtime; ordinary unit and architecture tests remain self-contained.
 
 ## Configuration boundary
 
@@ -35,5 +46,5 @@ Dependency resolution is strict and uses the committed `gradle.lockfile`. Only a
 
 ```bash
 ./gradlew resolveAndLockAll --write-locks
-./gradlew clean test bootJar
+./gradlew clean build
 ```

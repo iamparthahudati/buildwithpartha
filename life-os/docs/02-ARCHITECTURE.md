@@ -78,6 +78,7 @@ life-os/
 ## Backend rules
 
 - Java 21; Spring Boot 4.1.0 and the checksummed Gradle 9.5.1 wrapper are locked. Exact frontend declarations, npm lockfile v3, strict Gradle lock state, weekly update proposals and the security override path are governed by [the dependency policy](./DEPENDENCY-POLICY.md); unrelated tickets cannot upgrade them.
+- Backend quality is enforced by Spotless/google-java-format, Checkstyle, JUnit, AssertJ, ArchUnit, Testcontainers and JaCoCo. `./gradlew check` requires formatting/static-analysis success and at least 80% line and branch coverage; `./gradlew clean build` is the reproducible backend build contract.
 - Package by domain. Within a domain use `api`, `application`, `domain`, and `infrastructure` subpackages when complexity warrants; avoid a global controller/service/repository bucket.
 - Domains do not depend directly on one another. `common` is domain-neutral and may not depend on a domain or `config`; `config` is the outer wiring boundary. Within a layered domain, `api` and `infrastructure` depend inward through `application`/`domain`, while `domain` stays free of Spring and JPA. ArchUnit tests enforce the package list, domain isolation, allowed subpackages, and dependency direction.
 - REST JSON API with OpenAPI generated from code and consumer-facing examples.

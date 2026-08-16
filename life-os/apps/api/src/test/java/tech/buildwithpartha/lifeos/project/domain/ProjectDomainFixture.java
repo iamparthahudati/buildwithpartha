@@ -4,13 +4,13 @@ import tech.buildwithpartha.lifeos.project.infrastructure.ProjectInfrastructureF
 
 public final class ProjectDomainFixture {
 
-    private final ProjectInfrastructureFixture forbiddenDependency;
+  private final ProjectInfrastructureFixture forbiddenDependency;
 
-    public ProjectDomainFixture(ProjectInfrastructureFixture forbiddenDependency) {
-        this.forbiddenDependency = forbiddenDependency;
-    }
+  public ProjectDomainFixture(ProjectInfrastructureFixture forbiddenDependency) {
+    this.forbiddenDependency = forbiddenDependency;
+  }
 
-    public ProjectInfrastructureFixture forbiddenDependency() {
-        return forbiddenDependency;
-    }
+  public ProjectInfrastructureFixture forbiddenDependency() {
+    return forbiddenDependency;
+  }
 }

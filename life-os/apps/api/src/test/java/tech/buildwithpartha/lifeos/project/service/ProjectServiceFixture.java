@@ -1,4 +1,3 @@
 package tech.buildwithpartha.lifeos.project.service;
 
-public final class ProjectServiceFixture {
-}
+public final class ProjectServiceFixture {}

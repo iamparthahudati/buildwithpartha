@@ -40,6 +40,7 @@ Phase 1 — Foundations and component library.
 - LOS-0206 — Enforceable backend boundaries added for approved domain packages, inward `api`/`application`/`domain`/`infrastructure` dependencies, domain-neutral error/pagination contracts and negative architecture-test fixtures.
 - LOS-0207 — Frontend module boundaries established with public feature/component entrypoints, synchronized TypeScript/Vite aliases, restricted feature layouts and a test gate that rejects private feature imports and route-local UI components.
 - LOS-0208 — Frontend quality baseline added with Prettier, zero-warning ESLint, strict typechecking, Vitest, Testing Library/user-event helpers, axe accessibility checks and enforced 80% V8 coverage.
+- LOS-0209 — Backend quality baseline added with Spotless/google-java-format, Checkstyle, explicit JUnit/AssertJ/Testcontainers support, existing ArchUnit enforcement and an 80% JaCoCo line/branch coverage gate.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -54,7 +55,7 @@ Phase 1 — Foundations and component library.
 
 ## Next recommended ticket
 
-`LOS-0209 — Configure backend quality tools`.
+`LOS-0210 — Build local full-stack gateway`.
 
 ## Known decisions requiring implementation-time values
 
