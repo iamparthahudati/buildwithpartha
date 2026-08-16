@@ -18,6 +18,7 @@ Phase 0 — Planning and repository readiness.
 - LOS-0008 — Local, CI, staging and production environment/data/secrets separation and ownership documented.
 - LOS-0009 — Local documentation/link/ticket/freshness validator and hosted-CI workflow added.
 - LOS-0010 — Epic 00 governance gate passed locally; remote enforcement remains a pre-publish prerequisite.
+- LOS-0101 — Owner-centered personas, accessibility situations and ranked jobs-to-be-done established with a usage-validation plan.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -32,7 +33,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0101 — Validate personas and top jobs`, beginning the product/UX readiness epic.
+`LOS-0102 — Freeze v1 scope and future boundary`.
 
 ## Known decisions requiring implementation-time values
 
