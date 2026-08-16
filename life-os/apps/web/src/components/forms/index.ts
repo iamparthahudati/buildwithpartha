@@ -6,3 +6,5 @@ export {
   type FormFieldRegistry,
   type RegisteredFormField,
 } from "./formFieldRegistry";
+export { SearchField, type SearchFieldProps } from "./SearchField";
+export { useSearchField, type SearchFieldMode, type UseSearchFieldOptions } from "./useSearchField";

@@ -100,9 +100,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0401 — FormField added, the first Epic 04 ticket. It composes an atom through a render prop rather than cloning it, because every atom requires its own `label` as a real checked prop and a clone-based wrapper cannot satisfy that without forcing callers to write a throwaway label. `FormFieldGroup`/`FormErrorSummary` add the error-summary pattern the tone guide requires — the summary renders nothing until the caller has something to show it, and takes focus only when the caller's own submit handler calls it, never during ordinary typing. `lib/serverErrors.ts` maps the backend's `{ field, code }` validation shape to a per-field lookup without guessing at a message, since the same code means different approved copy on different fields.
 
+- LOS-0402 — SearchField added, composing TextInput with a `useSearchField` hook that owns only the *timing* of when to search — debounced-after-a-pause or submit-only, with Enter always searching immediately and IME composition correctly held off so an intermediate, not-yet-real character is never searched. A single-key shortcut focuses the field except while another editable element already has focus. The loading state is announced through a real sibling live region rather than nested inside the decorative icon, since an `aria-hidden` wrapper would have swallowed `Spinner`'s own status role.
+
 ## Next recommended ticket
 
-`LOS-0402 — Build SearchField`.
+`LOS-0403 — Build Combobox`.
 
 ## Known decisions requiring implementation-time values
 
