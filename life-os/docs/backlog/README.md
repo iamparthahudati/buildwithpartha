@@ -2,6 +2,8 @@
 
 This is the delivery source of truth. Ticket status begins as `Backlog` unless `CURRENT-STATUS.md` says otherwise. A ticket moves to `Ready` only after dependency and specification review.
 
+Workflow rules: [BACKLOG-WORKFLOW.md](../BACKLOG-WORKFLOW.md). Current ledger: [STATUS.md](./STATUS.md).
+
 ## Ticket format
 
 Each row contains the intended outcome plus minimum acceptance contract. Implementers expand the row using `docs/TICKET-TEMPLATE.md` in the PR or tracker without weakening it.
@@ -32,4 +34,3 @@ Each row contains the intended outcome plus minimum acceptance contract. Impleme
 ## Universal ticket context
 
 Every ticket reads `AGENTS.md`, `01-PRODUCT-CONTEXT.md`, `09-DEFINITION-OF-DONE.md`, the relevant specification section, and its dependencies. Security-sensitive tickets also read `06-SECURITY.md`; UI tickets read `03-DESIGN-SYSTEM.md` and `12-UX-STATES.md`; API tickets read `05-API-CONVENTIONS.md`.
-

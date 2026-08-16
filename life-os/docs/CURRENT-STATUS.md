@@ -12,6 +12,7 @@ Phase 0 — Planning and repository readiness.
 - LOS-0002 — Permanent product context approved on 2026-08-16.
 - LOS-0003 — Local `master`/`develop` branch foundation established without changing or deleting `main`; remote protection awaits a configured remote.
 - LOS-0004 — Contribution guide, pull-request/ticket templates and LifeOS ownership rules added.
+- LOS-0005 — Backlog workflow, readiness gate, priorities/estimates and status ledger established.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -26,7 +27,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0005 — Create backlog status workflow`, followed by the remaining Epic 00 readiness tickets.
+`LOS-0006 — Establish ADR workflow`; LOS-0007 through LOS-0009 are also ready according to their dependencies.
 
 ## Known decisions requiring implementation-time values
 
