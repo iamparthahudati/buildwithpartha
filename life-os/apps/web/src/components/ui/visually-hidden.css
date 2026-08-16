@@ -6,6 +6,12 @@
  * rule. LOS-0327 adds the `VisuallyHidden` component on top of it.
  */
 
+/* A live region that is meant to be read as well as announced. */
+.lifeos-live-region {
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+}
+
 .lifeos-visually-hidden {
   position: absolute;
   overflow: hidden;

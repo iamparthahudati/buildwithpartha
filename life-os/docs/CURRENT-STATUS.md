@@ -88,9 +88,15 @@ Phase 1 — Foundations and component library.
 - LOS-0324 — Skeleton added for text, card and table shapes. Its job is to stop the page moving under the user's pointer when data arrives; every shape is hidden from assistive technology, because announcing a dozen placeholders buries the one message that matters.
 - LOS-0325 — Divider added, silent by default. Most rules repeat a grouping that headings and list structure already carry, so the separator role is taken only when the line itself is the boundary.
 
+- LOS-0326 — Tooltip added. Its content is typed as plain text, because a control inside a tooltip can be seen but, for most people, never reached. Hover waits so a pointer crossing a toolbar does not flash five tooltips; focus opens at once; Escape closes it and latches it shut while the pointer is still there, without swallowing the key from a dialog above. Collision handling is a pure function, so flipping and clamping are tested without a layout engine.
+- LOS-0327 — VisuallyHidden, LiveRegion and `useAnnouncer` added. The live region is always mounted, because one that appears together with its text is frequently never announced. The announcer publishes the first message immediately and coalesces the rest, so a filter panel or a running timer cannot turn a live region into a stream of interruptions.
+- LOS-0328 — Original LifeOS wordmark, symbol and lockup added in `currentColor` and `em` units, so a mark inherits the colour and size of whatever names it. A bare symbol's label names the destination rather than the picture, and a test proves no reference-product name can reach the output.
+- LOS-0329 — Surface card primitive added. `interactive` is styling only: a clickable `div` reaches no keyboard and a button inside a button is invalid, so the card follows the focus of the real control inside it. A `section` becomes a landmark only when it has a title, because an unnamed region is worse than none.
+- LOS-0330 — DividerList added, drawing separators as a border on each row rather than an element between rows. A list whose children alternate between `li` and a decorative `div` is invalid and makes assistive technology report the wrong item count.
+
 ## Next recommended ticket
 
-`LOS-0326 — Build Tooltip`.
+`LOS-0331 — Audit atom visual identity`.
 
 ## Known decisions requiring implementation-time values
 

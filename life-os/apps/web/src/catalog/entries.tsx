@@ -3,6 +3,7 @@ import { CHART_SERIES_TOKENS, Z_INDEX } from "@styles/tokens";
 import { ATOM_CATALOG_ENTRIES } from "./atomEntries";
 import { FEEDBACK_CATALOG_ENTRIES } from "./feedbackEntries";
 import { FORM_CATALOG_ENTRIES } from "./formEntries";
+import { STRUCTURE_CATALOG_ENTRIES } from "./structureEntries";
 import { Swatch } from "./Swatch";
 import type { CatalogEntry } from "./registry";
 
@@ -280,4 +281,5 @@ export const CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
   ...ATOM_CATALOG_ENTRIES,
   ...FORM_CATALOG_ENTRIES,
   ...FEEDBACK_CATALOG_ENTRIES,
+  ...STRUCTURE_CATALOG_ENTRIES,
 ]);

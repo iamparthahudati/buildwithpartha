@@ -1,0 +1,58 @@
+/* Logo and wordmark (LOS-0328). */
+
+.lifeos-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  color: inherit;
+}
+
+.lifeos-logo__symbol {
+  /* In em, so the mark keeps its proportion to the name beside it. */
+  width: 1.25em;
+  height: 1.25em;
+  flex: none;
+}
+
+.lifeos-logo__wordmark {
+  font-weight: var(--lifeos-font-weight-semibold);
+  letter-spacing: var(--lifeos-letter-spacing-tight);
+  line-height: var(--lifeos-line-height-tight);
+  white-space: nowrap;
+}
+
+/*
+ * Sizes set a font size and let both parts follow it, so the mark and the name
+ * can never drift out of proportion with each other.
+ */
+.lifeos-logo--sm {
+  font-size: var(--lifeos-font-size-md);
+}
+
+.lifeos-logo--md {
+  font-size: var(--lifeos-font-size-xl);
+}
+
+.lifeos-logo--lg {
+  font-size: var(--lifeos-font-size-3xl);
+}
+
+/*
+ * Below the small breakpoint a header has room for the symbol but rarely for
+ * the name, so the lockup steps down a size rather than wrapping.
+ */
+@media (width < 480px) {
+  .lifeos-logo--md {
+    font-size: var(--lifeos-font-size-lg);
+  }
+
+  .lifeos-logo--lg {
+    font-size: var(--lifeos-font-size-2xl);
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-logo__symbol {
+    stroke: CanvasText;
+  }
+}
