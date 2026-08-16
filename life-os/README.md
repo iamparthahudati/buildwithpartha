@@ -21,10 +21,11 @@ This directory is the isolated LifeOS product area inside the existing `buildwit
 1. Read [AGENTS.md](./AGENTS.md).
 2. Read [docs/01-PRODUCT-CONTEXT.md](./docs/01-PRODUCT-CONTEXT.md).
 3. Read [docs/29-PRODUCT-VOCABULARY.md](./docs/29-PRODUCT-VOCABULARY.md) before naming UI, API, Java, TypeScript or database concepts.
-4. Find the ticket in [docs/backlog/README.md](./docs/backlog/README.md).
-5. Read any documents named in the ticket's `Context` field.
-6. Create the feature branch from `develop` using the exact ticket ID.
-7. Update [docs/CURRENT-STATUS.md](./docs/CURRENT-STATUS.md) and add a handoff note before stopping.
+4. Read [docs/30-CONTENT-AND-TONE-GUIDE.md](./docs/30-CONTENT-AND-TONE-GUIDE.md) before writing user-facing copy or fixtures.
+5. Find the ticket in [docs/backlog/README.md](./docs/backlog/README.md).
+6. Read any documents named in the ticket's `Context` field.
+7. Create the feature branch from `develop` using the exact ticket ID.
+8. Update [docs/CURRENT-STATUS.md](./docs/CURRENT-STATUS.md) and add a handoff note before stopping.
 
 No implementation work should begin until the relevant ticket is marked `Ready` and all dependencies are complete.
 
@@ -42,4 +43,5 @@ No implementation work should begin until the relevant ticket is marked `Ready` 
 - [Definition of done](./docs/09-DEFINITION-OF-DONE.md)
 - [Decision log](./docs/10-DECISIONS.md)
 - [Product vocabulary](./docs/29-PRODUCT-VOCABULARY.md)
+- [Content and tone guide](./docs/30-CONTENT-AND-TONE-GUIDE.md)
 - [Backlog index](./docs/backlog/README.md)

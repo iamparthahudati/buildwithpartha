@@ -49,6 +49,7 @@ Each component must have its own file, explicit props, loading/empty/error/disab
 
 - Confirm the active ticket and its dependencies in `docs/backlog/`.
 - Read `docs/29-PRODUCT-VOCABULARY.md` before introducing or changing a UI, API, TypeScript, Java or database name.
+- Read `docs/30-CONTENT-AND-TONE-GUIDE.md` before introducing or changing user-facing copy, validation messages, state language, notifications or fixtures.
 - Read `docs/CURRENT-STATUS.md` and the latest relevant file in `docs/handoffs/`.
 - Check the current Git branch and uncommitted changes. Preserve unrelated user work.
 - Record any necessary design/architecture deviation as an ADR before implementation.

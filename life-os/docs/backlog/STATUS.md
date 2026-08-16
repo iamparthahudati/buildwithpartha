@@ -25,6 +25,7 @@ Last updated: 2026-08-16
 | LOS-0109 | Done | `feature/LOS-0109-low-fidelity-wireframes` | Responsive route-complete wireframes and shared UI state patterns approved. |
 | LOS-0110 | Done baseline | `feature/LOS-0110-critical-interactions` | Seven critical interaction flows tested by specification walkthrough; owner review remains at the phase gate. |
 | LOS-0111 | Done | `feature/LOS-0111-product-vocabulary` | Canonical cross-layer vocabulary, statuses, priorities, labels and verbs approved. |
-| LOS-0112 | Ready | — | Define the content, validation and tone guide. |
+| LOS-0112 | Done | `feature/LOS-0112-content-tone-guide` | User-facing voice, state, validation, destructive, review, localization and fixture rules approved. |
+| LOS-0113 | Ready | — | Map privacy, collected data, retention, export and deletion lifecycle. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

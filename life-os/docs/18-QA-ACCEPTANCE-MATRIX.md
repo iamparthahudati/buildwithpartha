@@ -19,6 +19,7 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 - QA-UX-003: First-use, filtered-empty, search-empty, partial error, offline, 429, 5xx, expired-auth, conflict and success states match `12-UX-STATES.md`.
 - QA-UX-004: Closing a details drawer returns focus and preserves list filters, page, selection and scroll.
 - QA-UX-005: Reduced motion removes nonessential animation; forced colors/high contrast retain state meaning.
+- QA-UX-006: Copy follows the vocabulary/tone contracts; validation gives a correction, persistence states never overclaim, destructive actions name consequences, and dates/plurals localize correctly.
 
 ## Core execution
 

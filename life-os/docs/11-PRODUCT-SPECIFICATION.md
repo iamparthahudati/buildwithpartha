@@ -361,9 +361,13 @@ Every applicable module tests: DST start/end, timezone change, leap day, month/y
 
 Error messages say what happened, what was preserved, and what the user can do. Categories: field validation, permission, not found/deleted, conflict, offline, rate limited, service unavailable, and unexpected failure with correlation ID. Never expose stack traces. Preserve safe user input across recoverable failures.
 
+Exact message structure and approved examples follow `30-CONTENT-AND-TONE-GUIDE.md`.
+
 ## 44. Empty states
 
 Each empty state contains a plain explanation and one primary action. Distinguish first-use empty, filtered no results, search no results, permission unavailable, and data failed to load. Do not show fake data as if it were real.
+
+Module copy and localization rules follow `30-CONTENT-AND-TONE-GUIDE.md`.
 
 ## 45. Loading states
 
@@ -380,6 +384,7 @@ Use immediate control feedback, reserved layout space, skeletons for structured 
 - Use optimistic UI only with visible rollback on failure.
 - Relative dates supplement, not replace, absolute dates.
 - Avoid horizontal scrolling for core mobile workflows.
+- Apply `30-CONTENT-AND-TONE-GUIDE.md` to visible text, accessible names, validation, feedback, notifications and review prompts.
 
 ## 47. Design system, color, typography, icons, and animation
 

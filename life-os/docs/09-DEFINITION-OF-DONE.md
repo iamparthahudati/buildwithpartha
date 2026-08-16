@@ -7,7 +7,7 @@ A ticket is Done only when every applicable item is true.
 - Acceptance criteria pass and no unrelated behavior changed.
 - Dependencies are complete; assumptions and deviations are documented.
 - Loading, empty, error, success, disabled, and destructive states are handled where applicable.
-- Copy and fixtures use LifeOS identity and no reference-product data.
+- Copy and fixtures follow `29-PRODUCT-VOCABULARY.md` and `30-CONTENT-AND-TONE-GUIDE.md`, use LifeOS identity, and contain no reference-product or real personal data.
 
 ## Engineering quality
 
@@ -26,6 +26,7 @@ A ticket is Done only when every applicable item is true.
 
 - Keyboard, focus order, accessible name/description, contrast, zoom, reduced motion, mobile, tablet, and desktop were checked as applicable.
 - Dates/times were tested around timezone/day boundaries.
+- Validation, state and destructive copy was checked for honest persistence, recovery, localization and accessible announcements.
 - Performance impact and large-data behavior were considered.
 
 ## Delivery hygiene
@@ -34,4 +35,3 @@ A ticket is Done only when every applicable item is true.
 - Documentation and `CURRENT-STATUS.md` are current.
 - `docs/handoffs/LOS-####.md` records changes, checks, config/migrations, limitations, and next ticket.
 - Reviewer can reproduce the result from the documented setup.
-

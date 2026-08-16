@@ -37,6 +37,8 @@ On small screens the left navigation becomes an accessible drawer. The main task
 
 Use short action-first labels: “Add task”, “Start focus”, “Plan week”, “Mark done”. Avoid hype, gamified guilt, and fake urgency. Empty states explain the benefit and provide one primary next action. Dates must be unambiguous and localized from the user's timezone.
 
+Detailed UI writing, validation, state, review, security and localization rules are defined in [LifeOS content and tone guide](./30-CONTENT-AND-TONE-GUIDE.md).
+
 ## Data rules
 
 - Every domain record belongs to exactly one user in v1.

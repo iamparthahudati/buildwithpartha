@@ -4,6 +4,8 @@
 
 The design should feel focused, trustworthy, and information-rich. It borrows interaction patterns from the supplied references but uses the LifeOS name, original copy, neutral fixtures, and a responsive implementation.
 
+All visible and accessible component language follows the [LifeOS content and tone guide](./30-CONTENT-AND-TONE-GUIDE.md).
+
 ## Foundation tokens
 
 Define tokens before components. Initial semantic palette targets:
