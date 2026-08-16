@@ -16,6 +16,7 @@ Phase 0 — Planning and repository readiness.
 - LOS-0006 — ADR template, decision triggers, review and supersession workflow established.
 - LOS-0007 — Semantic version tags, changelog and release-note/rollback evidence template established.
 - LOS-0008 — Local, CI, staging and production environment/data/secrets separation and ownership documented.
+- LOS-0009 — Local documentation/link/ticket/freshness validator and hosted-CI workflow added.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -30,7 +31,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0009 — Define documentation freshness checks`.
+`LOS-0010 — Run the Phase 0 governance gate`.
 
 ## Known decisions requiring implementation-time values
 
