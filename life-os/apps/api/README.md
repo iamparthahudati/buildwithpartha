@@ -42,7 +42,7 @@ The API validates its active profile, port, database application/Flyway credenti
 
 For browser development, keep the API on loopback port `8080` and open LifeOS through `http://localhost:5173/life-os/`. The Vite gateway forwards `/life-os/api/` requests to this service without rewriting the path; browser code must use the relative `/life-os/api/v1` base rather than calling this port directly.
 
-The normal `test` profile disables Flyway because H2 cannot execute PostgreSQL extension SQL. `verify-flyway-postgres.sh` starts an isolated temporary PostgreSQL cluster, applies the forward-only migration to a clean database, applies it again to the already-migrated database, verifies the private history table and required extension, then removes only its temporary cluster.
+The normal `test` profile disables Flyway because H2 cannot execute PostgreSQL extension SQL. `verify-flyway-postgres.sh` starts an isolated temporary PostgreSQL cluster, applies the forward-only migration to a clean database, applies it again to the already-migrated database, verifies the private history table and required extension, then removes only its temporary cluster. It supplies the complete safe test environment required by startup validation and prints the bounded application log when startup fails.
 
 The generated executable archive is `build/libs/life-os-api.jar`. The only public backend endpoints at this stage are `GET /actuator/health/liveness` and `GET /actuator/health/readiness`; they return aggregate status without component or environment details. Other actuator endpoints are unavailable or denied.
 

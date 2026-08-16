@@ -9,6 +9,8 @@ This Compose project runs only the disposable local LifeOS database. It does not
 
 The current Mac does not yet have Docker installed. Install/start Docker before using these commands.
 
+LOS-0216 therefore ran its disposable database/API/web smoke with the installed native PostgreSQL tools rather than claiming the Compose image was exercised. That gate validates role creation, migrations, application readiness and cleanup without touching the normal local volume; it does not replace this PostgreSQL 18.4 Compose contract. Run the commands below when Docker becomes available and again before container/deployment gates.
+
 ## Start and verify
 
 From the repository root:

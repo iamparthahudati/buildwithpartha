@@ -43,6 +43,7 @@ Last updated: 2026-08-17
 | LOS-0213 | Done | `feature/LOS-0213-api-health-problem-details` | Versioned safe Problem Details, validated correlation IDs, public probes and restricted actuator behavior pass leak-focused tests. |
 | LOS-0214 | Done | `feature/LOS-0214-openapi-baseline` | Authenticated OpenAPI 3.1 baseline, shared schemas/responses and a retained validated CI artifact pass. |
 | LOS-0215 | Done | `feature/LOS-0215-test-data-builders` | Cross-stack deterministic User/Project/Task/time builders use safe defaults, isolated overrides and tested timezone boundaries. |
-| LOS-0216 | Ready | — | Run and record the complete engineering foundation gate from a clean checkout-equivalent state. |
+| LOS-0216 | Done gate | `feature/LOS-0216-engineering-foundation-gate` | A 34-second fresh-clone gate passed install, docs/CI policy, frontend, uncached backend, migration, API readiness and nested-route smoke; two defects were fixed. |
+| LOS-0301 | Ready | — | Freeze accessible semantic design tokens before component implementation. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
