@@ -1,0 +1,288 @@
+/*
+ * LifeOS design tokens — frozen by LOS-0301.
+ *
+ * This is the ONLY stylesheet allowed to contain raw color literals. Every other
+ * stylesheet and component consumes the semantic `--lifeos-*` custom properties
+ * below. `npm run verify:tokens` enforces that rule.
+ *
+ * Layer 1 (`--palette-*`) is private and must never be referenced outside this file.
+ * Layer 2 (`--lifeos-*`) is the public semantic contract consumed by components.
+ */
+
+:root {
+  /* ---------------------------------------------------------------- */
+  /* Layer 1 — private palette. Never reference these from components. */
+  /* ---------------------------------------------------------------- */
+
+  --palette-white: #ffffff;
+  --palette-black: #000000;
+
+  --palette-neutral-25: #fbfcfe;
+  --palette-neutral-50: #f7f9fc;
+  --palette-neutral-100: #f3f6fa;
+  --palette-neutral-200: #e4e7ec;
+  --palette-neutral-300: #d0d5dd;
+  --palette-neutral-400: #7d8b9f;
+  --palette-neutral-500: #667085;
+  --palette-neutral-600: #475467;
+  --palette-neutral-700: #344054;
+  --palette-neutral-900: #101828;
+
+  --palette-blue-50: #eef2ff;
+  --palette-blue-200: #c3cffd;
+  --palette-blue-500: #3157f5;
+  --palette-blue-600: #2446d8;
+  --palette-blue-700: #1d3fcc;
+
+  --palette-green-50: #e8f6ee;
+  --palette-green-500: #12a150;
+  --palette-green-700: #087443;
+
+  --palette-amber-50: #fef6e7;
+  --palette-amber-500: #dc6803;
+  --palette-amber-700: #b54708;
+
+  --palette-red-50: #fef3f2;
+  --palette-red-500: #f04438;
+  --palette-red-700: #b42318;
+
+  --palette-cyan-50: #eaf4fe;
+  --palette-cyan-500: #2e90fa;
+  --palette-cyan-700: #175cd3;
+
+  --palette-purple-50: #f4f1fe;
+  --palette-purple-500: #7a5af8;
+  --palette-purple-700: #5925dc;
+
+  --palette-teal-700: #0e7090;
+  --palette-magenta-700: #a8218a;
+  --palette-olive-700: #4f6b0c;
+
+  /* ---------------------------------------------------------------- */
+  /* Layer 2 — semantic color. Components use only these.              */
+  /* ---------------------------------------------------------------- */
+
+  --lifeos-color-canvas: var(--palette-neutral-50);
+  --lifeos-color-surface: var(--palette-white);
+  --lifeos-color-surface-muted: var(--palette-neutral-100);
+  --lifeos-color-surface-raised: var(--palette-neutral-25);
+  --lifeos-color-overlay: rgb(16 24 40 / 55%);
+
+  --lifeos-color-text: var(--palette-neutral-900);
+  --lifeos-color-text-secondary: var(--palette-neutral-600);
+  --lifeos-color-text-muted: var(--palette-neutral-500);
+  --lifeos-color-text-on-solid: var(--palette-white);
+
+  --lifeos-color-border: var(--palette-neutral-200);
+  --lifeos-color-border-strong: var(--palette-neutral-300);
+  --lifeos-color-border-interactive: var(--palette-neutral-400);
+
+  --lifeos-color-primary: var(--palette-blue-500);
+  --lifeos-color-primary-hover: var(--palette-blue-600);
+  --lifeos-color-primary-active: var(--palette-blue-700);
+  --lifeos-color-primary-soft: var(--palette-blue-50);
+  --lifeos-color-primary-border: var(--palette-blue-200);
+  --lifeos-color-on-primary-soft: var(--palette-blue-700);
+
+  --lifeos-color-success: var(--palette-green-700);
+  --lifeos-color-success-accent: var(--palette-green-500);
+  --lifeos-color-success-soft: var(--palette-green-50);
+
+  --lifeos-color-warning: var(--palette-amber-700);
+  --lifeos-color-warning-accent: var(--palette-amber-500);
+  --lifeos-color-warning-soft: var(--palette-amber-50);
+
+  --lifeos-color-danger: var(--palette-red-700);
+  --lifeos-color-danger-accent: var(--palette-red-500);
+  --lifeos-color-danger-soft: var(--palette-red-50);
+
+  --lifeos-color-info: var(--palette-cyan-700);
+  --lifeos-color-info-accent: var(--palette-cyan-500);
+  --lifeos-color-info-soft: var(--palette-cyan-50);
+
+  --lifeos-color-accent: var(--palette-purple-700);
+  --lifeos-color-accent-highlight: var(--palette-purple-500);
+  --lifeos-color-accent-soft: var(--palette-purple-50);
+
+  --lifeos-color-focus-ring: var(--palette-blue-600);
+  --lifeos-color-selection: var(--palette-blue-50);
+
+  /* Categorical chart series. Every series passes 3:1 against surface. */
+  --lifeos-chart-1: var(--palette-blue-600);
+  --lifeos-chart-2: var(--palette-green-700);
+  --lifeos-chart-3: var(--palette-amber-700);
+  --lifeos-chart-4: var(--palette-purple-700);
+  --lifeos-chart-5: var(--palette-teal-700);
+  --lifeos-chart-6: var(--palette-red-700);
+  --lifeos-chart-7: var(--palette-magenta-700);
+  --lifeos-chart-8: var(--palette-olive-700);
+  --lifeos-chart-grid: var(--palette-neutral-200);
+  --lifeos-chart-axis: var(--palette-neutral-600);
+  --lifeos-chart-track: var(--palette-neutral-100);
+
+  /* ---------------------------------------------------------------- */
+  /* Typography                                                        */
+  /* ---------------------------------------------------------------- */
+
+  --lifeos-font-sans:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --lifeos-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  /* Numeric type: durations, dates, metrics and timers must not shift width. */
+  --lifeos-font-numeric: tabular-nums lining-nums;
+
+  --lifeos-font-size-3xs: 0.75rem; /* 12px — hard floor, never go below */
+  --lifeos-font-size-2xs: 0.8125rem; /* 13px */
+  --lifeos-font-size-xs: 0.875rem; /* 14px — dense UI */
+  --lifeos-font-size-sm: 0.9375rem; /* 15px */
+  --lifeos-font-size-md: 1rem; /* 16px — default body */
+  --lifeos-font-size-lg: 1.125rem; /* 18px */
+  --lifeos-font-size-xl: 1.375rem; /* 22px */
+  --lifeos-font-size-2xl: 1.75rem; /* 28px */
+  --lifeos-font-size-3xl: 2.25rem; /* 36px */
+  --lifeos-font-size-4xl: 3rem; /* 48px */
+
+  --lifeos-font-weight-regular: 400;
+  --lifeos-font-weight-medium: 500;
+  --lifeos-font-weight-semibold: 600;
+  --lifeos-font-weight-bold: 700;
+
+  --lifeos-line-height-tight: 1.2;
+  --lifeos-line-height-snug: 1.35;
+  --lifeos-line-height-normal: 1.5;
+  --lifeos-line-height-relaxed: 1.65;
+
+  --lifeos-letter-spacing-tight: -0.02em;
+  --lifeos-letter-spacing-normal: 0em;
+  --lifeos-letter-spacing-wide: 0.06em;
+
+  /* ---------------------------------------------------------------- */
+  /* Spacing — 4px base, 8px primary rhythm                            */
+  /* ---------------------------------------------------------------- */
+
+  --lifeos-space-0: 0;
+  --lifeos-space-1: 0.25rem; /* 4px */
+  --lifeos-space-2: 0.5rem; /* 8px */
+  --lifeos-space-3: 0.75rem; /* 12px */
+  --lifeos-space-4: 1rem; /* 16px */
+  --lifeos-space-5: 1.25rem; /* 20px */
+  --lifeos-space-6: 1.5rem; /* 24px */
+  --lifeos-space-8: 2rem; /* 32px */
+  --lifeos-space-10: 2.5rem; /* 40px */
+  --lifeos-space-12: 3rem; /* 48px */
+  --lifeos-space-16: 4rem; /* 64px */
+
+  /* ---------------------------------------------------------------- */
+  /* Radius, border and shadow                                         */
+  /* ---------------------------------------------------------------- */
+
+  --lifeos-radius-xs: 0.25rem; /* 4px */
+  --lifeos-radius-sm: 0.375rem; /* 6px */
+  --lifeos-radius-md: 0.5rem; /* 8px */
+  --lifeos-radius-lg: 0.75rem; /* 12px */
+  --lifeos-radius-xl: 1rem; /* 16px */
+  --lifeos-radius-pill: 62.5rem;
+
+  --lifeos-border-width-hairline: 1px;
+  --lifeos-border-width-thick: 2px;
+  --lifeos-border-width-focus: 2px;
+  --lifeos-focus-ring-offset: 2px;
+
+  /* Shadows are supporting depth only and never the sole boundary. */
+  --lifeos-shadow-none: none;
+  --lifeos-shadow-xs: 0 1px 2px rgb(16 24 40 / 6%);
+  --lifeos-shadow-sm: 0 1px 3px rgb(16 24 40 / 8%), 0 1px 2px rgb(16 24 40 / 4%);
+  --lifeos-shadow-md: 0 4px 8px -2px rgb(16 24 40 / 10%), 0 2px 4px -2px rgb(16 24 40 / 6%);
+  --lifeos-shadow-lg: 0 12px 16px -4px rgb(16 24 40 / 8%), 0 4px 6px -2px rgb(16 24 40 / 4%);
+  --lifeos-shadow-xl: 0 24px 48px -12px rgb(16 24 40 / 18%);
+
+  /* ---------------------------------------------------------------- */
+  /* Z-index — the complete stacking contract                          */
+  /* ---------------------------------------------------------------- */
+
+  --lifeos-z-base: 0;
+  --lifeos-z-raised: 10;
+  --lifeos-z-sticky: 100;
+  --lifeos-z-navigation: 200;
+  --lifeos-z-drawer: 300;
+  --lifeos-z-overlay: 400;
+  --lifeos-z-dialog: 500;
+  --lifeos-z-popover: 600;
+  --lifeos-z-tooltip: 700;
+  --lifeos-z-toast: 800;
+  --lifeos-z-skip-link: 900;
+
+  /* ---------------------------------------------------------------- */
+  /* Motion — every duration is disabled under reduced motion          */
+  /* ---------------------------------------------------------------- */
+
+  --lifeos-motion-duration-instant: 0ms;
+  --lifeos-motion-duration-fast: 120ms;
+  --lifeos-motion-duration-normal: 200ms;
+  --lifeos-motion-duration-slow: 320ms;
+  --lifeos-motion-duration-deliberate: 480ms;
+
+  --lifeos-motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --lifeos-motion-ease-entrance: cubic-bezier(0, 0, 0, 1);
+  --lifeos-motion-ease-exit: cubic-bezier(0.3, 0, 1, 1);
+  --lifeos-motion-ease-linear: linear;
+
+  /* Delays for hover-intent surfaces such as Tooltip (LOS-0326). */
+  --lifeos-motion-delay-hover-in: 400ms;
+  --lifeos-motion-delay-hover-out: 100ms;
+
+  /* ---------------------------------------------------------------- */
+  /* Breakpoints — mirrored in tokens.ts for container/media queries   */
+  /* ---------------------------------------------------------------- */
+
+  --lifeos-breakpoint-sm: 480px;
+  --lifeos-breakpoint-md: 768px;
+  --lifeos-breakpoint-lg: 1200px;
+  --lifeos-breakpoint-xl: 1440px;
+  --lifeos-layout-min-width: 320px;
+  --lifeos-layout-content-max: 90rem;
+  --lifeos-layout-sidebar-width: 15rem; /* 240px, inside the 232–256px band */
+  --lifeos-layout-reading-max: 68ch;
+
+  /* ---------------------------------------------------------------- */
+  /* Density — comfortable is the default; compact is opt-in per region*/
+  /* ---------------------------------------------------------------- */
+
+  --lifeos-density-control-height: 2.5rem; /* 40px */
+  --lifeos-density-control-padding-inline: var(--lifeos-space-4);
+  --lifeos-density-row-height: 3rem; /* 48px */
+  --lifeos-density-row-gap: var(--lifeos-space-3);
+  --lifeos-density-section-gap: var(--lifeos-space-6);
+  --lifeos-density-font-size: var(--lifeos-font-size-md);
+  /* Minimum pointer target. Never reduce this on touch viewports. */
+  --lifeos-target-min-size: 2.75rem; /* 44px */
+}
+
+[data-density="compact"] {
+  --lifeos-density-control-height: 2rem; /* 32px */
+  --lifeos-density-control-padding-inline: var(--lifeos-space-3);
+  --lifeos-density-row-height: 2.25rem; /* 36px */
+  --lifeos-density-row-gap: var(--lifeos-space-2);
+  --lifeos-density-section-gap: var(--lifeos-space-4);
+  --lifeos-density-font-size: var(--lifeos-font-size-xs);
+}
+
+/*
+ * Coarse pointers restore comfortable sizing so compact regions keep 44px
+ * targets on touch devices, as required by the accessibility contract.
+ */
+@media (pointer: coarse) {
+  [data-density="compact"] {
+    --lifeos-density-control-height: var(--lifeos-target-min-size);
+    --lifeos-density-row-height: var(--lifeos-target-min-size);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --lifeos-motion-duration-fast: 0ms;
+    --lifeos-motion-duration-normal: 0ms;
+    --lifeos-motion-duration-slow: 0ms;
+    --lifeos-motion-duration-deliberate: 0ms;
+  }
+}
