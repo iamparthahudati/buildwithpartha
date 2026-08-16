@@ -1,0 +1,86 @@
+import { useRef, useState, type FormEvent } from "react";
+
+import { Button, Select, TextInput } from "@components/ui";
+import { FormErrorSummary, FormField, FormFieldGroup } from "@components/forms";
+
+/**
+ * Interactive demos for the composed-component catalog entries. They live
+ * apart from the entry registry so that file exports only data and this one
+ * only components, which keeps React Fast Refresh working.
+ */
+
+const PROJECT_OPTIONS = [
+  { value: "portfolio-refresh", label: "Portfolio refresh" },
+  { value: "home-records-cleanup", label: "Home records cleanup" },
+];
+
+export function CreateTaskFormDemo() {
+  const [title, setTitle] = useState("");
+  const [project, setProject] = useState("");
+  const [notes, setNotes] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const summaryRef = useRef<HTMLDivElement>(null);
+
+  // "Notes" is genuinely optional: it never produces an error, which is what
+  // separates its (optional) label from the required fields beside it.
+  const titleError = submitted && title.trim() === "" ? "Enter a task title." : undefined;
+  const projectError = submitted && project === "" ? "Choose a project." : undefined;
+  const hasErrors = Boolean(titleError) || Boolean(projectError);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitted(true);
+
+    // The summary appears and takes focus only at the moment a submit has
+    // actually failed, never while the user is still filling the form in.
+    if (title.trim() === "" || project === "") {
+      requestAnimationFrame(() => summaryRef.current?.focus());
+    }
+  }
+
+  return (
+    <FormFieldGroup>
+      <form className="specimen-stack" noValidate onSubmit={handleSubmit}>
+        {hasErrors ? <FormErrorSummary ref={summaryRef} /> : null}
+
+        <FormField name="title" label="Task title" {...(titleError ? { error: titleError } : {})}>
+          {(field) => (
+            <TextInput
+              {...field}
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+          )}
+        </FormField>
+
+        <FormField
+          name="project"
+          label="Project"
+          {...(projectError ? { error: projectError } : {})}
+        >
+          {(field) => (
+            <Select
+              {...field}
+              options={PROJECT_OPTIONS}
+              placeholder="Choose a project"
+              value={project}
+              onChange={(event) => setProject(event.target.value)}
+            />
+          )}
+        </FormField>
+
+        <FormField name="notes" label="Notes" required={false}>
+          {(field) => (
+            <TextInput
+              {...field}
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
+            />
+          )}
+        </FormField>
+
+        <Button type="submit">Create task</Button>
+      </form>
+    </FormFieldGroup>
+  );
+}
