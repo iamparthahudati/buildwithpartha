@@ -75,7 +75,7 @@ life-os/
 
 ## Backend rules
 
-- Java 21 and the stable Spring Boot line selected in bootstrap; current planning baseline is Spring Boot 4.1.
+- Java 21; LOS-0202 locks the initial backend to Spring Boot 4.1.0 and the checksummed Gradle 9.5.1 wrapper. Updates must follow the LOS-0203 dependency policy rather than arriving in unrelated tickets.
 - Package by domain. Within a domain use `api`, `application`, `domain`, and `infrastructure` subpackages when complexity warrants; avoid a global controller/service/repository bucket.
 - REST JSON API with OpenAPI generated from code and consumer-facing examples.
 - Spring Data JPA for normal persistence; explicit queries for reports/search where necessary.

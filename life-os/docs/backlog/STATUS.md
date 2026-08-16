@@ -29,6 +29,7 @@ Last updated: 2026-08-16
 | LOS-0113 | Done baseline | `feature/LOS-0113-privacy-data-lifecycle` | Data inventory, purposes, retention, rights, export/deletion, logs, backups, email, providers, files and AI mapped; owner/legal phase-gate decisions remain explicit. |
 | LOS-0114 | Done gate | `feature/LOS-0114-product-ux-phase-gate` | Owner approved the product/UX baseline; gate passed for Phase 1 and every material unknown has a named closure ticket/ADR. |
 | LOS-0201 | Done | `feature/LOS-0201-bootstrap-react-app` | React 19/TypeScript/Vite foundation, strict config, `/life-os/` base, browser target, starter view and nested production-asset test pass. |
-| LOS-0202 | Ready | — | Bootstrap the Java 21/Spring Boot API and starter test independently after the same gate. |
+| LOS-0202 | Done | `feature/LOS-0202-bootstrap-spring-boot-api` | Java 21/Spring Boot 4.1 API, checksummed Gradle wrapper, required starters/drivers, safe configuration and self-contained context test pass. |
+| LOS-0203 | Ready | — | Lock cross-stack dependency resolution and document the normal/security update policy. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

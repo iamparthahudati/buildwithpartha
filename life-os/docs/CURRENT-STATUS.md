@@ -33,6 +33,7 @@ Phase 1 — Foundations and component library.
 - LOS-0113 — Personal-data inventory, purposes, classifications, retention, consent/notice, export/deletion, logging, backup, email, provider, optional file and future AI lifecycle baseline completed with official-source review.
 - LOS-0114 — Product/UX phase gate passed with owner sign-off; the complete scope, information architecture, journeys, wireframes, interaction, language and privacy baseline is approved for engineering foundations.
 - LOS-0201 — Standalone React 19.2.8/TypeScript 7.0.2/Vite 8.2.1 application bootstrapped with strict typing, `/life-os/` development/production base, explicit browser target, temporary readiness view and nested-asset build test.
+- LOS-0202 — Java 21/Spring Boot 4.1.0 API bootstrapped with a checksummed Gradle 9.5.1 wrapper, required web/security/JPA/Flyway/mail/actuator/PostgreSQL dependencies, safe external configuration and a self-contained context test.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -43,11 +44,11 @@ Phase 1 — Foundations and component library.
 
 ## Not started
 
-- No LifeOS backend code, database migrations, authentication, product components/screens, VPS configuration, Cloudflare configuration, or production resources have been created.
+- No database migrations, authentication implementation, product components/screens, VPS configuration, Cloudflare configuration, or production resources have been created.
 
 ## Next recommended ticket
 
-`LOS-0202 — Bootstrap Spring Boot API`.
+`LOS-0203 — Establish dependency locking and update policy`.
 
 ## Known decisions requiring implementation-time values
 
@@ -55,6 +56,6 @@ Phase 1 — Foundations and component library.
 - Final VPS OS/CPU/RAM/storage and deployment user.
 - Cloudflare zone access method and origin certificate/tunnel choice.
 - Backup destination and retention policy.
-- Exact backend dependency patch versions at LOS-0202 and cross-stack update policy at LOS-0203.
+- Cross-stack dependency locking and update policy at LOS-0203.
 - Legal operator/controller name, privacy/grievance contact and approved launch geography.
 - ADR-012 accepts adults-only, India-first, 24-hour export, 30-day deletion-grace and 35-day backup-expiry engineering defaults; final privacy/legal applicability and provider review remains required before production.
