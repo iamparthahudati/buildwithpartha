@@ -1,0 +1,6 @@
+# LifeOS ownership. Update the handle if the Git host account differs.
+/life-os/ @parthahudati
+/.github/workflows/lifeos-* @parthahudati
+/.github/PULL_REQUEST_TEMPLATE.md @parthahudati
+/.github/ISSUE_TEMPLATE/lifeos-ticket.yml @parthahudati
+

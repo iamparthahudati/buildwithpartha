@@ -1,0 +1,89 @@
+name: LifeOS ticket
+description: Create one implementation-ready LifeOS ticket
+title: "[LOS-####] "
+labels:
+  - life-os
+body:
+  - type: markdown
+    attributes:
+      value: Read `life-os/AGENTS.md` and the relevant backlog epic before completing this form.
+  - type: input
+    id: epic
+    attributes:
+      label: Epic
+      placeholder: EPIC-##
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options:
+        - Foundation
+        - Frontend
+        - Backend
+        - Full-stack
+        - Infrastructure
+        - Security
+        - QA
+        - Documentation
+    validations:
+      required: true
+  - type: input
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List ticket IDs or None.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Required context
+      description: Link exact product, architecture, API, design or security sections.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: One observable result.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description and boundaries
+      description: Include important states, constraints and explicit exclusions.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Include positive, negative, permission, responsive, accessibility and recovery behavior where applicable.
+      value: |
+        - [ ]
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Name automated and manual checks.
+    validations:
+      required: true
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Ready checklist
+      options:
+        - label: Dependencies are complete or explicitly sequenced.
+          required: true
+        - label: The ticket is small enough for one focused pull request.
+          required: true
+        - label: Required documentation and handoff updates are identified.
+          required: true
+
