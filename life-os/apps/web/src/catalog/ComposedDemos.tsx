@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from "react";
 
-import { Button, Select, TextInput } from "@components/ui";
-import { FormErrorSummary, FormField, FormFieldGroup } from "@components/forms";
+import { Button, Select, Text, TextInput } from "@components/ui";
+import { FormErrorSummary, FormField, FormFieldGroup, SearchField } from "@components/forms";
 
 /**
  * Interactive demos for the composed-component catalog entries. They live
@@ -82,5 +82,56 @@ export function CreateTaskFormDemo() {
         <Button type="submit">Create task</Button>
       </form>
     </FormFieldGroup>
+  );
+}
+
+const RECENT_SEARCHES = [
+  "Prepare weekly review",
+  "Compare hosting options",
+  "Organize tax documents",
+];
+
+export function SearchFieldDebouncedDemo() {
+  const [value, setValue] = useState("");
+  const [lastSearch, setLastSearch] = useState("");
+
+  const resultCount = value.trim() === "" ? undefined : value === "Prepare weekly review" ? 1 : 0;
+
+  return (
+    <div className="specimen-stack">
+      <SearchField
+        label="Search tasks"
+        value={value}
+        onValueChange={setValue}
+        onSearch={setLastSearch}
+        shortcutKey="/"
+        recentSearches={RECENT_SEARCHES}
+        {...(resultCount === undefined ? {} : { resultCount })}
+      />
+      <Text tone="secondary" size="sm">
+        Last search fired: <code>{lastSearch === "" ? "(none yet)" : lastSearch}</code>
+      </Text>
+    </div>
+  );
+}
+
+export function SearchFieldSubmitDemo() {
+  const [value, setValue] = useState("");
+  const [submittedSearch, setSubmittedSearch] = useState("");
+
+  return (
+    <div className="specimen-stack">
+      <SearchField
+        label="Search tasks"
+        value={value}
+        onValueChange={setValue}
+        onSearch={setSubmittedSearch}
+        mode="submit"
+      />
+      <Text tone="secondary" size="sm">
+        Press Enter to search. Fired:{" "}
+        <code>{submittedSearch === "" ? "(none yet)" : submittedSearch}</code>
+      </Text>
+    </div>
   );
 }

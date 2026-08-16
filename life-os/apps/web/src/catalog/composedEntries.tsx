@@ -1,7 +1,11 @@
 import { TextInput } from "@components/ui";
 import { FormField } from "@components/forms";
 
-import { CreateTaskFormDemo } from "./ComposedDemos";
+import {
+  CreateTaskFormDemo,
+  SearchFieldDebouncedDemo,
+  SearchFieldSubmitDemo,
+} from "./ComposedDemos";
 
 import type { CatalogEntry } from "./registry";
 
@@ -46,6 +50,28 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "The summary appears and takes keyboard focus only once — after a failed submit — never while the fields are still being filled in.",
         render: () => <CreateTaskFormDemo />,
+      },
+    ],
+  },
+  {
+    id: "search-field",
+    name: "SearchField",
+    group: "Composed",
+    summary:
+      "A TextInput composed with when-to-search timing, a shortcut key, a loading announcement and a recent/no-results panel. A control that needs keyboard-navigable suggestions is Combobox instead.",
+    states: [
+      {
+        id: "search-field-debounced",
+        name: "Debounced, with recent searches",
+        description:
+          'Searches automatically after a pause; press "/" anywhere on this page to focus it.',
+        render: () => <SearchFieldDebouncedDemo />,
+      },
+      {
+        id: "search-field-submit",
+        name: "Submit mode, with a result",
+        description: "Searches only on Enter — typing alone never triggers it.",
+        render: () => <SearchFieldSubmitDemo />,
       },
     ],
   },
