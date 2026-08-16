@@ -4,7 +4,7 @@ Read this before every LifeOS ticket. This is the short, stable answer to “wha
 
 ## Product
 
-**LifeOS** is a private personal productivity web application. It is not a public marketing dashboard and not a copy of the “One System” examples. The examples inform information density, navigation, card composition, tables, drawers, scheduling rows, focus timer placement, and status treatment.
+**LifeOS** is a private personal productivity web application. It is not a public marketing dashboard and not a copy of the “One System” examples. The examples inform information density, navigation, card composition, tables, drawers, scheduling rows, active Focus Session placement, and status treatment.
 
 ## Users and access
 
@@ -17,7 +17,7 @@ Read this before every LifeOS ticket. This is the short, stable answer to “wha
 
 Primary: Today, Projects, Tasks, Calendar, Time Blocks, Sprints, Week Planner, Progress, Goals, Notes, Brain Dump, Habits, Reports.
 
-Global utilities: search, quick add, notifications, focus timer, profile/settings, sign out.
+Global utilities: search, Quick Add, notifications, active Focus Session, profile/settings, sign out.
 
 On small screens the left navigation becomes an accessible drawer. The main task remains reachable without horizontal scrolling.
 
@@ -63,4 +63,3 @@ Protected UI begins at `/life-os/app/*`. API begins at `/life-os/api/v1/*`.
 ## Delivery rule
 
 Do not implement a full screen until its token, atom, molecule, organism, mock-state, and accessibility tickets are complete. Do not integrate a screen with an API until both UI composition and API contract tests exist.
-

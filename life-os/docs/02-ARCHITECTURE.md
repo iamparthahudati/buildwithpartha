@@ -66,7 +66,7 @@ life-os/
 
 - React 19 with TypeScript and Vite; production `base` is `/life-os/`.
 - React Router owns protected routes under `/app`; browser refreshes are handled by Caddy's SPA fallback without intercepting `/life-os/api/*`.
-- TanStack Query owns server state and caching. Local component state remains local. Use a tiny client store only for genuinely global ephemeral state such as the active focus timer and navigation drawer.
+- TanStack Query owns server state and caching. Local component state remains local. Use a tiny client store only for genuinely global ephemeral presentation state such as the active Focus Session display and navigation drawer.
 - Zod validates environment/config and boundary payloads. React Hook Form may coordinate non-trivial forms.
 - Use CSS variables for tokens and CSS Modules or a single agreed component styling approach. Do not mix multiple styling systems.
 - Route files compose feature components and contain minimal business logic.

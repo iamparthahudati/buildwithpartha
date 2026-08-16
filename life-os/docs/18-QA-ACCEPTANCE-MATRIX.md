@@ -32,7 +32,7 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 
 ## Time, focus, and calendar
 
-- QA-TIME-001: Create/move/resize a block; overlap prompts cancel/edit/explicit override and is consistent in Today/Calendar.
+- QA-TIME-001: Add/move/resize a Time Block; overlap prompts cancel/edit/explicit override and is consistent in Today/Calendar.
 - QA-TIME-002: DST nonexistent and repeated local times show an explicit choice/error; stored/displayed instants remain correct.
 - QA-TIME-003: Focus start/pause/background-tab/sleep/refresh/resume/complete reports accurate server-authoritative elapsed time once.
 - QA-TIME-004: Two tabs cannot create two active focus sessions or double-complete one.
@@ -69,4 +69,3 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 - QA-OPS-002: Backup restore meets recorded RPO/RTO and restored data passes ownership/relationship checks.
 - QA-OPS-003: Cloudflare cache never serves private/auth/API data between users; origin bypass is blocked.
 - QA-OPS-004: Mail/job/storage/database failure emits safe logs/metrics/alerts and retries/degrades according to policy.
-

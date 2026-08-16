@@ -48,7 +48,6 @@ Every interactive component documents default, hover, active, focus-visible, dis
 
 - “One System” wordmark -> LifeOS wordmark.
 - Example project/task names -> neutral LifeOS fixtures such as “Website refresh” or “Weekly planning”.
-- Left focus timer remains a reusable global utility, but collapses on smaller viewports.
+- The active Focus Session display remains a reusable global utility, but collapses on smaller viewports.
 - Wide task/project tables become `DataTable` plus responsive record cards.
 - Right-side details become `DetailPanel` on large screens and `Drawer`/route on small screens.
-

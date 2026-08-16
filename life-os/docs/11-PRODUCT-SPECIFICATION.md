@@ -121,7 +121,7 @@ Purpose: hold actionable work and its execution state.
 
 Capabilities: create, edit, duplicate, move status, prioritize, set MIT, schedule, add subtasks/dependencies/labels/attachments/comments, track time, recur, archive/delete/restore, bulk update, search/filter/sort, and paginate or virtualize large result sets.
 
-Default statuses: To Do, In Progress, Blocked, Done, Cancelled. Priorities: P1 High, P2 Medium, P3 Low, P4 Someday. Overdue is derived, not stored as a status.
+Default statuses: To Do, In progress, Blocked, Done, Cancelled. Priorities: P1 — High, P2 — Medium, P3 — Low, P4 — Someday. Overdue is derived, not stored as a status.
 
 Rules:
 
@@ -200,7 +200,7 @@ Reports cover productivity overview, task completion, planned versus actual focu
 
 Every chart has numbers and an accessible summary. Users can export CSV; PDF is included only after layout and privacy QA. Reports never imply causal conclusions unsupported by data.
 
-## 20. Focus Mode — Pomodoro
+## 20. Focus Mode
 
 Default cycles are configurable (for example 25/5) without calling one method universally optimal. A session can attach to a task/time block, start, pause, resume, skip break, complete, or cancel with reason.
 
@@ -248,7 +248,7 @@ Tasks may block other tasks. Prevent self-dependency and cycles. A blocked task 
 
 Dependency changes are authorized, transactional, and included in activity.
 
-## 28. Labels and tags
+## 28. Labels
 
 One shared per-user label system applies to projects, tasks, notes, goals, and other approved records. Labels have unique normalized names and accessible colors. Renaming updates references; deleting prompts for replacement or removal.
 
@@ -256,7 +256,7 @@ Avoid a second synonymous “tags” entity in v1. UI copy may say “Labels”;
 
 ## 29. Priorities
 
-P1 High, P2 Medium, P3 Low, P4 Someday. Priority is independent of due date and derived urgency. Views may show an urgency warning but never silently change priority.
+P1 — High, P2 — Medium, P3 — Low, P4 — Someday. Priority is independent of due date and derived urgency. Views may show an urgency warning but never silently change priority.
 
 Priority colors always include text/icon labels so color is not the only signal.
 
@@ -416,4 +416,3 @@ The phase sequence in `08-DELIVERY-PHASES.md` is binding. The detailed ticket ba
 Teams/workspaces, assignments, sharing, comments/mentions, external calendar sync, browser/mobile push, native apps, full offline-first mode, version history, templates, automation rules, public API/webhooks, imports from common task apps, richer attachments, voice capture, controlled AI, billing/tiers if ever needed, and a plugin ecosystem.
 
 Future does not mean promised. Each item requires discovery, privacy/security assessment, architecture decision, and its own release plan.
-

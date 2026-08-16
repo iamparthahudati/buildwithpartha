@@ -12,7 +12,7 @@ The first production release must let a user:
 - see a useful “Today” dashboard immediately after login;
 - create and manage projects, milestones, tasks, subtasks, labels, priorities, and due dates;
 - plan a day and week with time blocks and detect scheduling conflicts;
-- run a focus timer tied to a task or time block;
+- run a Focus Session tied to a Task or Time Block;
 - plan sprints and weekly goals;
 - create goals, notes, brain-dump items, and habits;
 - review progress and export a basic report;
@@ -29,9 +29,8 @@ Deferred: teams/shared workspaces, billing, native mobile apps, third-party cale
 ## Success measures
 
 - A new user reaches the Today screen within two minutes of starting signup.
-- The primary task flow—create project, add task, schedule block, start focus, complete task—works end to end.
+- The primary task flow—add Project, add Task, schedule Time Block, start focus, mark Task done—works end to end.
 - No critical/high security findings at launch.
 - p75 LCP <= 2.5s and INP <= 200ms on the production route under representative load.
 - Core workflows pass keyboard-only and screen-reader smoke tests.
 - Backup restore is rehearsed before production launch.
-

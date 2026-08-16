@@ -12,7 +12,7 @@ Capture -> Clarify -> Plan -> Schedule -> Focus -> Complete -> Review -> Adjust
 - Tasks/projects/goals/notes clarify meaning and destination.
 - Sprints and Week Planner select commitments.
 - Time Blocks and Calendar reserve time.
-- Focus Mode executes a linked task/block.
+- Focus Mode executes a linked Task/Time Block.
 - Progress/Reports and Reviews reflect and adjust.
 
 ## Primary navigation groups
@@ -122,4 +122,3 @@ A new user may use Today + Tasks + Brain Dump only. Empty Projects/Sprints/Goals
 - No duplicated content entity or synonym requires the user to guess where data lives.
 - The primary loop and top ranked jobs are navigable without Reports, AI or Teams.
 - Responsive navigation preserves destination identity and canonical URLs.
-

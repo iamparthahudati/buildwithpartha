@@ -2,9 +2,13 @@
 
 Base path: `/life-os/api/v1`.
 
+Resource and field names follow the [LifeOS product vocabulary](./29-PRODUCT-VOCABULARY.md). API contracts use canonical code terms even when the UI destination is an experience name such as Week Planner or Focus Mode.
+
 ## Resources
 
-Use plural nouns: `/projects`, `/tasks`, `/time-blocks`, `/focus-sessions`, `/sprints`, `/weekly-plans`, `/goals`, `/notes`, `/brain-dump-items`, `/habits`, `/notifications`, `/reports`.
+Use plural nouns: `/projects`, `/tasks`, `/time-blocks`, `/focus-sessions`, `/sprints`, `/weekly-plans`, `/goals`, `/notes`, `/brain-dump-items`, `/habits`, `/reviews`, `/labels`, `/notifications`, `/reports`.
+
+Strongly parent-owned resources use nested collections where the parent identity is required, for example `/tasks/{taskId}/subtasks`, `/projects/{projectId}/milestones`, `/goals/{goalId}/check-ins` and `/habits/{habitId}/entries`.
 
 Authentication endpoints: `/auth/signup`, `/auth/login`, `/auth/logout`, `/auth/session`, `/auth/verify-email`, `/auth/resend-verification`, `/auth/forgot-password`, `/auth/reset-password`.
 
@@ -30,4 +34,3 @@ Authentication endpoints: `/auth/signup`, `/auth/login`, `/auth/logout`, `/auth/
 - Every endpoint has success, validation, unauthenticated, forbidden/cross-user, not-found, and conflict tests where relevant.
 - OpenAPI examples are validated in CI.
 - Frontend integration uses generated or schema-checked types; silent contract drift fails CI.
-

@@ -16,9 +16,12 @@
 ## Priorities
 
 - P0: production/security incident or work that blocks all useful progress.
+- P0: emergency production/security issue that blocks normal release flow; requires explicit owner justification.
 - P1: phase-critical capability or serious defect.
 - P2: normal planned work.
 - P3: optional improvement with no current phase gate impact.
+
+These are delivery-ticket priorities. They are unrelated to the P1–P4 Product priority stored on Projects and Tasks.
 
 ## Estimates
 
@@ -42,4 +45,3 @@ Estimates are relative planning aids, not promises of hours.
 ## Status ledger
 
 The authoritative local ledger is `docs/backlog/STATUS.md`. Update it at start, handoff and merge. When a remote tracker is configured, it may mirror the ledger, but ticket IDs and Git history remain authoritative and the two cannot silently diverge.
-

@@ -63,7 +63,7 @@ Quick Add opens a modal dialog on large/tablet and a full-screen sheet on small.
 Closed
   -> Open from utility bar or discoverable shortcut
   -> Choose type
-       common: Task / Brain Dump / Time Block / Note
+       common: Task / Brain Dump Item / Time Block / Note
        more: Project / Habit Entry / Goal Check-in
   -> Compose compact fields
        -> More options: preserve values and open canonical full form

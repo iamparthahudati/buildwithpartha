@@ -28,6 +28,7 @@ Phase 0 — Planning and repository readiness.
 - LOS-0108 — Daily, weekly and monthly review rituals, snapshots, skip/resume and neutral copy approved.
 - LOS-0109 — Responsive route-complete low-fidelity wireframes and shared UI state patterns approved.
 - LOS-0110 — Seven critical interactions prototyped with responsive, accessible and recovery paths; implementation risks assigned.
+- LOS-0111 — Canonical UI/code/API/database vocabulary, statuses, priorities, labels and action verbs approved.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -42,7 +43,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0111 — Finalize product vocabulary`.
+`LOS-0112 — Define content and tone guide`.
 
 ## Known decisions requiring implementation-time values
 

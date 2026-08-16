@@ -28,7 +28,7 @@ Recovery:
 
 Recovery:
 
-- Lost create response is idempotent and does not duplicate the project/task/block/session.
+- Lost create response is idempotent and does not duplicate the Project/Task/Time Block/Focus Session.
 - Stale edits preserve local changes and show conflict choices.
 - If focus disconnects, server state/time is authoritative and one active session remains.
 - Completing a project never silently deletes unfinished work.
@@ -49,8 +49,8 @@ Recovery:
 
 ## Journey 4 — Re-plan a disrupted day/week
 
-1. User opens Today or Week Planner and sees capacity, blocks, tasks and conflicts.
-2. User reschedules/moves a task or block, intentionally resolves overlaps and changes MIT if priorities changed.
+1. User opens Today or Week Planner and sees capacity, Time Blocks, Tasks and conflicts.
+2. User reschedules/moves a Task or Time Block, intentionally resolves overlaps and changes MIT if priorities changed.
 3. User carries, drops or reassigns unfinished work rather than letting it silently accumulate.
 4. Calendar and relevant plans update from the same records.
 
@@ -119,4 +119,3 @@ Recovery:
 - Loading, empty, error, offline, conflict, retry and destructive states are named.
 - Every drag, icon-only or pointer-first step has a keyboard/touch/accessibility path.
 - Each journey maps to the product acceptance and QA matrices before its screen/API tickets become Ready.
-
