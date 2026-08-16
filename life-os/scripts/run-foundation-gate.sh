@@ -37,7 +37,7 @@ verify_frontend() {
 
 verify_backend() {
   cd "$repository_root/life-os/apps/api"
-  ./gradlew clean build --no-daemon
+  ./gradlew clean build --no-daemon --no-build-cache
 }
 
 verify_postgres() {
