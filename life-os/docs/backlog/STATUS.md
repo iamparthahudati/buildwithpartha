@@ -69,5 +69,10 @@ Last updated: 2026-08-17
 | LOS-0323 | Done          | `feature/LOS-0321-progress-feedback`            | Spinner with a required label carried as live-region content, so an unlabelled busy indicator is a type error.                                                                  |
 | LOS-0324 | Done          | `feature/LOS-0321-progress-feedback`            | Skeleton text/card/table shapes that reserve space, stay hidden from assistive technology and stop animating under reduced motion.                                              |
 | LOS-0325 | Done          | `feature/LOS-0321-progress-feedback`            | Divider that is silent by default and takes the separator role only when the line itself carries the structure.                                                                 |
+| LOS-0326 | Done          | `feature/LOS-0326-tooltip-a11y-surface`         | Tooltip with delayed hover, immediate focus, latched Escape dismissal, plain-text-only content and pure-function collision handling.                                            |
+| LOS-0327 | Done          | `feature/LOS-0326-tooltip-a11y-surface`         | VisuallyHidden, an always-mounted LiveRegion and a `useAnnouncer` hook that coalesces bursts so a live region cannot be spammed.                                                |
+| LOS-0328 | Done          | `feature/LOS-0326-tooltip-a11y-surface`         | Original LifeOS wordmark, symbol and lockup in currentColor and em units, with a destination-naming label and no reference-product artifacts.                                    |
+| LOS-0329 | Done          | `feature/LOS-0326-tooltip-a11y-surface`         | Surface card primitive; `interactive` is styling that follows the real control's focus rather than a second tab stop, and a section is a landmark only when named.               |
+| LOS-0330 | Done          | `feature/LOS-0326-tooltip-a11y-surface`         | DividerList drawing separators as row borders, so the list stays valid markup and its item count stays truthful.                                                                |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
