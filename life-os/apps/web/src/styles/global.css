@@ -1,23 +1,13 @@
 /*
- * Global foundations. Tokens are frozen in tokens.css (LOS-0301); the full CSS
- * reset, skip link and contrast hooks arrive with LOS-0302.
+ * LifeOS global foundations — LOS-0302.
+ *
+ * Order matters: tokens define the values, the reset normalizes browser
+ * defaults, and this file applies the LifeOS canvas, focus, selection,
+ * reduced-motion, forced-colors and skip-link behavior on top.
  */
 
 @import "./tokens.css";
-
-:root {
-  font-family: var(--lifeos-font-sans);
-  font-size: 100%;
-  font-synthesis: none;
-  line-height: var(--lifeos-line-height-normal);
-  color: var(--lifeos-color-text);
-  background: var(--lifeos-color-canvas);
-  text-rendering: optimizeLegibility;
-}
-
-* {
-  box-sizing: border-box;
-}
+@import "./reset.css";
 
 html {
   min-width: var(--lifeos-layout-min-width);
@@ -27,33 +17,138 @@ html {
 
 body {
   min-width: var(--lifeos-layout-min-width);
-  min-height: 100vh;
-  margin: 0;
+  font-family: var(--lifeos-font-sans);
+  font-size: var(--lifeos-font-size-md);
+  font-weight: var(--lifeos-font-weight-regular);
+  font-synthesis: none;
+  line-height: var(--lifeos-line-height-normal);
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-canvas);
+  text-rendering: optimizeLegibility;
 }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
+::selection {
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-selection);
 }
 
+/*
+ * A single visible focus indicator for the whole application. Keyboard users
+ * always get a ring; pointer users do not, because :focus-visible is the
+ * browser's own heuristic rather than a scripted guess.
+ */
 :focus-visible {
   outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
   outline-offset: var(--lifeos-focus-ring-offset);
 }
 
-::selection {
-  background: var(--lifeos-color-selection);
-  color: var(--lifeos-color-text);
+/*
+ * Never remove the indicator without replacing it. Components that need a
+ * different shape override the ring, not its existence.
+ */
+:focus:not(:focus-visible) {
+  outline: none;
 }
+
+/* ------------------------------------------------------------------ */
+/* Skip link                                                          */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Off-screen rather than `display: none`, so it stays focusable. It is the
+ * first tab stop on every page and becomes visible the moment it receives
+ * focus. It sits above every other layer so nothing can cover it.
+ */
+.lifeos-skip-link {
+  position: absolute;
+  z-index: var(--lifeos-z-skip-link);
+  top: var(--lifeos-space-2);
+  left: var(--lifeos-space-2);
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  border-radius: var(--lifeos-radius-md);
+  color: var(--lifeos-color-text-on-solid);
+  background: var(--lifeos-color-primary);
+  box-shadow: var(--lifeos-shadow-md);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--lifeos-space-4)));
+  transition: transform var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion                                                     */
+/* ------------------------------------------------------------------ */
+
+/*
+ * The motion duration tokens are already zeroed under this preference. This
+ * block is the backstop for third-party or inherited animation that does not
+ * read the tokens.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Forced colors and increased contrast                               */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Under a forced-colors mode the user's palette wins. Backgrounds and shadows
+ * are dropped so nothing fights the system colors, and boundaries that were
+ * carried by color alone are restored as real borders.
+ */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: var(--lifeos-border-width-focus) solid CanvasText;
+    outline-offset: var(--lifeos-focus-ring-offset);
+  }
+
+  .lifeos-skip-link {
+    border: var(--lifeos-border-width-hairline) solid CanvasText;
+    box-shadow: none;
+  }
+
+  /* Icons must follow the surrounding text rather than a fixed token. */
+  svg {
+    fill: CanvasText;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    /* Promote hairline separators to the strong border so they survive. */
+    --lifeos-color-border: var(--lifeos-color-border-strong);
+    --lifeos-color-text-muted: var(--lifeos-color-text-secondary);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Temporary foundation view — replaced by the app shell ticket        */
+/* ------------------------------------------------------------------ */
 
 .foundation {
   display: grid;
   min-height: 100vh;
   place-items: center;
   padding: var(--lifeos-space-8) var(--lifeos-space-5);
-  background: var(--lifeos-color-canvas);
 }
 
 .foundation__card {
@@ -79,7 +174,7 @@ select {
 }
 
 .foundation__eyebrow {
-  margin: 0 0 var(--lifeos-space-2);
+  margin-bottom: var(--lifeos-space-2);
   color: var(--lifeos-color-on-primary-soft);
   font-size: var(--lifeos-font-size-3xs);
   font-weight: var(--lifeos-font-weight-semibold);
@@ -88,18 +183,16 @@ select {
 }
 
 .foundation h1 {
-  margin: 0;
-  color: var(--lifeos-color-text);
   font-size: var(--lifeos-font-size-3xl);
+  font-weight: var(--lifeos-font-weight-bold);
   line-height: var(--lifeos-line-height-tight);
   letter-spacing: var(--lifeos-letter-spacing-tight);
 }
 
 .foundation__summary {
   max-width: var(--lifeos-layout-reading-max);
-  margin: var(--lifeos-space-4) 0 0;
+  margin-top: var(--lifeos-space-4);
   color: var(--lifeos-color-text-secondary);
-  font-size: var(--lifeos-font-size-md);
   line-height: var(--lifeos-line-height-relaxed);
 }
 
@@ -107,7 +200,7 @@ select {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--lifeos-space-3);
-  margin: var(--lifeos-space-8) 0 0;
+  margin-top: var(--lifeos-space-8);
 }
 
 .foundation__details div {
@@ -127,7 +220,6 @@ select {
 
 .foundation__details dd {
   overflow-wrap: anywhere;
-  margin: 0;
   color: var(--lifeos-color-text);
   font-size: var(--lifeos-font-size-xs);
   font-weight: var(--lifeos-font-weight-semibold);
@@ -135,25 +227,13 @@ select {
 }
 
 .foundation__note {
-  margin: var(--lifeos-space-6) 0 0;
+  margin-top: var(--lifeos-space-6);
   color: var(--lifeos-color-text-muted);
   font-size: var(--lifeos-font-size-xs);
-  line-height: var(--lifeos-line-height-normal);
 }
 
 @media (max-width: 32rem) {
   .foundation__details {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: var(--lifeos-motion-duration-instant) !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: var(--lifeos-motion-duration-instant) !important;
   }
 }

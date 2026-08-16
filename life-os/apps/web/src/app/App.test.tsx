@@ -13,4 +13,23 @@ describe("App", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Foundation ready" })).toBeVisible();
     await expectNoAccessibilityViolations(container);
   });
+
+  it("offers the skip link as the first tab stop", async () => {
+    const { user } = renderWithUser(<App />);
+
+    await user.tab();
+
+    expect(screen.getByRole("link", { name: "Skip to main content" })).toHaveFocus();
+  });
+
+  it("points the skip link at a focusable main landmark outside the tab order", () => {
+    renderWithUser(<App />);
+
+    const skipLink = screen.getByRole("link", { name: "Skip to main content" });
+    const main = screen.getByRole("main");
+
+    expect(skipLink).toHaveAttribute("href", `#${main.id}`);
+    // -1 keeps the landmark out of the tab order while still allowing focus.
+    expect(main).toHaveAttribute("tabindex", "-1");
+  });
 });
