@@ -16,9 +16,9 @@ Authentication endpoints: `/auth/signup`, `/auth/login`, `/auth/logout`, `/auth/
 
 - JSON uses camelCase. IDs are UUID strings. Date-only values use `YYYY-MM-DD`; instants use RFC 3339 UTC.
 - Create returns `201` with the resource and `Location`. Update returns `200`; delete/restore returns a small result body where the UI needs it.
-- Pagination uses `page`, `size`, and stable `sort`; responses return `items`, `page`, `size`, `totalItems`, `totalPages`.
+- Pagination uses a zero-based `page`, positive `size`, and stable `sort`; immutable `PageResponse` values return `items`, `page`, `size`, `totalItems`, `totalPages`.
 - Filters are explicit query parameters and documented in OpenAPI.
-- Errors use RFC Problem Details with `type`, `title`, `status`, `detail`, `instance`, `code`, `correlationId`, and optional field `errors`.
+- Expected backend failures carry a stable upper-snake-case `ErrorCode`; exception messages are never returned directly. LOS-0213 maps these codes to RFC Problem Details with `type`, `title`, `status`, `detail`, `instance`, `code`, `correlationId`, and optional field `errors`.
 - Use `If-Match`/version or an equivalent explicit version field for collision-sensitive updates.
 - Never expose entity classes directly from controllers; use request/response records.
 
