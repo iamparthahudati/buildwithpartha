@@ -1,0 +1,19 @@
+/* NumberInput (LOS-0320). */
+
+.lifeos-number-input__element {
+  /*
+   * Numbers line up under one another only with tabular figures; a column of
+   * estimates in proportional digits reads as ragged.
+   */
+  font-variant-numeric: var(--lifeos-font-numeric);
+}
+
+/*
+ * The native spin buttons are kept. They are user-agent controls, which WCAG
+ * 2.2 target size (2.5.8) exempts, and removing them would take away the only
+ * pointer affordance for stepping a value — the keyboard keeps arrow keys
+ * either way.
+ */
+.lifeos-number-input__element::-webkit-inner-spin-button {
+  margin-inline-start: var(--lifeos-space-1);
+}

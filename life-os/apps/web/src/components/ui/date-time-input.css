@@ -1,0 +1,36 @@
+/* DateInput and TimeInput (LOS-0318, LOS-0319). */
+
+.lifeos-date-time__element {
+  /*
+   * Safari sizes date and time fields to their content and centres the text,
+   * which leaves the value floating in a full-width control. These two make it
+   * behave like every other field in a form.
+   */
+  min-width: 0;
+  text-align: start;
+}
+
+/*
+ * The platform picker button. It is part of the native control, so it is
+ * styled rather than replaced: replacing it would cost the platform picker,
+ * which is the whole reason for using `type="date"`.
+ */
+.lifeos-date-time__element::-webkit-calendar-picker-indicator {
+  padding: var(--lifeos-space-1);
+  border-radius: var(--lifeos-radius-xs);
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.lifeos-date-time__element::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.lifeos-date-time__element:disabled::-webkit-calendar-picker-indicator {
+  cursor: not-allowed;
+}
+
+/* An empty date or time field shows its own placeholder text (dd/mm/yyyy). */
+.lifeos-date-time__element::-webkit-datetime-edit-field-wrapper {
+  color: inherit;
+}

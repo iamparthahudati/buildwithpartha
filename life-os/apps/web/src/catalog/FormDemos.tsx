@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { RadioGroup, Textarea, TextInput } from "@components/ui";
+import { DateInput, RadioGroup, Textarea, TextInput, TimeInput } from "@components/ui";
+import { addLocalDays, formatLocalDate, todayLocalDate } from "@lib/localDateTime";
 
 import { PRIORITY_OPTIONS } from "./formFixtures";
 
@@ -51,5 +52,52 @@ export function NotesDemo() {
       autoGrow
       description="Grows with its content; the counter warns rather than truncating a paste."
     />
+  );
+}
+
+/**
+ * The date specimen proves the point of the control: the value stays a
+ * calendar date, so the echoed string and the formatted date always name the
+ * same day, whatever zone the machine viewing the catalog is set to.
+ */
+export function DueDateDemo({ timeZone = "Asia/Kolkata" }: { timeZone?: string }) {
+  const today = todayLocalDate(timeZone);
+  const [value, setValue] = useState(today);
+
+  return (
+    <div className="specimen-stack">
+      <DateInput
+        label="Due date (optional)"
+        value={value}
+        min={today}
+        max={addLocalDays(today, 365)}
+        onChange={(event) => setValue(event.target.value)}
+        onClear={() => setValue("")}
+        description={`Today in ${timeZone} is ${today}. Dates before it are out of range.`}
+      />
+      <p className="lifeos-field__description">
+        Stored value: <code>{value === "" ? "(none)" : value}</code>
+        {value === "" ? null : ` · shown as ${formatLocalDate(value, "en-GB")}`}
+      </p>
+    </div>
+  );
+}
+
+export function StartTimeDemo() {
+  const [value, setValue] = useState("09:30");
+
+  return (
+    <div className="specimen-stack">
+      <TimeInput
+        label="Start time"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        onClear={() => setValue("")}
+        description="Displayed in the platform's 12- or 24-hour preference."
+      />
+      <p className="lifeos-field__description">
+        Stored value: <code>{value === "" ? "(none)" : value}</code>
+      </p>
+    </div>
   );
 }
