@@ -33,9 +33,12 @@ Application connection values are:
 DATABASE_URL=jdbc:postgresql://localhost:55432/lifeos_local
 DATABASE_USERNAME=lifeos_local_app
 DATABASE_PASSWORD=lifeos_local_app_only
+FLYWAY_DATABASE_URL=jdbc:postgresql://localhost:55432/lifeos_local
+FLYWAY_DATABASE_USERNAME=lifeos_local_migrator
+FLYWAY_DATABASE_PASSWORD=lifeos_local_migrator_only
 ```
 
-The application role cannot create databases, roles, replication slots or superuser privileges. The local admin credential initializes the container and is not used by the API.
+The migration role owns the private `lifeos_internal` history schema and may create approved migration objects. The application role cannot create databases, schemas, roles, replication slots or superuser privileges and cannot read Flyway history. The local admin credential initializes the container and is not used by the API.
 
 ## Stop or reset
 

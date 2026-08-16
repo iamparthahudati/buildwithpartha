@@ -7,6 +7,8 @@ services:
       POSTGRES_DB: ${LIFEOS_POSTGRES_DATABASE:-lifeos_local}
       POSTGRES_USER: ${LIFEOS_POSTGRES_ADMIN_USERNAME:-lifeos_local_admin}
       POSTGRES_PASSWORD: ${LIFEOS_POSTGRES_ADMIN_PASSWORD:-lifeos_local_admin_only}
+      LIFEOS_MIGRATOR_USERNAME: ${LIFEOS_POSTGRES_MIGRATOR_USERNAME:-lifeos_local_migrator}
+      LIFEOS_MIGRATOR_PASSWORD: ${LIFEOS_POSTGRES_MIGRATOR_PASSWORD:-lifeos_local_migrator_only}
       LIFEOS_APP_USERNAME: ${LIFEOS_POSTGRES_APP_USERNAME:-lifeos_local_app}
       LIFEOS_APP_PASSWORD: ${LIFEOS_POSTGRES_APP_PASSWORD:-lifeos_local_app_only}
       PGDATA: /var/lib/postgresql/18/docker

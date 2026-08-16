@@ -1,0 +1,156 @@
+#!/usr/bin/env sh
+
+set -eu
+
+test_postgres_port="${LIFEOS_FLYWAY_TEST_PORT:-55433}"
+test_postgres_admin="lifeos_flyway_test_admin"
+test_postgres_database="lifeos_flyway_test"
+test_postgres_migrator="lifeos_flyway_test_migrator"
+test_postgres_migrator_password="lifeos_flyway_test_migrator_only"
+test_postgres_app="lifeos_flyway_test_app"
+test_postgres_app_password="lifeos_flyway_test_app_only"
+test_postgres_root=$(mktemp -d "${TMPDIR:-/tmp}/lifeos-flyway-test.XXXXXX")
+test_postgres_started=0
+
+if [ -n "${JAVA_HOME:-}" ] && [ -x "$JAVA_HOME/bin/java" ]; then
+  test_java_command="$JAVA_HOME/bin/java"
+else
+  test_java_command="java"
+fi
+
+cleanup() {
+  if [ "$test_postgres_started" -eq 1 ]; then
+    pg_ctl -D "$test_postgres_root/data" -m fast -w stop >/dev/null
+  fi
+
+  case "$test_postgres_root" in
+    */lifeos-flyway-test.*) rm -rf -- "$test_postgres_root" ;;
+    *) echo "Refusing to remove unexpected test directory: $test_postgres_root" >&2 ;;
+  esac
+}
+
+trap cleanup EXIT INT TERM
+
+for test_command in initdb pg_ctl createdb psql "$test_java_command"; do
+  if ! command -v "$test_command" >/dev/null 2>&1; then
+    echo "Required command is unavailable: $test_command" >&2
+    exit 1
+  fi
+done
+
+./gradlew bootJar --no-daemon
+
+initdb \
+  --pgdata="$test_postgres_root/data" \
+  --username="$test_postgres_admin" \
+  --auth=trust \
+  --encoding=UTF8 \
+  --no-locale >/dev/null
+
+pg_ctl \
+  -D "$test_postgres_root/data" \
+  -l "$test_postgres_root/postgres.log" \
+  -o "-h 127.0.0.1 -p $test_postgres_port" \
+  -w start >/dev/null
+test_postgres_started=1
+
+createdb \
+  --host=127.0.0.1 \
+  --port="$test_postgres_port" \
+  --username="$test_postgres_admin" \
+  "$test_postgres_database"
+
+PGHOST=127.0.0.1 \
+PGPORT="$test_postgres_port" \
+POSTGRES_USER="$test_postgres_admin" \
+POSTGRES_DB="$test_postgres_database" \
+LIFEOS_MIGRATOR_USERNAME="$test_postgres_migrator" \
+LIFEOS_MIGRATOR_PASSWORD="$test_postgres_migrator_password" \
+LIFEOS_APP_USERNAME="$test_postgres_app" \
+LIFEOS_APP_PASSWORD="$test_postgres_app_password" \
+  ../../infra/postgres/init/001-create-local-app-role.sh >/dev/null
+
+run_migration() {
+  DATABASE_URL="jdbc:postgresql://127.0.0.1:$test_postgres_port/$test_postgres_database" \
+  DATABASE_USERNAME="$test_postgres_app" \
+  DATABASE_PASSWORD="$test_postgres_app_password" \
+  FLYWAY_DATABASE_URL="jdbc:postgresql://127.0.0.1:$test_postgres_port/$test_postgres_database" \
+  FLYWAY_DATABASE_USERNAME="$test_postgres_migrator" \
+  FLYWAY_DATABASE_PASSWORD="$test_postgres_migrator_password" \
+  SPRING_MAIN_BANNER_MODE=off \
+    "$test_java_command" -jar build/libs/life-os-api.jar \
+      --spring.profiles.active=postgres-test \
+      >>"$test_postgres_root/application.log" 2>&1
+}
+
+run_migration
+run_migration
+
+test_migration_count=$(psql \
+  --host=127.0.0.1 \
+  --port="$test_postgres_port" \
+  --username="$test_postgres_admin" \
+  --dbname="$test_postgres_database" \
+  --tuples-only \
+  --no-align \
+  --command="SELECT count(*) FROM lifeos_internal.lifeos_schema_history WHERE version = '1' AND success")
+
+test_extension_count=$(psql \
+  --host=127.0.0.1 \
+  --port="$test_postgres_port" \
+  --username="$test_postgres_admin" \
+  --dbname="$test_postgres_database" \
+  --tuples-only \
+  --no-align \
+  --command="SELECT count(*) FROM pg_extension WHERE extname = 'pgcrypto'")
+
+test_product_table_count=$(psql \
+  --host=127.0.0.1 \
+  --port="$test_postgres_port" \
+  --username="$test_postgres_admin" \
+  --dbname="$test_postgres_database" \
+  --tuples-only \
+  --no-align \
+  --command="SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'")
+
+test_restricted_role_count=$(psql \
+  --host=127.0.0.1 \
+  --port="$test_postgres_port" \
+  --username="$test_postgres_admin" \
+  --dbname="$test_postgres_database" \
+  --tuples-only \
+  --no-align \
+  --command="SELECT count(*) FROM pg_roles WHERE rolname IN ('$test_postgres_migrator', '$test_postgres_app') AND NOT rolsuper AND NOT rolcreatedb AND NOT rolcreaterole AND NOT rolreplication")
+
+if [ "$test_migration_count" != "1" ]; then
+  echo "Expected exactly one successful V1 migration; found $test_migration_count." >&2
+  exit 1
+fi
+
+if [ "$test_extension_count" != "1" ]; then
+  echo "Expected pgcrypto to be installed exactly once; found $test_extension_count." >&2
+  exit 1
+fi
+
+if [ "$test_product_table_count" != "0" ]; then
+  echo "V1 must not introduce product tables; found $test_product_table_count." >&2
+  exit 1
+fi
+
+if [ "$test_restricted_role_count" != "2" ]; then
+  echo "Expected two restricted migration/application roles; found $test_restricted_role_count." >&2
+  exit 1
+fi
+
+if psql \
+  --host=127.0.0.1 \
+  --port="$test_postgres_port" \
+  --username="$test_postgres_app" \
+  --dbname="$test_postgres_database" \
+  --command="SELECT count(*) FROM lifeos_internal.lifeos_schema_history" \
+  >/dev/null 2>&1; then
+  echo "Application role must not read the private Flyway history schema." >&2
+  exit 1
+fi
+
+echo "Flyway PostgreSQL verification passed: restricted roles, clean migration and existing-database rerun."

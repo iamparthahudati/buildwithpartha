@@ -79,7 +79,7 @@ life-os/
 - Package by domain. Within a domain use `api`, `application`, `domain`, and `infrastructure` subpackages when complexity warrants; avoid a global controller/service/repository bucket.
 - REST JSON API with OpenAPI generated from code and consumer-facing examples.
 - Spring Data JPA for normal persistence; explicit queries for reports/search where necessary.
-- Flyway owns the database schema. Hibernate schema auto-generation is disabled outside tests.
+- Flyway owns every forward-only database change. Its checksum history is `lifeos_internal.lifeos_schema_history`, inaccessible to the runtime application role; product objects live in `public`. The initial V1 migration enables only the trusted `pgcrypto` extension. Automatic baselining and Flyway clean are disabled, and Hibernate always validates rather than creates schema.
 - Bean Validation at request boundaries; domain rules in application/domain services.
 - Problem Details (`application/problem+json`) for errors; no stack traces or internal exception names in responses.
 

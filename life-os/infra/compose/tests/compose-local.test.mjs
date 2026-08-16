@@ -33,7 +33,10 @@ test("local PostgreSQL is versioned, private, persistent and health checked", ()
 
 test("local API role is separate from the PostgreSQL admin role", () => {
   assert.match(compose, /POSTGRES_USER:.*lifeos_local_admin/);
+  assert.match(compose, /LIFEOS_MIGRATOR_USERNAME:.*lifeos_local_migrator/);
   assert.match(compose, /LIFEOS_APP_USERNAME:.*lifeos_local_app/);
   assert.match(roleInitializer, /NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION/);
-  assert.match(roleInitializer, /GRANT USAGE, CREATE ON SCHEMA public/);
+  assert.match(roleInitializer, /CREATE SCHEMA IF NOT EXISTS lifeos_internal/);
+  assert.match(roleInitializer, /GRANT USAGE ON SCHEMA public/);
+  assert.match(roleInitializer, /ALTER DEFAULT PRIVILEGES/);
 });
