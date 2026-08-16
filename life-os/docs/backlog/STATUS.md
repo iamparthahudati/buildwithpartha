@@ -20,6 +20,7 @@ Last updated: 2026-08-16
 | LOS-0104 | Done | `feature/LOS-0104-navigation-routes` | Canonical routes, URL state, responsive/back/auth/dirty behavior approved. |
 | LOS-0105 | Done | `feature/LOS-0105-critical-journeys` | Eight critical journeys plus main-site/LifeOS boundary ADR completed. |
 | LOS-0106 | Done | `feature/LOS-0106-onboarding` | Four-step resumable onboarding with required/optional boundaries approved. |
-| LOS-0107 | Ready | — | Rank Today information, sources and responsive collapse order. |
+| LOS-0107 | Done | `feature/LOS-0107-dashboard-priority` | Today priorities, sources, metrics and responsive order approved. |
+| LOS-0108 | Ready | — | Define daily, weekly and monthly review rituals. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
