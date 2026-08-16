@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ErrorContractsTests {
@@ -61,6 +63,51 @@ class ErrorContractsTests {
     assertThatNullPointerException()
         .isThrownBy(() -> new TestCodedException(code, null))
         .withMessage("message must not be null");
+  }
+
+  @Test
+  void problemDetailsDefensivelyCopyFieldErrors() {
+    List<FieldProblem> errors = new ArrayList<>();
+    errors.add(new FieldProblem("title", "NotBlank"));
+
+    ApiProblem problem =
+        new ApiProblem(
+            "https://buildwithpartha.tech/life-os/problems/v1/validation-failed",
+            "Validation failed",
+            400,
+            "One or more fields are invalid.",
+            "/tasks",
+            "VALIDATION_FAILED",
+            "test-correlation",
+            errors);
+    errors.clear();
+
+    assertThat(problem.errors()).containsExactly(new FieldProblem("title", "NotBlank"));
+    assertThatThrownBy(() -> problem.errors().clear())
+        .isInstanceOf(UnsupportedOperationException.class);
+  }
+
+  @Test
+  void problemDetailsRejectMissingRequiredValues() {
+    assertThatNullPointerException()
+        .isThrownBy(
+            () ->
+                new ApiProblem(
+                    null,
+                    "Title",
+                    400,
+                    "Detail",
+                    "/instance",
+                    "INVALID_REQUEST",
+                    "correlation",
+                    List.of()))
+        .withMessage("type must not be null");
+    assertThatNullPointerException()
+        .isThrownBy(() -> new FieldProblem(null, "NotBlank"))
+        .withMessage("field must not be null");
+    assertThatNullPointerException()
+        .isThrownBy(() -> new FieldProblem("title", null))
+        .withMessage("code must not be null");
   }
 
   private static final class TestCodedException extends CodedException {

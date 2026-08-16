@@ -17,6 +17,8 @@
 - Validate all input server-side; encode output; sanitize any future rich text using an allowlist.
 - Rate limit login, signup, verification resend, reset, search, exports, and write bursts.
 - Generic auth recovery responses prevent account enumeration.
+- Only aggregate liveness and readiness probes are public. Actuator discovery, the health root, component detail and every other actuator capability remain unavailable or denied.
+- Every response receives a safe correlation ID. Caller values are length/character allowlisted before entering response headers or logging context; unsafe values are replaced.
 
 ## Authorization and privacy
 
@@ -24,6 +26,7 @@
 - Repositories/services require authenticated `userId`; controllers do not accept a user ID for ownership.
 - Add negative cross-user tests for every user-owned resource.
 - Logs redact credentials, tokens, cookies, headers, note content, and sensitive search text.
+- Problem responses expose safe API-owned text, stable codes and field validator names only. They never expose exception messages/classes, stack traces, causes, rejected field values or query strings.
 - Exports require recent authentication, are account-scoped, and expire according to the approved retention class.
 - Account deletion is confirmed, delayed/recoverable, auditable, propagates through live/derived/provider data, and remains deleted after a backup restoration.
 

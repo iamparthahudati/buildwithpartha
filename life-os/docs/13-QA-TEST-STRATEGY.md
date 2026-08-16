@@ -17,6 +17,8 @@ The local gateway contract starts disposable Vite and mock-upstream servers. It 
 
 Environment tests exercise successful startup parsing plus missing, blank, malformed and sensitive-looking values. They assert that failures name every affected key without reproducing any value. Frontend test mode and the backend `test` profile supply deterministic public/non-secret values so the quality gates remain self-contained.
 
+The API safety suite proves that expected, validation, malformed, missing-resource, authentication, authorization and unexpected failures share the versioned `application/problem+json` contract. Assertions reject diagnostic messages, causes, exception classes, stack traces, request-body values and unsafe caller correlation IDs. Filter tests cover safe ID reuse, replacement and response/request-context propagation. Health tests prove that only liveness/readiness are public, database readiness contributes without component disclosure, and actuator discovery, info and health-root access remain restricted.
+
 The hosted `LifeOS CI` workflow runs for every pull request and push targeting a permanent branch. Its required jobs validate documentation/dependency/CI policy, execute the complete frontend gate plus a production environment build, execute the clean backend build (including formatting, static analysis, unit/architecture tests and coverage), and scan complete Git history for secrets. Third-party actions are pinned to full commit SHAs; npm caching is lockfile-scoped and Gradle cache writes are limited to permanent-branch runs.
 
 ## Required test dimensions
