@@ -1,0 +1,36 @@
+# API conventions
+
+Base path: `/life-os/api/v1`.
+
+Resource and field names follow the [LifeOS product vocabulary](./29-PRODUCT-VOCABULARY.md). API contracts use canonical code terms even when the UI destination is an experience name such as Week Planner or Focus Mode.
+
+## Resources
+
+Use plural nouns: `/projects`, `/tasks`, `/time-blocks`, `/focus-sessions`, `/sprints`, `/weekly-plans`, `/goals`, `/notes`, `/brain-dump-items`, `/habits`, `/reviews`, `/labels`, `/notifications`, `/reports`.
+
+Strongly parent-owned resources use nested collections where the parent identity is required, for example `/tasks/{taskId}/subtasks`, `/projects/{projectId}/milestones`, `/goals/{goalId}/check-ins` and `/habits/{habitId}/entries`.
+
+Authentication endpoints: `/auth/signup`, `/auth/login`, `/auth/logout`, `/auth/session`, `/auth/verify-email`, `/auth/resend-verification`, `/auth/forgot-password`, `/auth/reset-password`.
+
+## Request and response rules
+
+- JSON uses camelCase. IDs are UUID strings. Date-only values use `YYYY-MM-DD`; instants use RFC 3339 UTC.
+- Create returns `201` with the resource and `Location`. Update returns `200`; delete/restore returns a small result body where the UI needs it.
+- Pagination uses a zero-based `page`, positive `size`, and stable `sort`; immutable `PageResponse` values return `items`, `page`, `size`, `totalItems`, `totalPages`.
+- Filters are explicit query parameters and documented in OpenAPI.
+- Expected backend failures carry a stable upper-snake-case `ErrorCode`; exception messages are never returned directly. LOS-0213 maps these codes to RFC Problem Details with `type`, `title`, `status`, `detail`, `instance`, `code`, `correlationId`, and optional field `errors`.
+- Use `If-Match`/version or an equivalent explicit version field for collision-sensitive updates.
+- Never expose entity classes directly from controllers; use request/response records.
+
+## Security
+
+- Browser authentication is the session cookie. Frontend code never reads it.
+- `GET /auth/session` supplies the current safe user profile and CSRF bootstrap information.
+- All mutations require a valid CSRF token and authenticated server-side ownership checks.
+- Login/signup/reset endpoints have stricter rate limits and generic responses where account enumeration is possible.
+
+## Testing contract
+
+- Every endpoint has success, validation, unauthenticated, forbidden/cross-user, not-found, and conflict tests where relevant.
+- OpenAPI examples are validated in CI.
+- Frontend integration uses generated or schema-checked types; silent contract drift fails CI.

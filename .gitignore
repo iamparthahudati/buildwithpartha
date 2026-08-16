@@ -30,6 +30,16 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+!**/.env.example
+
+# java / gradle
+**/target/
+**/build/
+**/.gradle/
+*.class
+*.jar
+!**/gradle/wrapper/gradle-wrapper.jar
 
 # vercel
 .vercel

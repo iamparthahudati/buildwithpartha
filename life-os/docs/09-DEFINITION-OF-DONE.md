@@ -1,0 +1,38 @@
+# Definition of done
+
+A ticket is Done only when every applicable item is true.
+
+## Scope and behavior
+
+- Acceptance criteria pass and no unrelated behavior changed.
+- Dependencies are complete; assumptions and deviations are documented.
+- Loading, empty, error, success, disabled, and destructive states are handled where applicable.
+- Copy and fixtures follow `29-PRODUCT-VOCABULARY.md` and `30-CONTENT-AND-TONE-GUIDE.md`, use LifeOS identity, and contain no reference-product or real personal data.
+
+## Engineering quality
+
+- Code follows the documented folder/module boundaries and contains no avoidable duplication.
+- Formatting, lint, typecheck/compile, unit tests, integration tests, and production build pass.
+- New APIs include OpenAPI updates and contract tests; new schema changes include reviewed Flyway migrations.
+- No secrets, debug output, dead feature flags, or unexplained TODOs were added.
+
+## Security and privacy
+
+- Backend authorization and cross-user negative tests exist for user-owned data.
+- Validation, CSRF, session, logging/redaction, and rate-limit requirements are satisfied.
+- Security-sensitive change includes threat/abuse cases in tests or ticket notes.
+- Any new or changed data field, browser store, cache, queue, log, email, export, provider, file flow or AI flow is mapped to a purpose, classification, retention/deletion rule and processor evidence in `31-PRIVACY-DATA-LIFECYCLE.md`.
+
+## User experience
+
+- Keyboard, focus order, accessible name/description, contrast, zoom, reduced motion, mobile, tablet, and desktop were checked as applicable.
+- Dates/times were tested around timezone/day boundaries.
+- Validation, state and destructive copy was checked for honest persistence, recovery, localization and accessible announcements.
+- Performance impact and large-data behavior were considered.
+
+## Delivery hygiene
+
+- Ticket/PR uses the correct ID and branch.
+- Documentation and `CURRENT-STATUS.md` are current.
+- `docs/handoffs/LOS-####.md` records changes, checks, config/migrations, limitations, and next ticket.
+- Reviewer can reproduce the result from the documented setup.

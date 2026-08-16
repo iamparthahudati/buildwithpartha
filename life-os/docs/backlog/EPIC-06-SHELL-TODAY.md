@@ -1,0 +1,20 @@
+# EPIC-06 — Navigation, application shell, and Today
+
+| ID | Ticket | Description and acceptance contract | Depends on |
+| --- | --- | --- | --- |
+| LOS-0601 | Build responsive sidebar navigation | LifeOS wordmark, grouped destinations, active state, collapse/drawer behavior, skip link, keyboard focus and remembered non-sensitive device preference. | LOS-0434, LOS-0104 |
+| LOS-0602 | Build top utility bar | Date/context, global search trigger, notifications, Quick Add, focus status, account menu. Adapts without hiding essential mobile actions. | LOS-0434, LOS-0601 |
+| LOS-0603 | Build application shell | Compose sidebar/top/main/live regions/overlay roots/error boundary and protected routing. 320px/200% zoom works; focus changes on route navigation correctly. | LOS-0508, LOS-0601, LOS-0602 |
+| LOS-0604 | Build Quick Add | Command/dialog creates task, project, time block, note, brain dump, habit entry, or goal check-in with keyboard path and feature-aware fields. Failures preserve data. | LOS-0425, LOS-0602 |
+| LOS-0605 | Build global focus mini-player | Persistent active timer summary/actions across routes, server-restored state, compact/collapsed mobile behavior and accessible announcements. | LOS-0427, LOS-0603 |
+| LOS-0606 | Define Today aggregation contract | Define the stable modular response for local date, MIT, metrics, tasks, blocks, sprint/week summary, overdue and review status. Before those domains exist, providers return typed zero/empty states rather than fake data; partial failure/freshness is modeled. | LOS-0214, LOS-0513 |
+| LOS-0607 | Implement Today foundation endpoint | Implement the authenticated timezone/profile portion and a provider composition shell with zero-safe domain providers. Ownership, cache policy, empty account, provider isolation and integration tests pass; real domain providers arrive in later epics. | LOS-0606 |
+| LOS-0608 | Build Today page header and metric strip | Greeting/local date/helper, MIT/projects/tasks/time/focus/progress cards, loading/error/empty and responsive scroll/wrap using shared MetricCard. | LOS-0419, LOS-0603 |
+| LOS-0609 | Build Today plan component | MIT card and today's task list with set/change/complete/start actions, priorities, project context and state handling. | LOS-0424, LOS-0608 |
+| LOS-0610 | Build Today schedule component | Time-block list with current/next/completed/conflict states, add/start/open actions and responsive rendering. | LOS-0434, LOS-0608 |
+| LOS-0611 | Build Today sprint/week component | Current sprint progress, weekly day strip, goals/capacity summary, links and accessible metrics. | LOS-0429, LOS-0608 |
+| LOS-0612 | Build Today projects and next-up components | Active project rows and ranked next action; sources and ranking explanation are clear; no invented AI recommendation. | LOS-0434, LOS-0608 |
+| LOS-0613 | Build Today review/capture components | Morning/evening review state plus quick brain-dump capture; success/error/offline draft behavior. | LOS-0604, LOS-0608 |
+| LOS-0614 | Compose Today screen with mock states | Compose all completed components for first-use, normal, overloaded, partial failure, offline, mobile/tablet/desktop before API integration. | LOS-0608–LOS-0613 |
+| LOS-0615 | Integrate foundational Today screen | Connect the foundation endpoint and empty/onboarding actions, preserve partial content, handle auth expiry and prove that later domain providers can plug in without screen rewrites. | LOS-0607, LOS-0614 |
+| LOS-0616 | Run private shell/Today foundation gate | Verified users see correct timezone and honest empty/available data; anonymous/unverified users are blocked; navigation, Quick Add shell, focus placeholder and Today states pass a11y/responsive checks. Full real-data Today aggregation is closed by LOS-1415. | LOS-0601–LOS-0615 |

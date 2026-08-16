@@ -1,0 +1,25 @@
+# EPIC-05 — Identity, onboarding, account, and privacy
+
+| ID | Ticket | Description and acceptance contract | Depends on |
+| --- | --- | --- | --- |
+| LOS-0501 | Model identity schema | Flyway tables/constraints/indexes for user, credential, session, verification/reset tokens and terms acceptance. Tokens store hashes; timestamps/expiry and cleanup queries are tested. | LOS-0216, LOS-0113 |
+| LOS-0502 | Implement password policy and hashing | Normalize email, validate password length/common exposure policy, hash Argon2id with reviewed parameters, and provide rehash-on-login path. Tests avoid logging secrets. | LOS-0501 |
+| LOS-0503 | Implement signup API | Create unverified user transactionally, prevent duplicates with generic safe response, rate limit, audit, enqueue verification mail, return documented problem details. | LOS-0502, LOS-1402 |
+| LOS-0504 | Implement email verification API | Single-use hashed expiring token, safe repeated/expired behavior, verified transition and audit. Verification does not create unintended parallel accounts/sessions. | LOS-0503 |
+| LOS-0505 | Implement login/session API | Authenticate verified active user, rotate session, issue secure scoped cookie and CSRF bootstrap, generic failure/rate limit, safe user response. Session fixation and enumeration tests pass. | LOS-0502, LOS-0504 |
+| LOS-0506 | Implement logout and session revocation | Current/all-session revocation endpoints clear cookie idempotently, require CSRF as applicable, and invalidate server state immediately. | LOS-0505 |
+| LOS-0507 | Implement forgot/reset password | Generic request response, single-use short token, password update, rehash, revoke sessions, audit/security notice; expired/used/concurrent cases tested. | LOS-0502, LOS-1402 |
+| LOS-0508 | Implement auth route guard and API client | Frontend session bootstrap, CSRF attachment, 401 recovery, return-to validation, query cache clearing on logout/account change, no browser token storage. | LOS-0505, LOS-0207 |
+| LOS-0509 | Build signup form and screen | Compose completed form components; email/name/password/terms, inline+summary errors, pending/success, password-manager and mobile/a11y behavior. No app shell visible. | LOS-0333, LOS-0434, LOS-0503 |
+| LOS-0510 | Build login form and screen | Email/password, forgot link, generic error, pending dedupe, redirect to safe intended route/Today, keyboard/password-manager support. | LOS-0434, LOS-0505, LOS-0508 |
+| LOS-0511 | Build verification screens | Sent, resend cooldown, verifying, verified, invalid/expired and already-used states; no email enumeration; accessible recovery actions. | LOS-0504, LOS-0509 |
+| LOS-0512 | Build recovery screens | Forgot and reset forms preserve safe input, handle expired/used token, password policy, session revocation message, return to login. | LOS-0507, LOS-0434 |
+| LOS-0513 | Implement onboarding persistence | API/profile fields for timezone, locale, week start, work hours, focus defaults and completion. Server validates IANA timezone and safe defaults. | LOS-0505 |
+| LOS-0514 | Build onboarding flow | Multi-step/compact responsive flow with timezone detection confirmation, skip nonessential steps, resume, errors, and completion to Today. | LOS-0106, LOS-0513 |
+| LOS-0515 | Build profile/localization settings | View/update display name, timezone, locale, formats, week start with conflict/error/success and immediate consistent date recalculation. | LOS-0513, LOS-0434 |
+| LOS-0516 | Build security settings | Change password, list/revoke sessions, sign out all, show safe device/activity; current-session behavior and reauthentication policy are clear. | LOS-0506, LOS-0507 |
+| LOS-0517 | Implement data export request | Authorized, rate-limited background export of user data with short-lived private download, audit, notification, expiry/deletion. Export schema is documented. | LOS-1403, LOS-1405 |
+| LOS-0518 | Implement account deletion lifecycle | Confirm/re-auth, grace period/cancel path, revoke sessions, hide account, purge/anonymize with backup policy, audit without retaining unnecessary personal data. | LOS-0516, LOS-0113 |
+| LOS-0519 | Build privacy/data settings | Export status/download, deletion request/cancel, clear consequences/retention and failure recovery. Destructive confirmation names the account. | LOS-0517, LOS-0518 |
+| LOS-0520 | Run identity threat-model and gate | Test signup→verify→login→logout→recover, CSRF, fixation, enumeration, brute force, cross-user, token replay, expiry, cookies, privacy flows. No protected route/data leaks. | LOS-0501–LOS-0519 |
+
