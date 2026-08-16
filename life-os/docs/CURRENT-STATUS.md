@@ -10,6 +10,7 @@ Phase 0 — Planning and repository readiness.
 
 - LOS-0001 — Project charter approved by the owner on 2026-08-16.
 - LOS-0002 — Permanent product context approved on 2026-08-16.
+- LOS-0003 — Local `master`/`develop` branch foundation established without changing or deleting `main`; remote protection awaits a configured remote.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -24,7 +25,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0003 — Establish master and develop safely`, followed by the remaining Epic 00 readiness tickets.
+`LOS-0004 — Add repository contribution rules`, followed by the remaining Epic 00 readiness tickets.
 
 ## Known decisions requiring implementation-time values
 

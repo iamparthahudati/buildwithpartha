@@ -8,7 +8,11 @@
 - `release/*`: optional stabilization branch when a phase needs more than a direct PR.
 - `hotfix/*`: urgent production repair, branched from `master`, merged to both `master` and `develop`.
 
-The existing repository currently uses `main`; bootstrap ticket LOS-0003 reconciles it safely with the required `master` convention before LifeOS implementation begins.
+## Bootstrap state
+
+On 2026-08-16, LOS-0003 created `master` and `develop` from the existing `main` commit without renaming or deleting `main`. This preserves the existing website history and establishes the requested LifeOS flow. Initial planning tickets were then merged into `develop`; `master` remains the production baseline until the first completed phase release.
+
+The repository currently has no configured Git remote. Remote default-branch selection, pull-request enforcement, required checks, deletion protection, and force-push restrictions must be enabled when the repository is connected. Until then, these rules are mandatory by convention and local work must not advance `master` directly.
 
 ## Names
 
@@ -33,6 +37,14 @@ Only `Ready` tickets may start. A ticket becomes Ready when its description, con
 - Delete merged feature branches.
 - Never combine unrelated cleanup or another ticket in the PR.
 
+When remote protection is configured:
+
+- block direct pushes and force pushes to `master` and `develop`;
+- require pull requests, required CI checks, resolved conversations, and up-to-date branches;
+- restrict deletion of permanent branches;
+- set the repository default branch to `develop` during active development or `master` if production governance requires it, recording the choice;
+- require signed commits/tags if the selected Git host and owner workflow support them reliably.
+
 ## Phase release
 
 1. Complete every phase ticket and its review-gate ticket on `develop`.
@@ -44,4 +56,3 @@ Only `Ready` tickets may start. A ticket becomes Ready when its description, con
 ## Hotfix
 
 Branch from `master`, implement the smallest safe repair, validate, merge to `master`, deploy/tag, then merge/cherry-pick the same change into `develop`. Record why normal flow was bypassed.
-
