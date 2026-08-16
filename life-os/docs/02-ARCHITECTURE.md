@@ -6,13 +6,19 @@
 Browser
   -> Cloudflare (DNS, proxy, TLS, WAF/rate rules)
     -> VPS Caddy origin
-      -> /life-os/assets/* and SPA files
-      -> /life-os/api/v1/* -> Spring Boot container
-        -> PostgreSQL container/private volume
-        -> SMTP provider for verification/reset email
+      -> /life-os/api/v1/* -> LifeOS Spring Boot container
+      -> /life-os/*        -> LifeOS React application/assets
+      -> /api/*            -> future main-site Java API (when implemented)
+      -> /*                -> main buildwithpartha site
+
+LifeOS API
+  -> LifeOS PostgreSQL logical database and application role
+  -> SMTP provider for verification/reset email
 ```
 
-Cloudflare terminates public traffic; the origin also uses valid TLS and Cloudflare SSL mode must be Full (strict). The database is never exposed publicly. Caddy is the only public origin service.
+Cloudflare terminates public traffic; the origin also uses valid TLS and Cloudflare SSL mode must be Full (strict). The database is never exposed publicly. Caddy is the only public origin service. Routes are matched from most specific to least specific so the main-site SPA fallback cannot swallow LifeOS routes.
+
+The main site and LifeOS may use the same technology family and VPS, but they are independently deployable products with distinct service names, ports, configuration prefixes, cookies, database identities, migrations, cache rules and rollback paths. See ADR-011.
 
 ## Repository layout
 
@@ -97,4 +103,3 @@ life-os/
 - Structured JSON logs with request/correlation ID; never log passwords, session IDs, CSRF tokens, reset tokens, or note bodies.
 - Health endpoints distinguish liveness/readiness and are restricted appropriately.
 - Metrics cover latency, error rate, authentication failures, job failures, DB pool, disk, CPU, and backup age.
-

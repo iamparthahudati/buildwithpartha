@@ -1,8 +1,8 @@
 # buildwithpartha
 
-The existing site runs from this repository root. The new private productivity product is planned in [life-os/README.md](./life-os/README.md) and will be served at `https://buildwithpartha.tech/life-os` from the owner's VPS behind Cloudflare.
+The existing site is the main `buildwithpartha.tech` product and currently runs from this repository root. The new private productivity sub-product is planned in [life-os/README.md](./life-os/README.md) and will be served at `https://buildwithpartha.tech/life-os` from the owner's VPS behind Cloudflare.
 
-The LifeOS area has its own permanent context, architecture, component-first build plan, and epic/ticket backlog. Existing site files remain independent.
+The LifeOS area has its own permanent context, architecture, component-first build plan, and epic/ticket backlog. Existing site files remain independent. The main site may later use the same React/Java technology family, but its deployment, routes, sessions and data remain isolated from LifeOS.
 
 ## Existing site runtime
 

@@ -12,6 +12,6 @@
 | ADR-008 | Accepted | Component-first delivery is a release gate. | User explicitly requires every small component before full screens. |
 | ADR-009 | Accepted | `master` production, `develop` integration, `feature/*` per ticket. | User's required Git model. |
 | ADR-010 | Accepted | v1 is single-user-per-account; teams/sharing deferred. | Keeps authorization and product scope deliverable while preserving future expansion. |
+| ADR-011 | Accepted | Keep the main site and LifeOS as separate deployable applications behind one hostname; route LifeOS under `/life-os` first. | Allows both products to use React/Java safely while isolating releases, sessions, data, caching and rollback. |
 
 Create a dedicated file in `docs/adr/` for any decision that changes these contracts. Do not rewrite history silently.
-

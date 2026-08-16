@@ -7,6 +7,7 @@ This file is the shared context for every LifeOS ticket. It is authoritative for
 - The product name is **LifeOS**. Never use “One System”, “SmartSpend”, or other names/data from the visual references in product copy, fixtures, package names, API paths, metadata, or assets.
 - The visual references describe layout and interaction patterns only. They are not a source of product identity or production data.
 - Production is `https://buildwithpartha.tech/life-os` on the owner's VPS behind Cloudflare.
+- `buildwithpartha.tech` remains the main site. LifeOS is a separately deployable sub-product whose routes must be matched before the main `/` application; never overwrite or couple its release to the main site without a dedicated decision.
 - All application screens require a LifeOS account. Only authentication, legal, health, and static error routes may be public.
 
 ## Locked technical direction
@@ -15,6 +16,7 @@ This file is the shared context for every LifeOS ticket. It is authoritative for
 - Backend: Java 21 + Spring Boot, package root `tech.buildwithpartha.lifeos`.
 - Persistence: PostgreSQL; all schema changes use forward-only Flyway migrations.
 - Same-origin production paths: UI `/life-os/*`; API `/life-os/api/v1/*`.
+- LifeOS cookies, service-worker scope, caches, environment values, database identity/migrations and runtime service names are scoped to LifeOS. The future main React/Java application remains independently deployable even though it uses the same technology family.
 - Authentication: app-owned email/password with a server-side session cookie. Never put auth tokens in localStorage or sessionStorage.
 - Deployment: Docker Compose on VPS; Caddy origin; Cloudflare proxy/DNS/WAF/TLS in front. Do not use ChatGPT or Sites hosting/authentication.
 - Exact dependency versions are chosen and locked in the bootstrap ticket after checking current stable releases; do not silently upgrade them inside unrelated tickets.
@@ -67,4 +69,3 @@ Each component must have its own file, explicit props, loading/empty/error/disab
 - Meet WCAG 2.2 AA for keyboard access, focus, semantics, contrast, zoom, and reduced motion.
 - Mobile, tablet, and desktop behavior are required even though the reference images are desktop-first.
 - Destructive actions require confirmation and a recoverable strategy where practical.
-
