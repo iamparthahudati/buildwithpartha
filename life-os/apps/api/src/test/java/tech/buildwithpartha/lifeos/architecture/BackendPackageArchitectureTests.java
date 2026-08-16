@@ -7,32 +7,33 @@ import org.junit.jupiter.api.Test;
 
 class BackendPackageArchitectureTests {
 
-    private static final JavaClasses PRODUCTION_CLASSES = new ClassFileImporter()
-            .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-            .importPackages(PackageBoundaryRules.BASE_PACKAGE);
+  private static final JavaClasses PRODUCTION_CLASSES =
+      new ClassFileImporter()
+          .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+          .importPackages(PackageBoundaryRules.BASE_PACKAGE);
 
-    @Test
-    void usesOnlyApprovedTopLevelPackages() {
-        PackageBoundaryRules.approvedTopLevelPackages().check(PRODUCTION_CLASSES);
-    }
+  @Test
+  void usesOnlyApprovedTopLevelPackages() {
+    PackageBoundaryRules.approvedTopLevelPackages().check(PRODUCTION_CLASSES);
+  }
 
-    @Test
-    void keepsProductDomainsIndependent() {
-        PackageBoundaryRules.domainIsolation().check(PRODUCTION_CLASSES);
-    }
+  @Test
+  void keepsProductDomainsIndependent() {
+    PackageBoundaryRules.domainIsolation().check(PRODUCTION_CLASSES);
+  }
 
-    @Test
-    void keepsCommonTypesDomainNeutral() {
-        PackageBoundaryRules.commonIsDomainNeutral().check(PRODUCTION_CLASSES);
-    }
+  @Test
+  void keepsCommonTypesDomainNeutral() {
+    PackageBoundaryRules.commonIsDomainNeutral().check(PRODUCTION_CLASSES);
+  }
 
-    @Test
-    void usesOnlyApprovedLayersInsideDomains() {
-        PackageBoundaryRules.approvedDomainLayers().check(PRODUCTION_CLASSES);
-    }
+  @Test
+  void usesOnlyApprovedLayersInsideDomains() {
+    PackageBoundaryRules.approvedDomainLayers().check(PRODUCTION_CLASSES);
+  }
 
-    @Test
-    void keepsDependenciesPointingInward() {
-        PackageBoundaryRules.layerDirection().check(PRODUCTION_CLASSES);
-    }
+  @Test
+  void keepsDependenciesPointingInward() {
+    PackageBoundaryRules.layerDirection().check(PRODUCTION_CLASSES);
+  }
 }

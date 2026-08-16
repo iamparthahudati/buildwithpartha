@@ -8,7 +8,6 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class LifeOsApiApplicationTests {
 
-    @Test
-    void startsWithoutExternalSecretsOrServices() {
-    }
+  @Test
+  void startsWithoutExternalSecretsOrServices() {}
 }

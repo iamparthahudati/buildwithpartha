@@ -1,6 +1,6 @@
 package tech.buildwithpartha.lifeos.architecture;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
@@ -14,44 +14,40 @@ import tech.buildwithpartha.lifeos.task.domain.TaskDomainFixture;
 
 class PackageBoundaryRulesTests {
 
-    private final ClassFileImporter importer = new ClassFileImporter();
+  private final ClassFileImporter importer = new ClassFileImporter();
 
-    @Test
-    void rejectsACrossDomainDependency() {
-        JavaClasses fixtures = importer.importClasses(
-                ProjectBoundaryFixture.class, TaskDomainFixture.class);
+  @Test
+  void rejectsACrossDomainDependency() {
+    JavaClasses fixtures =
+        importer.importClasses(ProjectBoundaryFixture.class, TaskDomainFixture.class);
 
-        assertThrows(
-                AssertionError.class,
-                () -> PackageBoundaryRules.domainIsolation().check(fixtures));
-    }
+    assertThatThrownBy(() -> PackageBoundaryRules.domainIsolation().check(fixtures))
+        .isInstanceOf(AssertionError.class);
+  }
 
-    @Test
-    void rejectsACommonToDomainDependency() {
-        JavaClasses fixtures = importer.importClasses(
-                CommonBoundaryFixture.class, ProjectDomainFixture.class);
+  @Test
+  void rejectsACommonToDomainDependency() {
+    JavaClasses fixtures =
+        importer.importClasses(CommonBoundaryFixture.class, ProjectDomainFixture.class);
 
-        assertThrows(
-                AssertionError.class,
-                () -> PackageBoundaryRules.commonIsDomainNeutral().check(fixtures));
-    }
+    assertThatThrownBy(() -> PackageBoundaryRules.commonIsDomainNeutral().check(fixtures))
+        .isInstanceOf(AssertionError.class);
+  }
 
-    @Test
-    void rejectsAnOutwardDomainLayerDependency() {
-        JavaClasses fixtures = importer.importClasses(
-                ProjectDomainFixture.class, ProjectInfrastructureFixture.class);
+  @Test
+  void rejectsAnOutwardDomainLayerDependency() {
+    JavaClasses fixtures =
+        importer.importClasses(ProjectDomainFixture.class, ProjectInfrastructureFixture.class);
 
-        assertThrows(
-                AssertionError.class,
-                () -> PackageBoundaryRules.layerDirection().check(fixtures));
-    }
+    assertThatThrownBy(() -> PackageBoundaryRules.layerDirection().check(fixtures))
+        .isInstanceOf(AssertionError.class);
+  }
 
-    @Test
-    void rejectsAnUnapprovedDomainSubpackage() {
-        JavaClasses fixtures = importer.importClasses(ProjectServiceFixture.class);
+  @Test
+  void rejectsAnUnapprovedDomainSubpackage() {
+    JavaClasses fixtures = importer.importClasses(ProjectServiceFixture.class);
 
-        assertThrows(
-                AssertionError.class,
-                () -> PackageBoundaryRules.approvedDomainLayers().check(fixtures));
-    }
+    assertThatThrownBy(() -> PackageBoundaryRules.approvedDomainLayers().check(fixtures))
+        .isInstanceOf(AssertionError.class);
+  }
 }

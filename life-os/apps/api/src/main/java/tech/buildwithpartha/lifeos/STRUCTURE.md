@@ -44,3 +44,9 @@ config -----------------> domain packages and common (wiring only)
 `common.pagination.PageResponse` is the immutable API pagination envelope. Pages are zero-based and expose `items`, `page`, `size`, `totalItems`, and `totalPages`.
 
 `BackendPackageArchitectureTests` checks production bytecode. `PackageBoundaryRulesTests` contains intentionally invalid test-only fixtures so a broken cross-domain, common, layer-direction, or package-layout dependency is proven to fail.
+
+## Quality gate
+
+`./gradlew check` is the backend merge gate. It enforces Spotless formatting, Checkstyle static rules, the JUnit/AssertJ test suite, the ArchUnit rules above, and JaCoCo line and branch coverage at a minimum of 80%. HTML reports are written beneath `build/reports/`.
+
+PostgreSQL integration tests should obtain their pinned, isolated container from `PostgreSqlTestContainerFactory` in test support. Tests that start the container require Docker; unit, context, and architecture tests do not.

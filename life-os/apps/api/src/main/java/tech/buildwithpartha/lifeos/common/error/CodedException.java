@@ -11,19 +11,19 @@ import java.util.Objects;
  */
 public abstract class CodedException extends RuntimeException {
 
-    private final ErrorCode code;
+  private final ErrorCode code;
 
-    protected CodedException(ErrorCode code, String message) {
-        super(Objects.requireNonNull(message, "message must not be null"));
-        this.code = Objects.requireNonNull(code, "code must not be null");
-    }
+  protected CodedException(ErrorCode code, String message) {
+    super(Objects.requireNonNull(message, "message must not be null"));
+    this.code = Objects.requireNonNull(code, "code must not be null");
+  }
 
-    protected CodedException(ErrorCode code, String message, Throwable cause) {
-        super(Objects.requireNonNull(message, "message must not be null"), cause);
-        this.code = Objects.requireNonNull(code, "code must not be null");
-    }
+  protected CodedException(ErrorCode code, String message, Throwable cause) {
+    super(Objects.requireNonNull(message, "message must not be null"), cause);
+    this.code = Objects.requireNonNull(code, "code must not be null");
+  }
 
-    public final ErrorCode code() {
-        return code;
-    }
+  public final ErrorCode code() {
+    return code;
+  }
 }

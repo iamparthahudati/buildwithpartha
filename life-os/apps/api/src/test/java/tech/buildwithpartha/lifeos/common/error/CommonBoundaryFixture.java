@@ -4,13 +4,13 @@ import tech.buildwithpartha.lifeos.project.domain.ProjectDomainFixture;
 
 public final class CommonBoundaryFixture {
 
-    private final ProjectDomainFixture forbiddenDependency;
+  private final ProjectDomainFixture forbiddenDependency;
 
-    public CommonBoundaryFixture(ProjectDomainFixture forbiddenDependency) {
-        this.forbiddenDependency = forbiddenDependency;
-    }
+  public CommonBoundaryFixture(ProjectDomainFixture forbiddenDependency) {
+    this.forbiddenDependency = forbiddenDependency;
+  }
 
-    public ProjectDomainFixture forbiddenDependency() {
-        return forbiddenDependency;
-    }
+  public ProjectDomainFixture forbiddenDependency() {
+    return forbiddenDependency;
+  }
 }
