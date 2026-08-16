@@ -18,6 +18,8 @@ LifeOS API
 
 Cloudflare terminates public traffic; the origin also uses valid TLS and Cloudflare SSL mode must be Full (strict). The database is never exposed publicly. Caddy is the only public origin service. Routes are matched from most specific to least specific so the main-site SPA fallback cannot swallow LifeOS routes.
 
+The binding personal-data inventory, processor review, retention classes, browser-storage limits, export/deletion propagation and optional file/AI gates are defined in `31-PRIVACY-DATA-LIFECYCLE.md`. Any new store, cache, queue, index, log, email field or external provider must update that map before implementation.
+
 The main site and LifeOS may use the same technology family and VPS, but they are independently deployable products with distinct service names, ports, configuration prefixes, cookies, database identities, migrations, cache rules and rollback paths. See ADR-011.
 
 ## Repository layout

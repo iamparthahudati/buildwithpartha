@@ -22,10 +22,11 @@ This directory is the isolated LifeOS product area inside the existing `buildwit
 2. Read [docs/01-PRODUCT-CONTEXT.md](./docs/01-PRODUCT-CONTEXT.md).
 3. Read [docs/29-PRODUCT-VOCABULARY.md](./docs/29-PRODUCT-VOCABULARY.md) before naming UI, API, Java, TypeScript or database concepts.
 4. Read [docs/30-CONTENT-AND-TONE-GUIDE.md](./docs/30-CONTENT-AND-TONE-GUIDE.md) before writing user-facing copy or fixtures.
-5. Find the ticket in [docs/backlog/README.md](./docs/backlog/README.md).
-6. Read any documents named in the ticket's `Context` field.
-7. Create the feature branch from `develop` using the exact ticket ID.
-8. Update [docs/CURRENT-STATUS.md](./docs/CURRENT-STATUS.md) and add a handoff note before stopping.
+5. Read [docs/31-PRIVACY-DATA-LIFECYCLE.md](./docs/31-PRIVACY-DATA-LIFECYCLE.md) before changing stored/transmitted data, providers, logs, browser storage, email, export, deletion, files, or AI.
+6. Find the ticket in [docs/backlog/README.md](./docs/backlog/README.md).
+7. Read any documents named in the ticket's `Context` field.
+8. Create the feature branch from `develop` using the exact ticket ID.
+9. Update [docs/CURRENT-STATUS.md](./docs/CURRENT-STATUS.md) and add a handoff note before stopping.
 
 No implementation work should begin until the relevant ticket is marked `Ready` and all dependencies are complete.
 
@@ -44,4 +45,5 @@ No implementation work should begin until the relevant ticket is marked `Ready` 
 - [Decision log](./docs/10-DECISIONS.md)
 - [Product vocabulary](./docs/29-PRODUCT-VOCABULARY.md)
 - [Content and tone guide](./docs/30-CONTENT-AND-TONE-GUIDE.md)
+- [Privacy and data lifecycle](./docs/31-PRIVACY-DATA-LIFECYCLE.md)
 - [Backlog index](./docs/backlog/README.md)

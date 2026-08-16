@@ -8,7 +8,7 @@ This freezes the planning boundary for the first production release. Moving an i
 
 - Signup, email verification, login/logout, recovery, secure sessions and CSRF.
 - Onboarding, profile/timezone/week/focus defaults, session security settings.
-- Privacy/terms, account data export and account deletion lifecycle.
+- Privacy/terms, account data export and account deletion lifecycle following `31-PRIVACY-DATA-LIFECYCLE.md`.
 - Per-user authorization, audit, rate limits, security notifications and safe errors.
 
 ### Daily execution
@@ -65,4 +65,3 @@ These ship only if their dedicated gate passes. Their absence cannot break requi
 3. Remove or defer equivalent effort when expanding a fixed release.
 4. Update this matrix, product specification, roadmap, status ledger and affected tickets.
 5. Do not treat a visually present reference feature as automatically in scope.
-

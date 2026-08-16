@@ -16,7 +16,7 @@ Online-only: authentication changes, account deletion, attachments, exports, rec
 
 ## Queue model
 
-Each entry stores local ID, user/session binding, operation type, endpoint/resource, safe payload, idempotency key, entity dependencies, created/expiry timestamps, attempt count, last error, and state. Sensitive queue data is minimized and removed on logout/account switch.
+Each entry stores local ID, user/session binding, operation type, endpoint/resource, safe payload, idempotency key, entity dependencies, created/expiry timestamps, attempt count, last error, and state. Sensitive queue data is minimized and removed on logout/account switch. Device-draft and queue storage, expiry, export and deletion follow `31-PRIVACY-DATA-LIFECYCLE.md`.
 
 ## Conflict model
 
@@ -28,5 +28,4 @@ Each entry stores local ID, user/session binding, operation type, endpoint/resou
 
 ## UX language
 
-`Saved` means acknowledged by server. `Saved on this device` means local draft only. `Queued — will sync when online` means a pending mutation. `Sync conflict` requires user action.
-
+`Saved` means acknowledged by server. `Device draft` means local draft only. `Queued — will sync when online` means a pending mutation. `Sync conflict` requires user action.

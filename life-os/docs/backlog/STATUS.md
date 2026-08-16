@@ -26,6 +26,7 @@ Last updated: 2026-08-16
 | LOS-0110 | Done baseline | `feature/LOS-0110-critical-interactions` | Seven critical interaction flows tested by specification walkthrough; owner review remains at the phase gate. |
 | LOS-0111 | Done | `feature/LOS-0111-product-vocabulary` | Canonical cross-layer vocabulary, statuses, priorities, labels and verbs approved. |
 | LOS-0112 | Done | `feature/LOS-0112-content-tone-guide` | User-facing voice, state, validation, destructive, review, localization and fixture rules approved. |
-| LOS-0113 | Ready | — | Map privacy, collected data, retention, export and deletion lifecycle. |
+| LOS-0113 | Done baseline | `feature/LOS-0113-privacy-data-lifecycle` | Data inventory, purposes, retention, rights, export/deletion, logs, backups, email, providers, files and AI mapped; owner/legal phase-gate decisions remain explicit. |
+| LOS-0114 | Ready | — | Review and sign off the complete product/UX discovery baseline; convert every unresolved decision into a named ticket or ADR. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

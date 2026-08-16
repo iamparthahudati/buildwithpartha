@@ -337,7 +337,7 @@ Offline mutation queue entries include stable client IDs, idempotency keys, depe
 
 ## 40. Security
 
-`06-SECURITY.md` is binding. Additional product requirements: privacy dashboard, session/device view, export account data, delete account, security notifications, terms/privacy acceptance version, and a documented incident response/restore path.
+`06-SECURITY.md` and `31-PRIVACY-DATA-LIFECYCLE.md` are binding. Additional product requirements: privacy dashboard, session/device view, export account data, delete account, security notifications, terms/privacy acceptance version, and a documented incident response/restore path.
 
 ## 41. Settings
 

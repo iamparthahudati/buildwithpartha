@@ -11,6 +11,7 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 - QA-AUTH-005: Logout and password reset revoke required sessions; back/refresh cannot recover private cached content.
 - QA-AUTH-006: User B cannot infer or access any User A resource through ID, nested URL, filter, search, export, file, or activity.
 - QA-AUTH-007: Export contains the documented User A data only; delete lifecycle follows grace/purge/backup policy.
+- QA-AUTH-008: Account deletion reaches live rows, derived indexes/caches, jobs, optional provider data and device stores; restoring a pre-deletion backup reapplies the completed-deletion ledger before service resumes.
 
 ## Navigation, shell, and states
 

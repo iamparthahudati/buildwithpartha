@@ -21,6 +21,7 @@ A ticket is Done only when every applicable item is true.
 - Backend authorization and cross-user negative tests exist for user-owned data.
 - Validation, CSRF, session, logging/redaction, and rate-limit requirements are satisfied.
 - Security-sensitive change includes threat/abuse cases in tests or ticket notes.
+- Any new or changed data field, browser store, cache, queue, log, email, export, provider, file flow or AI flow is mapped to a purpose, classification, retention/deletion rule and processor evidence in `31-PRIVACY-DATA-LIFECYCLE.md`.
 
 ## User experience
 

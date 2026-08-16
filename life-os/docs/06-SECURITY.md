@@ -20,11 +20,12 @@
 
 ## Authorization and privacy
 
+- Follow the field-to-purpose inventory, retention classes, consent/notice boundaries, provider register and data-flow gates in `31-PRIVACY-DATA-LIFECYCLE.md`.
 - Repositories/services require authenticated `userId`; controllers do not accept a user ID for ownership.
 - Add negative cross-user tests for every user-owned resource.
 - Logs redact credentials, tokens, cookies, headers, note content, and sensitive search text.
-- Exports require recent authentication when practical and are deleted after a short retention.
-- Account deletion is confirmed, delayed/recoverable, auditable, and eventually purges personal data according to policy.
+- Exports require recent authentication, are account-scoped, and expire according to the approved retention class.
+- Account deletion is confirmed, delayed/recoverable, auditable, propagates through live/derived/provider data, and remains deleted after a backup restoration.
 
 ## Operations
 
@@ -41,4 +42,3 @@
 - OWASP ZAP baseline against staging plus manual auth/IDOR/CSRF checks.
 - Cloudflare and origin TLS configuration review.
 - Backup restoration and rollback rehearsal.
-
