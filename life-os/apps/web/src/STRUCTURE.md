@@ -67,6 +67,8 @@ Aliases are declared in both TypeScript and Vite so typechecking and production 
 
 Route modules compose imported feature/shared components. They do not declare local atoms or reach into feature internals. ESLint and the general quality gate supplement this architecture contract; the boundary verifier remains a separate required check.
 
+`npm run verify:tokens` checks every stylesheet and source file under `src/` and fails when a file other than `styles/tokens.css` contains a raw hex, `rgb()`, `hsl()` or `color()` value, sets a color property to a named CSS color, or reads the private `--palette-*` layer. Components consume the semantic `--lifeos-*` tokens only.
+
 ## Quality and test boundary
 
 - Prettier owns deterministic source/document formatting; ESLint owns JavaScript/TypeScript correctness, React Hooks, Vite refresh and static JSX accessibility rules.
@@ -75,4 +77,5 @@ Route modules compose imported feature/shared components. They do not declare lo
 - Shared setup, render helpers, user-event setup, the axe helper and deterministic data builders live in `src/test` and are imported through `@test/*`.
 - Data builders use fixed identifiers/instants, reserved identity data and approved neutral copy. Time-dependent fixtures require an explicit valid IANA timezone and derive rather than hard-code the local date.
 - The V8 coverage gate requires at least 80% statements, branches, functions and lines. Generated entrypoints, test support and the application bootstrap are excluded from the component-unit baseline.
-- Axe runs WCAG rules supported by JSDOM. Color contrast still requires browser automation and manual review because JSDOM does not calculate layout or rendered colors.
+- Axe runs WCAG rules supported by JSDOM. Color contrast still requires browser automation and manual review because JSDOM does not calculate layout or rendered colors. The frozen token pairings are proven separately by computing real WCAG ratios in `styles/tokens.test.ts`, which does not depend on a layout engine.
+- `styles/tokens.css` is the runtime token source of truth and `styles/tokens.ts` mirrors the values TypeScript needs. `tests/design-tokens.test.mjs` parses the stylesheet in Node and fails when the two disagree, when a scale token leaves `rem`, when a font size drops below 12px, when an animated duration escapes the reduced-motion override, or when compact density would shrink a touch target below 44px.

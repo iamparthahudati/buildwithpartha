@@ -48,6 +48,7 @@ Phase 1 — Foundations and component library.
 - LOS-0214 — Authenticated OpenAPI 3.1 baseline added with the versioned server, session/CSRF notes, reusable safe problems and pagination schema; backend tests validate and publish the empty-first contract as a retained CI artifact.
 - LOS-0215 — Deterministic frontend/backend User, Project, Task and time builders added with fixed safe identities/instants, immutable or isolated overrides, canonical statuses and tested IANA timezone date boundaries.
 - LOS-0216 — Engineering foundation gate passed from a fresh clone in 34 seconds: locked install, documentation/CI policy, frontend, uncached backend, PostgreSQL migration, API readiness and nested SPA route passed after fixing two clean-environment regressions.
+- LOS-0301 — Semantic color, typography, spacing, radius, border, shadow, z-index, motion, breakpoint, density and chart tokens frozen in a private-palette/semantic two-layer contract, with every rendered pairing proven against WCAG 2.2 AA, rem-only scales for 200% zoom, reduced-motion and 44px touch guarantees, and an enforced rule that no file outside the token file may contain a raw color.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -62,7 +63,7 @@ Phase 1 — Foundations and component library.
 
 ## Next recommended ticket
 
-`LOS-0301 — Freeze design tokens`.
+`LOS-0302 — Add CSS reset and global foundations`.
 
 ## Known decisions requiring implementation-time values
 

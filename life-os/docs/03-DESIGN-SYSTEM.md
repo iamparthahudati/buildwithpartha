@@ -8,19 +8,19 @@ All visible and accessible component language follows the [LifeOS content and to
 
 ## Foundation tokens
 
-Define tokens before components. Initial semantic palette targets:
+Tokens are frozen. The complete contract — color roles, proven contrast pairings, typography, spacing, radius, border, shadow, stacking, motion, breakpoints, density and chart series — lives in [the design token reference](./32-DESIGN-TOKENS.md) and is implemented in `apps/web/src/styles/tokens.css`.
 
-- canvas `#F7F9FC`, surface `#FFFFFF`, surface-muted `#F3F6FA`;
-- text `#101828`, text-secondary `#475467`, text-muted `#667085`;
-- border `#E4E7EC`, border-strong `#D0D5DD`;
-- primary `#3157F5`, primary-hover `#2446D8`, primary-soft `#EEF2FF`;
-- success `#12A150`, warning `#F79009`, danger `#F04438`, info `#2E90FA`, accent-purple `#7A5AF8`.
+The initial palette targets recorded here were adjusted during LOS-0301 so every rendered pairing passes WCAG 2.2 AA:
 
-Final values must pass contrast tests and be frozen in the token ticket. Use semantic names in components—never raw hex values.
+- solid status fills darkened to carry white labels: success `#087443`, warning `#b54708`, danger `#b42318`, info `#175cd3`, accent `#5925dc`;
+- the bright hues remain as `-accent` tokens for dots, icons and fills, with warning darkened to `#dc6803` to reach 3:1;
+- the interactive control border is `#7d8b9f` rather than a lighter neutral, so input outlines reach 3:1.
 
-Typography: a modern sans-serif variable font or a tested system stack. Default body 16px, dense UI may use 14px, never below 12px. Use tabular numerals for durations, dates, metrics, and timers.
+Use semantic token names in components—never raw hex values. `npm run verify:tokens` fails the build on any raw color literal outside the token file.
 
-Spacing: 4px base with an 8px primary rhythm. Radius: 6/8/12/16px. Shadows are subtle and never the only boundary.
+Typography: an Inter-led system stack. Default body 16px, dense UI may use 14px, never below 12px. Use tabular numerals for durations, dates, metrics, and timers.
+
+Spacing: 4px base with an 8px primary rhythm. Radius: 4/6/8/12/16px. Shadows are subtle and never the only boundary.
 
 ## Responsive layout
 
