@@ -47,6 +47,7 @@ Phase 1 — Foundations and component library.
 - LOS-0213 — Versioned safe API Problem Details, validated response correlation IDs, aggregate liveness/readiness and deny-by-default actuator access added with tests proving diagnostic and rejected-value data cannot leak.
 - LOS-0214 — Authenticated OpenAPI 3.1 baseline added with the versioned server, session/CSRF notes, reusable safe problems and pagination schema; backend tests validate and publish the empty-first contract as a retained CI artifact.
 - LOS-0215 — Deterministic frontend/backend User, Project, Task and time builders added with fixed safe identities/instants, immutable or isolated overrides, canonical statuses and tested IANA timezone date boundaries.
+- LOS-0216 — Engineering foundation gate passed from a fresh clone in 34 seconds: locked install, documentation/CI policy, frontend, uncached backend, PostgreSQL migration, API readiness and nested SPA route passed after fixing two clean-environment regressions.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -61,7 +62,7 @@ Phase 1 — Foundations and component library.
 
 ## Next recommended ticket
 
-`LOS-0216 — Run engineering foundation gate`.
+`LOS-0301 — Freeze design tokens`.
 
 ## Known decisions requiring implementation-time values
 

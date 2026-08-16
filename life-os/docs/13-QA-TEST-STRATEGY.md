@@ -37,3 +37,5 @@ The hosted `LifeOS CI` workflow runs for every pull request and push targeting a
 ## Release evidence
 
 Each phase gate stores: test run summary, known accepted risks, migration rehearsal, screenshots only where useful, accessibility notes, performance result, security scan result, and rollback steps. Production smoke tests must not mutate real user data beyond a dedicated test account.
+
+`life-os/scripts/run-foundation-gate.sh` is the reproducible Epic 02 checkout gate. It validates documentation/policy, performs a locked frontend install and complete test/build, forces an uncached backend build, reruns Flyway on clean/existing disposable PostgreSQL state, then starts the database, production API JAR and built web preview to verify readiness and nested SPA routing. It prints coarse per-step timings without telemetry or private data.
