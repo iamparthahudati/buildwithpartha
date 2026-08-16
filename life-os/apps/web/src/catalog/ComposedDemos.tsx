@@ -1,7 +1,14 @@
 import { useRef, useState, type FormEvent } from "react";
 
 import { Button, Select, Text, TextInput } from "@components/ui";
-import { FormErrorSummary, FormField, FormFieldGroup, SearchField } from "@components/forms";
+import {
+  Combobox,
+  type ComboboxOption,
+  FormErrorSummary,
+  FormField,
+  FormFieldGroup,
+  SearchField,
+} from "@components/forms";
 
 /**
  * Interactive demos for the composed-component catalog entries. They live
@@ -133,5 +140,56 @@ export function SearchFieldSubmitDemo() {
         <code>{submittedSearch === "" ? "(none yet)" : submittedSearch}</code>
       </Text>
     </div>
+  );
+}
+
+const LABEL_OPTIONS: readonly ComboboxOption[] = [
+  { value: "deep-work", label: "Deep work" },
+  { value: "reading", label: "Reading" },
+  { value: "weekly-planning", label: "Weekly planning" },
+  { value: "archived", label: "Archived", disabled: true },
+];
+
+export function ComboboxSingleDemo() {
+  const [value, setValue] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+
+  return (
+    <Combobox
+      label="Label"
+      description="Type to filter, or use the arrow keys."
+      options={LABEL_OPTIONS}
+      value={value}
+      onValueChange={setValue}
+      query={query}
+      onQueryChange={setQuery}
+    />
+  );
+}
+
+export function ComboboxMultiCreateDemo() {
+  const [value, setValue] = useState<readonly string[]>([]);
+  const [query, setQuery] = useState("");
+  const [options, setOptions] = useState(LABEL_OPTIONS);
+
+  return (
+    <Combobox
+      multiple
+      label="Labels"
+      description="Pick as many as apply, or create one that isn't listed yet."
+      options={options}
+      value={value}
+      onValueChange={setValue}
+      query={query}
+      onQueryChange={setQuery}
+      onCreateOption={(created) => {
+        const option: ComboboxOption = {
+          value: created.toLowerCase().replace(/\s+/g, "-"),
+          label: created,
+        };
+        setOptions((current) => [...current, option]);
+        setValue((current) => [...current, option.value]);
+      }}
+    />
   );
 }

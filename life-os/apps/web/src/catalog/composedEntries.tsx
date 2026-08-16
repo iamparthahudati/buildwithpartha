@@ -2,6 +2,8 @@ import { TextInput } from "@components/ui";
 import { FormField } from "@components/forms";
 
 import {
+  ComboboxMultiCreateDemo,
+  ComboboxSingleDemo,
   CreateTaskFormDemo,
   SearchFieldDebouncedDemo,
   SearchFieldSubmitDemo,
@@ -72,6 +74,28 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Submit mode, with a result",
         description: "Searches only on Enter — typing alone never triggers it.",
         render: () => <SearchFieldSubmitDemo />,
+      },
+    ],
+  },
+  {
+    id: "combobox",
+    name: "Combobox",
+    group: "Composed",
+    summary:
+      "Accessible single/multi-select built on a real text input following the ARIA 1.2 combobox-with-listbox pattern: focus stays on the input, and aria-activedescendant tracks the keyboard's current option. Reach for this only where Select cannot do the job.",
+    states: [
+      {
+        id: "combobox-single",
+        name: "Single select",
+        description: "Arrow keys move the active option; Enter selects and closes the listbox.",
+        render: () => <ComboboxSingleDemo />,
+      },
+      {
+        id: "combobox-multi-create",
+        name: "Multi-select with create",
+        description:
+          "Selecting keeps the listbox open. Typing a name with no match offers to create it.",
+        render: () => <ComboboxMultiCreateDemo />,
       },
     ],
   },

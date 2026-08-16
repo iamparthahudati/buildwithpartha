@@ -102,9 +102,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0402 — SearchField added, composing TextInput with a `useSearchField` hook that owns only the *timing* of when to search — debounced-after-a-pause or submit-only, with Enter always searching immediately and IME composition correctly held off so an intermediate, not-yet-real character is never searched. A single-key shortcut focuses the field except while another editable element already has focus. The loading state is announced through a real sibling live region rather than nested inside the decorative icon, since an `aria-hidden` wrapper would have swallowed `Spinner`'s own status role.
 
+- LOS-0403 — Combobox added, following the ARIA 1.2 combobox-with-listbox pattern where focus never leaves the input and `aria-activedescendant` tracks the keyboard's current option instead. Two real accessibility bugs surfaced and were fixed during the axe sweep: a listbox with zero option children (the loading and no-results states) fails `aria-required-children`, so `role="listbox"` is now applied only once the list actually owns an option; and once it stopped being a listbox in that state, its status rows could no longer carry `role="presentation"` either, since that breaks a *plain* list's own required content just as badly. Multi-select stays open after each pick — closing would undo the point of choosing more than one — and each chip's dismiss button is a normal tab stop, because there is no keyboard equivalent for removing one arbitrary chip the way there is for clearing a whole text field. `fieldIds` was additively exported from `components/ui` so `Combobox` did not have to rebuild the same id-generation helper every other field-shaped atom already uses.
+
 ## Next recommended ticket
 
-`LOS-0403 — Build Combobox`.
+`LOS-0404 — Build DateRangeField`.
 
 ## Known decisions requiring implementation-time values
 
