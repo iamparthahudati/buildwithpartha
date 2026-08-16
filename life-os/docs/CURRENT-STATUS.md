@@ -41,6 +41,7 @@ Phase 1 — Foundations and component library.
 - LOS-0207 — Frontend module boundaries established with public feature/component entrypoints, synchronized TypeScript/Vite aliases, restricted feature layouts and a test gate that rejects private feature imports and route-local UI components.
 - LOS-0208 — Frontend quality baseline added with Prettier, zero-warning ESLint, strict typechecking, Vitest, Testing Library/user-event helpers, axe accessibility checks and enforced 80% V8 coverage.
 - LOS-0209 — Backend quality baseline added with Spotless/google-java-format, Checkstyle, explicit JUnit/AssertJ/Testcontainers support, existing ArchUnit enforcement and an 80% JaCoCo line/branch coverage gate.
+- LOS-0210 — Vite development/preview same-origin gateway added with exact `/life-os/api` proxy matching, unchanged API paths and live tests proving API routing precedes nested SPA fallback.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -55,7 +56,7 @@ Phase 1 — Foundations and component library.
 
 ## Next recommended ticket
 
-`LOS-0210 — Build local full-stack gateway`.
+`LOS-0211 — Define environment validation`.
 
 ## Known decisions requiring implementation-time values
 

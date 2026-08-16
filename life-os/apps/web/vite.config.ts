@@ -1,6 +1,13 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+const apiProxy = {
+  "^/life-os/api(?:/|$)": {
+    target: "http://127.0.0.1:8080",
+    changeOrigin: false,
+  },
+};
+
 export default defineConfig({
   base: "/life-os/",
   plugins: [react()],
@@ -24,11 +31,13 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 5173,
     strictPort: true,
+    proxy: apiProxy,
   },
   preview: {
     host: "127.0.0.1",
     port: 4173,
     strictPort: true,
+    proxy: apiProxy,
   },
   build: {
     target: "baseline-widely-available",

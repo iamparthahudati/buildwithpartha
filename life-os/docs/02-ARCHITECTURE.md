@@ -18,6 +18,8 @@ LifeOS API
 
 Cloudflare terminates public traffic; the origin also uses valid TLS and Cloudflare SSL mode must be Full (strict). The database is never exposed publicly. Caddy is the only public origin service. Routes are matched from most specific to least specific so the main-site SPA fallback cannot swallow LifeOS routes.
 
+Local development uses Vite as the same-origin gateway at `http://localhost:5173`. Requests matching `/life-os/api` as a complete path segment are proxied unchanged to the loopback Spring Boot service on port `8080`; every other `/life-os/*` request stays with Vite and may use its SPA fallback. The same rule is applied to Vite preview. This keeps browser cookies and requests same-origin without enabling CORS, while production Caddy remains a separate Epic 16 deployment concern.
+
 The binding personal-data inventory, processor review, retention classes, browser-storage limits, export/deletion propagation and optional file/AI gates are defined in `31-PRIVACY-DATA-LIFECYCLE.md`. Any new store, cache, queue, index, log, email field or external provider must update that map before implementation.
 
 The main site and LifeOS may use the same technology family and VPS, but they are independently deployable products with distinct service names, ports, configuration prefixes, cookies, database identities, migrations, cache rules and rollback paths. See ADR-011.
@@ -68,6 +70,7 @@ life-os/
 
 - React 19 with TypeScript and Vite; production `base` is `/life-os/`.
 - React Router owns protected routes under `/app`; browser refreshes are handled by Caddy's SPA fallback without intercepting `/life-os/api/*`.
+- Vite development and preview proxy only the complete `/life-os/api` path segment to `127.0.0.1:8080` without rewriting. Automated live-server tests prove API responses/statuses are preserved before the SPA fallback and similarly named UI paths remain frontend routes.
 - TanStack Query owns server state and caching. Local component state remains local. Use a tiny client store only for genuinely global ephemeral presentation state such as the active Focus Session display and navigation drawer.
 - Zod validates environment/config and boundary payloads. React Hook Form may coordinate non-trivial forms.
 - Use CSS variables for tokens and CSS Modules or a single agreed component styling approach. Do not mix multiple styling systems.

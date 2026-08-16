@@ -53,7 +53,7 @@ These values are not secrets and may appear in the client bundle.
 | --- | --- | --- |
 | Stable dependency versions | Engineering owner | Resolved by LOS-0203; future changes follow `DEPENDENCY-POLICY.md` |
 | Local PostgreSQL port and Compose names | Engineering owner | Resolved by LOS-0204: loopback `55432`, project `life-os-local` |
-| Local same-origin UI/API gateway ports | Engineering owner | LOS-0210 |
+| Local same-origin UI/API gateway ports | Engineering owner | Resolved by LOS-0210: browser/Vite `5173`, API upstream `8080`, preview `4173` |
 | Staging hostname and access | Partha | LOS-1605 |
 | VPS OS/resources/deploy user | Partha | LOS-1601 |
 | Cloudflare zone/API/origin path | Partha | LOS-1606 |

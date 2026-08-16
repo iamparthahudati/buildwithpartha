@@ -13,6 +13,8 @@ The frontend unit baseline enforces 80% statements, branches, functions and line
 
 The backend baseline uses JUnit, AssertJ and ArchUnit, with PostgreSQL Testcontainers support for integration tests. `./gradlew check` also enforces deterministic Spotless formatting, zero-error/zero-warning Checkstyle analysis, and JaCoCo line and branch coverage at a minimum of 80%. XML and HTML coverage reports are generated for CI and local review. The shared test container definition pins the same PostgreSQL image as local Compose; tests that start it require a Docker-compatible runtime.
 
+The local gateway contract starts disposable Vite and mock-upstream servers. It proves `/life-os/api/*` paths and query strings are forwarded unchanged, API status/body responses are not replaced by HTML, nested `/life-os/*` UI routes receive the SPA document, and similarly prefixed UI paths do not cross the API boundary.
+
 ## Required test dimensions
 
 - User: anonymous, unverified, verified, expired/revoked session, second user attempting cross-account access.
