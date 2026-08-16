@@ -1,0 +1,25 @@
+/* Shared field messaging (LOS-0311 onward). */
+
+.lifeos-field__description {
+  display: block;
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+.lifeos-field__error {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  color: var(--lifeos-color-danger);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+.lifeos-field__success {
+  display: block;
+  color: var(--lifeos-color-success);
+  font-size: var(--lifeos-font-size-3xs);
+  line-height: var(--lifeos-line-height-snug);
+}

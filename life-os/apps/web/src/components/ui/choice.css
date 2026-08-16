@@ -1,0 +1,113 @@
+/* Checkbox and Radio (LOS-0311, LOS-0312). */
+
+.lifeos-choice__row {
+  display: flex;
+  align-items: center;
+  /* The whole row is the target, so the 44px minimum is easy to meet. */
+  min-height: var(--lifeos-target-min-size);
+  gap: var(--lifeos-space-2);
+  cursor: pointer;
+}
+
+/*
+ * The native control is styled, not replaced. `appearance: none` keeps the
+ * element — and therefore its keyboard behaviour, form participation and
+ * indeterminate state — while letting the design take over its appearance.
+ */
+.lifeos-choice__input {
+  flex: none;
+  width: var(--lifeos-space-5);
+  height: var(--lifeos-space-5);
+  border: var(--lifeos-border-width-thick) solid var(--lifeos-color-border-interactive);
+  border-radius: var(--lifeos-radius-xs);
+  appearance: none;
+  background: var(--lifeos-color-surface);
+  cursor: pointer;
+  transition:
+    background-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard),
+    border-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-choice__input[type="radio"] {
+  border-radius: var(--lifeos-radius-pill);
+}
+
+.lifeos-choice__input:checked,
+.lifeos-choice__input:indeterminate {
+  border-color: var(--lifeos-color-primary);
+  background-color: var(--lifeos-color-primary);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80%;
+}
+
+/*
+ * The tick and dash are masks in currentcolor, so they follow forced-colors
+ * mode instead of disappearing against a user-chosen background.
+ */
+.lifeos-choice__input[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+
+.lifeos-choice__input[type="checkbox"]:indeterminate {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
+}
+
+.lifeos-choice__input[type="radio"]:checked {
+  background-image: radial-gradient(circle, var(--lifeos-color-surface) 0 30%, transparent 32%);
+}
+
+.lifeos-choice__input:hover:not(:disabled) {
+  border-color: var(--lifeos-color-primary);
+}
+
+.lifeos-choice__input:disabled {
+  cursor: not-allowed;
+}
+
+.lifeos-choice__label {
+  font-size: var(--lifeos-font-size-xs);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+.lifeos-choice.is-disabled {
+  color: var(--lifeos-color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.lifeos-choice__messages:not(:empty) {
+  display: grid;
+  gap: var(--lifeos-space-1);
+  /* Aligns the messages under the label rather than under the control. */
+  margin-left: calc(var(--lifeos-space-5) + var(--lifeos-space-2));
+}
+
+.lifeos-radio-group {
+  display: grid;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-radio-group__legend {
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.lifeos-radio-group__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-radio-group--horizontal .lifeos-radio-group__options {
+  flex-flow: row wrap;
+  gap: var(--lifeos-space-5);
+}
+
+@media (forced-colors: active) {
+  .lifeos-choice__input:checked,
+  .lifeos-choice__input:indeterminate {
+    background-color: Highlight;
+  }
+}

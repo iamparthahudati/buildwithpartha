@@ -70,10 +70,14 @@ Phase 1 — Foundations and component library.
 - LOS-0308 — `Link` added for navigation only, with current-destination, external and quiet variants. It has no `disabled` prop by design: a disabled anchor loses its link role and its tab stop without explaining why, so an unavailable destination renders as text and an action renders as a button.
 - LOS-0309 — Badge, StatusDot and CountBadge added. Every badge renders text, so colour accompanies meaning rather than carrying it; canonical Task status and Product priority tones are mapped from the vocabulary instead of chosen per call site, and a count badge names what it counts while announcing the exact number it visually clamps.
 - LOS-0310 — Avatar and AvatarGroup added with image, initials, broken-image fallback and overflow states. The accent colour is hashed from the name, so a person keeps the same colour everywhere without anything being stored, and initials are taken by code point so emoji and astral characters are never split.
+- LOS-0311 — Checkbox added as a real native input with a real label, so keyboard activation, form participation and the label relationship are the browser's rather than re-implemented. The mixed state is set as a DOM property because it cannot be expressed as an attribute, and description and error are both linked with the error announced first.
+- LOS-0312 — RadioGroup added using a real fieldset, legend and shared input name, so arrow-key movement, the single roving tab stop and the one-selection rule all come from the browser rather than from script. Options carry their own descriptions; the error belongs to the group.
+- LOS-0313 — Switch added for settings that take effect immediately, announced as on/off through `role="switch"` on a native checkbox. A toggle in flight refuses a second change so it cannot race itself, and the pending state is announced rather than only shown.
+- LOS-0314 — TextInput added with a real bound label — never a placeholder standing in for one — plus prefix/suffix adornments, a clear action kept out of the tab order because the keyboard already has that capability, error/success/read-only/disabled states, and pass-through mobile keyboard and password-manager attributes.
 
 ## Next recommended ticket
 
-`LOS-0311 — Build Checkbox`.
+`LOS-0315 — Build PasswordInput`.
 
 ## Known decisions requiring implementation-time values
 
