@@ -1,0 +1,131 @@
+/* Typography primitives (LOS-0305). Every value comes from a token. */
+
+.lifeos-heading {
+  font-weight: var(--lifeos-font-weight-semibold);
+  line-height: var(--lifeos-line-height-tight);
+  letter-spacing: var(--lifeos-letter-spacing-tight);
+  overflow-wrap: break-word;
+}
+
+.lifeos-heading--xl {
+  font-size: var(--lifeos-font-size-2xl);
+}
+
+.lifeos-heading--lg {
+  font-size: var(--lifeos-font-size-xl);
+}
+
+.lifeos-heading--md {
+  font-size: var(--lifeos-font-size-lg);
+}
+
+.lifeos-heading--sm {
+  font-size: var(--lifeos-font-size-md);
+  letter-spacing: var(--lifeos-letter-spacing-normal);
+}
+
+.lifeos-heading--xs {
+  font-size: var(--lifeos-font-size-xs);
+  letter-spacing: var(--lifeos-letter-spacing-normal);
+}
+
+.lifeos-text {
+  line-height: var(--lifeos-line-height-normal);
+  overflow-wrap: break-word;
+}
+
+.lifeos-text--xs {
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.lifeos-text--sm {
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-text--md {
+  font-size: var(--lifeos-font-size-md);
+}
+
+.lifeos-text--lg {
+  font-size: var(--lifeos-font-size-lg);
+  line-height: var(--lifeos-line-height-relaxed);
+}
+
+.lifeos-caption {
+  display: inline-block;
+  font-size: var(--lifeos-font-size-3xs);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+.lifeos-weight--regular {
+  font-weight: var(--lifeos-font-weight-regular);
+}
+
+.lifeos-weight--medium {
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-weight--semibold {
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.lifeos-weight--bold {
+  font-weight: var(--lifeos-font-weight-bold);
+}
+
+.lifeos-tone--default {
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-tone--secondary {
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-tone--muted {
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-tone--danger {
+  color: var(--lifeos-color-danger);
+}
+
+.lifeos-tone--success {
+  color: var(--lifeos-color-success);
+}
+
+.lifeos-tone--on-solid {
+  color: var(--lifeos-color-text-on-solid);
+}
+
+/* Durations, timers, metrics and dates must not shift width as they change. */
+.lifeos-numeric {
+  font-variant-numeric: var(--lifeos-font-numeric);
+}
+
+.lifeos-metric__value {
+  display: block;
+  font-weight: var(--lifeos-font-weight-bold);
+  line-height: var(--lifeos-line-height-tight);
+  font-variant-numeric: var(--lifeos-font-numeric);
+}
+
+.lifeos-metric__label {
+  display: block;
+  margin-top: var(--lifeos-space-1);
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+/*
+ * Clamps to a line budget while leaving the full string in the DOM, so screen
+ * readers and find-in-page still reach the whole value.
+ */
+.lifeos-truncate {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lifeos-truncate-lines, 1);
+  overflow-wrap: normal;
+  word-break: break-word;
+}

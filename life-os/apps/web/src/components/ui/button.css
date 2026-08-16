@@ -1,0 +1,210 @@
+/* Button (LOS-0306). Every value comes from a token. */
+
+.lifeos-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--lifeos-border-width-hairline) solid transparent;
+  border-radius: var(--lifeos-radius-md);
+  font-weight: var(--lifeos-font-weight-semibold);
+  line-height: var(--lifeos-line-height-tight);
+  text-align: center;
+  white-space: nowrap;
+  transition:
+    background-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard),
+    border-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard),
+    color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-button__content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-button--full {
+  display: flex;
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------- */
+/* Sizes                                                             */
+/* ---------------------------------------------------------------- */
+
+.lifeos-button--sm {
+  min-height: var(--lifeos-space-8); /* 32px */
+  padding-inline: var(--lifeos-space-3);
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-button--md {
+  min-height: var(--lifeos-density-control-height);
+  padding-inline: var(--lifeos-density-control-padding-inline);
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-button--lg {
+  min-height: var(--lifeos-space-12); /* 48px */
+  padding-inline: var(--lifeos-space-6);
+  font-size: var(--lifeos-font-size-md);
+}
+
+/*
+ * Touch input needs a 44px target regardless of the chosen size, so small
+ * buttons grow on coarse pointers rather than staying visually compact.
+ */
+@media (pointer: coarse) {
+  .lifeos-button--sm,
+  .lifeos-button--md {
+    min-height: var(--lifeos-target-min-size);
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Variants                                                          */
+/* ---------------------------------------------------------------- */
+
+.lifeos-button--primary {
+  color: var(--lifeos-color-text-on-solid);
+  background: var(--lifeos-color-primary);
+}
+
+.lifeos-button--primary:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--lifeos-color-primary-hover);
+}
+
+.lifeos-button--primary:active:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--lifeos-color-primary-active);
+}
+
+.lifeos-button--secondary {
+  border-color: var(--lifeos-color-border-strong);
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-surface);
+}
+
+.lifeos-button--secondary:hover:not(:disabled):not([aria-disabled="true"]) {
+  border-color: var(--lifeos-color-border-interactive);
+  background: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-button--ghost {
+  color: var(--lifeos-color-text-secondary);
+  background: transparent;
+}
+
+.lifeos-button--ghost:hover:not(:disabled):not([aria-disabled="true"]) {
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-button--danger {
+  color: var(--lifeos-color-text-on-solid);
+  background: var(--lifeos-color-danger);
+}
+
+.lifeos-button--danger:hover:not(:disabled):not([aria-disabled="true"]) {
+  /* Darker on hover keeps the white label above 4.5:1. */
+  background: var(--lifeos-color-danger);
+  filter: brightness(0.92);
+}
+
+/*
+ * The link variant looks like a link but is still a button, because it performs
+ * an action rather than navigating. Real navigation uses `Link` (LOS-0308).
+ */
+.lifeos-button--link {
+  min-height: 0;
+  padding-inline: 0;
+  color: var(--lifeos-color-primary);
+  background: none;
+  text-decoration: underline;
+  text-decoration-thickness: max(0.08em, 1px);
+  text-underline-offset: 0.15em;
+}
+
+.lifeos-button--link:hover:not(:disabled):not([aria-disabled="true"]) {
+  color: var(--lifeos-color-primary-active);
+}
+
+/* ---------------------------------------------------------------- */
+/* Disabled and loading                                              */
+/* ---------------------------------------------------------------- */
+
+.lifeos-button:disabled,
+.lifeos-button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/*
+ * While loading, the label is hidden but still occupies its space, so the
+ * button keeps its width and the surrounding layout does not jump.
+ */
+.lifeos-button.is-loading .lifeos-button__content {
+  visibility: hidden;
+}
+
+.lifeos-button__busy {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inset: 0;
+}
+
+.lifeos-button__spinner {
+  width: var(--lifeos-space-4);
+  height: var(--lifeos-space-4);
+  border: var(--lifeos-border-width-thick) solid currentcolor;
+  border-radius: var(--lifeos-radius-pill);
+  border-top-color: transparent;
+  animation: lifeos-button-spin var(--lifeos-motion-duration-deliberate)
+    var(--lifeos-motion-ease-linear) infinite;
+}
+
+@keyframes lifeos-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+ * Under reduced motion the spinner stops turning. The busy state is still
+ * announced through aria-busy and the visually hidden loading label, so no
+ * information depends on the animation.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-button__spinner {
+    border-top-color: currentcolor;
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-button {
+    border-color: currentcolor;
+  }
+
+  .lifeos-button:disabled,
+  .lifeos-button[aria-disabled="true"] {
+    color: GrayText;
+    opacity: 1;
+  }
+}
+
+/* Kept here so any component can hide text without losing it. LOS-0327 owns
+   the shared VisuallyHidden component. */
+.lifeos-visually-hidden {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  margin: -1px;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
