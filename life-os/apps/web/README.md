@@ -52,8 +52,10 @@ npm test
 
 Vitest component tests use JSDOM, Testing Library, `user-event`, and the shared axe helper in `src/test`. Axe color-contrast checks are disabled only in JSDOM because it has no layout engine; browser automation and manual WCAG review remain required.
 
+Shared factories in `src/test/data-builders.ts` create immutable deterministic User, Project, Task and timezone-aware time fixtures. Defaults use fixed UUIDs/instants, the reserved `example.test` domain and approved neutral LifeOS copy. Tests can override only the fields relevant to a case; time fixtures always derive their local date from an explicit IANA timezone.
+
 Use `npm install --package-lock-only` only in a dedicated dependency update ticket. Normal development and CI use `npm ci`; they never rewrite `package-lock.json`.
 
 ## Current boundary
 
-LOS-0201 provides the executable frontend foundation and temporary readiness view. LOS-0207 adds public module entrypoints, TypeScript/Vite aliases, and an executable boundary gate. LOS-0208 adds the formatting, lint, component-test, accessibility-test and coverage baseline. LOS-0210 owns the local same-origin proxy and fallback order; LOS-0211 owns public startup configuration validation. React Router, design tokens, production components, authentication and product screens remain owned by their later tickets.
+LOS-0201 provides the executable frontend foundation and temporary readiness view. LOS-0207 adds public module entrypoints, TypeScript/Vite aliases, and an executable boundary gate. LOS-0208 adds the formatting, lint, component-test, accessibility-test and coverage baseline. LOS-0210 owns the local same-origin proxy and fallback order; LOS-0211 owns public startup configuration validation; LOS-0215 owns deterministic privacy-safe test data. React Router, design tokens, production components, authentication and product screens remain owned by their later tickets.

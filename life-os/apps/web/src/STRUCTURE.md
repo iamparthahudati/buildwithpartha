@@ -72,6 +72,7 @@ Route modules compose imported feature/shared components. They do not declare lo
 - Prettier owns deterministic source/document formatting; ESLint owns JavaScript/TypeScript correctness, React Hooks, Vite refresh and static JSX accessibility rules.
 - The TypeScript compiler remains the authoritative type checker. Babel parses TypeScript syntax for ESLint without replacing `tsc` semantic checks.
 - Vitest and Testing Library own unit/component tests in `src/**/*.test.{ts,tsx}`.
-- Shared setup, render helpers, user-event setup and the axe helper live in `src/test` and are imported through `@test/*`.
+- Shared setup, render helpers, user-event setup, the axe helper and deterministic data builders live in `src/test` and are imported through `@test/*`.
+- Data builders use fixed identifiers/instants, reserved identity data and approved neutral copy. Time-dependent fixtures require an explicit valid IANA timezone and derive rather than hard-code the local date.
 - The V8 coverage gate requires at least 80% statements, branches, functions and lines. Generated entrypoints, test support and the application bootstrap are excluded from the component-unit baseline.
 - Axe runs WCAG rules supported by JSDOM. Color contrast still requires browser automation and manual review because JSDOM does not calculate layout or rendered colors.

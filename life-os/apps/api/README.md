@@ -32,7 +32,7 @@ Apply deterministic Java formatting before committing:
 ./gradlew spotlessApply
 ```
 
-The HTML reports are generated under `build/reports/checkstyle/`, `build/reports/tests/test/`, and `build/reports/jacoco/test/html/`. The reusable PostgreSQL Testcontainers factory is in test support and pins the same PostgreSQL image as local Compose. A test that starts it requires a Docker-compatible runtime; ordinary unit and architecture tests remain self-contained.
+The HTML reports are generated under `build/reports/checkstyle/`, `build/reports/tests/test/`, and `build/reports/jacoco/test/html/`. Test support contains a reusable PostgreSQL Testcontainers factory pinned to the local Compose image and deterministic User, Project, Task and time builders. Builder defaults use fixed UUIDs/instants, reserved `example.test` identity data, approved neutral copy and explicit IANA timezone conversion. A test that starts PostgreSQL requires a Docker-compatible runtime; ordinary unit and architecture tests remain self-contained.
 
 ## Configuration boundary
 
