@@ -1,0 +1,48 @@
+/* Link (LOS-0308). */
+
+.lifeos-link {
+  display: inline;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  border-radius: var(--lifeos-radius-xs);
+  color: var(--lifeos-color-primary);
+  text-decoration: underline;
+  text-decoration-thickness: max(0.08em, 1px);
+  text-underline-offset: 0.15em;
+}
+
+.lifeos-link:hover {
+  color: var(--lifeos-color-primary-active);
+}
+
+/*
+ * The current destination is announced through aria-current; this only makes
+ * it visible too, so the state does not depend on either channel alone.
+ */
+.lifeos-link[aria-current="page"] {
+  color: var(--lifeos-color-text);
+  font-weight: var(--lifeos-font-weight-semibold);
+  text-decoration: none;
+}
+
+.lifeos-link--inline {
+  font-size: inherit;
+}
+
+/*
+ * Quiet links drop the underline for dense navigation, where a list of
+ * underlined rows is unreadable. The underline returns on hover and the focus
+ * ring is untouched, so neither pointer nor keyboard users lose the affordance.
+ */
+.lifeos-link--quiet {
+  text-decoration: none;
+}
+
+.lifeos-link--quiet:hover {
+  text-decoration: underline;
+}
+
+.lifeos-link__external {
+  margin-left: var(--lifeos-space-1);
+  vertical-align: baseline;
+}
