@@ -13,3 +13,8 @@ spring:
   mail:
     host: localhost
     port: 1025
+
+lifeos:
+  public-url: https://lifeos.example.test/life-os
+  session-cookie-secure: true
+  mail-from: lifeos@example.test

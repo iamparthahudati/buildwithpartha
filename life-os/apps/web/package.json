@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run typecheck && vite build",
+    "build:test": "npm run typecheck && vite build --mode test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",
@@ -22,7 +23,7 @@
     "verify:dependencies": "node ../../scripts/validate-dependency-locks.mjs",
     "verify:gateway": "node --test tests/local-gateway.test.mjs",
     "verify:quality": "npm run format:check && npm run lint && npm run typecheck && npm run verify:boundaries",
-    "test": "npm run verify:quality && npm run test:coverage && npm run build && node --test tests/*.test.mjs"
+    "test": "npm run verify:quality && npm run test:coverage && npm run build:test && node --test tests/*.test.mjs"
   },
   "dependencies": {
     "react": "19.2.8",

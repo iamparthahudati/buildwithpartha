@@ -2,17 +2,17 @@ spring:
   application:
     name: life-os-api
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:55432/lifeos_local}
-    username: ${DATABASE_USERNAME:lifeos_local_app}
-    password: ${DATABASE_PASSWORD:lifeos_local_app_only}
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     hikari:
       pool-name: LifeOsPool
   flyway:
     enabled: true
     locations: classpath:db/migration
-    url: ${FLYWAY_DATABASE_URL:${DATABASE_URL:jdbc:postgresql://localhost:55432/lifeos_local}}
-    user: ${FLYWAY_DATABASE_USERNAME:${DATABASE_USERNAME:lifeos_local_app}}
-    password: ${FLYWAY_DATABASE_PASSWORD:${DATABASE_PASSWORD:lifeos_local_app_only}}
+    url: ${FLYWAY_DATABASE_URL}
+    user: ${FLYWAY_DATABASE_USERNAME}
+    password: ${FLYWAY_DATABASE_PASSWORD}
     default-schema: lifeos_internal
     schemas:
       - lifeos_internal
@@ -28,13 +28,13 @@ spring:
       ddl-auto: validate
     open-in-view: false
   mail:
-    host: ${SMTP_HOST:localhost}
-    port: ${SMTP_PORT:1025}
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
     username: ${SMTP_USERNAME:}
     password: ${SMTP_PASSWORD:}
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT}
   servlet:
     context-path: /life-os/api/v1
   forward-headers-strategy: framework
@@ -47,3 +47,8 @@ management:
   endpoint:
     health:
       show-details: never
+
+lifeos:
+  public-url: ${APP_PUBLIC_URL}
+  session-cookie-secure: ${APP_SESSION_COOKIE_SECURE}
+  mail-from: ${APP_MAIL_FROM}

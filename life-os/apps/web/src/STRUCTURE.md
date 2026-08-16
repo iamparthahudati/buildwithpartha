@@ -53,6 +53,8 @@ Inside one feature or component category, use relative imports. Relative imports
 
 Aliases are declared in both TypeScript and Vite so typechecking and production bundling resolve the same modules.
 
+`app/environment.ts` is the typed public-configuration boundary used by both Vite startup and the browser bootstrap. Feature code consumes validated configuration through the application boundary rather than reading `import.meta.env` directly.
+
 ## Enforced rules
 
 `npm run verify:boundaries` checks every JavaScript/TypeScript source file and fails when:

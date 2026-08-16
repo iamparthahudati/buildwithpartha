@@ -15,6 +15,8 @@ The backend baseline uses JUnit, AssertJ and ArchUnit, with PostgreSQL Testconta
 
 The local gateway contract starts disposable Vite and mock-upstream servers. It proves `/life-os/api/*` paths and query strings are forwarded unchanged, API status/body responses are not replaced by HTML, nested `/life-os/*` UI routes receive the SPA document, and similarly prefixed UI paths do not cross the API boundary.
 
+Environment tests exercise successful startup parsing plus missing, blank, malformed and sensitive-looking values. They assert that failures name every affected key without reproducing any value. Frontend test mode and the backend `test` profile supply deterministic public/non-secret values so the quality gates remain self-contained.
+
 ## Required test dimensions
 
 - User: anonymous, unverified, verified, expired/revoked session, second user attempting cross-account access.

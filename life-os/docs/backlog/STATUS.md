@@ -38,6 +38,7 @@ Last updated: 2026-08-16
 | LOS-0208 | Done | `feature/LOS-0208-frontend-quality-tools` | Formatting, lint, types, component/accessibility tests and an 80% coverage gate pass. |
 | LOS-0209 | Done | `feature/LOS-0209-backend-quality-tools` | Formatting, static analysis, unit/architecture tests, Testcontainers support and an 80% line/branch coverage gate pass. |
 | LOS-0210 | Done | `feature/LOS-0210-local-full-stack-gateway` | Vite dev/preview proxy preserves same-origin API paths and cannot conflict with the nested SPA fallback. |
-| LOS-0211 | Ready | — | Add safe startup validation for frontend and backend environment configuration. |
+| LOS-0211 | Done | `feature/LOS-0211-environment-validation` | Frontend and backend startup validate required keys and safe shapes while errors expose key names only. |
+| LOS-0212 | Ready | — | Add the cross-stack CI foundation, secret scan, caching and remote enforcement. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

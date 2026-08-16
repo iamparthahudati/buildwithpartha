@@ -12,10 +12,13 @@ React 19 + TypeScript + Vite client for LifeOS. The application is independently
 ```bash
 npm ci
 npm run verify:dependencies
+cp .env.example .env.local
 npm run dev
 ```
 
 Open `http://localhost:5173/life-os/`. The development server intentionally rejects another process using the same port instead of silently moving LifeOS to a different URL.
+
+Vite validates `VITE_APP_BASE_PATH` and `VITE_API_BASE_PATH` before development or production builds begin. Both values are public browser configuration: the application path must be an absolute directory path, and the API path must be nested beneath its `/api` boundary. Missing, blank or malformed configuration stops startup with key names only; values are never included in the error. Tests use deterministic public values through Vite's `test` mode.
 
 Vite is the local same-origin gateway. Browser requests beneath `/life-os/api/` are forwarded unchanged to the Spring Boot service at `http://127.0.0.1:8080`; all other `/life-os/*` requests remain with the frontend and nested routes receive the SPA entry document. Use relative API URLs in browser code—do not call port `8080` directly or add local CORS.
 
@@ -53,4 +56,4 @@ Use `npm install --package-lock-only` only in a dedicated dependency update tick
 
 ## Current boundary
 
-LOS-0201 provides the executable frontend foundation and temporary readiness view. LOS-0207 adds public module entrypoints, TypeScript/Vite aliases, and an executable boundary gate. LOS-0208 adds the formatting, lint, component-test, accessibility-test and coverage baseline. LOS-0210 owns only the local same-origin proxy and fallback order; React Router, design tokens, production components, authentication and product screens remain owned by their later tickets.
+LOS-0201 provides the executable frontend foundation and temporary readiness view. LOS-0207 adds public module entrypoints, TypeScript/Vite aliases, and an executable boundary gate. LOS-0208 adds the formatting, lint, component-test, accessibility-test and coverage baseline. LOS-0210 owns the local same-origin proxy and fallback order; LOS-0211 owns public startup configuration validation. React Router, design tokens, production components, authentication and product screens remain owned by their later tickets.
