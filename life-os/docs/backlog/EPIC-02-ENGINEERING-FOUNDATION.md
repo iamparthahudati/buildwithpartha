@@ -13,9 +13,8 @@
 | LOS-0209 | Configure backend quality tools | Add formatting/static analysis, JUnit, AssertJ, Testcontainers, architecture tests, and coverage reporting. Clean build is reproducible. | LOS-0202, LOS-0204 |
 | LOS-0210 | Build local full-stack gateway | Add local Caddy/dev proxy or documented equivalent so browser/API behave same-origin under `/life-os`; SPA refresh and API routing do not conflict. | LOS-0201, LOS-0202 |
 | LOS-0211 | Define environment validation | Validate required frontend/backend configuration on startup; commit safe `.env.example`; errors name missing keys without printing values. | LOS-0201, LOS-0202 |
-| LOS-0212 | Add CI foundation | On feature PR run docs check, format, lint, typecheck/compile, unit/integration tests, build, secret scan. Cache safely; a failing check blocks merge. | LOS-0004, LOS-0203, LOS-0208, LOS-0209 |
+| LOS-0212 | Add CI foundation | On feature PR run docs check, format, lint, typecheck/compile, unit/integration tests, build, secret scan. Cache safely; a failing check blocks merge. When a remote exists, bind required checks and protection to `develop`/`master`. | LOS-0004, LOS-0203, LOS-0208, LOS-0209 |
 | LOS-0213 | Add API health and problem details | Implement versioned safe error format, correlation ID, liveness/readiness, and restricted actuator configuration. Tests prove no stack trace leaks. | LOS-0202, LOS-0206 |
 | LOS-0214 | Add OpenAPI baseline | Generate `/api/v1` spec with server path, security/CSRF notes, standard problems, pagination schema, and CI artifact. Empty baseline validates. | LOS-0213 |
 | LOS-0215 | Add test data builders | Create deterministic frontend/backend factories for user/project/task/time objects with timezone controls. No production-like personal data enters fixtures. | LOS-0208, LOS-0209 |
 | LOS-0216 | Run engineering foundation gate | Fresh clone starts web/API/DB, nested routes build, tests/CI pass, and docs match commands. Record timings and defects. | LOS-0201–LOS-0215 |
-

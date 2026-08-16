@@ -27,6 +27,8 @@ Last updated: 2026-08-16
 | LOS-0111 | Done | `feature/LOS-0111-product-vocabulary` | Canonical cross-layer vocabulary, statuses, priorities, labels and verbs approved. |
 | LOS-0112 | Done | `feature/LOS-0112-content-tone-guide` | User-facing voice, state, validation, destructive, review, localization and fixture rules approved. |
 | LOS-0113 | Done baseline | `feature/LOS-0113-privacy-data-lifecycle` | Data inventory, purposes, retention, rights, export/deletion, logs, backups, email, providers, files and AI mapped; owner/legal phase-gate decisions remain explicit. |
-| LOS-0114 | Ready | — | Review and sign off the complete product/UX discovery baseline; convert every unresolved decision into a named ticket or ADR. |
+| LOS-0114 | Done gate | `feature/LOS-0114-product-ux-phase-gate` | Owner approved the product/UX baseline; gate passed for Phase 1 and every material unknown has a named closure ticket/ADR. |
+| LOS-0201 | Ready | — | Bootstrap the nested-path React 19/TypeScript/Vite application and starter test. |
+| LOS-0202 | Ready | — | Bootstrap the Java 21/Spring Boot API and starter test independently after the same gate. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

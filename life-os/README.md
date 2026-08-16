@@ -46,4 +46,5 @@ No implementation work should begin until the relevant ticket is marked `Ready` 
 - [Product vocabulary](./docs/29-PRODUCT-VOCABULARY.md)
 - [Content and tone guide](./docs/30-CONTENT-AND-TONE-GUIDE.md)
 - [Privacy and data lifecycle](./docs/31-PRIVACY-DATA-LIFECYCLE.md)
+- [Product and UX phase gate](./docs/gates/PRODUCT-UX-PHASE-GATE.md)
 - [Backlog index](./docs/backlog/README.md)

@@ -1,5 +1,7 @@
 # Development roadmap
 
+Current position: Phase 1 / Release 0.1 foundations. The LOS-0114 product/UX gate passed on 2026-08-16; no application code or production release exists yet.
+
 ## Release 0.1 — Foundations
 
 Repository, Git policy, CI, local stack, tokens, atomic/composed components, component catalog, API skeleton, database baseline.
@@ -25,4 +27,3 @@ Search, notifications, reports, exports, recurring tasks hardening, offline draf
 Security/a11y/performance hardening, data export/delete, backups and restore rehearsal, monitoring, staging, Cloudflare, VPS deployment, rollback, production verification.
 
 After 1.0: prioritize based on actual use. Team support and AI remain separate opt-in initiatives rather than automatic next steps.
-

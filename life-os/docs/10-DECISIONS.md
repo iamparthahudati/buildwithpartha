@@ -13,5 +13,6 @@
 | ADR-009 | Accepted | `master` production, `develop` integration, `feature/*` per ticket. | User's required Git model. |
 | ADR-010 | Accepted | v1 is single-user-per-account; teams/sharing deferred. | Keeps authorization and product scope deliverable while preserving future expansion. |
 | ADR-011 | Accepted | Keep the main site and LifeOS as separate deployable applications behind one hostname; route LifeOS under `/life-os` first. | Allows both products to use React/Java safely while isolating releases, sessions, data, caching and rollback. |
+| [ADR-012](./adr/ADR-012-V1-PRIVACY-POSTURE.md) | Accepted | Use an adults-only, India-first, no-tracking v1; required-service email only, files/AI off, and short tested export/deletion/backup defaults. | Minimizes private-data and provider exposure while leaving final legal/provider evidence as a production gate. |
 
 Create a dedicated file in `docs/adr/` for any decision that changes these contracts. Do not rewrite history silently.

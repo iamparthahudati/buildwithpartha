@@ -4,7 +4,7 @@ Last updated: 2026-08-16
 
 ## Phase
 
-Phase 0 — Planning and repository readiness.
+Phase 1 — Foundations and component library.
 
 ## Completed
 
@@ -31,6 +31,7 @@ Phase 0 — Planning and repository readiness.
 - LOS-0111 — Canonical UI/code/API/database vocabulary, statuses, priorities, labels and action verbs approved.
 - LOS-0112 — Content voice, validation/state/destructive/review language, localization rules and original fixture policy approved.
 - LOS-0113 — Personal-data inventory, purposes, classifications, retention, consent/notice, export/deletion, logging, backup, email, provider, optional file and future AI lifecycle baseline completed with official-source review.
+- LOS-0114 — Product/UX phase gate passed with owner sign-off; the complete scope, information architecture, journeys, wireframes, interaction, language and privacy baseline is approved for engineering foundations.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -45,7 +46,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0114 — Run product/UX phase gate`.
+`LOS-0201 — Bootstrap React application`.
 
 ## Known decisions requiring implementation-time values
 
@@ -55,5 +56,4 @@ Phase 0 — Planning and repository readiness.
 - Backup destination and retention policy.
 - Exact stable dependency patch versions at bootstrap.
 - Legal operator/controller name, privacy/grievance contact and approved launch geography.
-- Owner acceptance or replacement of the adults-only, India-first and 30-day deletion-grace/35-day backup-expiry recommendations.
-- Final privacy/legal applicability review; the discovery document is an engineering baseline, not legal advice or a compliance claim.
+- ADR-012 accepts adults-only, India-first, 24-hour export, 30-day deletion-grace and 35-day backup-expiry engineering defaults; final privacy/legal applicability and provider review remains required before production.

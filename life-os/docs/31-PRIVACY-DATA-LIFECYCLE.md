@@ -8,7 +8,7 @@
 
 This document maps what LifeOS collects, why, where it flows, how long it remains, what an export contains and how deletion reaches live data, caches, jobs, files and backups. It is an implementation contract and launch checklist, not legal advice or a claim of compliance in every jurisdiction.
 
-The production operator/controller legal name, launch countries, VPS/backup locations, SMTP provider, privacy contact and final policy periods are not yet supplied. They are explicit LOS-0114 launch decisions. No public privacy notice may invent them.
+The production operator/controller legal name, VPS/backup locations, SMTP provider, privacy contact and final legal policy values are not yet supplied. They remain named production-gate decisions. No public privacy notice may invent them. ADR-012 records the accepted v1 engineering posture.
 
 ## Privacy principles
 
@@ -39,7 +39,7 @@ The separate [CERT-In Directions under section 70B](https://www.cert-in.org.in/P
 
 If LifeOS offers services to or monitors people in the EEA, the [EU General Data Protection Regulation](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=EN) may add controller transparency, lawful-basis, rights, records, security, breach and international-transfer obligations. UK and other country/state regimes need their own launch review. Public internet reach alone is not used here to assert a legal conclusion.
 
-Until LOS-0114 decides launch geography and counsel confirms scope, LifeOS must:
+ADR-012 makes v1 India-first. Until a documented jurisdiction/transfer review approves expansion, LifeOS must:
 
 - avoid claiming worldwide privacy compliance;
 - keep the system capable of access, correction, export, erasure, consent withdrawal and grievance handling;
@@ -51,9 +51,9 @@ Until LOS-0114 decides launch geography and counsel confirms scope, LifeOS must:
 
 Cloudflare is an infrastructure processor/independent controller for some account/service data, not the LifeOS privacy policy. Cloudflare’s [Privacy Policy](https://www.cloudflare.com/privacypolicy/) states that customers remain responsible for their own sites/applications and end-user compliance. Review the applicable [Cloudflare data processing/SCC terms](https://www.cloudflare.com/en-gb/cloudflare-customer-scc/), selected services, logs, locations and subprocessors before enabling production proxy/security products.
 
-## Recommended v1 launch posture
+## Accepted v1 engineering posture
 
-These are phase-gate recommendations, not silent assumptions:
+LOS-0114 accepted these defaults through ADR-012. Final legal/provider review may require a documented pre-production change:
 
 | Decision | Recommended v1 posture | Why |
 | --- | --- | --- |
@@ -65,7 +65,7 @@ These are phase-gate recommendations, not silent assumptions:
 | AI | Future gate remains off. No private content leaves LifeOS for AI processing. | Provider, purpose, training, region, retention and evaluation are unresolved. |
 | Team sharing | Not available in v1. | Every record remains private to one account; sharing would change roles, notices and deletion rights. |
 
-LOS-0114 must accept these recommendations or create named ADR/tickets before implementation dependencies are released.
+Any change to these defaults requires a superseding ADR and updates to this lifecycle, tests and public notice before affected processing begins.
 
 ## Data classification
 
@@ -141,7 +141,7 @@ If a later capability needs any item above, update scope, this inventory, threat
 
 ## Retention classes
 
-These are proposed maximums for engineering design and LOS-0114 approval. A shorter product-specific period wins unless a documented legal obligation requires longer.
+These are accepted engineering maximums under ADR-012. A shorter product-specific period wins unless a documented legal obligation requires longer; final legal/provider verification remains required before production.
 
 | Class | Maximum/trigger | Applies to |
 | --- | --- | --- |
@@ -260,7 +260,7 @@ Never export password/session/token/CSRF hashes, raw security secrets, internal 
 
 ## Account deletion lifecycle
 
-Proposed v1 state machine:
+Accepted v1 engineering state machine under ADR-012:
 
 ```text
 ACTIVE
@@ -407,11 +407,10 @@ Maintain legal entity, service, purpose, data categories, locations, transfer me
 | Blocker/decision | Owner/ticket | Unblocks when |
 | --- | --- | --- |
 | Legal operator/controller identity and privacy/grievance contact | Owner + LOS-0114/LOS-1614 | Verified publishable values recorded |
-| Adults-only and India-first recommendation | Owner + LOS-0114; ADR if changed | Accepted or replacement child/international scope ticket created |
 | Applicable-law review including DPDP commencement/CERT-In/operator form | Owner/legal + LOS-0114/LOS-1515 | Written scope/deadlines/log requirements recorded |
 | VPS, backup, SMTP, monitoring provider/regions/contracts | LOS-0008, LOS-1402, LOS-1601, LOS-1604, LOS-1608 | Processor register entries complete |
 | Exact session/token/email/privacy-request retention | LOS-0501–LOS-0507, LOS-1402, LOS-0517–LOS-0519 | Schema/job/policy tests match approved classes |
-| Account deletion grace and backup expiry | Owner + LOS-0114, LOS-0518, LOS-1608 | 30/35-day proposal accepted or replaced consistently |
+| Account deletion grace and backup expiry implementation | LOS-0518, LOS-1608 | Jobs, restore, policy and tests match the accepted 30/35-day defaults or a superseding ADR |
 | Privacy notice/terms and versioned consent UI | LOS-0503, LOS-0509, LOS-1614 | Counsel-reviewed copy matches implementation |
 | Export schema/deletion propagation | LOS-0517–LOS-0519, LOS-1512 | Automated cross-user/completeness/purge tests pass |
 | Incident contact/reporting runbook | LOS-1504, LOS-1610, LOS-1613 | Tabletop proves applicable clocks/contact paths |
@@ -437,7 +436,7 @@ Maintain legal entity, service, purpose, data categories, locations, transfer me
 
 ## Source revalidation
 
-Recheck these official sources during LOS-0114 and immediately before launch:
+Recheck these official sources during LOS-1614/LOS-1515 and immediately before launch:
 
 - [India Code — Digital Personal Data Protection Act, 2023 and linked Rules/notifications](https://www.indiacode.nic.in/handle/123456789/22037)
 - [Official Digital Personal Data Protection Rules, 2025 PDF](https://upload.indiacode.nic.in/showfile?actid=AC_CEN_45_0_00003_2023-22_1763464807080&filename=dpdprules2025.pdf&type=rule)
