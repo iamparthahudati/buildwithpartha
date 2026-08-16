@@ -43,6 +43,9 @@ const requiredFragments = [
   "cancel-in-progress: true",
   "npm ci --ignore-scripts",
   "./gradlew clean build --no-daemon",
+  "name: life-os-openapi",
+  "life-os/apps/api/build/openapi/life-os-openapi.json",
+  "if-no-files-found: error",
   "GITLEAKS_ENABLE_COMMENTS: \"false\"",
 ];
 

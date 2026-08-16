@@ -19,6 +19,7 @@
 - Generic auth recovery responses prevent account enumeration.
 - Only aggregate liveness and readiness probes are public. Actuator discovery, the health root, component detail and every other actuator capability remain unavailable or denied.
 - Every response receives a safe correlation ID. Caller values are length/character allowlisted before entering response headers or logging context; unsafe values are replaced.
+- The OpenAPI JSON is authenticated, contains no private runtime data, and documents the `lifeos_session` HttpOnly cookie plus `X-CSRF-TOKEN` mutation requirement. Interactive documentation is disabled.
 
 ## Authorization and privacy
 

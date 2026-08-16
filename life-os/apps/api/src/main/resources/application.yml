@@ -59,6 +59,15 @@ management:
         readiness:
           include: readinessState,db
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /openapi
+  remove-broken-reference-definitions: false
+  swagger-ui:
+    enabled: false
+  show-actuator: false
+
 lifeos:
   public-url: ${APP_PUBLIC_URL}
   session-cookie-secure: ${APP_SESSION_COOKIE_SECURE}
