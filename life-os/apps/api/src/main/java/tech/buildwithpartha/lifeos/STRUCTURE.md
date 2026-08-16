@@ -6,7 +6,7 @@ Domains: `auth`, `user`, `project`, `task`, `calendar`, `timeblock`, `focus`, `s
 
 Cross-cutting packages: `common` for stable domain-neutral primitives/errors and `config` for Spring configuration. Avoid a global controller/service/repository layout.
 
-The `config` package owns early process-environment validation and typed Spring configuration binding. Runtime validation reports key names only and completes before service or persistence beans are created.
+The `config` package owns early process-environment validation, typed Spring configuration binding, HTTP correlation, safe API failure mapping and cross-cutting security/actuator policy. Runtime validation reports key names only and completes before service or persistence beans are created.
 
 Within a domain, add layers only when used:
 
@@ -41,7 +41,7 @@ config -----------------> domain packages and common (wiring only)
 - `common` does not depend on any domain or on `config`.
 - Domain subpackages are limited to `api`, `application`, `domain`, and `infrastructure`; add only the layers a domain actually uses.
 
-`common.error.ErrorCode` is the stable machine-readable code value, and `common.error.CodedException` is the base for expected coded failures. Exception messages remain server-side; LOS-0213 maps codes to safe RFC Problem Details.
+`common.error.ErrorCode` is the stable machine-readable code value, and `common.error.CodedException` is the base for expected coded failures. `common.error.ApiProblem` and `FieldProblem` define the versioned public response shape. Exception messages and rejected values remain server-side; `config` maps failures to safe Problem Details with the request correlation ID.
 
 `common.pagination.PageResponse` is the immutable API pagination envelope. Pages are zero-based and expose `items`, `page`, `size`, `totalItems`, and `totalPages`.
 

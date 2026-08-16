@@ -1,0 +1,14 @@
+package tech.buildwithpartha.lifeos.common.error;
+
+/** Stable cross-cutting error codes used before domain-specific error catalogs exist. */
+public final class StandardErrorCodes {
+
+  public static final ErrorCode ACCESS_DENIED = ErrorCode.of("ACCESS_DENIED");
+  public static final ErrorCode AUTHENTICATION_REQUIRED = ErrorCode.of("AUTHENTICATION_REQUIRED");
+  public static final ErrorCode INTERNAL_ERROR = ErrorCode.of("INTERNAL_ERROR");
+  public static final ErrorCode INVALID_REQUEST = ErrorCode.of("INVALID_REQUEST");
+  public static final ErrorCode RESOURCE_NOT_FOUND = ErrorCode.of("RESOURCE_NOT_FOUND");
+  public static final ErrorCode VALIDATION_FAILED = ErrorCode.of("VALIDATION_FAILED");
+
+  private StandardErrorCodes() {}
+}

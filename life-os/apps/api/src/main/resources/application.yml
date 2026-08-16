@@ -41,12 +41,23 @@ server:
 
 management:
   endpoints:
+    access:
+      default: none
     web:
       exposure:
-        include: health,info
+        include: health
   endpoint:
     health:
+      access: read-only
+      probes:
+        enabled: true
+      show-components: never
       show-details: never
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db
 
 lifeos:
   public-url: ${APP_PUBLIC_URL}

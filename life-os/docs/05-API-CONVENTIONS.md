@@ -22,6 +22,43 @@ Authentication endpoints: `/auth/signup`, `/auth/login`, `/auth/logout`, `/auth/
 - Use `If-Match`/version or an equivalent explicit version field for collision-sensitive updates.
 - Never expose entity classes directly from controllers; use request/response records.
 
+## Problem Details
+
+Failures use `application/problem+json` and this versioned shape:
+
+```json
+{
+  "type": "https://buildwithpartha.tech/life-os/problems/v1/validation-failed",
+  "title": "Validation failed",
+  "status": 400,
+  "detail": "One or more fields are invalid.",
+  "instance": "/life-os/api/v1/tasks",
+  "code": "VALIDATION_FAILED",
+  "correlationId": "c91cdba4-1d9f-4c5e-afcf-945ebca78a72",
+  "errors": [{"field": "title", "code": "NotBlank"}]
+}
+```
+
+- `type` is a stable absolute URI beneath `/life-os/problems/v1/`; changing its meaning requires a new problem version or type.
+- `title` and `detail` are safe API-owned summaries, not raw exception or validation messages.
+- `instance` contains only the request path, never its query string.
+- `code` is the stable machine-readable `ErrorCode` value.
+- `correlationId` matches the response `X-Correlation-ID` header.
+- `errors` is omitted when empty and otherwise contains only safe field names and validator codes. It never includes rejected values.
+- Authentication and authorization failures use the same shape. Unexpected failures use `INTERNAL_ERROR` and never expose an exception class, cause, message or stack trace.
+
+## Correlation IDs
+
+Every response includes `X-Correlation-ID`. The server reuses an incoming value only when it begins with an ASCII letter or digit, contains only ASCII letters, digits, `.`, `_` or `-`, and is at most 64 characters. Missing or unsafe values are replaced by a generated UUID. The selected value is available to server logging context as `correlationId`; request bodies, query strings, credentials and private record content remain prohibited from logs.
+
+## Health endpoints
+
+- `GET /actuator/health/liveness` is public and reports only aggregate liveness status.
+- `GET /actuator/health/readiness` is public and reports only aggregate readiness status, including database readiness internally.
+- Component names and details are hidden from both responses.
+- The health root and all other actuator paths are not public. Configuration leaves non-health capabilities unexposed, and security denies every actuator path except the two probes.
+- Health endpoints are operational exceptions to the versioned product API base and do not create a product resource contract.
+
 ## Security
 
 - Browser authentication is the session cookie. Frontend code never reads it.

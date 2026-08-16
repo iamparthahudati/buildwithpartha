@@ -44,6 +44,7 @@ Phase 1 — Foundations and component library.
 - LOS-0210 — Vite development/preview same-origin gateway added with exact `/life-os/api` proxy matching, unchanged API paths and live tests proving API routing precedes nested SPA fallback.
 - LOS-0211 — Frontend and backend startup validation added for required public/runtime configuration, with deterministic test profiles, safe local examples and errors limited to missing/invalid key names.
 - LOS-0212 — Four-check GitHub Actions foundation added with pinned actions, safe lock-scoped caches, frontend/backend builds, full-history secret scanning and enforced protection/default-branch settings for `develop` and `master`.
+- LOS-0213 — Versioned safe API Problem Details, validated response correlation IDs, aggregate liveness/readiness and deny-by-default actuator access added with tests proving diagnostic and rejected-value data cannot leak.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -58,7 +59,7 @@ Phase 1 — Foundations and component library.
 
 ## Next recommended ticket
 
-`LOS-0213 — Add API health and problem details`.
+`LOS-0214 — Add OpenAPI baseline`.
 
 ## Known decisions requiring implementation-time values
 

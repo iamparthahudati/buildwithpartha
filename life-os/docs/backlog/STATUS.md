@@ -40,6 +40,7 @@ Last updated: 2026-08-16
 | LOS-0210 | Done | `feature/LOS-0210-local-full-stack-gateway` | Vite dev/preview proxy preserves same-origin API paths and cannot conflict with the nested SPA fallback. |
 | LOS-0211 | Done | `feature/LOS-0211-environment-validation` | Frontend and backend startup validate required keys and safe shapes while errors expose key names only. |
 | LOS-0212 | Done | `feature/LOS-0212-ci-foundation` | Four required pinned-action checks, safe caches, secret scanning and permanent-branch protection are configured. |
-| LOS-0213 | Ready | — | Add safe API Problem Details, correlation IDs and public/restricted health behavior. |
+| LOS-0213 | Done | `feature/LOS-0213-api-health-problem-details` | Versioned safe Problem Details, validated correlation IDs, public probes and restricted actuator behavior pass leak-focused tests. |
+| LOS-0214 | Ready | — | Add and validate the OpenAPI baseline for the versioned API contracts. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
