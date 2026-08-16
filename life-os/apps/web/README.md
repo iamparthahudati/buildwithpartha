@@ -11,6 +11,7 @@ React 19 + TypeScript + Vite client for LifeOS. The application is independently
 
 ```bash
 npm ci
+npm run verify:dependencies
 npm run dev
 ```
 
@@ -20,10 +21,13 @@ Open `http://localhost:5173/life-os/`. The development server intentionally reje
 
 ```bash
 npm run typecheck
+npm run verify:dependencies
 npm test
 ```
 
 `npm test` creates a production build and verifies that the generated HTML loads its assets from `/life-os/assets/`. Build output is written to `dist/` for the later Caddy/container tickets.
+
+Use `npm install --package-lock-only` only in a dedicated dependency update ticket. Normal development and CI use `npm ci`; they never rewrite `package-lock.json`.
 
 ## Current boundary
 

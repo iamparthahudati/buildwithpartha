@@ -1,3 +1,5 @@
+import org.gradle.api.artifacts.dsl.LockMode
+
 plugins {
     java
     id("org.springframework.boot") version "4.1.0"
@@ -15,6 +17,11 @@ java {
 
 repositories {
     mavenCentral()
+}
+
+dependencyLocking {
+    lockAllConfigurations()
+    lockMode.set(LockMode.STRICT)
 }
 
 dependencies {
@@ -42,6 +49,24 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.register("resolveAndLockAll") {
+    description = "Resolves every dependency configuration and writes the complete lock state."
+    group = "build setup"
+    notCompatibleWithConfigurationCache("Resolves configurations only during explicit lock maintenance")
+
+    doFirst {
+        require(gradle.startParameter.isWriteDependencyLocks) {
+            "Run resolveAndLockAll with --write-locks."
+        }
+    }
+
+    doLast {
+        configurations
+            .filter { it.isCanBeResolved }
+            .forEach { it.resolve() }
+    }
 }
 
 tasks.bootJar {

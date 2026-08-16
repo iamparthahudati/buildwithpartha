@@ -35,6 +35,7 @@ No implementation work should begin until the relevant ticket is marked `Ready` 
 - [Project charter](./docs/00-PROJECT-CHARTER.md)
 - [Permanent product context](./docs/01-PRODUCT-CONTEXT.md)
 - [Architecture](./docs/02-ARCHITECTURE.md)
+- [Dependency policy](./docs/DEPENDENCY-POLICY.md)
 - [Design system](./docs/03-DESIGN-SYSTEM.md)
 - [Domain model](./docs/04-DOMAIN-MODEL.md)
 - [API conventions](./docs/05-API-CONVENTIONS.md)

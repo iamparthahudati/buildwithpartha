@@ -75,7 +75,7 @@ life-os/
 
 ## Backend rules
 
-- Java 21; LOS-0202 locks the initial backend to Spring Boot 4.1.0 and the checksummed Gradle 9.5.1 wrapper. Updates must follow the LOS-0203 dependency policy rather than arriving in unrelated tickets.
+- Java 21; Spring Boot 4.1.0 and the checksummed Gradle 9.5.1 wrapper are locked. Exact frontend declarations, npm lockfile v3, strict Gradle lock state, weekly update proposals and the security override path are governed by [the dependency policy](./DEPENDENCY-POLICY.md); unrelated tickets cannot upgrade them.
 - Package by domain. Within a domain use `api`, `application`, `domain`, and `infrastructure` subpackages when complexity warrants; avoid a global controller/service/repository bucket.
 - REST JSON API with OpenAPI generated from code and consumer-facing examples.
 - Spring Data JPA for normal persistence; explicit queries for reports/search where necessary.

@@ -51,7 +51,7 @@ These values are not secrets and may appear in the client bundle.
 
 | Area | Owner | Must be resolved by |
 | --- | --- | --- |
-| Stable dependency versions | Engineering owner | LOS-0203 |
+| Stable dependency versions | Engineering owner | Resolved by LOS-0203; future changes follow `DEPENDENCY-POLICY.md` |
 | Local ports and compose names | Engineering owner | LOS-0204/LOS-0210 |
 | Staging hostname and access | Partha | LOS-1605 |
 | VPS OS/resources/deploy user | Partha | LOS-1601 |
@@ -69,4 +69,3 @@ Each production/staging secret needs owner, purpose, environment, creation date,
 - Local/CI: disposable; clear after task/job unless retained temporarily for a named failing test.
 - Staging: synthetic; resettable; attachments/exports/jobs follow short test retention.
 - Production: follows privacy/data lifecycle, audit, export, deletion and backup policies approved in dedicated tickets.
-
