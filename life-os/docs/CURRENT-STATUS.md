@@ -13,6 +13,7 @@ Phase 0 — Planning and repository readiness.
 - LOS-0003 — Local `master`/`develop` branch foundation established without changing or deleting `main`; remote protection awaits a configured remote.
 - LOS-0004 — Contribution guide, pull-request/ticket templates and LifeOS ownership rules added.
 - LOS-0005 — Backlog workflow, readiness gate, priorities/estimates and status ledger established.
+- LOS-0006 — ADR template, decision triggers, review and supersession workflow established.
 - LifeOS product boundary and production URL recorded.
 - Reference screens analyzed as interaction/layout guidance.
 - React/Java/PostgreSQL/VPS/Cloudflare architecture selected.
@@ -27,7 +28,7 @@ Phase 0 — Planning and repository readiness.
 
 ## Next recommended ticket
 
-`LOS-0006 — Establish ADR workflow`; LOS-0007 through LOS-0009 are also ready according to their dependencies.
+`LOS-0007 — Define versioning and changelog`; LOS-0008 and LOS-0009 are also ready.
 
 ## Known decisions requiring implementation-time values
 
