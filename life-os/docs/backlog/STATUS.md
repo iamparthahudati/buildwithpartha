@@ -80,5 +80,6 @@ Last updated: 2026-08-17
 | LOS-0401 | Done          | `feature/LOS-0401-form-field`                   | FormField composed as a render prop (not a clone) so each atom's own required `label` stays real; FormErrorSummary/FormFieldGroup add error-summary linkage; `groupFieldProblems` maps server field errors. |
 | LOS-0402 | Done          | `feature/LOS-0402-search-field`                 | SearchField composes TextInput with debounced/submit timing (`useSearchField`), IME-safe composition handling, a focus shortcut, a decoupled loading announcement and a recent/no-results panel.            |
 | LOS-0403 | Done          | `feature/LOS-0403-combobox`                     | Combobox: ARIA 1.2 combobox+listbox pattern, focus stays on the input, multi-select stays open with removable chips, honest non-virtualized threshold row, `fieldIds` additively exported from `components/ui`. |
+| LOS-0404 | Done          | `feature/LOS-0404-date-range-field`             | DateRangeField groups two DateInputs under one fieldset/legend; a self-computed order check constrains both native pickers and needs no copy from the caller; presets stay a mechanism, not a hard-coded policy. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

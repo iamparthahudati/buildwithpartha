@@ -1,0 +1,71 @@
+/* DateRangeField (LOS-0404). */
+
+.lifeos-date-range-field {
+  display: grid;
+  gap: var(--lifeos-space-3);
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+
+.lifeos-date-range-field__legend {
+  padding: 0;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-date-range-field__presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-date-range-field__preset {
+  padding: var(--lifeos-space-1) var(--lifeos-space-3);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  cursor: pointer;
+}
+
+.lifeos-date-range-field__preset:hover {
+  border-color: var(--lifeos-color-border-interactive);
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-date-range-field__preset:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.lifeos-date-range-field__inputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-date-range-field__inputs > * {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+/*
+ * Below the small breakpoint the two fields stack full-width, one above the
+ * other, rather than being squeezed into an unreadable side-by-side pair —
+ * the closest this ticket gets to the reference "mobile sheet" without a
+ * modal primitive to host a true bottom sheet in (Drawer, LOS-0414).
+ */
+@media (width < 480px) {
+  .lifeos-date-range-field__inputs > * {
+    flex-basis: 100%;
+  }
+}
+
+.lifeos-date-range-field:disabled .lifeos-date-range-field__legend {
+  color: var(--lifeos-color-text-muted);
+}
