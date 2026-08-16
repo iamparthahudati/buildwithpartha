@@ -1,0 +1,31 @@
+/* IconButton (LOS-0307). A square target built on Button. */
+
+.lifeos-icon-button {
+  aspect-ratio: 1;
+  padding-inline: 0;
+}
+
+.lifeos-icon-button.lifeos-button--sm {
+  min-width: var(--lifeos-space-8);
+}
+
+.lifeos-icon-button.lifeos-button--md {
+  min-width: var(--lifeos-density-control-height);
+}
+
+.lifeos-icon-button.lifeos-button--lg {
+  min-width: var(--lifeos-space-12);
+}
+
+/*
+ * An icon-only control has no text to enlarge its hit area, so the 44px
+ * minimum matters more here than anywhere else. On touch devices every size
+ * grows to the minimum target.
+ */
+@media (pointer: coarse) {
+  .lifeos-icon-button.lifeos-button--sm,
+  .lifeos-icon-button.lifeos-button--md {
+    min-width: var(--lifeos-target-min-size);
+    min-height: var(--lifeos-target-min-size);
+  }
+}

@@ -1,0 +1,44 @@
+/*
+ * Icon sizing. The box is set here rather than through the library's `size`
+ * prop so every icon scales with the user's text settings: the tokens are in
+ * rem, so 200% zoom and a larger browser font size enlarge icons with the text
+ * they sit beside.
+ */
+
+.lifeos-icon {
+  flex: none;
+  /* Follows the surrounding text unless a consumer sets a color explicitly. */
+  color: inherit;
+  /* Aligns the optical center of the glyph with the text baseline. */
+  vertical-align: middle;
+}
+
+.lifeos-icon--sm {
+  width: var(--lifeos-space-4); /* 16px */
+  height: var(--lifeos-space-4);
+}
+
+.lifeos-icon--md {
+  width: var(--lifeos-space-5); /* 20px */
+  height: var(--lifeos-space-5);
+}
+
+.lifeos-icon--lg {
+  width: var(--lifeos-space-6); /* 24px */
+  height: var(--lifeos-space-6);
+}
+
+.lifeos-icon--xl {
+  width: var(--lifeos-space-8); /* 32px */
+  height: var(--lifeos-space-8);
+}
+
+/*
+ * Icons are strokes, not fills. Under forced colors the stroke must follow the
+ * user's text color, and `fill: currentcolor` from the reset would otherwise
+ * paint the interior.
+ */
+.lifeos-icon {
+  fill: none;
+  stroke: currentcolor;
+}

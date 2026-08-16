@@ -47,5 +47,9 @@ Last updated: 2026-08-17
 | LOS-0301 | Done          | `feature/LOS-0301-freeze-design-tokens`         | Two-layer token contract frozen with proven WCAG 2.2 AA pairings and an enforced no-raw-color rule.                                                                            |
 | LOS-0302 | Done          | `feature/LOS-0302-css-reset-global-foundations` | Token-driven reset, focus-visible ring, selection, reduced-motion, forced-colors/contrast hooks and a focusable skip link, with native semantics preserved.                    |
 | LOS-0303 | Done          | `feature/LOS-0303-component-catalog`            | Development-only catalog with registry, per-state specimens and viewport controls; excluded from every production build.                                                       |
+| LOS-0304 | Done          | `feature/LOS-0304-icon-primitive`               | Single `Icon` wrapper over lucide-react (ADR-013) with named rem sizes, decorative/labelled contract and per-icon tree-shaking.                                                |
+| LOS-0305 | Done          | `feature/LOS-0304-icon-primitive`               | Heading, Text, Caption, Metric and TruncatedText; visual size is independent of heading level and truncation keeps the full string in the DOM.                                 |
+| LOS-0306 | Done          | `feature/LOS-0304-icon-primitive`               | Five variants, three sizes, icon slots; loading preserves width, stays focusable and blocks a duplicate submit.                                                                |
+| LOS-0307 | Done          | `feature/LOS-0304-icon-primitive`               | Icon-only control with a required `label`, so a missing accessible name is a type error; 44px targets on touch.                                                                |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

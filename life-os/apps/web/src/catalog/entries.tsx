@@ -1,5 +1,6 @@
 import { CHART_SERIES_TOKENS, Z_INDEX } from "@styles/tokens";
 
+import { ATOM_CATALOG_ENTRIES } from "./atomEntries";
 import { Swatch } from "./Swatch";
 import type { CatalogEntry } from "./registry";
 
@@ -128,8 +129,8 @@ export const CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
     ],
   },
   {
-    id: "typography",
-    name: "Typography",
+    id: "type-scale",
+    name: "Type scale",
     group: "Foundations",
     summary: "The type scale, weights and the tabular numerals required for metrics and timers.",
     states: [
@@ -274,4 +275,5 @@ export const CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
       },
     ],
   },
+  ...ATOM_CATALOG_ENTRIES,
 ]);

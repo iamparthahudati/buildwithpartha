@@ -63,10 +63,14 @@ Phase 1 — Foundations and component library.
 
 - LOS-0302 — Token-driven CSS reset and global foundations added: normalized box sizing, form typography and media without erasing native list, heading or control semantics; a single `:focus-visible` ring; selection, reduced-motion, forced-colors and increased-contrast hooks; and a skip link that stays focusable, is the first tab stop and moves real focus to a `tabindex="-1"` main landmark.
 - LOS-0303 — Development-only component catalog added: a registry that fails loudly on duplicate or stateless entries, per-state specimens for the frozen foundations, and viewport controls that start at the 320px minimum. It is excluded from every production build rather than protected at runtime, with a runtime guard as a second line of defense.
+- LOS-0304 — Single `Icon` wrapper added over the approved icon set (lucide-react, ADR-013): named rem sizes that scale with text, a decorative-versus-labelled contract enforced by the type signature, and per-icon imports so a screen ships only the icons it renders.
+- LOS-0305 — Heading, Text, Caption, Metric and TruncatedText added. Visual size is a separate prop from heading level so appearance never forces a broken outline; tabular numerals are opt-in for values that change in place; truncation clips visually while leaving the full string in the DOM.
+- LOS-0306 — Button added with primary/secondary/ghost/danger/link variants, three sizes and decorative icon slots. Loading keeps the button's width and its place in the tab order, announces itself through `aria-busy`, and blocks a duplicate submit.
+- LOS-0307 — IconButton added on top of Button with a required `label`, so an icon-only control without an accessible name fails typechecking rather than review; touch targets stay at 44px at every size.
 
 ## Next recommended ticket
 
-`LOS-0304 — Build Icon primitive`.
+`LOS-0308 — Build Link`.
 
 ## Known decisions requiring implementation-time values
 
