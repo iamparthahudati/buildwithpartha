@@ -74,3 +74,9 @@
     min-height: var(--lifeos-target-min-size);
   }
 }
+
+/* Slot for a strength meter or policy list beneath a password field. */
+.lifeos-text-input__help {
+  display: grid;
+  gap: var(--lifeos-space-1);
+}

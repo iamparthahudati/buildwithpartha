@@ -1,6 +1,6 @@
-import { Checkbox, RadioGroup, Switch, TextInput } from "@components/ui";
+import { Checkbox, PasswordInput, RadioGroup, Switch, Textarea, TextInput } from "@components/ui";
 
-import { ClearableDemo, PriorityDemo } from "./FormDemos";
+import { ClearableDemo, NotesDemo, PriorityDemo } from "./FormDemos";
 import { PRIORITY_OPTIONS } from "./formFixtures";
 
 import type { CatalogEntry } from "./registry";
@@ -153,6 +153,56 @@ export const FORM_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
               enterKeyHint="next"
             />
             <TextInput label="Search tasks" labelHidden placeholder="Search tasks" type="search" />
+          </div>
+        ),
+      },
+    ],
+  },
+  {
+    id: "password-input",
+    name: "PasswordInput",
+    group: "Atoms",
+    summary:
+      "Reveal toggle, Caps Lock hint and a help slot that never receives the value, so the component cannot leak it.",
+    states: [
+      {
+        id: "password-states",
+        name: "States",
+        description:
+          "The reveal toggle reports itself as pressed, and always returns to concealed on a fresh mount.",
+        render: () => (
+          <div className="specimen-stack">
+            <PasswordInput label="Password" />
+            <PasswordInput
+              label="New password"
+              autoComplete="new-password"
+              help={<span className="lifeos-field__description">Use at least 12 characters.</span>}
+            />
+            <PasswordInput label="Password" error="Password is incorrect." />
+            <PasswordInput label="Password" disabled />
+          </div>
+        ),
+      },
+    ],
+  },
+  {
+    id: "textarea",
+    name: "Textarea",
+    group: "Atoms",
+    summary:
+      "Auto-growing uses the field-sizing CSS property rather than measuring scroll height on every keystroke.",
+    states: [
+      {
+        id: "textarea-states",
+        name: "States",
+        description: "Fixed, auto-growing with a counter, error, read-only and disabled.",
+        render: () => (
+          <div className="specimen-stack">
+            <Textarea label="Notes" placeholder="Anything worth remembering" />
+            <NotesDemo />
+            <Textarea label="Notes" error="Notes cannot be empty." />
+            <Textarea label="Notes" defaultValue="Fixed content" readOnly />
+            <Textarea label="Notes" disabled />
           </div>
         ),
       },

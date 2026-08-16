@@ -74,10 +74,12 @@ Phase 1 — Foundations and component library.
 - LOS-0312 — RadioGroup added using a real fieldset, legend and shared input name, so arrow-key movement, the single roving tab stop and the one-selection rule all come from the browser rather than from script. Options carry their own descriptions; the error belongs to the group.
 - LOS-0313 — Switch added for settings that take effect immediately, announced as on/off through `role="switch"` on a native checkbox. A toggle in flight refuses a second change so it cannot race itself, and the pending state is announced rather than only shown.
 - LOS-0314 — TextInput added with a real bound label — never a placeholder standing in for one — plus prefix/suffix adornments, a clear action kept out of the tab order because the keyboard already has that capability, error/success/read-only/disabled states, and pass-through mobile keyboard and password-manager attributes.
+- LOS-0315 — PasswordInput added with a reveal toggle that reports itself as pressed and returns to concealed on every mount, a politely announced Caps Lock hint, `new-password` versus `current-password` autocomplete so password managers offer to generate or fill correctly, and a help slot for a strength meter that never receives the value and therefore cannot leak it.
+- LOS-0316 — Textarea added. Auto-growing uses the `field-sizing` CSS property instead of measuring scroll height on every keystroke, so there is no resize observer to keep in sync. The character counter counts code points, so an emoji is one character, and it warns rather than setting `maxLength` — silently truncating a paste would lose the user's text without telling them.
 
 ## Next recommended ticket
 
-`LOS-0315 — Build PasswordInput`.
+`LOS-0317 — Build Select`.
 
 ## Known decisions requiring implementation-time values
 
