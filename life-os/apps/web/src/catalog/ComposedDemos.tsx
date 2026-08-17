@@ -3,6 +3,8 @@ import { useRef, useState, type FormEvent } from "react";
 import { Button, Select, Text, TextInput } from "@components/ui";
 import {
   buildCommonDateRangePresets,
+  ColorIconPicker,
+  type ColorIconValue,
   Combobox,
   type ComboboxOption,
   DateRangeField,
@@ -321,5 +323,21 @@ export function DurationFieldBoundedDemo() {
       max={180}
       description="Between 15 minutes and 3 hours."
     />
+  );
+}
+
+export function ColorIconPickerDemo() {
+  // "amber", not one of the swatch names ("blue", "green", "purple", "teal",
+  // "red", "olive") that would read as a plain CSS named color to the
+  // design-token verifier's `color:`-property check.
+  const [value, setValue] = useState<ColorIconValue>({ color: "amber", icon: "rocket" });
+
+  return (
+    <div className="specimen-stack">
+      <ColorIconPicker legend="Appearance" value={value} onValueChange={setValue} />
+      <Text tone="secondary" size="sm">
+        Stored value: <code>{JSON.stringify(value)}</code>
+      </Text>
+    </div>
   );
 }

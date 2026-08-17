@@ -110,9 +110,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0406 — DurationField added: two NumberInputs (Hours, Minutes) over one canonical minute total, matching Estimate's stored form. The two inputs are derived fresh from the total on every render, which is what makes an overflowing minutes entry normalize into whole hours automatically, with no "1h 90m" intermediate state to clean up. A first version clamped `min`/`max` live on every keystroke and shipped two failing tests before anything else: clearing a field below its minimum snapped the value back mid-edit, so the next digit typed landed appended to the snapped-back number. The fix reports out-of-bounds values as a message instead of rewriting them, the same "derive and display, never rewrite while the user is typing" shape `DateRangeField`'s order check and `DateTimeField`'s DST check already use. The readable summary (`lib/duration.ts`) uses `Intl.NumberFormat`'s `unit` style rather than the newer `Intl.DurationFormat`, which is not yet safe against the project's frozen Safari/Firefox browser target.
 
+- LOS-0407 — ColorIconPicker added for Project/Habit appearance. Two real native radio groups reuse the eight frozen chart tokens (LOS-0301) rather than a new palette, each proven — not assumed — to clear WCAG AA as a solid fill under a white preview icon via the same contrast math `styles/tokens.test.ts` already uses. The stored value is always a name ("blue", "folder"), never a hex value or a `--lifeos-*` token, so a future repaint of the palette changes nothing about data already saved. Icons come from a small curated list within the approved lucide set rather than the whole library.
+
 ## Next recommended ticket
 
-`LOS-0407 — Build ColorIconPicker`.
+`LOS-0408 — Build Alert and InlineMessage`.
 
 ## Known decisions requiring implementation-time values
 

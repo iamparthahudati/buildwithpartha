@@ -18,3 +18,12 @@ export {
 export { buildCommonDateRangePresets } from "./dateRangePresets";
 export { DateTimeField, type DateTimeFieldProps, type DateTimeValue } from "./DateTimeField";
 export { DurationField, type DurationFieldProps } from "./DurationField";
+export { ColorIconPicker, type ColorIconPickerProps, type ColorIconValue } from "./ColorIconPicker";
+export {
+  COLOR_SWATCHES,
+  ICON_OPTIONS,
+  type ColorSwatch,
+  type ColorSwatchName,
+  type IconOption,
+  type IconOptionName,
+} from "./colorIconPalette";
