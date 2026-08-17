@@ -106,9 +106,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0404 — DateRangeField added, grouping two DateInputs under one fieldset and legend the way RadioGroup groups related radio inputs. The end-before-start check is computed by the component itself rather than left to every caller to word — the rule is universal to any date range, unlike a required-field message — and is enforced structurally too: each side constrains the other's native `min`/`max` on top of the message. Presets stay a mechanism (`{ label, range }`) rather than a hard-coded policy, matching the "no domain columns hardcoded" principle DataTable's ticket already states; `buildCommonDateRangePresets` ships a ready-made set in its own module so the plain function doesn't break Fast Refresh by sharing a file with the component.
 
+- LOS-0405 — DateTimeField added, grouping a DateInput and a TimeInput under one fieldset the way DateRangeField groups its two dates. `timeZone` is required input rather than a label, because a new `resolveLocalDateTime` (`lib/localDateTime.ts`) uses it to check whether the chosen date and time actually name a real moment: twice a year, in a zone with daylight saving, a spring-forward gap skips an hour that has no valid instant (an error) and a fall-back fold repeats one, giving two valid instants an hour apart (a non-blocking warning, resolved to the earlier one). A first version of the resolver silently missed the fold case — it refined from the naive instant's own offset instead of checking a day either side of it — caught and fixed by the 2026 fall-back test before it shipped.
+
 ## Next recommended ticket
 
-`LOS-0405 — Build DateTimeField`.
+`LOS-0406 — Build DurationField`.
 
 ## Known decisions requiring implementation-time values
 
