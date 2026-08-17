@@ -1,0 +1,62 @@
+/* AttachmentList (LOS-0431). */
+
+.lifeos-attachment-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-attachment-list__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  background: var(--lifeos-color-surface);
+}
+
+.lifeos-attachment-list__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 12rem;
+}
+
+.lifeos-attachment-list__name {
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.lifeos-attachment-list__status {
+  flex: 1 1 10rem;
+  min-width: 8rem;
+}
+
+.lifeos-attachment-list__row > .lifeos-inline-message {
+  flex-basis: 100%;
+}
+
+.lifeos-attachment-list__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  margin-left: auto;
+}
+
+@media (width < 768px) {
+  .lifeos-attachment-list__row {
+    align-items: flex-start;
+  }
+
+  .lifeos-attachment-list__status {
+    flex-basis: 100%;
+  }
+
+  .lifeos-attachment-list__actions {
+    margin-left: 0;
+  }
+}

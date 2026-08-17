@@ -1,5 +1,7 @@
 import {
   AccountMenuDemo,
+  AttachmentDemo,
+  AttachmentDisabledDemo,
   BackLinkDemo,
   BarChartDemo,
   BreadcrumbsLongDemo,
@@ -363,6 +365,29 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "The current entry's marker pulses gently (disabled under reduced motion); the overdue one is styled distinctly from a plain future entry despite both being un-completed.",
         render: () => <TimelineDemo />,
+      },
+    ],
+  },
+  {
+    id: "attachment",
+    name: "AttachmentUploader / AttachmentList",
+    group: "Composed",
+    summary:
+      "A feature-flagged picker plus the list of what it's picked, following the Files capability's own scan-before-availability lifecycle end to end: uploading (cancellable) → scanning → ready (authorized download/delete) or blocked (failed the scan, never downloadable), with failed (an incomplete upload) retryable. onDownload/onDelete gate whether their own controls render at all rather than rendering them disabled — authorization is the backend's decision, never a hidden frontend control's. Delete reuses ConfirmDialog (LOS-0413) internally, naming the exact file being removed, and closes itself once the caller's own successful delete removes the row from the list.",
+    states: [
+      {
+        id: "attachment-lifecycle",
+        name: "Full lifecycle: ready, blocked, failed, plus a live upload",
+        description:
+          "Add a file to watch it move through a real uploading → scanning → ready sequence; retry the dropped upload; delete goes through a named confirmation before a real pending delay removes the row.",
+        render: () => <AttachmentDemo />,
+      },
+      {
+        id: "attachment-disabled",
+        name: "Files capability off",
+        description:
+          "docs/31-PRIVACY-DATA-LIFECYCLE.md's own P4 \"optional high-risk\" gate: no picker renders at all, only the tone guide's exact explanation.",
+        render: () => <AttachmentDisabledDemo />,
       },
     ],
   },
