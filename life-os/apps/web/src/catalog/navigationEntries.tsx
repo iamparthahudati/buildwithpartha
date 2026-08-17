@@ -1,4 +1,12 @@
-import { AccountMenuDemo, MenuDemo, TabsLocalDemo, TabsUrlDemo } from "./NavigationDemos";
+import {
+  AccountMenuDemo,
+  BackLinkDemo,
+  BreadcrumbsLongDemo,
+  BreadcrumbsShortDemo,
+  MenuDemo,
+  TabsLocalDemo,
+  TabsUrlDemo,
+} from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
 
@@ -52,6 +60,43 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Backed by useDeepLinkParam (LOS-0414) instead — reload the page or use the browser's Back button and the selection stays correct.",
         render: () => <TabsUrlDemo />,
+      },
+    ],
+  },
+  {
+    id: "breadcrumbs",
+    name: "Breadcrumbs",
+    group: "Composed",
+    summary:
+      'A real <nav aria-label="Breadcrumb"><ol> hierarchy. The last item is never a link — there is nothing to navigate to — and carries aria-current="page" instead. A trail longer than maxVisible collapses its middle behind a "Show N hidden breadcrumbs" button rather than losing it outright; each remaining crumb also truncates with an ellipsis on narrow viewports, automatic by breakpoint.',
+    states: [
+      {
+        id: "breadcrumbs-short",
+        name: "Fits without collapsing",
+        description: "Three items, under the default maxVisible of 4.",
+        render: () => <BreadcrumbsShortDemo />,
+      },
+      {
+        id: "breadcrumbs-long",
+        name: "Collapsed, with an expand control",
+        description: "Five items over a maxVisible of 4 — the middle hides behind the button.",
+        render: () => <BreadcrumbsLongDemo />,
+      },
+    ],
+  },
+  {
+    id: "back-link",
+    name: "BackLink",
+    group: "Composed",
+    summary:
+      '"Back" only means the browser\'s own history when document.referrer proves the page was actually reached from elsewhere in this app; otherwise it renders as a real Link to a caller-supplied fallback instead of a history button that could do nothing or leave the app entirely.',
+    states: [
+      {
+        id: "back-link-basic",
+        name: "Renders per the catalog's own referrer",
+        description:
+          "This page's own document.referrer decides which form renders — reload via a direct URL to see the fallback Link instead of the history button.",
+        render: () => <BackLinkDemo />,
       },
     ],
   },
