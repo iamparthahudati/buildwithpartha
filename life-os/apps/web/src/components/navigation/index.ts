@@ -30,3 +30,5 @@ export {
   type FilterState,
   type FilterValue,
 } from "./filterUrlContract";
+export { Pagination, type PaginationProps } from "./Pagination";
+export { paginationRange, type PaginationEntry } from "./paginationRange";
