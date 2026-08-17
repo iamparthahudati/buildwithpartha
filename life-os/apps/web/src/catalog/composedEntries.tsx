@@ -7,6 +7,9 @@ import {
   CreateTaskFormDemo,
   DateRangeFieldDemo,
   DateRangeFieldInvalidOrderDemo,
+  DateTimeFieldDemo,
+  DateTimeFieldFoldDemo,
+  DateTimeFieldGapDemo,
   SearchFieldDebouncedDemo,
   SearchFieldSubmitDemo,
 } from "./ComposedDemos";
@@ -119,6 +122,35 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Invalid order",
         description: "The built-in check, not a message the caller had to write.",
         render: () => <DateRangeFieldInvalidOrderDemo />,
+      },
+    ],
+  },
+  {
+    id: "datetime-field",
+    name: "DateTimeField",
+    group: "Composed",
+    summary:
+      "A DateInput and a TimeInput under one fieldset and legend. The timezone is required input, not a label: it is what lets the field check whether the chosen date and time name a real moment at all.",
+    states: [
+      {
+        id: "datetime-field-default",
+        name: "Ordinary value",
+        description: "An unremarkable date and time produces no extra message.",
+        render: () => <DateTimeFieldDemo />,
+      },
+      {
+        id: "datetime-field-gap",
+        name: "Daylight-saving gap",
+        description:
+          "02:30 on 8 March 2026 in America/New_York is skipped when clocks spring forward — an error, because there is no valid instant to offer.",
+        render: () => <DateTimeFieldGapDemo />,
+      },
+      {
+        id: "datetime-field-fold",
+        name: "Daylight-saving fold",
+        description:
+          "01:30 on 1 November 2026 in America/New_York happens twice when clocks fall back — a warning, not an error, resolved to the earlier occurrence.",
+        render: () => <DateTimeFieldFoldDemo />,
       },
     ],
   },

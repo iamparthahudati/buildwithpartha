@@ -112,6 +112,21 @@
   line-height: var(--lifeos-line-height-snug);
 }
 
+/*
+ * A caveat about the current value that does not block it — e.g. a fold in
+ * local time near a daylight-saving change (LOS-0405). Distinct from
+ * lifeos-field__error, which is for a value that cannot be used at all.
+ */
+.lifeos-field__warning {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  color: var(--lifeos-color-warning);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  line-height: var(--lifeos-line-height-snug);
+}
+
 /* Slot for a strength meter or policy list beneath a field. */
 .lifeos-field__help {
   display: grid;

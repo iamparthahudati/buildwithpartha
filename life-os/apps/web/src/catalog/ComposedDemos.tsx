@@ -7,6 +7,8 @@ import {
   type ComboboxOption,
   DateRangeField,
   type DateRangeValue,
+  DateTimeField,
+  type DateTimeValue,
   FormErrorSummary,
   FormField,
   FormFieldGroup,
@@ -226,6 +228,60 @@ export function DateRangeFieldInvalidOrderDemo() {
     <DateRangeField
       legend="Reporting period"
       timeZone="Asia/Kolkata"
+      value={value}
+      onValueChange={setValue}
+    />
+  );
+}
+
+export function DateTimeFieldDemo() {
+  const [value, setValue] = useState<DateTimeValue>({ date: "2026-08-17", time: "09:30" });
+
+  return (
+    <div className="specimen-stack">
+      <DateTimeField
+        legend="Reminder time"
+        timeZone="Asia/Kolkata"
+        value={value}
+        onValueChange={setValue}
+      />
+      <Text tone="secondary" size="sm">
+        Stored value: <code>{JSON.stringify(value)}</code>
+      </Text>
+    </div>
+  );
+}
+
+/*
+ * 2026-03-08 is when America/New_York clocks spring forward: 01:59:59 EST is
+ * followed directly by 03:00:00 EDT, so 02:30 never happens on any clock
+ * there. A fixed date is used rather than "the next transition from today",
+ * so the specimen stays true regardless of when the catalog is viewed.
+ */
+export function DateTimeFieldGapDemo() {
+  const [value, setValue] = useState<DateTimeValue>({ date: "2026-03-08", time: "02:30" });
+
+  return (
+    <DateTimeField
+      legend="Reminder time"
+      timeZone="America/New_York"
+      value={value}
+      onValueChange={setValue}
+    />
+  );
+}
+
+/*
+ * 2026-11-01 is when America/New_York clocks fall back: 01:59:59 EDT is
+ * followed by 01:00:00 EST, so every wall time in that hour happens twice.
+ */
+export function DateTimeFieldFoldDemo() {
+  const [value, setValue] = useState<DateTimeValue>({ date: "2026-11-01", time: "01:30" });
+
+  return (
+    <DateTimeField
+      legend="Reminder time"
+      timeZone="America/New_York"
       value={value}
       onValueChange={setValue}
     />

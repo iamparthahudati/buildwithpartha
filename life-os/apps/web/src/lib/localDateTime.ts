@@ -136,6 +136,118 @@ export function localTimeFromMinutes(minutes: number): LocalTime {
   ].join(":");
 }
 
+/**
+ * What a calendar date and wall-clock time in one timezone resolve to (LOS-0405).
+ *
+ * Twice a year, in a zone that observes daylight saving, a local date/time pair
+ * stops mapping to exactly one instant. When clocks spring forward, the hour
+ * that is skipped means a time like `02:30` on that date never happens at all.
+ * When clocks fall back, the repeated hour means a time like `01:30` happens
+ * twice, an hour apart — and picking one silently would schedule a Time Block
+ * an hour away from what the user saw on the screen.
+ */
+export type ZonedTimeResolution =
+  | { readonly kind: "valid"; readonly instantMs: number }
+  /** Occurs twice; `instantMs` is the earlier of the two, before the clocks fall back. */
+  | { readonly kind: "ambiguous"; readonly instantMs: number }
+  /** Skipped by the clocks moving forward. There is no valid instant to offer. */
+  | { readonly kind: "nonexistent" };
+
+/**
+ * Resolves a local date/time in `timeZone` to the instant it names.
+ *
+ * There is no direct API for this, so the offset is read from the zone at two
+ * reference points a full day either side of the requested time — safely
+ * outside any transition, since a real IANA zone shifts at most once per
+ * calendar day. If those two offsets agree, nothing changed nearby and the
+ * single candidate they produce is correct. If they disagree, a transition
+ * falls on this local day, and each offset's own candidate instant is checked
+ * against the requested wall time: both matching is the fold (ambiguous),
+ * neither matching is the gap (nonexistent), and exactly one matching is an
+ * ordinary time that simply sits close to the transition.
+ *
+ * Probing the naive instant itself instead of a day either side would miss
+ * the fold: its own offset is already inside one of the two regimes, so
+ * refining from it alone converges on that regime and never surfaces the
+ * other valid instant.
+ */
+export function resolveLocalDateTime(
+  date: LocalDate,
+  time: LocalTime,
+  timeZone: string,
+): ZonedTimeResolution {
+  const { year, month, day } = splitLocalDate(date);
+  const [hourText = "0", minuteText = "0"] = time.split(":");
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+  const naiveMs = Date.UTC(year, month - 1, day, hour, minute);
+
+  const offsetBefore = offsetMinutesAt(naiveMs - MILLISECONDS_PER_DAY, timeZone);
+  const offsetAfter = offsetMinutesAt(naiveMs + MILLISECONDS_PER_DAY, timeZone);
+  const candidateBefore = naiveMs - offsetBefore * 60_000;
+
+  if (offsetBefore === offsetAfter) {
+    return { kind: "valid", instantMs: candidateBefore };
+  }
+
+  const candidateAfter = naiveMs - offsetAfter * 60_000;
+  const requestedWallTime = `${date}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  const matchesBefore = wallTimeAt(candidateBefore, timeZone) === requestedWallTime;
+  const matchesAfter = wallTimeAt(candidateAfter, timeZone) === requestedWallTime;
+
+  if (matchesBefore && matchesAfter) {
+    return { kind: "ambiguous", instantMs: Math.min(candidateBefore, candidateAfter) };
+  }
+  if (matchesBefore) {
+    return { kind: "valid", instantMs: candidateBefore };
+  }
+  if (matchesAfter) {
+    return { kind: "valid", instantMs: candidateAfter };
+  }
+  return { kind: "nonexistent" };
+}
+
+/** The zone's offset from UTC at `ms`, in minutes, positive when ahead of UTC. */
+function offsetMinutesAt(ms: number, timeZone: string): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).formatToParts(new Date(ms));
+
+  const get = (type: Intl.DateTimeFormatPartTypes) => Number(partValue(parts, type));
+  const wallAsUtcMs = Date.UTC(
+    get("year"),
+    get("month") - 1,
+    get("day"),
+    get("hour"),
+    get("minute"),
+    get("second"),
+  );
+
+  return Math.round((wallAsUtcMs - ms) / 60_000);
+}
+
+/** The wall-clock reading of `ms` in `timeZone`, as `YYYY-MM-DDTHH:mm`. */
+function wallTimeAt(ms: number, timeZone: string): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).formatToParts(new Date(ms));
+
+  return `${partValue(parts, "year")}-${partValue(parts, "month")}-${partValue(parts, "day")}T${partValue(parts, "hour")}:${partValue(parts, "minute")}`;
+}
+
 function splitLocalDate(date: LocalDate): { year: number; month: number; day: number } {
   const [year = "0", month = "1", day = "1"] = date.split("-");
   return { year: Number(year), month: Number(month), day: Number(day) };

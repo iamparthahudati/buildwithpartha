@@ -9,6 +9,7 @@ import {
   localTimeFromMinutes,
   localTimeToMinutes,
   nowLocalTime,
+  resolveLocalDateTime,
   todayLocalDate,
 } from "./localDateTime";
 
@@ -94,5 +95,69 @@ describe("local time values", () => {
     expect(localTimeFromMinutes(1440)).toBe("00:00");
     expect(localTimeFromMinutes(1500)).toBe("01:00");
     expect(localTimeFromMinutes(-30)).toBe("23:30");
+  });
+});
+
+describe("resolveLocalDateTime", () => {
+  it("resolves an ordinary time to exactly one instant", () => {
+    const resolution = resolveLocalDateTime("2026-08-17", "09:30", "America/New_York");
+
+    expect(resolution.kind).toBe("valid");
+    expect(resolution).toMatchObject({
+      kind: "valid",
+      instantMs: Date.UTC(2026, 7, 17, 13, 30),
+    });
+  });
+
+  it("agrees with a UTC reading of the same wall time", () => {
+    const resolution = resolveLocalDateTime("2026-08-17", "09:30", "UTC");
+
+    expect(resolution).toEqual({ kind: "valid", instantMs: Date.UTC(2026, 7, 17, 9, 30) });
+  });
+
+  // 2026-03-08 is when America/New_York clocks spring forward: 01:59:59 EST is
+  // followed directly by 03:00:00 EDT, so the half hour in between never
+  // happens on any clock in that zone.
+  it("reports a spring-forward gap as having no valid instant", () => {
+    const resolution = resolveLocalDateTime("2026-03-08", "02:30", "America/New_York");
+
+    expect(resolution).toEqual({ kind: "nonexistent" });
+  });
+
+  it("resolves the times immediately outside the spring-forward gap normally", () => {
+    expect(resolveLocalDateTime("2026-03-08", "01:30", "America/New_York")).toEqual({
+      kind: "valid",
+      instantMs: Date.UTC(2026, 2, 8, 6, 30), // 01:30 EST = 06:30 UTC
+    });
+    expect(resolveLocalDateTime("2026-03-08", "03:30", "America/New_York")).toEqual({
+      kind: "valid",
+      instantMs: Date.UTC(2026, 2, 8, 7, 30), // 03:30 EDT = 07:30 UTC
+    });
+  });
+
+  // 2026-11-01 is when America/New_York clocks fall back: 01:59:59 EDT is
+  // followed by 01:00:00 EST, so every wall time in that hour happens twice.
+  it("reports a fall-back repeat as ambiguous, resolved to the earlier occurrence", () => {
+    const resolution = resolveLocalDateTime("2026-11-01", "01:30", "America/New_York");
+
+    expect(resolution).toEqual({
+      kind: "ambiguous",
+      // The first 01:30 is still EDT (UTC-4); the DST offset has not changed
+      // yet, which is why it is the earlier of the two instants.
+      instantMs: Date.UTC(2026, 10, 1, 5, 30),
+    });
+  });
+
+  it("resolves the time immediately after the fall-back repeat normally", () => {
+    expect(resolveLocalDateTime("2026-11-01", "02:30", "America/New_York")).toEqual({
+      kind: "valid",
+      instantMs: Date.UTC(2026, 10, 1, 7, 30), // 02:30 EST = 07:30 UTC
+    });
+  });
+
+  it("finds no gap or ambiguity in a zone with no daylight saving", () => {
+    // India does not observe DST, so nothing here should ever be flagged.
+    expect(resolveLocalDateTime("2026-03-08", "02:30", "Asia/Kolkata").kind).toBe("valid");
+    expect(resolveLocalDateTime("2026-11-01", "01:30", "Asia/Kolkata").kind).toBe("valid");
   });
 });
