@@ -96,3 +96,11 @@ export {
   type AttachmentValidationResult,
 } from "./attachmentValidation";
 export { sanitizeFileNameForDisplay } from "./attachmentFileName";
+export { CommentComposer, type CommentComposerProps } from "./CommentComposer";
+export {
+  CommentList,
+  type Comment,
+  type CommentListProps,
+  type CommentListStatus,
+} from "./CommentList";
+export { formatAbsoluteCommentTime, formatRelativeCommentTime } from "./commentTimestamp";
