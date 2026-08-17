@@ -5,6 +5,7 @@ import {
   AccountMenu,
   BackLink,
   Breadcrumbs,
+  DataTable,
   FilterBar,
   Menu,
   MetricCard,
@@ -23,13 +24,14 @@ import {
   ViewToggle,
   type ActiveFilterChip,
   type BreadcrumbItem,
+  type DataTableColumn,
   type MenuItemDescriptor,
   type SortOption,
   type SortState,
   type TabItem,
   type ViewMode,
 } from "@components/navigation";
-import { Badge, Button, CountBadge, Link, Select, Text, TextInput } from "@components/ui";
+import { Badge, Button, CountBadge, Link, Select, Surface, Text, TextInput } from "@components/ui";
 import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
 
 /**
@@ -406,5 +408,80 @@ export function TableDemo() {
         ))}
       </TableBody>
     </Table>
+  );
+}
+
+const DATA_TABLE_COLUMNS: readonly DataTableColumn<DemoTask>[] = [
+  { key: "name", header: "Name", render: (task) => task.name, truncate: true },
+  { key: "status", header: "Status", render: (task) => task.status },
+];
+
+export function DataTableDemo() {
+  const [status, setStatus] = useState("");
+  const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(new Set());
+  const [sort, setSort] = useState<SortState>({ optionId: "name", direction: "asc" });
+  const [page, setPage] = useState(1);
+
+  const visibleTasks = status ? DEMO_TASKS.filter((task) => task.status === status) : DEMO_TASKS;
+
+  const chips: ActiveFilterChip[] = status
+    ? [{ id: "status", label: `Status: ${status}`, onRemove: () => setStatus("") }]
+    : [];
+
+  return (
+    <DataTable
+      label="Tasks"
+      columns={DATA_TABLE_COLUMNS}
+      rows={visibleTasks}
+      getRowId={(task) => task.id}
+      getRowLabel={(task) => task.name}
+      emptyTitle="No tasks match this filter"
+      emptyDescription="Try clearing the status filter."
+      filters={{
+        controls: (
+          <Select
+            label="Status"
+            labelHidden
+            placeholder="Any status"
+            options={[
+              { value: "Open", label: "Open" },
+              { value: "In progress", label: "In progress" },
+              { value: "Done", label: "Done" },
+            ]}
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+          />
+        ),
+        activeChips: chips,
+        onClearAll: () => setStatus(""),
+        resultCount: `${visibleTasks.length} tasks`,
+      }}
+      sort={{
+        options: [
+          { id: "name", label: "Name" },
+          { id: "status", label: "Status" },
+        ],
+        value: sort,
+        onChange: setSort,
+      }}
+      pagination={{ page, pageSize: 10, total: visibleTasks.length, onPageChange: setPage }}
+      selection={{
+        selectedIds,
+        onSelectedIdsChange: setSelectedIds,
+        bulkActions: (
+          <Button variant="danger" size="sm">
+            Delete
+          </Button>
+        ),
+      }}
+      renderCard={(task) => (
+        <Surface padding="sm">
+          <Text weight="semibold">{task.name}</Text>
+          <Text tone="secondary" size="sm">
+            {task.status}
+          </Text>
+        </Surface>
+      )}
+    />
   );
 }
