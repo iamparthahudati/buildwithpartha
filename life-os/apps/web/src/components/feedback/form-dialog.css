@@ -1,0 +1,67 @@
+/* FormDialog (LOS-0425). */
+
+.lifeos-form-dialog__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-form-dialog__error {
+  margin-top: var(--lifeos-space-3);
+}
+
+.lifeos-form-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--lifeos-space-3);
+  margin-top: var(--lifeos-space-5);
+}
+
+/*
+ * A true full-screen sheet, distinct from Dialog's own baseline mobile
+ * treatment (a bottom sheet capped at 90dvh) — a form usually needs the
+ * whole viewport's height once its own keyboard is up. `position: fixed`
+ * lifts the dialog out of the backdrop's centering layout entirely, so it
+ * covers the viewport regardless of the backdrop's own padding, without
+ * needing a `:has()` selector to also change the backdrop itself.
+ */
+@media (width < 768px) {
+  dialog.lifeos-form-dialog {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    max-height: none;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+  }
+
+  /*
+   * Grid's implicit rows stretch to fill whatever height the dialog is
+   * given — fine at the default content-sized height, but once the dialog
+   * above is stretched to the full viewport that leaves header/description
+   * pulled apart from the form by whatever space the fields don't use.
+   * Flex keeps header/description at their natural size and hands all of
+   * it to the body instead, so only the fields scroll and the actions stay
+   * pinned to the bottom edge.
+   */
+  .lifeos-form-dialog .lifeos-dialog__body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .lifeos-form-dialog .lifeos-dialog__body > form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .lifeos-form-dialog .lifeos-form-dialog__fields {
+    flex: 1;
+    overflow-y: auto;
+  }
+}

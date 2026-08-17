@@ -7,6 +7,7 @@ import {
   DetailPanelDemo,
   DialogDemo,
   DrawerDemo,
+  FormDialogDemo,
   NestedDialogDemo,
   ToastDemo,
 } from "./MessagingDemos";
@@ -343,6 +344,22 @@ export const MESSAGING_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze(
         name: "Deep link, loading and not found",
         description: "The second button opens an id with no matching fixture.",
         render: () => <DetailPanelDemo />,
+      },
+    ],
+  },
+  {
+    id: "form-dialog",
+    name: "FormDialog",
+    group: "Composed",
+    summary:
+      "A create/edit form on Dialog. pending/error stay caller-controlled, the same shape ConfirmDialog already uses. Dialog funnels Escape, the backdrop and its own close button into one onClose, which is what lets the isDirty guard intercept all three — plus Cancel — at a single point behind a discard confirmation. Below the small breakpoint the dialog becomes a true full-screen sheet, distinct from Dialog's own baseline mobile bottom sheet.",
+    states: [
+      {
+        id: "form-dialog-pending-error",
+        name: "Dirty guard, pending, then a retryable error",
+        description:
+          "Type a name, then try Escape or the backdrop. Submitting the first attempt fails; submit again to succeed.",
+        render: () => <FormDialogDemo />,
       },
     ],
   },

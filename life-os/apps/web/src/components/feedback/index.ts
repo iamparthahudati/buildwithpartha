@@ -9,3 +9,4 @@ export { Dialog, type DialogProps, type DialogSize } from "./Dialog";
 export { ConfirmDialog, type ConfirmDialogProps } from "./ConfirmDialog";
 export { Drawer, type DrawerPlacement, type DrawerProps } from "./Drawer";
 export { DetailPanel, type DetailPanelProps } from "./DetailPanel";
+export { FormDialog, type FormDialogProps } from "./FormDialog";
