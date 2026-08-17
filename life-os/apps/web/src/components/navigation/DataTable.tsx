@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { EmptyState, ErrorState, type EmptyStateVariant } from "@components/feedback";
-import { Button, Skeleton, Text } from "@components/ui";
+import { Button, LiveRegion, Skeleton, Text } from "@components/ui";
 
 import { FilterBar, type ActiveFilterChip } from "./FilterBar";
 import { Pagination } from "./Pagination";
@@ -220,6 +220,10 @@ export function DataTable<T>({
         />
       ) : (
         <>
+          {status.type === "loading" ? (
+            // Skeleton is aria-hidden by design; this is what actually announces loading.
+            <LiveRegion message={`Loading ${label}…`} />
+          ) : null}
           <div className="lifeos-data-table__table-view">
             <Table caption={label} density={density}>
               <TableHead>
