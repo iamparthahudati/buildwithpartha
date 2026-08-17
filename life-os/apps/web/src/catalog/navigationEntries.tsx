@@ -3,6 +3,7 @@ import {
   BackLinkDemo,
   BreadcrumbsLongDemo,
   BreadcrumbsShortDemo,
+  DataTableDemo,
   FilterBarDemo,
   MenuDemo,
   MetricCardEmptyDemo,
@@ -241,6 +242,22 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "The Description column truncates; the Name header shows an ascending sort indicator. Select rows or Select all.",
         render: () => <TableDemo />,
+      },
+    ],
+  },
+  {
+    id: "data-table",
+    name: "DataTable",
+    group: "Composed",
+    summary:
+      "The Epic 04 composition, not a ninth primitive: FilterBar, SortControl, the Table primitives, Pagination, EmptyState and ErrorState wired together, fully controlled by the caller exactly like each already is on its own. Generic over the row type via columns/rows/getRowId, so no domain columns are hardcoded here. Column headers are not themselves clickable to sort — SortControl already owns that interaction — but do carry real aria-sort when named as the active field.",
+    states: [
+      {
+        id: "data-table-basic",
+        name: "Filters, sort, selection, bulk actions, pagination and a card view",
+        description:
+          "Filter by status, sort by a field, select rows for the bulk Delete action, or resize narrower to see the card view replace the table.",
+        render: () => <DataTableDemo />,
       },
     ],
   },

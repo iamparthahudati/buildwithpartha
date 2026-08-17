@@ -59,3 +59,13 @@ export {
   type TableSelectAllCellProps,
   type TableSelectCellProps,
 } from "./Table";
+export {
+  DataTable,
+  type DataTableColumn,
+  type DataTableFiltersConfig,
+  type DataTablePaginationConfig,
+  type DataTableProps,
+  type DataTableSelectionConfig,
+  type DataTableSortConfig,
+  type DataTableStatus,
+} from "./DataTable";
