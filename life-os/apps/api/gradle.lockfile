@@ -1,6 +1,7 @@
 # This is a Gradle generated file for dependency locking.
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
+# To regenerate this file, run: ./gradlew :dependencies --write-locks
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,testCompileClasspath
 ch.qos.logback:logback-classic:1.5.34=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 ch.qos.logback:logback-core:1.5.34=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
@@ -25,7 +26,7 @@ com.h2database:h2:2.4.240=testRuntimeClasspath
 com.jayway.jsonpath:json-path:2.10.0=testCompileClasspath,testRuntimeClasspath
 com.puppycrawl.tools:checkstyle:13.9.0=checkstyle
 com.sun.istack:istack-commons-runtime:4.1.2=productionRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
-com.tngtech.archunit:archunit:1.4.2=testCompileClasspath,testRuntimeClasspath
+com.tngtech.archunit:archunit:1.5.0=testCompileClasspath,testRuntimeClasspath
 com.vaadin.external.google:android-json:0.0.20131108.vaadin1=testCompileClasspath,testRuntimeClasspath
 com.zaxxer:HikariCP:7.0.2=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 commons-beanutils:commons-beanutils:1.11.0=checkstyle
@@ -39,9 +40,9 @@ io.micrometer:micrometer-core:1.17.0=compileClasspath,productionRuntimeClasspath
 io.micrometer:micrometer-jakarta9:1.17.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 io.micrometer:micrometer-observation-test:1.17.0=testCompileClasspath,testRuntimeClasspath
 io.micrometer:micrometer-observation:1.17.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-io.swagger.core.v3:swagger-annotations-jakarta:2.2.47=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-io.swagger.core.v3:swagger-core-jakarta:2.2.47=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-io.swagger.core.v3:swagger-models-jakarta:2.2.47=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+io.swagger.core.v3:swagger-annotations-jakarta:2.2.52=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+io.swagger.core.v3:swagger-core-jakarta:2.2.52=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+io.swagger.core.v3:swagger-models-jakarta:2.2.52=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 jakarta.activation:jakarta.activation-api:2.1.4=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 jakarta.annotation:jakarta.annotation-api:3.0.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 jakarta.inject:jakarta.inject-api:2.0.1=productionRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
@@ -128,8 +129,8 @@ org.skyscreamer:jsonassert:1.5.3=testCompileClasspath,testRuntimeClasspath
 org.slf4j:jul-to-slf4j:2.0.18=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.slf4j:slf4j-api:2.0.18=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.slf4j:slf4j-simple:2.0.18=checkstyle
-org.springdoc:springdoc-openapi-starter-common:3.0.3=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-org.springdoc:springdoc-openapi-starter-webmvc-api:3.0.3=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.springdoc:springdoc-openapi-starter-common:3.1.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.springdoc:springdoc-openapi-starter-webmvc-api:3.1.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.springframework.boot:spring-boot-actuator-autoconfigure:4.1.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.springframework.boot:spring-boot-actuator:4.1.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.springframework.boot:spring-boot-autoconfigure:4.1.0=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
