@@ -10,3 +10,13 @@ export { ConfirmDialog, type ConfirmDialogProps } from "./ConfirmDialog";
 export { Drawer, type DrawerPlacement, type DrawerProps } from "./Drawer";
 export { DetailPanel, type DetailPanelProps } from "./DetailPanel";
 export { FormDialog, type FormDialogProps } from "./FormDialog";
+export {
+  CommandPalette,
+  type CommandPaletteGroup,
+  type CommandPaletteItem,
+  type CommandPaletteProps,
+} from "./CommandPalette";
+export {
+  useCommandPaletteShortcut,
+  type UseCommandPaletteShortcutOptions,
+} from "./useCommandPaletteShortcut";

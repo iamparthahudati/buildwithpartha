@@ -2,6 +2,7 @@ import { Alert, EmptyState, ErrorState, InlineMessage } from "@components/feedba
 import { Button, Link } from "@components/ui";
 
 import {
+  CommandPaletteDemo,
   ConfirmDialogDemo,
   ConfirmDialogTypedDemo,
   DetailPanelDemo,
@@ -360,6 +361,22 @@ export const MESSAGING_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze(
         description:
           "Type a name, then try Escape or the backdrop. Submitting the first attempt fails; submit again to succeed.",
         render: () => <FormDialogDemo />,
+      },
+    ],
+  },
+  {
+    id: "command-palette",
+    name: "CommandPalette",
+    group: "Composed",
+    summary:
+      "A keyboard-opened, Dialog-hosted search-and-act surface. A single input drives a grouped listbox through aria-activedescendant, the same real-focus-stays-on-the-input pattern Combobox already uses. Typing timing reuses useSearchField (LOS-0402); no result data is cached inside the component — groups is entirely the caller's, and the active result is tracked by id so a narrowed result set can never leave a stale item highlighted.",
+    states: [
+      {
+        id: "command-palette-grouped-search",
+        name: "Grouped results with a debounced search",
+        description:
+          "Open with the button below or ⌘K / Ctrl+K from anywhere on this page. Type to filter, arrow through results — the disabled item and the group boundary are both skipped — and press Enter or click to select.",
+        render: () => <CommandPaletteDemo />,
       },
     ],
   },
