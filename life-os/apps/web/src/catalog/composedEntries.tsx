@@ -10,6 +10,8 @@ import {
   DateTimeFieldDemo,
   DateTimeFieldFoldDemo,
   DateTimeFieldGapDemo,
+  DurationFieldBoundedDemo,
+  DurationFieldDemo,
   SearchFieldDebouncedDemo,
   SearchFieldSubmitDemo,
 } from "./ComposedDemos";
@@ -151,6 +153,28 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "01:30 on 1 November 2026 in America/New_York happens twice when clocks fall back — a warning, not an error, resolved to the earlier occurrence.",
         render: () => <DateTimeFieldFoldDemo />,
+      },
+    ],
+  },
+  {
+    id: "duration-field",
+    name: "DurationField",
+    group: "Composed",
+    summary:
+      "Hours and minutes entry over one canonical minute total. The two inputs are derived fresh from the total on every render, which is what makes an overflowing minutes entry normalize into whole hours automatically. Bounds are reported, never silently rewritten.",
+    states: [
+      {
+        id: "duration-field-default",
+        name: "Default",
+        description: "The readable summary appears once there is a value, and disappears with it.",
+        render: () => <DurationFieldDemo />,
+      },
+      {
+        id: "duration-field-bounds",
+        name: "Out of bounds",
+        description:
+          "The message names the correction; the typed value is preserved rather than replaced.",
+        render: () => <DurationFieldBoundedDemo />,
       },
     ],
   },

@@ -14,3 +14,9 @@ export {
   type ZonedTimeResolution,
 } from "./localDateTime";
 export { groupFieldProblems, type FieldProblem } from "./serverErrors";
+export {
+  formatDurationMinutes,
+  fromDurationParts,
+  toDurationParts,
+  type DurationParts,
+} from "./duration";
