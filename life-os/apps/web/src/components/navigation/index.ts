@@ -16,3 +16,10 @@ export {
 export { BackLink, type BackLinkProps } from "./BackLink";
 export { canGoBackWithinApp } from "./backLinkSafety";
 export { PageHeader, type PageHeaderProps } from "./PageHeader";
+export {
+  MetricCard,
+  type MetricCardProps,
+  type MetricCardStatus,
+  type MetricTrend,
+  type MetricTrendDirection,
+} from "./MetricCard";

@@ -4,6 +4,10 @@ import {
   BreadcrumbsLongDemo,
   BreadcrumbsShortDemo,
   MenuDemo,
+  MetricCardEmptyDemo,
+  MetricCardErrorDemo,
+  MetricCardLoadingDemo,
+  MetricCardReadyDemo,
   PageHeaderDemo,
   TabsLocalDemo,
   TabsUrlDemo,
@@ -113,6 +117,40 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         name: "Every slot filled",
         description: "Resize the viewport narrower to see the actions drop below the title.",
         render: () => <PageHeaderDemo />,
+      },
+    ],
+  },
+  {
+    id: "metric-card",
+    name: "MetricCard",
+    group: "Composed",
+    summary:
+      "A single number on Surface, built on the Metric typography atom (LOS-0305) rather than a heading — a number is a data point, not a document-outline entry. status is one discriminated prop (ready/loading/error/empty) so an impossible combination is a type error, not a runtime check. A trend is never color alone: a direction icon, the value's own visible text and a hidden increase/decrease/no-change word all back it.",
+    states: [
+      {
+        id: "metric-card-ready",
+        name: "Ready, with trend, period and action",
+        description:
+          "A falling count is good for Open tasks but a rising one is bad for Overdue tasks — isPositive, not direction alone, decides the trend's color.",
+        render: () => <MetricCardReadyDemo />,
+      },
+      {
+        id: "metric-card-loading",
+        name: "Loading",
+        description: "The label stays real visible text; only the value becomes a skeleton.",
+        render: () => <MetricCardLoadingDemo />,
+      },
+      {
+        id: "metric-card-error",
+        name: "Error, with retry",
+        description: "onRetry is optional — omitting it renders the message with no button.",
+        render: () => <MetricCardErrorDemo />,
+      },
+      {
+        id: "metric-card-empty",
+        name: "Empty",
+        description: 'Defaults to "No data yet"; a caller-supplied message overrides it.',
+        render: () => <MetricCardEmptyDemo />,
       },
     ],
   },
