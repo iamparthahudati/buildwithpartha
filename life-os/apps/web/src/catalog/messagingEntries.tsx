@@ -1,7 +1,13 @@
 import { Alert, EmptyState, ErrorState, InlineMessage } from "@components/feedback";
 import { Button, Link } from "@components/ui";
 
-import { DialogDemo, NestedDialogDemo, ToastDemo } from "./MessagingDemos";
+import {
+  ConfirmDialogDemo,
+  ConfirmDialogTypedDemo,
+  DialogDemo,
+  NestedDialogDemo,
+  ToastDemo,
+} from "./MessagingDemos";
 
 import type { CatalogEntry } from "./registry";
 
@@ -282,6 +288,29 @@ export const MESSAGING_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze(
         description:
           "Open the confirmation from inside the first dialog. Escape closes only the topmost layer; the inner one also disables Escape and backdrop dismissal entirely.",
         render: () => <NestedDialogDemo />,
+      },
+    ],
+  },
+  {
+    id: "confirm-dialog",
+    name: "ConfirmDialog",
+    group: "Composed",
+    summary:
+      "Built on Dialog for an irreversible or high-impact action only — description is required, button labels always repeat the action, and focus defaults to Cancel rather than the danger button. pending/error stay caller-controlled, the same shape every composed field in this design system already uses.",
+    states: [
+      {
+        id: "confirm-dialog-pending-error",
+        name: "Pending, then a retryable error",
+        description:
+          "The first confirm fails and the dialog stays open with the error visible; confirm again to succeed.",
+        render: () => <ConfirmDialogDemo />,
+      },
+      {
+        id: "confirm-dialog-typed",
+        name: "Typed confirmation",
+        description:
+          "The ticket's high-impact escalation: the danger action stays disabled until the exact text is typed.",
+        render: () => <ConfirmDialogTypedDemo />,
       },
     ],
   },

@@ -1,0 +1,23 @@
+/* ConfirmDialog (LOS-0413). */
+
+.lifeos-confirm-dialog {
+  display: grid;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-confirm-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--lifeos-space-2);
+}
+
+@media (width < 480px) {
+  .lifeos-confirm-dialog__actions {
+    flex-direction: column-reverse;
+  }
+
+  .lifeos-confirm-dialog__actions > * {
+    width: 100%;
+  }
+}

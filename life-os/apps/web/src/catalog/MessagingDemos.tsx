@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Alert, Dialog, ToastViewport } from "@components/feedback";
+import { Alert, ConfirmDialog, Dialog, ToastViewport } from "@components/feedback";
 import { Button, TextInput } from "@components/ui";
 import { ToastProvider } from "@state/ToastProvider";
 import { useToast } from "@state/toastQueue";
@@ -81,6 +81,74 @@ export function DialogDemo() {
           </div>
         </div>
       </Dialog>
+    </>
+  );
+}
+
+export function ConfirmDialogDemo() {
+  const [open, setOpen] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [failNext, setFailNext] = useState(true);
+
+  function handleConfirm() {
+    setPending(true);
+    setError(undefined);
+
+    setTimeout(() => {
+      setPending(false);
+      if (failNext) {
+        setError("Something went wrong. Try again.");
+        setFailNext(false);
+      } else {
+        setOpen(false);
+      }
+    }, 700);
+  }
+
+  return (
+    <>
+      <Button
+        variant="danger"
+        onClick={() => {
+          setError(undefined);
+          setOpen(true);
+        }}
+      >
+        Archive project
+      </Button>
+      <ConfirmDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={handleConfirm}
+        title={'Archive "Website refresh"?'}
+        description="The Project will leave active views. Its Tasks remain available according to their current status. You can restore the Project from Archived."
+        confirmLabel="Archive project"
+        pending={pending}
+        pendingLabel="Archiving"
+        {...(error ? { error } : {})}
+      />
+    </>
+  );
+}
+
+export function ConfirmDialogTypedDemo() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button variant="danger" onClick={() => setOpen(true)}>
+        Delete Label
+      </Button>
+      <ConfirmDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={() => setOpen(false)}
+        title={'Delete Label "Learning"?'}
+        description="The Label will be removed from 6 records. The records will not be deleted. This can't be undone."
+        confirmLabel="Delete Label"
+        typedConfirmation="Learning"
+      />
     </>
   );
 }
