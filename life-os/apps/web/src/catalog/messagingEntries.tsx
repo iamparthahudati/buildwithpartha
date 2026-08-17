@@ -1,7 +1,7 @@
 import { Alert, EmptyState, ErrorState, InlineMessage } from "@components/feedback";
 import { Button, Link } from "@components/ui";
 
-import { ToastDemo } from "./MessagingDemos";
+import { DialogDemo, NestedDialogDemo, ToastDemo } from "./MessagingDemos";
 
 import type { CatalogEntry } from "./registry";
 
@@ -259,6 +259,29 @@ export const MESSAGING_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze(
             correlationId="8f2c-91ad"
           />
         ),
+      },
+    ],
+  },
+  {
+    id: "dialog",
+    name: "Dialog",
+    group: "Composed",
+    summary:
+      "A focus-trapping, Escape/backdrop-dismissible modal built entirely by hand rather than through <dialog>'s showModal()/close() — jsdom, this project's test environment, implements neither, which would make every behavior here untestable. Escape is routed only to the topmost of any nested pair.",
+    states: [
+      {
+        id: "dialog-basic",
+        name: "Basic",
+        description:
+          "Tab cycles within it; Escape or the backdrop closes it; focus returns to Add project.",
+        render: () => <DialogDemo />,
+      },
+      {
+        id: "dialog-nested",
+        name: "Nested and non-dismissible",
+        description:
+          "Open the confirmation from inside the first dialog. Escape closes only the topmost layer; the inner one also disables Escape and backdrop dismissal entirely.",
+        render: () => <NestedDialogDemo />,
       },
     ],
   },

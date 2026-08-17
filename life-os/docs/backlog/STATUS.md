@@ -88,5 +88,6 @@ Last updated: 2026-08-17
 | LOS-0409 | Done          | `feature/LOS-0409-toast-system`                 | Toast system, first ticket in `state/`; composes Alert with a pause-aware `useAutoDismissTimer`, id-based dedupe/refresh and a `maxVisible` queue that promotes the oldest waiting toast on dismissal. |
 | LOS-0410 | Done          | `feature/LOS-0410-empty-state`                  | EmptyState on Surface; `variant` picks only a default icon, never copy, and the title joins the page's heading outline only when an explicit `titleLevel` is given. |
 | LOS-0411 | Done          | `feature/LOS-0411-error-state`                  | ErrorState maps the tone guide's error formula onto title/description/named actions (onRetry/onGoBack/onSignIn, canonical labels); region composes Alert, page cannot reuse EmptyState's variant type. |
+| LOS-0412 | Done          | `feature/LOS-0412-dialog`                       | Dialog built on `<dialog>` without showModal (unimplemented in jsdom); new useFocusTrap hook and dialogStack registry give real focus trap, restore and topmost-only Escape routing across nested dialogs. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

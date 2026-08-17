@@ -120,9 +120,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0411 — ErrorState added, completing the "empty/error" pair `STRUCTURE.md` names alongside `EmptyState`. The tone guide's error message formula (what happened / what was preserved / next action) maps directly onto `title`/`description`/named recovery props; `onRetry`/`onGoBack`/`onSignIn` carry the tone guide's own canonical labels (`Try again`, `Sign in`) rather than trusting each call site to retype them consistently. `scope="region"` composes `Alert` directly, matching the tone guide's "keep the rest of the page visible" rule for a partial failure; `scope="page"` could not reuse `EmptyState`, since that component's `variant` type names reasons a list is empty, not reasons a load failed.
 
+- LOS-0412 — Dialog added, the first modal primitive; `ConfirmDialog`, `Drawer`/`DetailPanel`, `Menu`, `FormDialog` and `CommandPalette` all build on it later. Built on `<dialog>` without `showModal()`/`close()`, since jsdom (this project's test environment) implements neither — confirmed by direct experiment before committing to the approach, which would otherwise have made every behavior here untestable. A new `useFocusTrap` hook (extracted for the same later tickets to reuse) surfaced two real bugs during testing: an `offsetParent`-based visibility filter that silently excluded every element under jsdom's missing layout engine, and a focus-restore race where the container's own DOM removal settles focus onto `document.body` after a synchronous restore call, fixed by deferring the restore to a microtask. A new `dialogStack.ts` — a plain module-level array, not React state — is what makes Escape safe to nest: each dialog checks whether it is topmost before acting, proven with a two-dialog test built around how nesting actually happens (a confirmation opened from inside an already-open dialog, not two dialogs mounted at once).
+
 ## Next recommended ticket
 
-`LOS-0412 — Build Dialog`.
+`LOS-0413 — Build ConfirmDialog`.
 
 ## Known decisions requiring implementation-time values
 

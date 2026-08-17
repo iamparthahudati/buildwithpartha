@@ -1,5 +1,7 @@
-import { Alert, ToastViewport } from "@components/feedback";
-import { Button } from "@components/ui";
+import { useState } from "react";
+
+import { Alert, Dialog, ToastViewport } from "@components/feedback";
+import { Button, TextInput } from "@components/ui";
 import { ToastProvider } from "@state/ToastProvider";
 import { useToast } from "@state/toastQueue";
 
@@ -49,5 +51,95 @@ export function ToastDemo() {
       </div>
       <ToastViewport />
     </ToastProvider>
+  );
+}
+
+export function DialogDemo() {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Add project</Button>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Add project"
+        description="Projects group related outcomes and Tasks."
+      >
+        <div className="specimen-stack">
+          <TextInput
+            label="Project name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+          />
+          <div className="specimen-row">
+            <Button onClick={() => setOpen(false)}>Add project</Button>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </Dialog>
+    </>
+  );
+}
+
+export function NestedDialogDemo() {
+  const [outerOpen, setOuterOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  return (
+    <>
+      <Button variant="danger" onClick={() => setOuterOpen(true)}>
+        Delete project
+      </Button>
+      <Dialog
+        open={outerOpen}
+        onClose={() => setOuterOpen(false)}
+        title={'Delete "Portfolio refresh"?'}
+      >
+        <div className="specimen-stack">
+          <p>Its Tasks remain available according to their current status.</p>
+          <div className="specimen-row">
+            <Button variant="danger" onClick={() => setConfirmOpen(true)}>
+              Delete project
+            </Button>
+            <Button variant="secondary" onClick={() => setOuterOpen(false)}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+
+        <Dialog
+          open={confirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          title="This can't be undone"
+          dismissible={false}
+          size="sm"
+        >
+          <div className="specimen-stack">
+            <p>
+              Escape and a backdrop click are disabled here — try them, then use one of the two
+              buttons below.
+            </p>
+            <div className="specimen-row">
+              <Button
+                variant="danger"
+                onClick={() => {
+                  setConfirmOpen(false);
+                  setOuterOpen(false);
+                }}
+              >
+                Delete permanently
+              </Button>
+              <Button variant="secondary" onClick={() => setConfirmOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </Dialog>
+      </Dialog>
+    </>
   );
 }
