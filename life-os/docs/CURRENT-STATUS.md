@@ -134,9 +134,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0418 — PageHeader added, composing `Breadcrumbs` (LOS-0417) above the page's one real `<h1>`, an optional description and caller-supplied metadata, a primary action and — reusing `Menu` (LOS-0415) rather than inventing a second dropdown — an overflow menu for everything secondary. "Primary/split actions" is read as a layout split (primary action beside a menu for the rest), not a split-button widget, since that is the shape almost every real page header actually needs and it composes cleanly from pieces this epic already built. The actions row drops to its own full-width row below the title block under the small breakpoint — automatic by breakpoint, confirmed live by comparing the two rows' bounding rects at a mobile viewport width, not just asserted from the CSS.
 
+- LOS-0419 — MetricCard added on `Surface` (LOS-0329), built on the `Metric` typography atom (LOS-0305) rather than a heading — a raw number is a data point, not a document-outline entry, and `Metric` already gives it tabular numerals and a real, visible, selectable label instead of an `aria-label`. `status` is one discriminated prop (`ready`/`loading`/`error`/`empty`) rather than separate booleans, the same shape `Combobox`'s single/multiple split already uses, ruling out impossible combinations as a type error; because `Metric`'s own `value` prop accepts any `ReactNode`, that is the one slot that actually varies across states — the label stays real, visible text throughout, including while loading. A trend is never color alone: a direction icon, the value's own visible text and a hidden "increase"/"decrease"/"no change" word all back it, and the color itself is driven by a caller-supplied `isPositive` rather than direction alone — confirmed live in a browser with a falling "Open tasks" count (good, green) beside a rising "Overdue tasks" count (bad, red).
+
 ## Next recommended ticket
 
-`LOS-0419 — Build MetricCard`.
+`LOS-0420 — Build FilterBar`.
 
 ## Known decisions requiring implementation-time values
 

@@ -1,0 +1,41 @@
+/* MetricCard (LOS-0419). */
+
+.lifeos-metric-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-metric-card__icon {
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-metric-card__trend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  font-variant-numeric: var(--lifeos-font-numeric);
+}
+
+.lifeos-metric-card__trend--positive {
+  color: var(--lifeos-color-success);
+}
+
+.lifeos-metric-card__trend--negative {
+  color: var(--lifeos-color-danger);
+}
+
+.lifeos-metric-card__trend--neutral {
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-metric-card__period {
+  margin: 0;
+}
+
+.lifeos-metric-card__action {
+  margin-top: var(--lifeos-space-1);
+}

@@ -1,18 +1,19 @@
 import { useState } from "react";
-import { Copy, Pencil, Trash2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Copy, Pencil, Trash2, Users } from "lucide-react";
 
 import {
   AccountMenu,
   BackLink,
   Breadcrumbs,
   Menu,
+  MetricCard,
   PageHeader,
   Tabs,
   type BreadcrumbItem,
   type MenuItemDescriptor,
   type TabItem,
 } from "@components/navigation";
-import { Badge, Button, CountBadge, Text } from "@components/ui";
+import { Badge, Button, CountBadge, Link, Text } from "@components/ui";
 import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
 
 /**
@@ -166,4 +167,50 @@ export function PageHeaderDemo() {
       secondaryActions={PAGE_HEADER_SECONDARY_ACTIONS}
     />
   );
+}
+
+export function MetricCardReadyDemo() {
+  return (
+    <div className="specimen-row">
+      <MetricCard
+        icon={CheckCircle2}
+        label="Open tasks"
+        status={{ type: "ready", value: "42" }}
+        period="vs last 7 days"
+        trend={{ direction: "down", value: "8%", isPositive: true }}
+        action={<Link href="#tasks">View all</Link>}
+      />
+      <MetricCard
+        icon={AlertTriangle}
+        label="Overdue tasks"
+        status={{ type: "ready", value: "5" }}
+        period="vs last 7 days"
+        trend={{ direction: "up", value: "3", isPositive: false }}
+      />
+      <MetricCard
+        icon={Users}
+        label="Active members"
+        status={{ type: "ready", value: "18" }}
+        trend={{ direction: "flat", value: "0%", isPositive: true }}
+      />
+    </div>
+  );
+}
+
+export function MetricCardLoadingDemo() {
+  return <MetricCard icon={CheckCircle2} label="Open tasks" status={{ type: "loading" }} />;
+}
+
+export function MetricCardErrorDemo() {
+  return (
+    <MetricCard
+      icon={CheckCircle2}
+      label="Open tasks"
+      status={{ type: "error", message: "Couldn't load this metric.", onRetry: () => {} }}
+    />
+  );
+}
+
+export function MetricCardEmptyDemo() {
+  return <MetricCard icon={CheckCircle2} label="Open tasks" status={{ type: "empty" }} />;
 }
