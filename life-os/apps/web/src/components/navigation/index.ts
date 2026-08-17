@@ -76,3 +76,9 @@ export { formatChartPercent, formatChartValue } from "./chartValueFormat";
 export { BarChart, type BarChartProps } from "./BarChart";
 export { LineChart, type LineChartProps } from "./LineChart";
 export { DonutChart, type DonutChartProps } from "./DonutChart";
+export {
+  Timeline,
+  type TimelineEntry,
+  type TimelineEntryStatus,
+  type TimelineProps,
+} from "./Timeline";

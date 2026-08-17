@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-17
+Last updated: 2026-08-17 (LOS-0430)
 
 ## Phase
 
@@ -146,9 +146,16 @@ Phase 1 — Foundations and component library.
 
 - LOS-0424 — DataTable added, the Epic 04 composition, not a ninth primitive: `FilterBar` (LOS-0420), `SortControl` (LOS-0422), the `Table` primitives (LOS-0423), `Pagination` (LOS-0421), `EmptyState`/`ErrorState` (LOS-0410/0411) wired together, fully controlled by the caller exactly like each already is on its own — `DataTable` owns no query state of its own; the composition *is* the query state living in one caller's component instead of five. Generic over the row type (`columns`/`rows`/`getRowId`), so nothing about a Task or any other record is hardcoded, matching the ticket's own "no domain columns hardcoded" line directly. Column headers are not themselves clickable to sort — `SortControl` already owns that interaction, and a second competing trigger would just be two ways to do the same thing — but do carry real `aria-sort` when named as the active field. `renderCard` swaps in a domain-aware card list below the small breakpoint, using a JS-computed `data-has-card-view` attribute rather than a CSS `:has()` selector, since `:has()` postdates this project's frozen minimum Firefox target. All of it — filtering to one row, the resulting chip, the bulk-action bar appearing, and the card view actually replacing the table at a 375px viewport — was confirmed live in a browser, not just asserted from component tests.
 
+- LOS-0425 — FormDialog added, composing Dialog (LOS-0412) with the same caller-controlled `pending`/`error` shape ConfirmDialog (LOS-0413) established. A `requestClose` wrapper funnels Escape, the backdrop, the header close button and Cancel through one dirty-guard path, opening a ConfirmDialog ("Discard unsaved changes?") instead of closing directly whenever `isDirty`, and no-oping every dismissal path while `pending`.
+- LOS-0426 — CommandPalette and `useCommandPaletteShortcut` added: a keyboard-opened, Dialog-hosted search-and-act surface. Real DOM focus stays on the input at all times, the same `aria-activedescendant` pattern Combobox (LOS-0403) already uses; results render as a flat grouped listbox so Arrow/Home/End navigate one sequence across group boundaries while skipping disabled commands.
+- LOS-0427 — TimerRing added on ProgressRing (LOS-0322). `totalSeconds`/`remainingSeconds`/`status` are plain controlled props with no `setInterval` of its own, the same component-supplies-mechanism/caller-supplies-state split ConfirmDialog and FormDialog already use; the running state's marker pulse is disabled under `prefers-reduced-motion`.
+- LOS-0428 — ChartFrame and ChartLegend added as the chrome around any chart, grouped with MetricCard/DataTable/PageHeader per the component-to-screen map. `status` mirrors DataTable's own `ready`/`loading`/`empty`/`error` shape; the actual chart is always the caller's `children` — drawing one is LOS-0429's ticket, not this one's.
+- LOS-0429 — BarChart, LineChart and DonutChart added as hand-rolled SVG on one shared `0–100` viewBox, responsive with no `ResizeObserver`. All three share the same roving-tabIndex keyboard pattern Menu (LOS-0415) established, with real DOM focus (not just the attribute) moving on Arrow/Home/End; a negative value extends a bar/line below the zero baseline while a donut clamps it to zero, since a pie slice is area and area cannot be negative.
+- LOS-0430 — Timeline added to `components/navigation/`: a vertical `<ol>` of dated milestones in one of four caller-supplied statuses (`completed`/`current`/`future`/`overdue`) — Timeline computes nothing about overdue itself, since only a caller holding both "now" and a timezone can resolve that. `DividerList` (LOS-0330) was evaluated and rejected as a base, since a timeline's connecting line runs vertically through each row's own marker column rather than horizontally between rows. A live-browser pass caught the connecting line rendering at zero height because `height: calc(100% - …)` resolved against the marker's own size; the fix anchors it with `top`/`bottom` on the entry itself instead, letting the box model solve the height from the entry's real (content-derived, wrappable) size.
+
 ## Next recommended ticket
 
-`LOS-0425 — Build FormDialog pattern`.
+`LOS-0431 — Build attachment uploader/list`.
 
 ## Known decisions requiring implementation-time values
 

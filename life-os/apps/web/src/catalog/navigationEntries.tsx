@@ -26,6 +26,7 @@ import {
   TableDemo,
   TabsLocalDemo,
   TabsUrlDemo,
+  TimelineDemo,
   ViewToggleDemo,
 } from "./NavigationDemos";
 
@@ -346,6 +347,22 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Falls back to a plain track-colored ring — ProgressRing's own is-empty treatment — rather than an invisible chart.",
         render: () => <DonutChartEmptyDemo />,
+      },
+    ],
+  },
+  {
+    id: "timeline",
+    name: "Timeline",
+    group: "Composed",
+    summary:
+      "A vertical sequence of dated milestones. status (completed/current/future/overdue) is entirely the caller's — whether a future-dated entry has quietly become overdue depends on \"now\" and a timezone, which only the caller holding both can resolve. Composing DividerList (LOS-0330) directly was considered and rejected: its horizontal hairline-between-rows separator fights a timeline's own vertical connecting line through each marker, so this uses a plain <ol> with its own marker/line CSS instead. Titles stay plain text by default (EmptyState's own titleLevel convention) rather than assuming every milestone deserves a real heading in the page's outline.",
+    states: [
+      {
+        id: "timeline-basic",
+        name: "Completed, current, overdue and future milestones",
+        description:
+          "The current entry's marker pulses gently (disabled under reduced motion); the overdue one is styled distinctly from a plain future entry despite both being un-completed.",
+        render: () => <TimelineDemo />,
       },
     ],
   },
