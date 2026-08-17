@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertTriangle, CheckCircle2, Copy, Pencil, Trash2, Users } from "lucide-react";
 
 import {
   AccountMenu,
+  AttachmentList,
+  AttachmentUploader,
   BackLink,
   BarChart,
   Breadcrumbs,
@@ -29,6 +31,7 @@ import {
   Timeline,
   ViewToggle,
   type ActiveFilterChip,
+  type Attachment,
   type BreadcrumbItem,
   type ChartDatum,
   type ChartLegendItem,
@@ -680,4 +683,130 @@ const TIMELINE_ENTRIES: readonly TimelineEntry[] = [
 
 export function TimelineDemo() {
   return <Timeline entries={TIMELINE_ENTRIES} label="Website refresh milestones" locale="en-US" />;
+}
+
+const ATTACHMENT_ACCEPTED_TYPES = ["application/pdf", "image/png"];
+
+const INITIAL_ATTACHMENTS: readonly Attachment[] = [
+  { id: "contract", fileName: "Signed contract.pdf", fileSizeBytes: 482_133, status: "ready" },
+  { id: "quarantined", fileName: "invoice-scan.pdf", fileSizeBytes: 190_442, status: "blocked" },
+  {
+    id: "dropped",
+    fileName: "Meeting notes.docx",
+    fileSizeBytes: 12_400,
+    status: "failed",
+    error: "The connection dropped before the upload finished.",
+  },
+];
+
+function nextAttachmentId() {
+  return `attachment-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+/**
+ * Owns a real, ticking uploading → scanning → ready sequence for anything
+ * added through the picker, and a real pending delay before a delete
+ * actually removes a row — the same "the demo owns the async simulation,
+ * the component only ever renders what it's told" split `TimerRing`'s own
+ * catalog demo already established for its countdown.
+ */
+export function AttachmentDemo() {
+  const [attachments, setAttachments] = useState<readonly Attachment[]>(INITIAL_ATTACHMENTS);
+  const [deletePending, setDeletePending] = useState(false);
+
+  useEffect(() => {
+    const hasInFlightAttachment = attachments.some(
+      (attachment) => attachment.status === "uploading" || attachment.status === "scanning",
+    );
+    if (!hasInFlightAttachment) {
+      return;
+    }
+    const id = setTimeout(() => {
+      setAttachments((current) =>
+        current.map((attachment) => {
+          if (attachment.status === "uploading") {
+            const next = (attachment.uploadProgress ?? 0) + 20;
+            // `uploadProgress` is only ever read while `status` is
+            // "uploading", so the stale value left behind here is inert.
+            return next >= 100
+              ? { ...attachment, status: "scanning" }
+              : { ...attachment, uploadProgress: next };
+          }
+          if (attachment.status === "scanning") {
+            return { ...attachment, status: "ready" };
+          }
+          return attachment;
+        }),
+      );
+    }, 500);
+    return () => clearTimeout(id);
+  }, [attachments]);
+
+  return (
+    <div className="specimen-stack">
+      <AttachmentUploader
+        acceptedTypes={ATTACHMENT_ACCEPTED_TYPES}
+        acceptedTypesLabel="PDF or PNG"
+        maxFileSizeBytes={5 * 1024 * 1024}
+        locale="en-US"
+        onFilesSelected={(files) => {
+          setAttachments((current) => [
+            ...current,
+            ...files.map((file) => ({
+              id: nextAttachmentId(),
+              fileName: file.name,
+              fileSizeBytes: file.size,
+              status: "uploading" as const,
+              uploadProgress: 0,
+            })),
+          ]);
+        }}
+      />
+
+      <AttachmentList
+        label="Project attachments"
+        attachments={attachments}
+        locale="en-US"
+        emptyTitle="No attachments yet"
+        emptyDescription="Add a file to attach it to this project."
+        onCancel={(id) =>
+          setAttachments((current) => current.filter((attachment) => attachment.id !== id))
+        }
+        onRetry={(id) =>
+          setAttachments((current) =>
+            current.map((attachment) =>
+              // The stale `error` is left in place rather than cleared: it's
+              // only ever read while `status` is "failed", which this
+              // transition just left.
+              attachment.id === id
+                ? { ...attachment, status: "uploading", uploadProgress: 0 }
+                : attachment,
+            ),
+          )
+        }
+        onDownload={() => {}}
+        onDelete={(id) => {
+          setDeletePending(true);
+          setTimeout(() => {
+            setAttachments((current) => current.filter((attachment) => attachment.id !== id));
+            setDeletePending(false);
+          }, 600);
+        }}
+        deletePending={deletePending}
+      />
+    </div>
+  );
+}
+
+export function AttachmentDisabledDemo() {
+  return (
+    <AttachmentUploader
+      acceptedTypes={ATTACHMENT_ACCEPTED_TYPES}
+      acceptedTypesLabel="PDF or PNG"
+      maxFileSizeBytes={5 * 1024 * 1024}
+      locale="en-US"
+      enabled={false}
+      onFilesSelected={() => {}}
+    />
+  );
 }

@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-17 (LOS-0430)
+Last updated: 2026-08-18 (LOS-0431)
 
 ## Phase
 
@@ -152,10 +152,11 @@ Phase 1 — Foundations and component library.
 - LOS-0428 — ChartFrame and ChartLegend added as the chrome around any chart, grouped with MetricCard/DataTable/PageHeader per the component-to-screen map. `status` mirrors DataTable's own `ready`/`loading`/`empty`/`error` shape; the actual chart is always the caller's `children` — drawing one is LOS-0429's ticket, not this one's.
 - LOS-0429 — BarChart, LineChart and DonutChart added as hand-rolled SVG on one shared `0–100` viewBox, responsive with no `ResizeObserver`. All three share the same roving-tabIndex keyboard pattern Menu (LOS-0415) established, with real DOM focus (not just the attribute) moving on Arrow/Home/End; a negative value extends a bar/line below the zero baseline while a donut clamps it to zero, since a pie slice is area and area cannot be negative.
 - LOS-0430 — Timeline added to `components/navigation/`: a vertical `<ol>` of dated milestones in one of four caller-supplied statuses (`completed`/`current`/`future`/`overdue`) — Timeline computes nothing about overdue itself, since only a caller holding both "now" and a timezone can resolve that. `DividerList` (LOS-0330) was evaluated and rejected as a base, since a timeline's connecting line runs vertically through each row's own marker column rather than horizontally between rows. A live-browser pass caught the connecting line rendering at zero height because `height: calc(100% - …)` resolved against the marker's own size; the fix anchors it with `top`/`bottom` on the entry itself instead, letting the box model solve the height from the entry's real (content-derived, wrappable) size.
+- LOS-0431 — AttachmentUploader and AttachmentList added to `components/navigation/`. `status` walks the exact scan lifecycle `docs/31-PRIVACY-DATA-LIFECYCLE.md`'s "Optional attachments" section requires (uploading → scanning → ready/blocked, plus a retryable failed), and `enabled=false` renders the tone guide's own exact "Attachments aren't enabled for LifeOS yet." copy for this P4 optional-high-risk feature rather than hiding silently. `onDownload`/`onDelete` gate whether their controls render at all — authorization is the backend's decision, never a hidden frontend control's. Delete reuses ConfirmDialog (LOS-0413) internally, naming the exact file and closing itself once the caller's own successful delete removes the row. A new `sanitizeFileNameForDisplay` strips Unicode bidi-override characters before any filename reaches the DOM, neutralizing a real extension-spoofing technique (bytes reading `gpj.exe` displayed as `exe.jpg`).
 
 ## Next recommended ticket
 
-`LOS-0431 — Build attachment uploader/list`.
+`LOS-0432 — Build comment composer/list`.
 
 ## Known decisions requiring implementation-time values
 

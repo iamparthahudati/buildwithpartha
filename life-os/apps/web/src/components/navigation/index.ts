@@ -82,3 +82,17 @@ export {
   type TimelineEntryStatus,
   type TimelineProps,
 } from "./Timeline";
+export { AttachmentUploader, type AttachmentUploaderProps } from "./AttachmentUploader";
+export {
+  AttachmentList,
+  type Attachment,
+  type AttachmentListProps,
+  type AttachmentStatus,
+} from "./AttachmentList";
+export {
+  validateAttachmentFile,
+  formatFileSize,
+  type AttachmentRestrictions,
+  type AttachmentValidationResult,
+} from "./attachmentValidation";
+export { sanitizeFileNameForDisplay } from "./attachmentFileName";
