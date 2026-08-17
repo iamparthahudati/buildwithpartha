@@ -1,8 +1,19 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle, CheckCircle2, Copy, Pencil, Trash2, Users } from "lucide-react";
+import {
+  AlertTriangle,
+  Archive,
+  CheckCircle2,
+  Copy,
+  MessageSquare,
+  Pencil,
+  Plus,
+  Trash2,
+  Users,
+} from "lucide-react";
 
 import {
   AccountMenu,
+  ActivityFeed,
   AttachmentList,
   AttachmentUploader,
   BackLink,
@@ -33,6 +44,7 @@ import {
   Timeline,
   ViewToggle,
   type ActiveFilterChip,
+  type ActivityEvent,
   type Attachment,
   type BreadcrumbItem,
   type ChartDatum,
@@ -922,6 +934,104 @@ export function CommentEmptyDemo() {
       timeZone="UTC"
       emptyTitle="No comments yet"
       emptyDescription="Add a comment when you have feedback to leave."
+    />
+  );
+}
+
+function hoursAgoIso(hours: number): string {
+  return new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+}
+
+// Anchored to real "now" the same way AttachmentDemo/CommentDemo's own
+// fixtures are, so Today/Yesterday grouping is always correct whenever the
+// catalog is actually opened.
+function createActivityEvents(): readonly ActivityEvent[] {
+  return [
+    {
+      id: "a1",
+      actorName: "Ada Lovelace",
+      action: "marked done",
+      object: { label: "Fix header on the marketing landing page", href: "#" },
+      createdAt: hoursAgoIso(1),
+      icon: CheckCircle2,
+    },
+    {
+      id: "a2",
+      actorName: "Grace Hopper",
+      action: "commented on",
+      object: { label: "Website refresh", href: "#" },
+      createdAt: hoursAgoIso(3),
+      icon: MessageSquare,
+    },
+    {
+      id: "a3",
+      actorName: "Ada Lovelace",
+      // No `object`: this Task was deleted by someone else after the
+      // comment, so the safe fallback renders in place of a broken link.
+      action: "commented on",
+      createdAt: hoursAgoIso(5),
+      icon: MessageSquare,
+    },
+    {
+      id: "a4",
+      actorName: "Grace Hopper",
+      action: "archived",
+      object: { label: "Q1 planning", href: "#" },
+      createdAt: hoursAgoIso(27),
+      icon: Archive,
+    },
+    {
+      id: "a5",
+      actorName: "Ada Lovelace",
+      action: "created",
+      object: { label: "Onboarding checklist", href: "#" },
+      createdAt: hoursAgoIso(30),
+      icon: Plus,
+    },
+  ];
+}
+
+export function ActivityFeedDemo() {
+  const [events] = useState<readonly ActivityEvent[]>(createActivityEvents);
+  const [page, setPage] = useState(1);
+  const pageSize = 3;
+  const paged = events.slice((page - 1) * pageSize, page * pageSize);
+
+  return (
+    <ActivityFeed
+      label="Project activity"
+      events={paged}
+      locale="en-US"
+      timeZone="UTC"
+      emptyTitle="No activity yet"
+      emptyDescription="Actions taken on this project will show up here."
+      pagination={{ page, pageSize, total: events.length, onPageChange: setPage }}
+    />
+  );
+}
+
+export function ActivityFeedLoadingDemo() {
+  return (
+    <ActivityFeed
+      label="Project activity"
+      events={[]}
+      locale="en-US"
+      timeZone="UTC"
+      emptyTitle="No activity yet"
+      status={{ type: "loading" }}
+    />
+  );
+}
+
+export function ActivityFeedErrorDemo() {
+  return (
+    <ActivityFeed
+      label="Project activity"
+      events={[]}
+      locale="en-US"
+      timeZone="UTC"
+      emptyTitle="No activity yet"
+      status={{ type: "error", message: "Project activity couldn't load.", onRetry: () => {} }}
     />
   );
 }
