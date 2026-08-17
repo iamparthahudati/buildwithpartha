@@ -6,3 +6,4 @@ export {
   type MenuSide,
 } from "./menuPosition";
 export { AccountMenu, type AccountMenuProps } from "./AccountMenu";
+export { Tabs, type TabItem, type TabsProps } from "./Tabs";
