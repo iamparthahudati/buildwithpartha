@@ -1,6 +1,8 @@
 import { Alert, InlineMessage } from "@components/feedback";
 import { Button, Link } from "@components/ui";
 
+import { ToastDemo } from "./MessagingDemos";
+
 import type { CatalogEntry } from "./registry";
 
 /*
@@ -92,6 +94,22 @@ export const MESSAGING_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze(
             <InlineMessage tone="warning">Overdue</InlineMessage>
           </div>
         ),
+      },
+    ],
+  },
+  {
+    id: "toast",
+    name: "Toast",
+    group: "Composed",
+    summary:
+      "Queued, nonblocking notifications composing Alert with auto-dismiss timing. Hover or focus pauses the countdown; a persistent toast (durationMs: null) is the alternative for a critical error that must not disappear on its own.",
+    states: [
+      {
+        id: "toast-queue",
+        name: "Queue, dedupe and pause",
+        description:
+          "Try pushing all three, then hover one — its countdown stops until the pointer leaves.",
+        render: () => <ToastDemo />,
       },
     ],
   },

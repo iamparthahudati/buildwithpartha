@@ -114,9 +114,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0408 — Alert and InlineMessage added, the first ticket to populate the reserved `components/feedback/` category. Both share one four-tone icon contract; `Alert` adds a heading, an action and a dismiss control. `announce` (none/status/alert) is an explicit prop rather than something derived from tone and defaults to `"none"`, because only the caller knows whether a given render is permanent page content or a fresh reaction worth interrupting for — a `danger` message reading "This account is suspended" and one reading "Save failed" cannot share a default. Both components are tested to update in place rather than remount when their message content changes while still announcing, since a remount is what would cause a still-visible message to be announced a second time for no new reason.
 
+- LOS-0409 — Toast system added, the first ticket to populate the reserved `state/` category. `Toast` composes `Alert` rather than reinventing its box, and — unlike `Alert` itself — always announces, since a toast is by nature always a fresh reaction rather than static content. A new `useAutoDismissTimer` hook tracks the true remaining time across pause/resume rather than restarting a full countdown, and `Toast` corrects a subtle case the hook can't see on its own: a refreshed notification arriving while the pointer never left must stay paused, not silently resume underneath the user. `ToastProvider`'s queue dedupes by id (defaulting to tone+message) and caps how many show at once, promoting the oldest waiting toast the moment a slot frees up.
+
 ## Next recommended ticket
 
-`LOS-0409 — Build Toast system`.
+`LOS-0410 — Build EmptyState`.
 
 ## Known decisions requiring implementation-time values
 
