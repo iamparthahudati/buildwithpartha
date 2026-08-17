@@ -9,9 +9,11 @@ import {
   Dialog,
   Drawer,
   FormDialog,
+  TimerRing,
   ToastViewport,
   useCommandPaletteShortcut,
   type CommandPaletteGroup,
+  type TimerRingStatus,
 } from "@components/feedback";
 import { Button, Text, TextInput } from "@components/ui";
 import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
@@ -470,5 +472,46 @@ export function CommandPaletteDemo() {
         placeholder="Search projects or run a command…"
       />
     </>
+  );
+}
+
+const TIMER_RING_TOTAL_SECONDS = 15;
+
+export function TimerRingDemo() {
+  const [remaining, setRemaining] = useState(TIMER_RING_TOTAL_SECONDS);
+  const [status, setStatus] = useState<TimerRingStatus>("idle");
+
+  useEffect(() => {
+    if (status !== "running") {
+      return;
+    }
+    const id = setTimeout(() => {
+      setRemaining((current) => {
+        const next = current - 1;
+        if (next <= 0) {
+          setStatus("completed");
+          return 0;
+        }
+        return next;
+      });
+    }, 1000);
+    return () => clearTimeout(id);
+  }, [status, remaining]);
+
+  return (
+    <TimerRing
+      label="Quick focus break"
+      totalSeconds={TIMER_RING_TOTAL_SECONDS}
+      remainingSeconds={remaining}
+      status={status}
+      locale="en-US"
+      onStart={() => setStatus("running")}
+      onPause={() => setStatus("paused")}
+      onResume={() => setStatus("running")}
+      onReset={() => {
+        setStatus("idle");
+        setRemaining(TIMER_RING_TOTAL_SECONDS);
+      }}
+    />
   );
 }

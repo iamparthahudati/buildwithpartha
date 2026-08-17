@@ -10,6 +10,7 @@ import {
   DrawerDemo,
   FormDialogDemo,
   NestedDialogDemo,
+  TimerRingDemo,
   ToastDemo,
 } from "./MessagingDemos";
 
@@ -377,6 +378,22 @@ export const MESSAGING_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze(
         description:
           "Open with the button below or ⌘K / Ctrl+K from anywhere on this page. Type to filter, arrow through results — the disabled item and the group boundary are both skipped — and press Enter or click to select.",
         render: () => <CommandPaletteDemo />,
+      },
+    ],
+  },
+  {
+    id: "timer-ring",
+    name: "TimerRing",
+    group: "Composed",
+    summary:
+      "A duration display on ProgressRing, tabular numerals included for free from the ring's own font-numeric token. totalSeconds/remainingSeconds/status are plain controlled props — no setInterval of its own — and only status transitions are announced, never the running countdown itself, which the tone guide forbids.",
+    states: [
+      {
+        id: "timer-ring-running",
+        name: "A real 15-second countdown",
+        description:
+          "Start, pause, resume and reset. Watch the ring pulse while running (disabled under reduced motion) and listen for the paused/resumed/completed announcement — never one per second.",
+        render: () => <TimerRingDemo />,
       },
     ],
   },
