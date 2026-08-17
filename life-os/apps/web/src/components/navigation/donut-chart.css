@@ -1,0 +1,60 @@
+/* DonutChart (LOS-0429). */
+
+.lifeos-donut-chart {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.lifeos-donut-chart__svg {
+  width: 100%;
+  max-width: 16rem;
+  aspect-ratio: 1;
+}
+
+.lifeos-donut-chart__slice {
+  fill: var(--lifeos-chart-slice-color);
+  cursor: pointer;
+  transition: opacity var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-donut-chart__slice:hover,
+.lifeos-donut-chart__slice:focus-visible {
+  opacity: 0.8;
+}
+
+.lifeos-donut-chart__empty-track {
+  fill: none;
+  stroke: var(--lifeos-chart-track);
+}
+
+.lifeos-donut-chart__center {
+  position: absolute;
+  color: var(--lifeos-color-text);
+  font-weight: var(--lifeos-font-weight-semibold);
+  font-size: var(--lifeos-font-size-lg);
+  font-variant-numeric: var(--lifeos-font-numeric);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-donut-chart__slice {
+    transition: none;
+  }
+}
+
+@media print {
+  .lifeos-donut-chart__slice {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-donut-chart__slice {
+    fill: CanvasText;
+  }
+
+  .lifeos-donut-chart__empty-track {
+    stroke: CanvasText;
+  }
+}

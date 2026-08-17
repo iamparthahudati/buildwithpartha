@@ -1,6 +1,7 @@
 import {
   AccountMenuDemo,
   BackLinkDemo,
+  BarChartDemo,
   BreadcrumbsLongDemo,
   BreadcrumbsShortDemo,
   ChartFrameEmptyDemo,
@@ -9,7 +10,10 @@ import {
   ChartFrameReadyDemo,
   ChartLegendDemo,
   DataTableDemo,
+  DonutChartEmptyDemo,
+  DonutChartReadyDemo,
   FilterBarDemo,
+  LineChartDemo,
   MenuDemo,
   MetricCardEmptyDemo,
   MetricCardErrorDemo,
@@ -306,6 +310,42 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Each item is a real toggle button here (onToggle given) — click one to hide/show it.",
         render: () => <ChartLegendDemo />,
+      },
+    ],
+  },
+  {
+    id: "bar-line-donut-charts",
+    name: "BarChart, LineChart and DonutChart",
+    group: "Composed",
+    summary:
+      'Hand-rolled SVG, not a charting dependency (DEPENDENCY-POLICY.md treats a new package as its own reviewable ticket). All three share a 0–100 viewBox stretched with preserveAspectRatio="none" for responsiveness with no resize observer, a roving tabIndex across data points that also moves real DOM focus (Menu\'s own mechanics), and a percentage-positioned ChartTooltip. Bar/Line always include a zero baseline and render a negative value below/against it; Donut clamps a negative value to zero (an area cannot be negative) and falls back to a plain track-colored ring when every value is zero.',
+    states: [
+      {
+        id: "bar-chart-basic",
+        name: "BarChart, with a zero, a negative and a large value",
+        description:
+          "Tab to the first bar, then use ArrowLeft/ArrowRight, Home and End — the tooltip and each bar's spoken value follow real keyboard focus, not just a visual highlight.",
+        render: () => <BarChartDemo />,
+      },
+      {
+        id: "line-chart-basic",
+        name: "LineChart, same data as a trend",
+        description: "The same net-tasks series as a line against a dashed zero reference.",
+        render: () => <LineChartDemo />,
+      },
+      {
+        id: "donut-chart-basic",
+        name: "DonutChart, tasks by status",
+        description:
+          "Each slice's tooltip and accessible label carry both its value and its share of the total.",
+        render: () => <DonutChartReadyDemo />,
+      },
+      {
+        id: "donut-chart-empty",
+        name: "DonutChart, every value zero",
+        description:
+          "Falls back to a plain track-colored ring — ProgressRing's own is-empty treatment — rather than an invisible chart.",
+        render: () => <DonutChartEmptyDemo />,
       },
     ],
   },

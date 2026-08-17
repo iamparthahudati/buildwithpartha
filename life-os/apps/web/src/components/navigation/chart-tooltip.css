@@ -1,0 +1,21 @@
+/* ChartTooltip (LOS-0429). */
+
+.lifeos-chart-tooltip {
+  position: absolute;
+  z-index: var(--lifeos-z-popover);
+  transform: translate(-50%, calc(-100% - var(--lifeos-space-2)));
+  padding: var(--lifeos-space-1) var(--lifeos-space-2);
+  border-radius: var(--lifeos-radius-sm);
+  background: var(--lifeos-color-text);
+  color: var(--lifeos-color-canvas);
+  font-size: var(--lifeos-font-size-3xs);
+  font-variant-numeric: var(--lifeos-font-numeric);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media print {
+  .lifeos-chart-tooltip {
+    display: none;
+  }
+}
