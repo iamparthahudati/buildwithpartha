@@ -3,6 +3,7 @@ import {
   BackLinkDemo,
   BreadcrumbsLongDemo,
   BreadcrumbsShortDemo,
+  FilterBarDemo,
   MenuDemo,
   MetricCardEmptyDemo,
   MetricCardErrorDemo,
@@ -151,6 +152,22 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         name: "Empty",
         description: 'Defaults to "No data yet"; a caller-supplied message overrides it.',
         render: () => <MetricCardEmptyDemo />,
+      },
+    ],
+  },
+  {
+    id: "filter-bar",
+    name: "FilterBar",
+    group: "Composed",
+    summary:
+      "The shell around a screen's own filter controls — no domain filters of its own, matching DataTable's \"no domain columns hardcoded\" principle. Renders the caller's controls inline on a wide viewport and behind a single Filters button opening a Drawer (LOS-0414) below the small breakpoint, both reading the same controlled state. A separate, pure filterUrlContract (serializeFilters/parseFilters) defines how a filter set round-trips through a URL, independent of this component.",
+    states: [
+      {
+        id: "filter-bar-basic",
+        name: "Status and search, with chips and a count",
+        description:
+          "Pick a status or type a search term, then try Clear all. Resize narrower to see the Filters button and Drawer.",
+        render: () => <FilterBarDemo />,
       },
     ],
   },
