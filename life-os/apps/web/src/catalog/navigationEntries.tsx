@@ -3,6 +3,11 @@ import {
   BackLinkDemo,
   BreadcrumbsLongDemo,
   BreadcrumbsShortDemo,
+  ChartFrameEmptyDemo,
+  ChartFrameErrorDemo,
+  ChartFrameLoadingDemo,
+  ChartFrameReadyDemo,
+  ChartLegendDemo,
   DataTableDemo,
   FilterBarDemo,
   MenuDemo,
@@ -258,6 +263,49 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Filter by status, sort by a field, select rows for the bulk Delete action, or resize narrower to see the card view replace the table.",
         render: () => <DataTableDemo />,
+      },
+    ],
+  },
+  {
+    id: "chart-frame",
+    name: "ChartFrame and ChartLegend",
+    group: "Composed",
+    summary:
+      "The chrome around any chart — title, summary, header actions, a ready/loading/empty/error contract (mirroring DataTable's own status shape) and the legend — built on Surface directly. ChartFrame draws no chart itself; that stays the caller's children (LOS-0429's own ticket). Giving dataTable adds a self-contained \"View as table\" toggle, the accessible alternative to a chart no screen reader can meaningfully read. ChartLegend reuses the eight frozen chart tokens ColorIconPicker already named, and becomes a real toggle button per item only when the caller supplies onToggle.",
+    states: [
+      {
+        id: "chart-frame-ready",
+        name: "Ready, with a legend, export action and table fallback",
+        description:
+          'Try "View as table" — it swaps the placeholder bars for a real, accessible table of the same data without losing the header or legend.',
+        render: () => <ChartFrameReadyDemo />,
+      },
+      {
+        id: "chart-frame-loading",
+        name: "Loading",
+        description:
+          "A Skeleton reserves the chart's space; the waiting state is announced once, not silently.",
+        render: () => <ChartFrameLoadingDemo />,
+      },
+      {
+        id: "chart-frame-empty",
+        name: "Empty",
+        description: "Composes EmptyState with the caller's own title and description.",
+        render: () => <ChartFrameEmptyDemo />,
+      },
+      {
+        id: "chart-frame-error",
+        name: "Error, with retry",
+        description:
+          'Composes ErrorState at scope="region" — the rest of the page stays usable around it.',
+        render: () => <ChartFrameErrorDemo />,
+      },
+      {
+        id: "chart-legend-toggle",
+        name: "ChartLegend on its own, as an interactive series toggle",
+        description:
+          "Each item is a real toggle button here (onToggle given) — click one to hide/show it.",
+        render: () => <ChartLegendDemo />,
       },
     ],
   },

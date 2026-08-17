@@ -1,0 +1,26 @@
+/* ChartFrame (LOS-0428). */
+
+.lifeos-chart-frame__summary {
+  margin: calc(var(--lifeos-space-2) * -1) 0 var(--lifeos-space-3);
+}
+
+.lifeos-chart-frame__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-chart-frame__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lifeos-chart-frame__skeleton {
+  width: 100%;
+  border-radius: var(--lifeos-radius-lg);
+}
+
+.lifeos-chart-frame__legend {
+  margin-top: var(--lifeos-space-3);
+}

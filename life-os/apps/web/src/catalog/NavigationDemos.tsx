@@ -5,6 +5,8 @@ import {
   AccountMenu,
   BackLink,
   Breadcrumbs,
+  ChartFrame,
+  ChartLegend,
   DataTable,
   FilterBar,
   Menu,
@@ -24,6 +26,7 @@ import {
   ViewToggle,
   type ActiveFilterChip,
   type BreadcrumbItem,
+  type ChartLegendItem,
   type DataTableColumn,
   type MenuItemDescriptor,
   type SortOption,
@@ -484,4 +487,144 @@ export function DataTableDemo() {
       )}
     />
   );
+}
+
+interface TaskStatusDatum {
+  readonly id: string;
+  readonly label: string;
+  readonly colorName: ChartLegendItem["colorName"];
+  readonly count: number;
+}
+
+const TASK_STATUS_DATA: readonly TaskStatusDatum[] = [
+  { id: "todo", label: "To do", colorName: "blue", count: 12 },
+  { id: "in-progress", label: "In progress", colorName: "amber", count: 5 },
+  { id: "done", label: "Done", colorName: "green", count: 8 },
+];
+
+export function ChartFrameReadyDemo() {
+  const total = TASK_STATUS_DATA.reduce((sum, datum) => sum + datum.count, 0);
+  const legend: readonly ChartLegendItem[] = TASK_STATUS_DATA.map((datum) => ({
+    id: datum.id,
+    label: datum.label,
+    colorName: datum.colorName,
+    value: String(datum.count),
+  }));
+
+  return (
+    <ChartFrame
+      title="Tasks by status"
+      summary="Most open work is still in To do."
+      status="ready"
+      legend={legend}
+      actions={<Button variant="secondary">Export CSV</Button>}
+      dataTable={
+        <Table aria-label="Tasks by status, as a table">
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Status</TableHeaderCell>
+              <TableHeaderCell>Count</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {TASK_STATUS_DATA.map((datum) => (
+              <TableRow key={datum.id}>
+                <TableCell>{datum.label}</TableCell>
+                <TableCell>{datum.count}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      }
+    >
+      {/*
+        A placeholder bar visualization, not a real chart primitive — those
+        are LOS-0429's own ticket. ChartFrame only needs *some* children to
+        demonstrate its chrome; the bars reuse the same named chart tokens
+        ChartLegend renders beside them, so the two never disagree about
+        which color means which status.
+      */}
+      <div className="specimen-stack" aria-hidden="true">
+        {TASK_STATUS_DATA.map((datum) => (
+          <div key={datum.id} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <div
+              style={{
+                width: `${(datum.count / total) * 100}%`,
+                minWidth: "1.5rem",
+                height: "1.5rem",
+                borderRadius: "var(--lifeos-radius-sm)",
+                background: `var(${COLOR_TOKEN[datum.colorName]})`,
+              }}
+            />
+          </div>
+        ))}
+      </div>
+    </ChartFrame>
+  );
+}
+
+const COLOR_TOKEN: Record<ChartLegendItem["colorName"], string> = {
+  blue: "--lifeos-chart-1",
+  green: "--lifeos-chart-2",
+  amber: "--lifeos-chart-3",
+  purple: "--lifeos-chart-4",
+  teal: "--lifeos-chart-5",
+  red: "--lifeos-chart-6",
+  magenta: "--lifeos-chart-7",
+  olive: "--lifeos-chart-8",
+};
+
+export function ChartFrameLoadingDemo() {
+  return (
+    <ChartFrame title="Tasks by status" status="loading">
+      <div />
+    </ChartFrame>
+  );
+}
+
+export function ChartFrameEmptyDemo() {
+  return (
+    <ChartFrame
+      title="Tasks by status"
+      status="empty"
+      emptyTitle="No tasks in this range"
+      emptyDescription="Try a wider date range."
+    >
+      <div />
+    </ChartFrame>
+  );
+}
+
+export function ChartFrameErrorDemo() {
+  return (
+    <ChartFrame
+      title="Tasks by status"
+      status="error"
+      errorTitle="Couldn't load this chart"
+      errorDescription="Your other widgets are unaffected."
+      onRetry={() => {}}
+    >
+      <div />
+    </ChartFrame>
+  );
+}
+
+export function ChartLegendDemo() {
+  const [active, setActive] = useState<Record<string, boolean>>({
+    todo: true,
+    "in-progress": true,
+    done: true,
+  });
+
+  const items: readonly ChartLegendItem[] = TASK_STATUS_DATA.map((datum) => ({
+    id: datum.id,
+    label: datum.label,
+    colorName: datum.colorName,
+    value: String(datum.count),
+    active: active[datum.id] ?? true,
+    onToggle: () =>
+      setActive((current) => ({ ...current, [datum.id]: !(current[datum.id] ?? true) })),
+  }));
+
+  return <ChartLegend items={items} label="Tasks by status" />;
 }
