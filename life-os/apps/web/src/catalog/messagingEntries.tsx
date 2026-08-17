@@ -4,7 +4,9 @@ import { Button, Link } from "@components/ui";
 import {
   ConfirmDialogDemo,
   ConfirmDialogTypedDemo,
+  DetailPanelDemo,
   DialogDemo,
+  DrawerDemo,
   NestedDialogDemo,
   ToastDemo,
 } from "./MessagingDemos";
@@ -311,6 +313,36 @@ export const MESSAGING_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze(
         description:
           "The ticket's high-impact escalation: the danger action stays disabled until the exact text is typed.",
         render: () => <ConfirmDialogTypedDemo />,
+      },
+    ],
+  },
+  {
+    id: "drawer",
+    name: "Drawer",
+    group: "Composed",
+    summary:
+      "A side panel on a wide viewport, a full-screen sheet below the small breakpoint — automatic by breakpoint, not a size a caller chooses. Shares Dialog's focus trap, Escape/backdrop rules and stacking; isDirty guards every dismissal path behind a discard confirmation.",
+    states: [
+      {
+        id: "drawer-dirty-guard",
+        name: "Dirty-state guard",
+        description: "Type something, then try Escape or the backdrop.",
+        render: () => <DrawerDemo />,
+      },
+    ],
+  },
+  {
+    id: "detail-panel",
+    name: "DetailPanel",
+    group: "Composed",
+    summary:
+      "A Drawer for showing one record by id, synced to the URL with useDeepLinkParam rather than a router — reload the page or use the browser's own Back button and the panel stays correct. Composes Spinner for the loading gap and EmptyState's permission variant when the id doesn't resolve, without confirming which case it is.",
+    states: [
+      {
+        id: "detail-panel-deep-link",
+        name: "Deep link, loading and not found",
+        description: "The second button opens an id with no matching fixture.",
+        render: () => <DetailPanelDemo />,
       },
     ],
   },

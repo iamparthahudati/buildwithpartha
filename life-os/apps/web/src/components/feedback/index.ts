@@ -7,3 +7,5 @@ export { EmptyState, type EmptyStateProps, type EmptyStateVariant } from "./Empt
 export { ErrorState, type ErrorStateProps } from "./ErrorState";
 export { Dialog, type DialogProps, type DialogSize } from "./Dialog";
 export { ConfirmDialog, type ConfirmDialogProps } from "./ConfirmDialog";
+export { Drawer, type DrawerPlacement, type DrawerProps } from "./Drawer";
+export { DetailPanel, type DetailPanelProps } from "./DetailPanel";
