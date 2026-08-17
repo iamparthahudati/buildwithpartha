@@ -112,9 +112,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0407 — ColorIconPicker added for Project/Habit appearance. Two real native radio groups reuse the eight frozen chart tokens (LOS-0301) rather than a new palette, each proven — not assumed — to clear WCAG AA as a solid fill under a white preview icon via the same contrast math `styles/tokens.test.ts` already uses. The stored value is always a name ("blue", "folder"), never a hex value or a `--lifeos-*` token, so a future repaint of the palette changes nothing about data already saved. Icons come from a small curated list within the approved lucide set rather than the whole library.
 
+- LOS-0408 — Alert and InlineMessage added, the first ticket to populate the reserved `components/feedback/` category. Both share one four-tone icon contract; `Alert` adds a heading, an action and a dismiss control. `announce` (none/status/alert) is an explicit prop rather than something derived from tone and defaults to `"none"`, because only the caller knows whether a given render is permanent page content or a fresh reaction worth interrupting for — a `danger` message reading "This account is suspended" and one reading "Save failed" cannot share a default. Both components are tested to update in place rather than remount when their message content changes while still announcing, since a remount is what would cause a still-visible message to be announced a second time for no new reason.
+
 ## Next recommended ticket
 
-`LOS-0408 — Build Alert and InlineMessage`.
+`LOS-0409 — Build Toast system`.
 
 ## Known decisions requiring implementation-time values
 

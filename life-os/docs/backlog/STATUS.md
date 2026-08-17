@@ -84,5 +84,6 @@ Last updated: 2026-08-17
 | LOS-0405 | Done          | `feature/LOS-0405-datetime-field`               | DateTimeField groups a DateInput and TimeInput; a new `resolveLocalDateTime` detects a DST gap (error, no valid instant) or fold (non-blocking warning, resolved to the earlier occurrence) against real 2026 transition dates. |
 | LOS-0406 | Done          | `feature/LOS-0406-duration-field`               | DurationField splits/combines an Estimate's minute total into Hours/Minutes with automatic overflow normalization; bounds are reported as a message rather than clamped live, after live-clamping was caught mid-typing a field back to its minimum. |
 | LOS-0407 | Done          | `feature/LOS-0407-color-icon-picker`            | ColorIconPicker: two native radio groups reusing the eight frozen chart tokens (named output only) and a curated icon list; every swatch's AA contrast as a white-icon solid fill is computed and proven, not assumed. |
+| LOS-0408 | Done          | `feature/LOS-0408-alert-inline-message`         | Alert and InlineMessage, first tickets in `components/feedback/`; `announce` role is an explicit caller-set prop defaulting to none rather than tone-derived, and both are tested to update in place rather than remount on new content. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
