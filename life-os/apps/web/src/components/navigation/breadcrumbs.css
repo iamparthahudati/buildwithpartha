@@ -1,0 +1,61 @@
+/* Breadcrumbs (LOS-0417). */
+
+.lifeos-breadcrumbs__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-breadcrumbs__item {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  min-width: 0;
+}
+
+.lifeos-breadcrumbs__link,
+.lifeos-breadcrumbs__current {
+  overflow: hidden;
+  max-width: 16rem;
+  font-size: var(--lifeos-font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lifeos-breadcrumbs__current {
+  color: var(--lifeos-color-text);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-breadcrumbs__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--lifeos-space-1);
+  border: none;
+  border-radius: var(--lifeos-radius-sm);
+  background: transparent;
+  color: var(--lifeos-color-text-secondary);
+  cursor: pointer;
+}
+
+.lifeos-breadcrumbs__ellipsis:hover {
+  background: var(--lifeos-color-surface-muted);
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-breadcrumbs__separator {
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-xs);
+}
+
+/* Narrower viewports leave less room per crumb before it truncates. */
+@media (width < 768px) {
+  .lifeos-breadcrumbs__link,
+  .lifeos-breadcrumbs__current {
+    max-width: 8rem;
+  }
+}

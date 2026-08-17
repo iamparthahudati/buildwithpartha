@@ -1,0 +1,95 @@
+/* Surface (LOS-0329). */
+
+.lifeos-surface {
+  display: block;
+  border: var(--lifeos-border-width-hairline) solid transparent;
+  border-radius: var(--lifeos-radius-lg);
+  background: var(--lifeos-color-surface);
+}
+
+.lifeos-surface--muted {
+  background: var(--lifeos-color-surface-muted);
+}
+
+/*
+ * A raised surface still keeps its border. A shadow alone disappears in
+ * forced-colors mode and in high-contrast themes, which would leave the card
+ * with no edge at all.
+ */
+.lifeos-surface--raised {
+  background: var(--lifeos-color-surface-raised);
+  box-shadow: var(--lifeos-shadow-sm);
+}
+
+.lifeos-surface.is-bordered {
+  border-color: var(--lifeos-color-border);
+}
+
+.lifeos-surface--padding-none {
+  padding: 0;
+}
+
+.lifeos-surface--padding-sm {
+  padding: var(--lifeos-space-3);
+}
+
+.lifeos-surface--padding-md {
+  padding: var(--lifeos-space-4);
+}
+
+.lifeos-surface--padding-lg {
+  padding: var(--lifeos-space-6);
+}
+
+.lifeos-surface__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-3);
+  margin-block-end: var(--lifeos-space-3);
+}
+
+.lifeos-surface__header-action {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  flex: none;
+}
+
+/* ---------------------------------------------------------------- */
+/* Interactive                                                       */
+/* ---------------------------------------------------------------- */
+
+.lifeos-surface.is-interactive {
+  transition:
+    border-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard),
+    box-shadow var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-surface.is-interactive:hover {
+  border-color: var(--lifeos-color-border-interactive);
+  box-shadow: var(--lifeos-shadow-sm);
+}
+
+/*
+ * The card follows the focus of the real control inside it, rather than being
+ * focusable itself. `:focus-within` is what makes the whole card visibly
+ * current for a keyboard user without inventing a second tab stop.
+ */
+.lifeos-surface.is-interactive:focus-within {
+  border-color: var(--lifeos-color-primary);
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: var(--lifeos-focus-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-surface.is-interactive {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-surface {
+    border-color: CanvasText;
+  }
+}

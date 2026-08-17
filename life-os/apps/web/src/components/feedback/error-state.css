@@ -1,0 +1,55 @@
+/* ErrorState (LOS-0411). */
+
+.lifeos-error-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-error-state__correlation code {
+  font-family: var(--lifeos-font-mono);
+  font-size: inherit;
+}
+
+/* ---------------------------------------------------------------- */
+/* Region (an Alert underneath — see error-state.tsx)                */
+/* ---------------------------------------------------------------- */
+
+.lifeos-error-state--region.lifeos-alert .lifeos-alert__action {
+  margin-block-start: var(--lifeos-space-3);
+}
+
+.lifeos-error-state--region .lifeos-error-state__correlation {
+  margin-block-start: var(--lifeos-space-1);
+}
+
+/* ---------------------------------------------------------------- */
+/* Page                                                               */
+/* ---------------------------------------------------------------- */
+
+.lifeos-error-state--page {
+  display: grid;
+  justify-items: center;
+  gap: var(--lifeos-space-2);
+  text-align: center;
+}
+
+.lifeos-error-state--page .lifeos-error-state__icon {
+  width: var(--lifeos-space-8);
+  height: var(--lifeos-space-8);
+  margin-block-end: var(--lifeos-space-1);
+  color: var(--lifeos-color-danger);
+}
+
+.lifeos-error-state--page .lifeos-error-state__description {
+  max-width: 32rem;
+}
+
+.lifeos-error-state--page .lifeos-error-state__actions {
+  justify-content: center;
+  margin-block-start: var(--lifeos-space-2);
+}
+
+.lifeos-error-state--page .lifeos-error-state__correlation {
+  margin-block-start: var(--lifeos-space-1);
+}

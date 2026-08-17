@@ -1,0 +1,50 @@
+/* TimerRing (LOS-0427). */
+
+.lifeos-timer-ring {
+  display: inline-grid;
+  justify-items: center;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-timer-ring__status {
+  margin: 0;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-timer-ring__actions {
+  display: flex;
+  gap: var(--lifeos-space-2);
+}
+
+/*
+ * A gentle pulse on the ring itself while counting down — motion, not text,
+ * is what actually says "still running" for a display no one is meant to
+ * stare at continuously; the state text and the ticking value already carry
+ * that in words. Targets ProgressRing's own dial class directly, the same
+ * cross-component styling FormDialog already does to Dialog's classes for
+ * an identical reason: a composition-specific behavior that belongs to the
+ * composing component's stylesheet, not the composed one's.
+ */
+.lifeos-timer-ring--running .lifeos-progress-ring__dial {
+  animation: lifeos-timer-ring-pulse var(--lifeos-motion-duration-deliberate)
+    var(--lifeos-motion-ease-standard) infinite;
+}
+
+@keyframes lifeos-timer-ring-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-timer-ring--running .lifeos-progress-ring__dial {
+    animation: none;
+  }
+}

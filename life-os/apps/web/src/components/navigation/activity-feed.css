@@ -1,0 +1,78 @@
+/* ActivityFeed (LOS-0433). */
+
+.lifeos-activity-feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-activity-feed__groups,
+.lifeos-activity-feed__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-activity-feed__group-label {
+  margin: 0 0 var(--lifeos-space-2);
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-activity-feed__events {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-activity-feed__event {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-activity-feed__icon {
+  flex: none;
+  margin-top: var(--lifeos-space-1);
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-activity-feed__sentence {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.lifeos-activity-feed__time {
+  flex: none;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+  white-space: nowrap;
+}
+
+/*
+ * `SkeletonText`'s own bars are percentage-widthed against their parent, but
+ * a flex-row child with no `flex`/`width` of its own sizes to its content —
+ * empty, for a skeleton with no text — so the bar resolved a real 0px
+ * without this. `.lifeos-activity-feed__event` doubles as both the real
+ * event row (icon + sentence + time, sized by those children) and this
+ * loading placeholder, so the fix is scoped to the loading list only.
+ */
+.lifeos-activity-feed__loading .lifeos-skeleton-text {
+  flex: 1;
+}
+
+@media (width < 768px) {
+  .lifeos-activity-feed__event {
+    flex-wrap: wrap;
+  }
+
+  .lifeos-activity-feed__time {
+    margin-left: calc(var(--lifeos-space-2) + var(--lifeos-space-4));
+  }
+}

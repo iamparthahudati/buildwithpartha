@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { Icon } from "./Icon";
 import type { BadgeTone } from "./scales";
 import "./badge.css";
+import "./visually-hidden.css";
 
 /**
  * Badge and StatusDot (LOS-0309).

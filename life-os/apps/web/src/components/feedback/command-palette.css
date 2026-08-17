@@ -1,0 +1,130 @@
+/* CommandPalette (LOS-0426). */
+
+.lifeos-command-palette__search {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  padding-bottom: var(--lifeos-space-3);
+  border-bottom: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-command-palette__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-sm);
+}
+
+.lifeos-command-palette__input:focus-visible {
+  outline: none;
+}
+
+.lifeos-command-palette__input::placeholder {
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-command-palette__list {
+  display: grid;
+  gap: var(--lifeos-space-3);
+  padding: 0;
+  margin: var(--lifeos-space-3) 0 0;
+  max-height: 24rem;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.lifeos-command-palette__group {
+  display: grid;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-command-palette__heading {
+  margin: 0 0 var(--lifeos-space-1);
+  padding-inline: var(--lifeos-space-2);
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.lifeos-command-palette__option {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  padding: var(--lifeos-space-2);
+  border-radius: var(--lifeos-radius-sm);
+  color: var(--lifeos-color-text);
+  cursor: pointer;
+}
+
+/*
+ * The keyboard's current option, tracked through aria-activedescendant
+ * rather than real focus (see the component's own doc comment) — this
+ * highlight is the only visible sign of where it is.
+ */
+.lifeos-command-palette__option.is-active {
+  background: var(--lifeos-color-primary-soft);
+  color: var(--lifeos-color-on-primary-soft);
+}
+
+.lifeos-command-palette__option.is-disabled {
+  color: var(--lifeos-color-text-muted);
+  cursor: not-allowed;
+}
+
+.lifeos-command-palette__option-body {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.lifeos-command-palette__option-label {
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-command-palette__option-description {
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.lifeos-command-palette__option.is-active .lifeos-command-palette__option-description {
+  color: inherit;
+}
+
+.lifeos-command-palette__shortcut {
+  flex: none;
+  padding-inline: var(--lifeos-space-1);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-xs);
+  color: var(--lifeos-color-text-muted);
+  background: var(--lifeos-color-surface-muted);
+  font-family: var(--lifeos-font-mono);
+  font-size: var(--lifeos-font-size-3xs);
+  line-height: var(--lifeos-line-height-tight);
+}
+
+.lifeos-command-palette__option.is-active .lifeos-command-palette__shortcut {
+  color: inherit;
+  border-color: currentColor;
+  background: none;
+}
+
+.lifeos-command-palette__status {
+  padding: var(--lifeos-space-2);
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+@media (forced-colors: active) {
+  .lifeos-command-palette__option.is-active {
+    background: Highlight;
+    color: HighlightText;
+  }
+}

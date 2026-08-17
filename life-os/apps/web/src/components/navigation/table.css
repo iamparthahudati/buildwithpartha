@@ -1,0 +1,106 @@
+/* Table primitives (LOS-0423). */
+
+/*
+ * The responsive escape hatch: a table too wide for its viewport scrolls
+ * horizontally within its own container rather than crushing every column
+ * or breaking the page's own layout. A domain-aware card view is DataTable's
+ * job (LOS-0424), not this primitive's.
+ */
+.lifeos-table-scroll {
+  overflow-x: auto;
+}
+
+.lifeos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-table__head {
+  border-bottom: var(--lifeos-border-width-thick) solid var(--lifeos-color-border);
+}
+
+.lifeos-table__head.is-sticky {
+  position: sticky;
+  top: 0;
+  z-index: var(--lifeos-z-raised);
+  background: var(--lifeos-color-surface);
+}
+
+.lifeos-table__header-cell {
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  color: var(--lifeos-color-text-secondary);
+  font-weight: var(--lifeos-font-weight-semibold);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.lifeos-table__row {
+  border-bottom: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-table__row.is-selected {
+  background: var(--lifeos-color-primary-soft);
+}
+
+.lifeos-table__cell {
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  color: var(--lifeos-color-text);
+  vertical-align: middle;
+}
+
+/*
+ * Density is set once on the table root and cascades to every cell, rather
+ * than a prop each cell would otherwise need to repeat.
+ */
+.lifeos-table[data-density="compact"] .lifeos-table__header-cell,
+.lifeos-table[data-density="compact"] .lifeos-table__cell {
+  padding-block: var(--lifeos-space-2);
+}
+
+/*
+ * `table-layout: auto` (this table's default) sizes every column to fit its
+ * widest content, so `overflow: hidden` alone never has anything to clip —
+ * the column just grows instead. `max-width: 0` paired with `width: 100%` is
+ * the standard way to cap an auto-layout cell's growth without opting the
+ * whole table into fixed layout: the browser still distributes the table's
+ * real width across columns, but this cell no longer gets to claim more of
+ * it than its neighbors need, so its own overflow finally has something to
+ * hide.
+ */
+.lifeos-table__cell--truncate {
+  max-width: 0;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lifeos-table__select-cell {
+  width: var(--lifeos-space-8);
+  padding-inline-end: 0;
+}
+
+/*
+ * A visible checkbox needs no visible label beside it in a dense table row —
+ * the same visually-hidden technique `VisuallyHidden` uses, applied directly
+ * to Checkbox's own label here since Checkbox always renders one visibly by
+ * design everywhere else it is used.
+ */
+.lifeos-table__select-cell .lifeos-choice__label {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  margin: -1px;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (forced-colors: active) {
+  .lifeos-table__row.is-selected {
+    outline: var(--lifeos-border-width-hairline) solid CanvasText;
+  }
+}

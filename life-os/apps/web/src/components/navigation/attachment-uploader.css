@@ -1,0 +1,28 @@
+/* AttachmentUploader (LOS-0431). */
+
+.lifeos-attachment-uploader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--lifeos-space-2);
+}
+
+/*
+ * Clipped rather than `display: none` — a `display: none` input is
+ * inconsistent across browsers about honoring a programmatic `.click()`,
+ * while a clipped one stays a real, clickable element the trigger `Button`
+ * forwards its click to. It carries no accessible name of its own and is
+ * removed from the tab order, since the visible `Button` is the only
+ * control a keyboard or screen-reader user ever needs to reach.
+ */
+.lifeos-attachment-uploader__input {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  margin: -1px;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

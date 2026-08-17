@@ -1,24 +1,8 @@
-/* Textarea (LOS-0316). */
+/* Textarea (LOS-0316); the frame and shell come from field.css. */
 
-.lifeos-textarea {
-  display: grid;
-  gap: var(--lifeos-space-1);
-}
-
-.lifeos-textarea__label {
-  color: var(--lifeos-color-text);
-  font-size: var(--lifeos-font-size-xs);
-  font-weight: var(--lifeos-font-weight-medium);
-}
-
-.lifeos-textarea__field {
-  width: 100%;
+.lifeos-textarea__element {
   min-height: calc(var(--lifeos-space-10) * 2);
   padding: var(--lifeos-space-3);
-  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border-interactive);
-  border-radius: var(--lifeos-radius-md);
-  background: var(--lifeos-color-surface);
-  font-size: var(--lifeos-font-size-xs);
   line-height: var(--lifeos-line-height-normal);
   /* Horizontal resize breaks responsive layouts; vertical stays available. */
   resize: vertical;
@@ -30,43 +14,14 @@
  * keystroke and has to be re-run whenever the value changes from outside.
  * Browsers without support keep the fixed rows, which is a graceful loss.
  */
-.lifeos-textarea__field.is-auto-grow {
+.lifeos-textarea__element.is-auto-grow {
   field-sizing: content;
   max-height: 60vh;
   resize: none;
 }
 
-.lifeos-textarea__field:focus-visible {
-  border-color: var(--lifeos-color-primary);
-}
-
-.lifeos-textarea__field::placeholder {
-  color: var(--lifeos-color-text-muted);
-}
-
-.lifeos-textarea__field:read-only {
-  color: var(--lifeos-color-text-secondary);
-  background: var(--lifeos-color-surface-muted);
-}
-
-.lifeos-textarea.has-error .lifeos-textarea__field {
-  border-color: var(--lifeos-color-danger);
-}
-
-.lifeos-textarea.is-disabled .lifeos-textarea__field {
-  background: var(--lifeos-color-surface-muted);
-  cursor: not-allowed;
-}
-
-.lifeos-textarea__footer {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--lifeos-space-3);
-}
-
 .lifeos-textarea__counter {
-  flex: none;
+  justify-self: end;
   color: var(--lifeos-color-text-muted);
   font-size: var(--lifeos-font-size-3xs);
   font-variant-numeric: var(--lifeos-font-numeric);

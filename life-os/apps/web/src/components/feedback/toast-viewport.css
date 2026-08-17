@@ -1,0 +1,27 @@
+/* ToastViewport (LOS-0409). */
+
+.lifeos-toast-viewport {
+  position: fixed;
+  z-index: var(--lifeos-z-toast);
+  inset-block-end: var(--lifeos-space-4);
+  inset-inline-end: var(--lifeos-space-4);
+  display: flex;
+  /* Newest toast sits closest to the corner it entered from. */
+  flex-direction: column-reverse;
+  gap: var(--lifeos-space-2);
+  width: min(100%, 24rem);
+  max-width: calc(100vw - var(--lifeos-space-8));
+  pointer-events: none;
+}
+
+.lifeos-toast-viewport .lifeos-toast {
+  pointer-events: auto;
+}
+
+@media (width < 480px) {
+  .lifeos-toast-viewport {
+    inset-inline: var(--lifeos-space-3);
+    inset-block-end: var(--lifeos-space-3);
+    width: auto;
+  }
+}

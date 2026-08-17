@@ -1,0 +1,73 @@
+/* DividerList (LOS-0330). */
+
+.lifeos-divider-list {
+  display: block;
+  /* The reset keeps native list semantics, so the marker is removed here. */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lifeos-divider-list__row {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  /*
+   * The separator is a border on the row, not an element between rows: a list
+   * whose children alternate between li and a decorative div is invalid, and
+   * assistive technology reports the wrong item count.
+   */
+  border-block-start: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+/* No rule above the first row: a list does not start with a separator. */
+.lifeos-divider-list__row:first-child {
+  border-block-start: 0;
+}
+
+.lifeos-divider-list--md .lifeos-divider-list__row {
+  min-height: var(--lifeos-density-row-height);
+  padding-block: var(--lifeos-space-3);
+}
+
+.lifeos-divider-list--sm .lifeos-divider-list__row {
+  min-height: var(--lifeos-space-8);
+  padding-block: var(--lifeos-space-2);
+}
+
+.lifeos-divider-list__row.is-interactive {
+  transition: background-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-divider-list__row.is-interactive:hover {
+  background: var(--lifeos-color-surface-muted);
+}
+
+/*
+ * The row follows the focus of the real control inside it rather than becoming
+ * a tab stop of its own.
+ */
+.lifeos-divider-list__row.is-interactive:focus-within {
+  background: var(--lifeos-color-surface-muted);
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: calc(var(--lifeos-focus-ring-offset) * -1);
+}
+
+/* A touch row needs the full target height whatever the density setting. */
+@media (pointer: coarse) {
+  .lifeos-divider-list__row {
+    min-height: var(--lifeos-target-min-size);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-divider-list__row.is-interactive {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-divider-list__row {
+    border-block-start-color: CanvasText;
+  }
+}

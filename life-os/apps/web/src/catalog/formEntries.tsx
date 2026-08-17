@@ -1,11 +1,22 @@
-import { Checkbox, PasswordInput, RadioGroup, Switch, Textarea, TextInput } from "@components/ui";
+import {
+  Checkbox,
+  DateInput,
+  NumberInput,
+  PasswordInput,
+  RadioGroup,
+  Select,
+  Switch,
+  Textarea,
+  TextInput,
+  TimeInput,
+} from "@components/ui";
 
-import { ClearableDemo, NotesDemo, PriorityDemo } from "./FormDemos";
-import { PRIORITY_OPTIONS } from "./formFixtures";
+import { ClearableDemo, DueDateDemo, NotesDemo, PriorityDemo, StartTimeDemo } from "./FormDemos";
+import { PRIORITY_OPTIONS, PROJECT_OPTIONS, TASK_STATUS_OPTIONS } from "./formFixtures";
 
 import type { CatalogEntry } from "./registry";
 
-/* Form control entries (LOS-0311 to LOS-0314). */
+/* Form control entries (LOS-0311 to LOS-0320). */
 
 export const FORM_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
   {
@@ -203,6 +214,149 @@ export const FORM_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
             <Textarea label="Notes" error="Notes cannot be empty." />
             <Textarea label="Notes" defaultValue="Fixed content" readOnly />
             <Textarea label="Notes" disabled />
+          </div>
+        ),
+      },
+    ],
+  },
+  {
+    id: "select",
+    name: "Select",
+    group: "Atoms",
+    summary:
+      "A real select. A custom listbox would have to re-implement type-ahead, Home/End and the platform's touch picker, and would still not be the control the device knows how to render.",
+    states: [
+      {
+        id: "select-states",
+        name: "States",
+        description: "Default, with a placeholder, error, and disabled.",
+        render: () => (
+          <div className="specimen-stack">
+            <Select label="Status" options={TASK_STATUS_OPTIONS} defaultValue="IN_PROGRESS" />
+            <Select
+              label="Project (optional)"
+              options={PROJECT_OPTIONS}
+              placeholder="No project"
+              defaultValue=""
+              description="An optional field keeps its placeholder selectable, so a choice can be undone."
+            />
+            <Select
+              label="Status"
+              options={TASK_STATUS_OPTIONS}
+              placeholder="Choose a status"
+              required
+              error="Choose a status."
+            />
+            <Select label="Status" options={TASK_STATUS_OPTIONS} disabled />
+          </div>
+        ),
+      },
+      {
+        id: "select-disabled-option",
+        name: "Unavailable option",
+        description:
+          "An archived project stays visible but unselectable, so its absence is explained rather than mysterious.",
+        render: () => (
+          <Select label="Project" options={PROJECT_OPTIONS} defaultValue="portfolio-refresh" />
+        ),
+      },
+    ],
+  },
+  {
+    id: "date-input",
+    name: "DateInput",
+    group: "Atoms",
+    summary:
+      "The value is a calendar date and stays a string end to end. Putting it through a Date would attach a time of day and move the deadline a day for anyone whose timezone differs from their browser's.",
+    states: [
+      {
+        id: "date-input-value",
+        name: "Value boundary",
+        description: "The stored string and the formatted date always name the same day.",
+        render: () => <DueDateDemo />,
+      },
+      {
+        id: "date-input-states",
+        name: "States",
+        description: "Default, error and disabled.",
+        render: () => (
+          <div className="specimen-stack">
+            <DateInput label="Deadline (optional)" />
+            <DateInput
+              label="Deadline"
+              defaultValue="2026-08-10"
+              min="2026-08-17"
+              error="Choose a deadline on or after 17 Aug 2026."
+            />
+            <DateInput label="Deadline" defaultValue="2026-08-17" disabled />
+          </div>
+        ),
+      },
+    ],
+  },
+  {
+    id: "time-input",
+    name: "TimeInput",
+    group: "Atoms",
+    summary:
+      "Canonical 24-hour HH:mm however the platform chooses to display it, so a stored Time Block start is never ambiguous.",
+    states: [
+      {
+        id: "time-input-value",
+        name: "Value boundary",
+        description: "The displayed format follows the platform; the stored value does not.",
+        render: () => <StartTimeDemo />,
+      },
+      {
+        id: "time-input-states",
+        name: "States",
+        description: "Default, minute steps, error and disabled.",
+        render: () => (
+          <div className="specimen-stack">
+            <TimeInput label="Start time" />
+            <TimeInput label="Start time" step={60} description="One-minute granularity." />
+            <TimeInput
+              label="End time"
+              defaultValue="08:00"
+              error="Choose an end time after the start time."
+            />
+            <TimeInput label="Start time" defaultValue="09:30" disabled />
+          </div>
+        ),
+      },
+    ],
+  },
+  {
+    id: "number-input",
+    name: "NumberInput",
+    group: "Atoms",
+    summary:
+      "Bounds, step and an announced unit. Scrolling the page over a focused number field silently changes its value in most browsers; this one does not.",
+    states: [
+      {
+        id: "number-input-states",
+        name: "States",
+        description: "Default with a unit, bounded, error and disabled.",
+        render: () => (
+          <div className="specimen-stack">
+            <NumberInput
+              label="Estimate (optional)"
+              unit="minutes"
+              min={0}
+              max={480}
+              step={15}
+              defaultValue={60}
+              description="Your expected effort. You can update it later."
+            />
+            <NumberInput label="Target count" unit="per week" min={1} max={21} defaultValue={3} />
+            <NumberInput
+              label="Estimate"
+              unit="minutes"
+              defaultValue={-5}
+              min={0}
+              error="Enter a whole number of minutes."
+            />
+            <NumberInput label="Estimate" unit="minutes" defaultValue={60} disabled />
           </div>
         ),
       },

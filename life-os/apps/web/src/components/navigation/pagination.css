@@ -1,0 +1,82 @@
+/* Pagination (LOS-0421). */
+
+.lifeos-pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-pagination__page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--lifeos-space-8);
+  height: var(--lifeos-space-8);
+  padding-inline: var(--lifeos-space-2);
+  border: none;
+  border-radius: var(--lifeos-radius-sm);
+  background: transparent;
+  color: var(--lifeos-color-text-secondary);
+  font: inherit;
+  font-size: var(--lifeos-font-size-xs);
+  font-variant-numeric: var(--lifeos-font-numeric);
+  cursor: pointer;
+}
+
+.lifeos-pagination__page:hover {
+  background: var(--lifeos-color-surface-muted);
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-pagination__page.is-current {
+  background: var(--lifeos-color-primary-soft);
+  color: var(--lifeos-color-on-primary-soft);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.lifeos-pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--lifeos-space-8);
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-pagination__compact {
+  display: none;
+  margin: 0;
+}
+
+/*
+ * Below the small breakpoint the numbered buttons give way to a compact
+ * "Page X of Y" label — automatic by breakpoint, the same mechanism
+ * FilterBar's own inline-versus-Drawer collapse uses.
+ */
+@media (width < 768px) {
+  .lifeos-pagination__pages {
+    display: none;
+  }
+
+  .lifeos-pagination__compact {
+    display: inline;
+  }
+}
+
+@media (pointer: coarse) {
+  .lifeos-pagination__page {
+    min-width: var(--lifeos-target-min-size);
+    height: var(--lifeos-target-min-size);
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-pagination__page.is-current {
+    outline: var(--lifeos-border-width-thick) solid CanvasText;
+  }
+}

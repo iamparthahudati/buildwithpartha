@@ -1,0 +1,67 @@
+/* Tooltip (LOS-0326). */
+
+.lifeos-tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.lifeos-tooltip__bubble {
+  position: absolute;
+  z-index: var(--lifeos-z-tooltip);
+  left: 50%;
+  max-width: 18rem;
+  width: max-content;
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  border-radius: var(--lifeos-radius-md);
+  color: var(--lifeos-color-text-on-solid);
+  background: var(--lifeos-color-text);
+  box-shadow: var(--lifeos-shadow-md);
+  font-size: var(--lifeos-font-size-3xs);
+  line-height: var(--lifeos-line-height-snug);
+  text-align: start;
+  /*
+   * The bubble never takes the pointer. A tooltip that can be hovered invites
+   * the user to reach for content that is about to disappear.
+   */
+  pointer-events: none;
+  animation: lifeos-tooltip-appear var(--lifeos-motion-duration-fast)
+    var(--lifeos-motion-ease-entrance);
+}
+
+.lifeos-tooltip__bubble--top {
+  bottom: calc(100% + var(--lifeos-space-2));
+  transform: translateX(calc(-50% + var(--lifeos-tooltip-shift, 0px)));
+}
+
+.lifeos-tooltip__bubble--bottom {
+  top: calc(100% + var(--lifeos-space-2));
+  transform: translateX(calc(-50% + var(--lifeos-tooltip-shift, 0px)));
+}
+
+@keyframes lifeos-tooltip-appear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * Reduced motion removes the fade. The tooltip still appears; it simply does
+ * not animate, and no information was carried by the transition.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-tooltip__bubble {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-tooltip__bubble {
+    border: var(--lifeos-border-width-hairline) solid CanvasText;
+    color: CanvasText;
+    background: Canvas;
+  }
+}

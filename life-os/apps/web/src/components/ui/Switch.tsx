@@ -3,6 +3,7 @@ import { forwardRef, useId, type InputHTMLAttributes } from "react";
 import { FieldMessages } from "./FieldMessages";
 import { fieldIds } from "./fieldIds";
 import "./switch.css";
+import "./visually-hidden.css";
 
 /**
  * Switch (LOS-0313).

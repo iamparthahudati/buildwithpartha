@@ -1,0 +1,91 @@
+/* SearchField (LOS-0402). */
+
+.lifeos-search-field {
+  position: relative;
+}
+
+/* Spins the decorative loading icon in place of the static search glyph. */
+.lifeos-search-field__spinner {
+  animation: lifeos-search-field-spin var(--lifeos-motion-duration-deliberate)
+    var(--lifeos-motion-ease-linear) infinite;
+}
+
+@keyframes lifeos-search-field-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-search-field__spinner {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+.lifeos-search-field__shortcut {
+  padding-inline: var(--lifeos-space-1);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-xs);
+  color: var(--lifeos-color-text-muted);
+  background: var(--lifeos-color-surface-muted);
+  font-family: var(--lifeos-font-mono);
+  font-size: var(--lifeos-font-size-3xs);
+  line-height: var(--lifeos-line-height-tight);
+}
+
+.lifeos-search-field__panel {
+  position: absolute;
+  z-index: var(--lifeos-z-popover);
+  inset-inline: 0;
+  top: calc(100% + var(--lifeos-space-1));
+  display: grid;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-3);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-lg);
+  background: var(--lifeos-color-surface);
+  box-shadow: var(--lifeos-shadow-md);
+}
+
+.lifeos-search-field__panel-label {
+  margin: 0 0 var(--lifeos-space-1);
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-search-field__recent-list {
+  display: grid;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-search-field__recent-item {
+  width: 100%;
+  padding-block: var(--lifeos-space-2);
+  border: none;
+  background: none;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-xs);
+  text-align: start;
+  cursor: pointer;
+  border-radius: var(--lifeos-radius-sm);
+}
+
+.lifeos-search-field__recent-item:hover {
+  background: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-search-field__no-results {
+  margin: 0;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+}
+
+@media (forced-colors: active) {
+  .lifeos-search-field__panel {
+    border-color: CanvasText;
+  }
+}

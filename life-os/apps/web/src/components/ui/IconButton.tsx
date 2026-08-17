@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import { Button, type ButtonProps } from "./Button";
 import type { ButtonSize, ButtonVariant } from "./scales";
 import "./icon-button.css";
+import "./visually-hidden.css";
 
 /**
  * IconButton (LOS-0307).

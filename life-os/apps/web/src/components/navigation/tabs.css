@@ -1,0 +1,72 @@
+/* Tabs (LOS-0416). */
+
+.lifeos-tabs__list {
+  display: flex;
+  gap: var(--lifeos-space-1);
+  overflow-x: auto;
+  border-bottom: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-tabs__tab {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  border: none;
+  border-bottom: var(--lifeos-border-width-thick) solid transparent;
+  margin-bottom: calc(-1 * var(--lifeos-border-width-hairline));
+  background: transparent;
+  color: var(--lifeos-color-text-secondary);
+  font: inherit;
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.lifeos-tabs__tab:hover:not(:disabled) {
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-tabs__tab.is-selected {
+  border-bottom-color: var(--lifeos-color-primary);
+  color: var(--lifeos-color-primary);
+}
+
+.lifeos-tabs__tab:disabled {
+  color: var(--lifeos-color-text-muted);
+  cursor: not-allowed;
+}
+
+.lifeos-tabs__panel {
+  padding-block: var(--lifeos-space-4);
+}
+
+.lifeos-tabs__panel:focus-visible {
+  outline: none;
+}
+
+/*
+ * A coarse pointer needs the full touch target, same as every other control;
+ * the tab list scrolls horizontally instead of wrapping so it never grows
+ * taller than one row on a narrow viewport.
+ */
+@media (pointer: coarse) {
+  .lifeos-tabs__tab {
+    min-height: var(--lifeos-target-min-size);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lifeos-tabs__list {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-tabs__tab.is-selected {
+    border-bottom-color: CanvasText;
+    color: CanvasText;
+  }
+}

@@ -1,9 +1,11 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { forwardRef, useId, type ButtonHTMLAttributes, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 
 import { Icon } from "./Icon";
+import { Spinner } from "./Spinner";
 import type { ButtonSize, ButtonVariant } from "./scales";
 import "./button.css";
+import "./visually-hidden.css";
 
 /**
  * Button (LOS-0306).
@@ -61,6 +63,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
    * handler — this is what prevents a double submit.
    */
   const inert = disabled || loading;
+  const labelId = useId();
 
   const classes = [
     "lifeos-button",
@@ -82,6 +85,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       disabled={disabled}
       aria-disabled={loading || undefined}
       aria-busy={loading || undefined}
+      /*
+       * While loading, the name is pinned to the label. Without this the busy
+       * text would be read instead — the visible label is hidden to make room
+       * for the spinner — and the user would lose what the button does at the
+       * exact moment they are waiting on it. Referenced text is used for the
+       * name even while it is hidden, which is why this works.
+       */
+      {...(loading ? { "aria-labelledby": labelId } : {})}
       onClick={(event) => {
         if (inert) {
           event.preventDefault();
@@ -97,14 +108,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       */}
       <span className="lifeos-button__content" aria-hidden={loading || undefined}>
         {iconStart ? <Icon icon={iconStart} decorative size={size === "lg" ? "md" : "sm"} /> : null}
-        <span className="lifeos-button__label">{children}</span>
+        <span id={labelId} className="lifeos-button__label">
+          {children}
+        </span>
         {iconEnd ? <Icon icon={iconEnd} decorative size={size === "lg" ? "md" : "sm"} /> : null}
       </span>
 
       {loading ? (
+        /*
+         * The busy state is announced by the spinner's own status region
+         * rather than by rewriting the button's name, so "Save changes" stays
+         * the thing the user hears and can say to a speech-input tool.
+         */
         <span className="lifeos-button__busy">
-          <span className="lifeos-button__spinner" aria-hidden="true" />
-          <span className="lifeos-visually-hidden">{loadingLabel}</span>
+          <Spinner label={loadingLabel} size={size === "lg" ? "md" : "sm"} />
         </span>
       ) : null}
     </button>

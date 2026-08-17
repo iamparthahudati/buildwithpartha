@@ -67,3 +67,39 @@ export const PRIORITY_TONE: Readonly<Record<string, BadgeTone>> = Object.freeze(
 export type AvatarSize = "xs" | "sm" | "md" | "lg";
 
 export const AVATAR_SIZES: readonly AvatarSize[] = Object.freeze(["xs", "sm", "md", "lg"]);
+
+/**
+ * Progress tones. `primary` is the default because progress is usually just
+ * information; `success`, `warning` and `danger` are for a bar whose value has
+ * crossed a threshold the user has been told about, never for decoration.
+ */
+export type ProgressTone = "primary" | "success" | "warning" | "danger";
+
+export const PROGRESS_TONES: readonly ProgressTone[] = Object.freeze([
+  "primary",
+  "success",
+  "warning",
+  "danger",
+]);
+
+export type ProgressSize = "sm" | "md" | "lg";
+
+export const PROGRESS_SIZES: readonly ProgressSize[] = Object.freeze(["sm", "md", "lg"]);
+
+export type SpinnerSize = "sm" | "md" | "lg";
+
+export const SPINNER_SIZES: readonly SpinnerSize[] = Object.freeze(["sm", "md", "lg"]);
+
+/**
+ * Alert/InlineMessage tones. A narrower set than `BadgeTone`: a message is
+ * always one of these four kinds, never `neutral` or `accent`, so the type
+ * itself rules out a tone that would not map to an icon or a meaning.
+ */
+export type MessageTone = "info" | "success" | "warning" | "danger";
+
+export const MESSAGE_TONES: readonly MessageTone[] = Object.freeze([
+  "info",
+  "success",
+  "warning",
+  "danger",
+]);

@@ -1,0 +1,52 @@
+/* CommentList (LOS-0432). */
+
+.lifeos-comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-comment-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-comment-list__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-comment-list__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--lifeos-space-2);
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-comment-list__edited {
+  font-style: italic;
+}
+
+/*
+ * A comment body is arbitrary user text, never Markdown or HTML — this is
+ * what actually shows the line breaks the author typed, and `anywhere`
+ * keeps one long unbroken token (a URL, say) from forcing the row wider
+ * than its container instead of wrapping inside it.
+ */
+.lifeos-comment-list__body {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.lifeos-comment-list__actions {
+  display: flex;
+  gap: var(--lifeos-space-1);
+}

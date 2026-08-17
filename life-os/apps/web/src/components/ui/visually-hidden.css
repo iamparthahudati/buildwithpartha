@@ -1,0 +1,25 @@
+/*
+ * Text that is available to assistive technology but not painted.
+ *
+ * Kept in its own stylesheet so any component can hide text without losing it,
+ * and without having to pull in an unrelated component's styles to get the
+ * rule. LOS-0327 adds the `VisuallyHidden` component on top of it.
+ */
+
+/* A live region that is meant to be read as well as announced. */
+.lifeos-live-region {
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-visually-hidden {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  margin: -1px;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

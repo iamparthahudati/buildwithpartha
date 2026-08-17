@@ -1,0 +1,109 @@
+/* Combobox (LOS-0403). */
+
+.lifeos-combobox {
+  position: relative;
+}
+
+.lifeos-combobox__control {
+  flex-wrap: wrap;
+  row-gap: var(--lifeos-space-2);
+}
+
+.lifeos-combobox__control .lifeos-field__element {
+  /* Never narrower than a few characters, however many chips came before it. */
+  min-width: 6rem;
+  flex: 1;
+}
+
+/* ---------------------------------------------------------------- */
+/* Selected chips (multi-select)                                     */
+/* ---------------------------------------------------------------- */
+
+.lifeos-combobox__chips {
+  display: contents;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-combobox__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  padding-inline-start: var(--lifeos-space-2);
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-color-primary-soft);
+  color: var(--lifeos-color-on-primary-soft);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- */
+/* Listbox                                                           */
+/* ---------------------------------------------------------------- */
+
+.lifeos-combobox__listbox {
+  position: absolute;
+  z-index: var(--lifeos-z-popover);
+  inset-inline: 0;
+  top: calc(100% + var(--lifeos-space-1));
+  overflow-y: auto;
+  max-height: 16rem;
+  padding: var(--lifeos-space-1);
+  margin: 0;
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-lg);
+  background: var(--lifeos-color-surface);
+  box-shadow: var(--lifeos-shadow-md);
+  list-style: none;
+}
+
+.lifeos-combobox__option {
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  border-radius: var(--lifeos-radius-sm);
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-xs);
+  cursor: pointer;
+}
+
+/*
+ * The keyboard's current option, tracked through aria-activedescendant rather
+ * than real focus. This highlight is the only visible sign of where it is, so
+ * it has to be unmistakable against both the resting and hovered state.
+ */
+.lifeos-combobox__option.is-active {
+  background: var(--lifeos-color-primary-soft);
+  color: var(--lifeos-color-on-primary-soft);
+}
+
+.lifeos-combobox__option.is-selected::after {
+  content: "✓";
+  float: inline-end;
+}
+
+.lifeos-combobox__option.is-disabled {
+  color: var(--lifeos-color-text-muted);
+  cursor: not-allowed;
+}
+
+.lifeos-combobox__status {
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+@media (forced-colors: active) {
+  .lifeos-combobox__listbox {
+    border-color: CanvasText;
+  }
+
+  .lifeos-combobox__option.is-active {
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .lifeos-combobox__chip {
+    border: var(--lifeos-border-width-hairline) solid CanvasText;
+  }
+}

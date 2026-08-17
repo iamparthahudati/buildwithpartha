@@ -1,0 +1,52 @@
+/* DataTable (LOS-0424). */
+
+.lifeos-data-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-data-table__toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lifeos-data-table__bulk-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  border-radius: var(--lifeos-radius-md);
+  background: var(--lifeos-color-primary-soft);
+  color: var(--lifeos-color-on-primary-soft);
+}
+
+.lifeos-data-table__card-view {
+  display: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-data-table__card-view > li + li {
+  margin-top: var(--lifeos-space-3);
+}
+
+/*
+ * Below the small breakpoint, a caller-supplied card renderer replaces the
+ * table entirely rather than forcing horizontal scroll — the domain-aware
+ * responsive escape hatch this ticket adds on top of Table's own generic
+ * one. `data-has-card-view` is set in JS from whether `renderCard` was
+ * given, rather than a `:has()` selector, since `:has()` postdates this
+ * project's frozen minimum Firefox target.
+ */
+@media (width < 768px) {
+  .lifeos-data-table[data-has-card-view="true"] .lifeos-data-table__table-view {
+    display: none;
+  }
+
+  .lifeos-data-table__card-view {
+    display: block;
+  }
+}

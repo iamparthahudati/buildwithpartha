@@ -1,0 +1,49 @@
+/* DateTimeField (LOS-0405). */
+
+.lifeos-datetime-field {
+  display: grid;
+  gap: var(--lifeos-space-2);
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+
+.lifeos-datetime-field__legend {
+  padding: 0;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-datetime-field__inputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-datetime-field__inputs > * {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+/* The date reads longer than the time; giving it more of the row keeps both legible. */
+.lifeos-datetime-field__inputs > *:first-child {
+  flex-grow: 1.4;
+}
+
+@media (width < 480px) {
+  .lifeos-datetime-field__inputs > * {
+    flex-basis: 100%;
+  }
+}
+
+.lifeos-datetime-field__zone {
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+.lifeos-datetime-field:disabled .lifeos-datetime-field__legend {
+  color: var(--lifeos-color-text-muted);
+}

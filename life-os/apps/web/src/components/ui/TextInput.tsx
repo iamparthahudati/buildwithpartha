@@ -1,10 +1,9 @@
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from "react";
 import { X } from "lucide-react";
 
-import { FieldMessages } from "./FieldMessages";
+import { Field } from "./Field";
 import { IconButton } from "./IconButton";
 import { fieldIds } from "./fieldIds";
-import "./text-input.css";
 
 /**
  * TextInput (LOS-0314).
@@ -12,6 +11,10 @@ import "./text-input.css";
  * The label is always a real `<label>` bound by `htmlFor`. A placeholder is
  * never a label: it disappears the moment the user types, which leaves them
  * with no way to check what the field was for.
+ *
+ * The frame around the control — label, description, error, success — comes
+ * from `Field` (LOS-0317), so every LifeOS field wires those relationships the
+ * same way and cannot drift apart from the others.
  */
 
 // `prefix` is a global RDFa attribute in React's DOM typings; ours is a
@@ -51,8 +54,8 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
     onClear,
     clearLabel = "Clear",
     className,
-    disabled,
-    readOnly,
+    disabled = false,
+    readOnly = false,
     id,
     type = "text",
     value,
@@ -70,23 +73,19 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
   const showClear = Boolean(onClear) && hasValue && !disabled && !readOnly;
 
   return (
-    <div
-      className={["lifeos-text-input", error && "has-error", disabled && "is-disabled", className]
-        .filter(Boolean)
-        .join(" ")}
+    <Field
+      ids={ids}
+      label={label}
+      labelHidden={labelHidden}
+      {...(description ? { description } : {})}
+      {...(error ? { error } : {})}
+      {...(success ? { success } : {})}
+      disabled={disabled}
+      {...(className ? { className } : {})}
     >
-      <label
-        htmlFor={ids.controlId}
-        className={["lifeos-text-input__label", labelHidden && "lifeos-visually-hidden"]
-          .filter(Boolean)
-          .join(" ")}
-      >
-        {label}
-      </label>
-
-      <div className="lifeos-text-input__control">
+      <div className="lifeos-field__control">
         {prefix ? (
-          <span className="lifeos-text-input__affix" aria-hidden="true">
+          <span className="lifeos-field__affix" aria-hidden="true">
             {prefix}
           </span>
         ) : null}
@@ -96,7 +95,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
           ref={ref}
           id={ids.controlId}
           type={type}
-          className="lifeos-text-input__field"
+          className="lifeos-field__element"
           disabled={disabled}
           readOnly={readOnly}
           {...(value === undefined ? {} : { value })}
@@ -110,7 +109,6 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
             label={clearLabel}
             size="sm"
             variant="ghost"
-            className="lifeos-text-input__clear"
             onClick={onClear}
             // Keeps the clear button out of the tab order: it duplicates a
             // capability the keyboard already has, and a tab stop between
@@ -120,24 +118,11 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
         ) : null}
 
         {suffix ? (
-          <span className="lifeos-text-input__affix" aria-hidden="true">
+          <span className="lifeos-field__affix" aria-hidden="true">
             {suffix}
           </span>
         ) : null}
       </div>
-
-      <FieldMessages
-        {...(description ? { description } : {})}
-        descriptionId={ids.descriptionId}
-        {...(error ? { error } : {})}
-        errorId={ids.errorId}
-      />
-
-      {success && !error ? (
-        <span className="lifeos-field__success" role="status">
-          {success}
-        </span>
-      ) : null}
-    </div>
+    </Field>
   );
 });

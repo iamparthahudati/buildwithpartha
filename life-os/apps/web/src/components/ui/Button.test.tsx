@@ -101,9 +101,22 @@ describe("Button", () => {
         </Button>,
       );
 
-      const button = screen.getByRole("button", { name: /Saving/ });
+      // The name stays the label the user can see and say. Letting the busy
+      // text become the name would take away what the button does at the
+      // exact moment they are waiting on it (LOS-0332).
+      const button = screen.getByRole("button", { name: "Save changes" });
       expect(button).toHaveAttribute("aria-busy", "true");
       expect(button).toHaveAttribute("aria-disabled", "true");
+    });
+
+    it("announces what it is busy with, separately from its name", () => {
+      renderWithUser(
+        <Button loading loadingLabel="Saving">
+          Save changes
+        </Button>,
+      );
+
+      expect(screen.getByRole("status")).toHaveTextContent("Saving");
     });
 
     it("prevents a duplicate submit", async () => {
