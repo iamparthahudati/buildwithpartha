@@ -1,0 +1,190 @@
+/* ColorIconPicker (LOS-0407). */
+
+.lifeos-color-icon-picker {
+  display: grid;
+  gap: var(--lifeos-space-2);
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+
+.lifeos-color-icon-picker__legend {
+  padding: 0;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-color-icon-picker__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-4);
+}
+
+/*
+ * The chosen color is independently proven to clear AA as a solid fill under
+ * a white icon (ColorIconPicker.test.tsx), so the preview can safely show the
+ * real combination rather than a smaller, lower-contrast stand-in.
+ */
+.lifeos-color-icon-picker__preview {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--lifeos-space-12); /* 48px */
+  height: var(--lifeos-space-12);
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-color-icon-picker__preview-icon {
+  color: var(--lifeos-color-text-on-solid);
+}
+
+.lifeos-color-icon-picker__groups {
+  display: grid;
+  flex: 1 1 auto;
+  gap: var(--lifeos-space-3);
+  min-width: 0;
+}
+
+.lifeos-color-icon-picker__group {
+  display: grid;
+  gap: var(--lifeos-space-2);
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+
+.lifeos-color-icon-picker__group-legend {
+  padding: 0;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-color-icon-picker__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-2);
+}
+
+/* ---------------------------------------------------------------- */
+/* Shared: the native input stays in the DOM, only out of sight       */
+/* ---------------------------------------------------------------- */
+
+.lifeos-color-swatch,
+.lifeos-icon-swatch {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--lifeos-target-min-size);
+  height: var(--lifeos-target-min-size);
+  cursor: pointer;
+}
+
+.lifeos-color-swatch__input,
+.lifeos-icon-swatch__input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  /* Kept clickable/focusable and in the tab order — only its paint is gone. */
+}
+
+.lifeos-color-swatch__input:disabled,
+.lifeos-icon-swatch__input:disabled {
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------- */
+/* Color swatch                                                      */
+/* ---------------------------------------------------------------- */
+
+.lifeos-color-swatch__dot {
+  width: var(--lifeos-space-6);
+  height: var(--lifeos-space-6);
+  border-radius: var(--lifeos-radius-pill);
+  outline: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  outline-offset: 2px;
+  transition: outline-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-color-swatch__input:checked ~ .lifeos-color-swatch__dot {
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-text);
+  outline-offset: 2px;
+}
+
+.lifeos-color-swatch__input:focus-visible ~ .lifeos-color-swatch__dot {
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Icon swatch                                                       */
+/* ---------------------------------------------------------------- */
+
+.lifeos-icon-swatch__glyph {
+  display: grid;
+  place-items: center;
+  width: var(--lifeos-space-8);
+  height: var(--lifeos-space-8);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  color: var(--lifeos-color-text-secondary);
+  background: var(--lifeos-color-surface);
+  transition:
+    border-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard),
+    color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-icon-swatch__input:checked ~ .lifeos-icon-swatch__glyph {
+  border-color: var(--lifeos-color-primary);
+  color: var(--lifeos-color-primary);
+  background: var(--lifeos-color-primary-soft);
+}
+
+.lifeos-icon-swatch__input:focus-visible ~ .lifeos-icon-swatch__glyph {
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-color-swatch__dot,
+  .lifeos-icon-swatch__glyph {
+    transition: none;
+  }
+}
+
+/*
+ * Forced colors discards both the fill backgrounds and the outline colors
+ * above, so the checked state would otherwise vanish entirely. CanvasText and
+ * Highlight are the two roles guaranteed to still render.
+ */
+@media (forced-colors: active) {
+  /*
+   * The color is the content here, the one narrow case where overriding it
+   * would break the control rather than protect the user: a picker whose
+   * swatches all render identically cannot be operated. The checked ring
+   * still switches to Highlight below, so the selection stays visible even
+   * though the swatch fills do not.
+   */
+  .lifeos-color-swatch__dot {
+    outline-color: CanvasText;
+    forced-color-adjust: none;
+  }
+
+  .lifeos-color-swatch__input:checked ~ .lifeos-color-swatch__dot {
+    outline-color: Highlight;
+    outline-width: calc(var(--lifeos-border-width-focus) * 2);
+  }
+
+  .lifeos-icon-swatch__glyph {
+    border-color: CanvasText;
+  }
+
+  .lifeos-icon-swatch__input:checked ~ .lifeos-icon-swatch__glyph {
+    border-color: Highlight;
+    color: Highlight;
+    background: Canvas;
+  }
+}

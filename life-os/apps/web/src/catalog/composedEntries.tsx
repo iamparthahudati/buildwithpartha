@@ -8,6 +8,7 @@ import {
   DateRangeFieldDemo,
   DateRangeFieldInvalidOrderDemo,
   DateTimeFieldDemo,
+  ColorIconPickerDemo,
   DateTimeFieldFoldDemo,
   DateTimeFieldGapDemo,
   DurationFieldBoundedDemo,
@@ -175,6 +176,22 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "The message names the correction; the typed value is preserved rather than replaced.",
         render: () => <DurationFieldBoundedDemo />,
+      },
+    ],
+  },
+  {
+    id: "color-icon-picker",
+    name: "ColorIconPicker",
+    group: "Composed",
+    summary:
+      "Two real native radio groups reusing the eight frozen chart tokens and a small curated icon set. Arrow-key movement and the roving tab stop come from the browser; the stored value is always a name, never a token or hex.",
+    states: [
+      {
+        id: "color-icon-picker-default",
+        name: "Default",
+        description:
+          "Every swatch is independently proven to clear AA as a solid fill under the white preview icon.",
+        render: () => <ColorIconPickerDemo />,
       },
     ],
   },
