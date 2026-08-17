@@ -122,9 +122,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0412 — Dialog added, the first modal primitive; `ConfirmDialog`, `Drawer`/`DetailPanel`, `Menu`, `FormDialog` and `CommandPalette` all build on it later. Built on `<dialog>` without `showModal()`/`close()`, since jsdom (this project's test environment) implements neither — confirmed by direct experiment before committing to the approach, which would otherwise have made every behavior here untestable. A new `useFocusTrap` hook (extracted for the same later tickets to reuse) surfaced two real bugs during testing: an `offsetParent`-based visibility filter that silently excluded every element under jsdom's missing layout engine, and a focus-restore race where the container's own DOM removal settles focus onto `document.body` after a synchronous restore call, fixed by deferring the restore to a microtask. A new `dialogStack.ts` — a plain module-level array, not React state — is what makes Escape safe to nest: each dialog checks whether it is topmost before acting, proven with a two-dialog test built around how nesting actually happens (a confirmation opened from inside an already-open dialog, not two dialogs mounted at once).
 
+- LOS-0413 — ConfirmDialog added on Dialog, for an irreversible or high-impact action only. `description` and `confirmLabel` are required props, not stylistic defaults — the tone guide's "must name the record and exact consequence" and "button labels repeat the action, never Yes/Proceed" rules become type errors a caller cannot skip rather than review comments. State stays fully caller-controlled (`pending`/`error` as plain props, no internal try/catch), matching every other composed field in this design system. Default focus lands on Cancel, not the danger action or the dialog's own close button, so an accidental Enter press cannot confirm anything; `typedConfirmation` is the ticket's high-impact escalation, keeping the danger button disabled until an exact match.
+
 ## Next recommended ticket
 
-`LOS-0413 — Build ConfirmDialog`.
+`LOS-0414 — Build Drawer and DetailPanel`.
 
 ## Known decisions requiring implementation-time values
 
