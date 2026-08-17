@@ -6,6 +6,7 @@ import {
   DetailPanel,
   Dialog,
   Drawer,
+  FormDialog,
   ToastViewport,
 } from "@components/feedback";
 import { Button, Text, TextInput } from "@components/ui";
@@ -307,5 +308,65 @@ export function DetailPanelDemo() {
         content={content}
       />
     </div>
+  );
+}
+
+export function FormDialogDemo() {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [failNext, setFailNext] = useState(true);
+
+  function handleSubmit() {
+    setPending(true);
+    setError(undefined);
+
+    setTimeout(() => {
+      setPending(false);
+      if (failNext) {
+        setError('A project named "' + name + '" already exists.');
+        setFailNext(false);
+      } else {
+        setOpen(false);
+        setName("");
+        setFailNext(true);
+      }
+    }, 700);
+  }
+
+  return (
+    <>
+      <Button
+        onClick={() => {
+          setError(undefined);
+          setOpen(true);
+        }}
+      >
+        Add project
+      </Button>
+      <FormDialog
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          setName("");
+        }}
+        onSubmit={handleSubmit}
+        title="Add project"
+        description="Projects group related outcomes and Tasks."
+        submitLabel="Add project"
+        isDirty={name.trim() !== ""}
+        pending={pending}
+        pendingLabel="Adding"
+        {...(error ? { error } : {})}
+      >
+        <TextInput
+          label="Project name"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          description="Try Escape or the backdrop once you've typed something, then submit to see the first attempt fail before a retry succeeds."
+        />
+      </FormDialog>
+    </>
   );
 }
