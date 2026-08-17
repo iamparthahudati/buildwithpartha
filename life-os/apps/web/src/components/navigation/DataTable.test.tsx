@@ -94,6 +94,21 @@ describe("DataTable", () => {
     expect(container.querySelectorAll(".lifeos-skeleton").length).toBeGreaterThan(0);
   });
 
+  it("announces the loading state, since the skeleton rows are aria-hidden", () => {
+    renderWithUser(
+      <DataTable
+        label="Tasks"
+        columns={COLUMNS}
+        rows={TASKS}
+        getRowId={(task) => task.id}
+        emptyTitle="No tasks"
+        status={{ type: "loading" }}
+      />,
+    );
+
+    expect(screen.getByRole("status")).toHaveTextContent("Loading Tasks…");
+  });
+
   it("wires selection: selecting a row and select-all both update the caller's own state", async () => {
     function Harness() {
       const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(new Set());
