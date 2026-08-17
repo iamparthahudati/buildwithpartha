@@ -1,0 +1,83 @@
+/* Alert (LOS-0408). */
+
+.lifeos-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-4);
+  border: var(--lifeos-border-width-hairline) solid transparent;
+  border-radius: var(--lifeos-radius-lg);
+}
+
+.lifeos-alert__icon {
+  flex: none;
+  margin-block-start: 0.125rem;
+}
+
+.lifeos-alert__body {
+  display: grid;
+  flex: 1 1 auto;
+  gap: var(--lifeos-space-1);
+  min-width: 0;
+}
+
+.lifeos-alert__heading {
+  margin: 0;
+  font-weight: var(--lifeos-font-weight-semibold);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+.lifeos-alert__message {
+  font-size: var(--lifeos-font-size-xs);
+  line-height: var(--lifeos-line-height-normal);
+}
+
+.lifeos-alert__action {
+  margin-block-start: var(--lifeos-space-2);
+}
+
+.lifeos-alert__dismiss {
+  flex: none;
+  /* Pulled in slightly so its 44px target does not push the box wider. */
+  margin: calc(var(--lifeos-space-2) * -1);
+}
+
+/* ---------------------------------------------------------------- */
+/* Tones                                                             */
+/* ---------------------------------------------------------------- */
+
+.lifeos-alert--info {
+  color: var(--lifeos-color-info);
+  background: var(--lifeos-color-info-soft);
+}
+
+.lifeos-alert--success {
+  color: var(--lifeos-color-success);
+  background: var(--lifeos-color-success-soft);
+}
+
+.lifeos-alert--warning {
+  color: var(--lifeos-color-warning);
+  background: var(--lifeos-color-warning-soft);
+}
+
+.lifeos-alert--danger {
+  color: var(--lifeos-color-danger);
+  background: var(--lifeos-color-danger-soft);
+}
+
+/*
+ * Body text inherits the tone color at full strength on the icon and heading,
+ * but reads better at the ordinary text color once it is a full paragraph —
+ * the tone has already been established by the icon and heading beside it.
+ */
+.lifeos-alert__message {
+  color: var(--lifeos-color-text);
+}
+
+@media (forced-colors: active) {
+  .lifeos-alert {
+    border-color: CanvasText;
+    background: Canvas;
+  }
+}
