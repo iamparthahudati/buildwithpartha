@@ -3,8 +3,11 @@ import { Copy, Pencil, Trash2 } from "lucide-react";
 
 import {
   AccountMenu,
+  BackLink,
+  Breadcrumbs,
   Menu,
   Tabs,
+  type BreadcrumbItem,
   type MenuItemDescriptor,
   type TabItem,
 } from "@components/navigation";
@@ -107,4 +110,33 @@ export function TabsUrlDemo() {
       label="Project views (URL-synced)"
     />
   );
+}
+
+const SHORT_TRAIL: readonly BreadcrumbItem[] = [
+  { label: "Home", href: "#home" },
+  { label: "Projects", href: "#projects" },
+  { label: "Website refresh", href: "#projects/website-refresh" },
+];
+
+const LONG_TRAIL: readonly BreadcrumbItem[] = [
+  { label: "Home", href: "#home" },
+  { label: "Projects", href: "#projects" },
+  { label: "Website refresh", href: "#projects/website-refresh" },
+  { label: "Tasks", href: "#projects/website-refresh/tasks" },
+  {
+    label: "Fix header on the marketing landing page",
+    href: "#projects/website-refresh/tasks/fix-header",
+  },
+];
+
+export function BreadcrumbsShortDemo() {
+  return <Breadcrumbs items={SHORT_TRAIL} />;
+}
+
+export function BreadcrumbsLongDemo() {
+  return <Breadcrumbs items={LONG_TRAIL} maxVisible={4} />;
+}
+
+export function BackLinkDemo() {
+  return <BackLink fallbackHref="#" />;
 }
