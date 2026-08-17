@@ -1,4 +1,4 @@
-import { AccountMenuDemo, MenuDemo } from "./NavigationDemos";
+import { AccountMenuDemo, MenuDemo, TabsLocalDemo, TabsUrlDemo } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
 
@@ -30,6 +30,28 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         name: "Profile, settings and sign out",
         description: "Aligns to the trailing edge of the trigger by default, like a top-bar menu.",
         render: () => <AccountMenuDemo />,
+      },
+    ],
+  },
+  {
+    id: "tabs",
+    name: "Tabs",
+    group: "Composed",
+    summary:
+      'The ARIA tabs pattern with automatic activation: arrow keys move a roving tabIndex between real <button role="tab"> elements and select as they go, matching Menu\'s own roving-focus mechanics. A panel mounts the first time its tab is selected and then stays mounted (hidden, not removed) — real lazy loading without losing local state on the next visit. Tabs is fully controlled, so "local" and "URL-synced" are the same component wired to different state.',
+    states: [
+      {
+        id: "tabs-local",
+        name: "Local state",
+        description: "Selection lives in useState and resets on reload. Try the arrow keys.",
+        render: () => <TabsLocalDemo />,
+      },
+      {
+        id: "tabs-url",
+        name: "URL-synced",
+        description:
+          "Backed by useDeepLinkParam (LOS-0414) instead — reload the page or use the browser's Back button and the selection stays correct.",
+        render: () => <TabsUrlDemo />,
       },
     ],
   },
