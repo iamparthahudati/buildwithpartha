@@ -1,0 +1,52 @@
+/* PageHeader (LOS-0418). */
+
+.lifeos-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-page-header__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-page-header__titleblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  min-width: 0;
+}
+
+.lifeos-page-header__description {
+  margin: 0;
+}
+
+.lifeos-page-header__metadata {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-page-header__actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+/*
+ * Below the small breakpoint the actions drop to their own full-width row
+ * under the title block, rather than staying pinned beside it — automatic by
+ * breakpoint, matching every other composed component's own "responsive."
+ */
+@media (width < 768px) {
+  .lifeos-page-header__actions {
+    width: 100%;
+  }
+}

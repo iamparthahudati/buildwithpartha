@@ -4,6 +4,7 @@ import {
   BreadcrumbsLongDemo,
   BreadcrumbsShortDemo,
   MenuDemo,
+  PageHeaderDemo,
   TabsLocalDemo,
   TabsUrlDemo,
 } from "./NavigationDemos";
@@ -97,6 +98,21 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "This page's own document.referrer decides which form renders — reload via a direct URL to see the fallback Link instead of the history button.",
         render: () => <BackLinkDemo />,
+      },
+    ],
+  },
+  {
+    id: "page-header",
+    name: "PageHeader",
+    group: "Composed",
+    summary:
+      "The banner at the top of a screen: an optional Breadcrumbs trail, the page's one real <h1>, an optional description and caller-supplied metadata, a primary action and — reusing Menu (LOS-0415) rather than a second dropdown — an overflow menu for everything secondary. The title row wraps to a stacked layout below the small breakpoint, automatic like every other composed component's \"responsive.\"",
+    states: [
+      {
+        id: "page-header-full",
+        name: "Every slot filled",
+        description: "Resize the viewport narrower to see the actions drop below the title.",
+        render: () => <PageHeaderDemo />,
       },
     ],
   },

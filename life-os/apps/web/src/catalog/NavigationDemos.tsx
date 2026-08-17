@@ -6,12 +6,13 @@ import {
   BackLink,
   Breadcrumbs,
   Menu,
+  PageHeader,
   Tabs,
   type BreadcrumbItem,
   type MenuItemDescriptor,
   type TabItem,
 } from "@components/navigation";
-import { Button, CountBadge, Text } from "@components/ui";
+import { Badge, Button, CountBadge, Text } from "@components/ui";
 import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
 
 /**
@@ -139,4 +140,30 @@ export function BreadcrumbsLongDemo() {
 
 export function BackLinkDemo() {
   return <BackLink fallbackHref="#" />;
+}
+
+const PAGE_HEADER_BREADCRUMBS: readonly BreadcrumbItem[] = [
+  { label: "Home", href: "#home" },
+  { label: "Projects", href: "#projects" },
+  { label: "Website refresh", href: "#projects/website-refresh" },
+];
+
+const PAGE_HEADER_SECONDARY_ACTIONS: readonly MenuItemDescriptor[] = [
+  { type: "item", id: "duplicate", label: "Duplicate project", onSelect: () => {} },
+  { type: "item", id: "export", label: "Export data", onSelect: () => {} },
+  { type: "separator", id: "sep-1" },
+  { type: "item", id: "archive", label: "Archive project", destructive: true, onSelect: () => {} },
+];
+
+export function PageHeaderDemo() {
+  return (
+    <PageHeader
+      title="Website refresh"
+      description="Every task related to the marketing site relaunch."
+      breadcrumbs={PAGE_HEADER_BREADCRUMBS}
+      metadata={<Badge tone="success">Active</Badge>}
+      primaryAction={<Button>Add task</Button>}
+      secondaryActions={PAGE_HEADER_SECONDARY_ACTIONS}
+    />
+  );
 }

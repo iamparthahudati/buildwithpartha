@@ -132,9 +132,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0417 — Breadcrumbs and BackLink added. Breadcrumbs is a real `<nav aria-label="Breadcrumb"><ol>` hierarchy; the last item is never a link (there is nothing to navigate to) and carries `aria-current="page"` instead. A trail longer than `maxVisible` collapses its middle behind a single "Show N hidden breadcrumbs" button — a new `collapseBreadcrumbs` pure function (paired with `menuPosition.ts`'s/`tooltipPosition.ts`'s precedent) decides what stays visible — rather than a dead ellipsis with no way back to the hidden path; each remaining crumb also truncates with an ellipsis on narrow viewports, automatic by breakpoint. A real bug surfaced live in the browser rather than in Vitest: the catalog demo's placeholder items all shared the same `href: "#"`, and keying breadcrumb `<li>`s by `href` alone collided, duplicating entries on expand — fixed by keying on `index` plus `href` in the component (defensive against any future caller's duplicate hrefs) and by giving the demo realistic, distinct hrefs. BackLink treats "Back" as the browser's own history only when a new pure `canGoBackWithinApp` function proves `document.referrer` is same-origin — real in-app navigation sets it, a bookmark or shared link does not — rendering a history-button in that case and a real `Link` to a caller-supplied `fallbackHref` otherwise, so the control never does nothing or leaves the app entirely.
 
+- LOS-0418 — PageHeader added, composing `Breadcrumbs` (LOS-0417) above the page's one real `<h1>`, an optional description and caller-supplied metadata, a primary action and — reusing `Menu` (LOS-0415) rather than inventing a second dropdown — an overflow menu for everything secondary. "Primary/split actions" is read as a layout split (primary action beside a menu for the rest), not a split-button widget, since that is the shape almost every real page header actually needs and it composes cleanly from pieces this epic already built. The actions row drops to its own full-width row below the title block under the small breakpoint — automatic by breakpoint, confirmed live by comparing the two rows' bounding rects at a mobile viewport width, not just asserted from the CSS.
+
 ## Next recommended ticket
 
-`LOS-0418 — Build PageHeader`.
+`LOS-0419 — Build MetricCard`.
 
 ## Known decisions requiring implementation-time values
 
