@@ -15,3 +15,4 @@ export {
 } from "./breadcrumbsCollapse";
 export { BackLink, type BackLinkProps } from "./BackLink";
 export { canGoBackWithinApp } from "./backLinkSafety";
+export { PageHeader, type PageHeaderProps } from "./PageHeader";
