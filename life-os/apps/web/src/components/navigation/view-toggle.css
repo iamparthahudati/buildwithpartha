@@ -1,0 +1,21 @@
+/* ViewToggle (LOS-0422). */
+
+.lifeos-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  padding: var(--lifeos-space-1);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+}
+
+.lifeos-view-toggle__button.is-pressed {
+  background: var(--lifeos-color-primary-soft);
+  color: var(--lifeos-color-on-primary-soft);
+}
+
+@media (forced-colors: active) {
+  .lifeos-view-toggle__button.is-pressed {
+    outline: var(--lifeos-border-width-thick) solid CanvasText;
+  }
+}

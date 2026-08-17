@@ -12,8 +12,10 @@ import {
   PageHeaderDemo,
   PaginationLocalDemo,
   PaginationUrlDemo,
+  SortControlDemo,
   TabsLocalDemo,
   TabsUrlDemo,
+  ViewToggleDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -192,6 +194,36 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Backed by useDeepLinkParam instead — reload the page or use the browser's Back button and the page stays correct.",
         render: () => <PaginationUrlDemo />,
+      },
+    ],
+  },
+  {
+    id: "sort-control",
+    name: "SortControl",
+    group: "Composed",
+    summary:
+      'One trigger showing the current sort as a stable label ("Sort: Name, ascending"), reusing Menu (LOS-0415) for the field picker. Picking the already-selected field toggles its direction; picking a different one keeps the current direction, since nothing here can guess which is more natural for a caller\'s own field.',
+    states: [
+      {
+        id: "sort-control-basic",
+        name: "Toggle direction by reselecting the same field",
+        description: "Open it, pick Name again to flip direction, or pick a different field.",
+        render: () => <SortControlDemo />,
+      },
+    ],
+  },
+  {
+    id: "view-toggle",
+    name: "ViewToggle",
+    group: "Composed",
+    summary:
+      'A real role="group" of real buttons, each carrying aria-pressed for the selected view — the ARIA toggle-button-group pattern, not a radiogroup, since a view preference is presentation rather than a set of mutually exclusive answers. The three modes (list/grid/table) are this design system\'s own fixed vocabulary, not caller-supplied domain data.',
+    states: [
+      {
+        id: "view-toggle-basic",
+        name: "List, grid and table",
+        description: "The pressed button reflects the current selection.",
+        render: () => <ViewToggleDemo />,
       },
     ],
   },
