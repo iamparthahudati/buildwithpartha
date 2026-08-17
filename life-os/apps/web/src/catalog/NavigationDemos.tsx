@@ -4,11 +4,14 @@ import { AlertTriangle, CheckCircle2, Copy, Pencil, Trash2, Users } from "lucide
 import {
   AccountMenu,
   BackLink,
+  BarChart,
   Breadcrumbs,
   ChartFrame,
   ChartLegend,
   DataTable,
+  DonutChart,
   FilterBar,
+  LineChart,
   Menu,
   MetricCard,
   PageHeader,
@@ -26,6 +29,7 @@ import {
   ViewToggle,
   type ActiveFilterChip,
   type BreadcrumbItem,
+  type ChartDatum,
   type ChartLegendItem,
   type DataTableColumn,
   type MenuItemDescriptor,
@@ -503,12 +507,17 @@ const TASK_STATUS_DATA: readonly TaskStatusDatum[] = [
 ];
 
 export function ChartFrameReadyDemo() {
-  const total = TASK_STATUS_DATA.reduce((sum, datum) => sum + datum.count, 0);
   const legend: readonly ChartLegendItem[] = TASK_STATUS_DATA.map((datum) => ({
     id: datum.id,
     label: datum.label,
     colorName: datum.colorName,
     value: String(datum.count),
+  }));
+  const chartData: readonly ChartDatum[] = TASK_STATUS_DATA.map((datum) => ({
+    id: datum.id,
+    label: datum.label,
+    value: datum.count,
+    colorName: datum.colorName,
   }));
 
   return (
@@ -537,42 +546,10 @@ export function ChartFrameReadyDemo() {
         </Table>
       }
     >
-      {/*
-        A placeholder bar visualization, not a real chart primitive — those
-        are LOS-0429's own ticket. ChartFrame only needs *some* children to
-        demonstrate its chrome; the bars reuse the same named chart tokens
-        ChartLegend renders beside them, so the two never disagree about
-        which color means which status.
-      */}
-      <div className="specimen-stack" aria-hidden="true">
-        {TASK_STATUS_DATA.map((datum) => (
-          <div key={datum.id} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <div
-              style={{
-                width: `${(datum.count / total) * 100}%`,
-                minWidth: "1.5rem",
-                height: "1.5rem",
-                borderRadius: "var(--lifeos-radius-sm)",
-                background: `var(${COLOR_TOKEN[datum.colorName]})`,
-              }}
-            />
-          </div>
-        ))}
-      </div>
+      <BarChart data={chartData} label="Tasks by status" locale="en-US" />
     </ChartFrame>
   );
 }
-
-const COLOR_TOKEN: Record<ChartLegendItem["colorName"], string> = {
-  blue: "--lifeos-chart-1",
-  green: "--lifeos-chart-2",
-  amber: "--lifeos-chart-3",
-  purple: "--lifeos-chart-4",
-  teal: "--lifeos-chart-5",
-  red: "--lifeos-chart-6",
-  magenta: "--lifeos-chart-7",
-  olive: "--lifeos-chart-8",
-};
 
 export function ChartFrameLoadingDemo() {
   return (
@@ -627,4 +604,44 @@ export function ChartLegendDemo() {
   }));
 
   return <ChartLegend items={items} label="Tasks by status" />;
+}
+
+const NET_TASKS_DATA: readonly ChartDatum[] = [
+  { id: "mon", label: "Mon", value: 4 },
+  { id: "tue", label: "Tue", value: 0 },
+  { id: "wed", label: "Wed", value: -3 },
+  { id: "thu", label: "Thu", value: 1 },
+  { id: "fri", label: "Fri", value: 12450 },
+];
+
+export function BarChartDemo() {
+  return (
+    <BarChart data={NET_TASKS_DATA} label="Net tasks completed vs. added, by day" locale="en-US" />
+  );
+}
+
+export function LineChartDemo() {
+  return (
+    <LineChart data={NET_TASKS_DATA} label="Net tasks completed vs. added, by day" locale="en-US" />
+  );
+}
+
+export function DonutChartReadyDemo() {
+  const data: readonly ChartDatum[] = TASK_STATUS_DATA.map((datum) => ({
+    id: datum.id,
+    label: datum.label,
+    value: datum.count,
+    colorName: datum.colorName,
+  }));
+
+  return <DonutChart data={data} label="Tasks by status" locale="en-US" />;
+}
+
+export function DonutChartEmptyDemo() {
+  const data: readonly ChartDatum[] = [
+    { id: "todo", label: "To do", value: 0 },
+    { id: "done", label: "Done", value: 0 },
+  ];
+
+  return <DonutChart data={data} label="Tasks by status" locale="en-US" />;
 }

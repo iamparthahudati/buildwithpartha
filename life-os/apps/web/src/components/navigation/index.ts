@@ -71,3 +71,8 @@ export {
 } from "./DataTable";
 export { ChartFrame, type ChartFrameProps, type ChartFrameStatus } from "./ChartFrame";
 export { ChartLegend, type ChartLegendItem, type ChartLegendProps } from "./ChartLegend";
+export type { ChartDatum } from "./chartTypes";
+export { formatChartPercent, formatChartValue } from "./chartValueFormat";
+export { BarChart, type BarChartProps } from "./BarChart";
+export { LineChart, type LineChartProps } from "./LineChart";
+export { DonutChart, type DonutChartProps } from "./DonutChart";

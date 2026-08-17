@@ -1,0 +1,69 @@
+/* BarChart (LOS-0429). */
+
+.lifeos-bar-chart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-bar-chart__svg {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  overflow: visible;
+}
+
+.lifeos-bar-chart__baseline {
+  stroke: var(--lifeos-chart-axis);
+  stroke-width: 0.3;
+  vector-effect: non-scaling-stroke;
+}
+
+.lifeos-bar-chart__bar {
+  fill: var(--lifeos-chart-bar-color);
+  cursor: pointer;
+  transition: opacity var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-bar-chart__bar:hover,
+.lifeos-bar-chart__bar:focus-visible {
+  opacity: 0.8;
+}
+
+.lifeos-bar-chart__labels {
+  display: flex;
+}
+
+.lifeos-bar-chart__label {
+  flex: 1;
+  overflow: hidden;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-3xs);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-bar-chart__bar {
+    transition: none;
+  }
+}
+
+@media print {
+  .lifeos-bar-chart__bar,
+  .lifeos-bar-chart__baseline {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-bar-chart__bar {
+    fill: CanvasText;
+  }
+
+  .lifeos-bar-chart__baseline {
+    stroke: CanvasText;
+  }
+}

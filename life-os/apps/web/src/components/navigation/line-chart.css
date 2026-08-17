@@ -1,0 +1,79 @@
+/* LineChart (LOS-0429). */
+
+.lifeos-line-chart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-line-chart__svg {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  overflow: visible;
+}
+
+.lifeos-line-chart__baseline {
+  stroke: var(--lifeos-chart-grid);
+  stroke-width: 0.3;
+  stroke-dasharray: 1.5 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.lifeos-line-chart__line {
+  fill: none;
+  stroke: var(--lifeos-chart-1);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.lifeos-line-chart__point {
+  fill: var(--lifeos-color-surface);
+  stroke: var(--lifeos-chart-1);
+  stroke-width: 0.6;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  transition: r var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-line-chart__point:hover,
+.lifeos-line-chart__point:focus-visible {
+  r: 2.2;
+}
+
+.lifeos-line-chart__labels {
+  display: flex;
+}
+
+.lifeos-line-chart__label {
+  flex: 1;
+  overflow: hidden;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-3xs);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-line-chart__point {
+    transition: none;
+  }
+}
+
+@media print {
+  .lifeos-line-chart__line,
+  .lifeos-line-chart__point {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-line-chart__line,
+  .lifeos-line-chart__point {
+    stroke: CanvasText;
+  }
+}
