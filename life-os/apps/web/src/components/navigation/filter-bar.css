@@ -1,0 +1,76 @@
+/* FilterBar (LOS-0420). */
+
+.lifeos-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-filter-bar__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-filter-bar__controls--inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-filter-bar__mobile-trigger {
+  display: none;
+}
+
+.lifeos-filter-bar__count {
+  margin-inline-start: auto;
+}
+
+.lifeos-filter-bar__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-filter-bar__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  padding-inline-start: var(--lifeos-space-3);
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-color-primary-soft);
+  color: var(--lifeos-color-on-primary-soft);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  white-space: nowrap;
+}
+
+.lifeos-filter-bar__controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+/*
+ * Below the small breakpoint, the inline controls give way to a single
+ * "Filters" button that opens the same controls inside a Drawer — automatic
+ * by breakpoint, the same "responsive" every other composed component here
+ * uses, achieved by hiding one of two renders rather than a media query
+ * deciding whether the Drawer exists at all.
+ */
+@media (width < 768px) {
+  .lifeos-filter-bar__controls--inline {
+    display: none;
+  }
+
+  .lifeos-filter-bar__mobile-trigger {
+    display: inline-flex;
+  }
+
+  .lifeos-filter-bar__count {
+    margin-inline-start: 0;
+  }
+}

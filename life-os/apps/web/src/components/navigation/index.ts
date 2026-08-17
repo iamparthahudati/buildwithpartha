@@ -23,3 +23,10 @@ export {
   type MetricTrend,
   type MetricTrendDirection,
 } from "./MetricCard";
+export { FilterBar, type ActiveFilterChip, type FilterBarProps } from "./FilterBar";
+export {
+  serializeFilters,
+  parseFilters,
+  type FilterState,
+  type FilterValue,
+} from "./filterUrlContract";

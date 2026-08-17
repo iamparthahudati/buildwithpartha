@@ -136,9 +136,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0419 — MetricCard added on `Surface` (LOS-0329), built on the `Metric` typography atom (LOS-0305) rather than a heading — a raw number is a data point, not a document-outline entry, and `Metric` already gives it tabular numerals and a real, visible, selectable label instead of an `aria-label`. `status` is one discriminated prop (`ready`/`loading`/`error`/`empty`) rather than separate booleans, the same shape `Combobox`'s single/multiple split already uses, ruling out impossible combinations as a type error; because `Metric`'s own `value` prop accepts any `ReactNode`, that is the one slot that actually varies across states — the label stays real, visible text throughout, including while loading. A trend is never color alone: a direction icon, the value's own visible text and a hidden "increase"/"decrease"/"no change" word all back it, and the color itself is driven by a caller-supplied `isPositive` rather than direction alone — confirmed live in a browser with a falling "Open tasks" count (good, green) beside a rising "Overdue tasks" count (bad, red).
 
+- LOS-0420 — FilterBar added. Like `PageHeader` and `DataTable`, it has no domain filters of its own, matching the "no domain columns hardcoded" principle — `children` is whatever fields the screen actually filters by; `FilterBar` supplies only the shell (active-filter chips, a result count, "Clear all" and the mobile collapse). The responsive collapse renders `children` twice — inline for a wide viewport, once more inside a `Drawer` (LOS-0414) behind a "Filters" button — with CSS choosing which is visible, since a Drawer is a real mounted overlay that `@media` alone cannot reposition the way it can a flex row; both copies read the same caller-owned controlled state, confirmed live by setting a filter through the inline control and reopening the Drawer to see the identical value already selected there. A new pure `filterUrlContract.ts` (`serializeFilters`/`parseFilters`) is the ticket's "URL serialization contract": a symmetric round-trip between a generic filter-state object and `URLSearchParams`, independent of any specific filter schema and deliberately not wired to `history.pushState` itself — that live-sync wiring is left to a caller or a future hook, the same way `useDeepLinkParam` handles a single value today.
+
 ## Next recommended ticket
 
-`LOS-0420 — Build FilterBar`.
+`LOS-0421 — Build Pagination`.
 
 ## Known decisions requiring implementation-time values
 

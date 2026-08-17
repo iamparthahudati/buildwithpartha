@@ -5,15 +5,17 @@ import {
   AccountMenu,
   BackLink,
   Breadcrumbs,
+  FilterBar,
   Menu,
   MetricCard,
   PageHeader,
   Tabs,
+  type ActiveFilterChip,
   type BreadcrumbItem,
   type MenuItemDescriptor,
   type TabItem,
 } from "@components/navigation";
-import { Badge, Button, CountBadge, Link, Text } from "@components/ui";
+import { Badge, Button, CountBadge, Link, Select, Text, TextInput } from "@components/ui";
 import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
 
 /**
@@ -213,4 +215,57 @@ export function MetricCardErrorDemo() {
 
 export function MetricCardEmptyDemo() {
   return <MetricCard icon={CheckCircle2} label="Open tasks" status={{ type: "empty" }} />;
+}
+
+const STATUS_OPTIONS = [
+  { value: "open", label: "Open" },
+  { value: "in-progress", label: "In progress" },
+  { value: "done", label: "Done" },
+];
+
+const STATUS_LABEL: Readonly<Record<string, string>> = Object.freeze({
+  open: "Open",
+  "in-progress": "In progress",
+  done: "Done",
+});
+
+export function FilterBarDemo() {
+  const [status, setStatus] = useState("");
+  const [search, setSearch] = useState("");
+
+  const chips: ActiveFilterChip[] = [];
+  if (status) {
+    chips.push({
+      id: "status",
+      label: `Status: ${STATUS_LABEL[status]}`,
+      onRemove: () => setStatus(""),
+    });
+  }
+  if (search) {
+    chips.push({ id: "search", label: `Search: "${search}"`, onRemove: () => setSearch("") });
+  }
+
+  return (
+    <FilterBar
+      activeChips={chips}
+      resultCount="12 tasks"
+      onClearAll={() => {
+        setStatus("");
+        setSearch("");
+      }}
+    >
+      <Select
+        label="Status"
+        options={STATUS_OPTIONS}
+        placeholder="Any status"
+        value={status}
+        onChange={(event) => setStatus(event.target.value)}
+      />
+      <TextInput
+        label="Search"
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+      />
+    </FilterBar>
+  );
 }
