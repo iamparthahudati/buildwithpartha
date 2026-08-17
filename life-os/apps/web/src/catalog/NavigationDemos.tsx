@@ -11,6 +11,14 @@ import {
   PageHeader,
   Pagination,
   SortControl,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+  TableSelectAllCell,
+  TableSelectCell,
   Tabs,
   ViewToggle,
   type ActiveFilterChip,
@@ -319,4 +327,84 @@ export function SortControlDemo() {
 export function ViewToggleDemo() {
   const [mode, setMode] = useState<ViewMode>("list");
   return <ViewToggle value={mode} onChange={setMode} label="Task list view" />;
+}
+
+interface DemoTask {
+  readonly id: string;
+  readonly name: string;
+  readonly status: string;
+  readonly description: string;
+}
+
+const DEMO_TASKS: readonly DemoTask[] = [
+  {
+    id: "1",
+    name: "Fix header on the marketing landing page",
+    status: "Open",
+    description: "The logo overlaps the nav on narrow viewports below 480px.",
+  },
+  {
+    id: "2",
+    name: "Ship release",
+    status: "In progress",
+    description: "Tag v2.4.0 once the last two blockers close.",
+  },
+  {
+    id: "3",
+    name: "Write release notes",
+    status: "Done",
+    description: "Summarize the changelog for the newsletter.",
+  },
+];
+
+export function TableDemo() {
+  const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
+
+  function toggleRow(id: string, checked: boolean) {
+    const next = new Set(selected);
+    if (checked) {
+      next.add(id);
+    } else {
+      next.delete(id);
+    }
+    setSelected(next);
+  }
+
+  function toggleAll(checked: boolean) {
+    setSelected(checked ? new Set(DEMO_TASKS.map((task) => task.id)) : new Set());
+  }
+
+  const allSelected = selected.size === DEMO_TASKS.length;
+  const someSelected = selected.size > 0 && !allSelected;
+
+  return (
+    <Table caption="Tasks">
+      <TableHead>
+        <TableRow>
+          <TableSelectAllCell
+            checked={allSelected}
+            indeterminate={someSelected}
+            onChange={toggleAll}
+          />
+          <TableHeaderCell sortDirection="ascending">Name</TableHeaderCell>
+          <TableHeaderCell>Status</TableHeaderCell>
+          <TableHeaderCell>Description</TableHeaderCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {DEMO_TASKS.map((task) => (
+          <TableRow key={task.id} selected={selected.has(task.id)}>
+            <TableSelectCell
+              checked={selected.has(task.id)}
+              onChange={(checked) => toggleRow(task.id, checked)}
+              label={`Select ${task.name}`}
+            />
+            <TableCell>{task.name}</TableCell>
+            <TableCell>{task.status}</TableCell>
+            <TableCell truncate>{task.description}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
 }

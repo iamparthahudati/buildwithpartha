@@ -13,6 +13,7 @@ import {
   PaginationLocalDemo,
   PaginationUrlDemo,
   SortControlDemo,
+  TableDemo,
   TabsLocalDemo,
   TabsUrlDemo,
   ViewToggleDemo,
@@ -224,6 +225,22 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         name: "List, grid and table",
         description: "The pressed button reflects the current selection.",
         render: () => <ViewToggleDemo />,
+      },
+    ],
+  },
+  {
+    id: "table",
+    name: "Table primitives",
+    group: "Composed",
+    summary:
+      'Real <table>/<thead>/<tbody>/<tr>/<th>/<td> — never role="grid", which is a spreadsheet-editing contract nothing here needs. Tab reaches every real control (a selection Checkbox) in reading order; a screen reader\'s own table-navigation commands read scope/aria-sort for free. Selection cells reuse Checkbox (LOS-0311) with its visible label hidden only inside a select cell; DataTable (LOS-0424) is what will compose these with query state, filters, sorting and a domain-aware responsive card view.',
+    states: [
+      {
+        id: "table-basic",
+        name: "Selection, sort indicator, truncation and density",
+        description:
+          "The Description column truncates; the Name header shows an ascending sort indicator. Select rows or Select all.",
+        render: () => <TableDemo />,
       },
     ],
   },
