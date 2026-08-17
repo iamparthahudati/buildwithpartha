@@ -10,11 +10,16 @@ import {
   MetricCard,
   PageHeader,
   Pagination,
+  SortControl,
   Tabs,
+  ViewToggle,
   type ActiveFilterChip,
   type BreadcrumbItem,
   type MenuItemDescriptor,
+  type SortOption,
+  type SortState,
   type TabItem,
+  type ViewMode,
 } from "@components/navigation";
 import { Badge, Button, CountBadge, Link, Select, Text, TextInput } from "@components/ui";
 import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
@@ -296,4 +301,22 @@ export function PaginationUrlDemo() {
       label="Tasks pagination (URL-synced)"
     />
   );
+}
+
+const SORT_OPTIONS: readonly SortOption[] = [
+  { id: "name", label: "Name" },
+  { id: "created", label: "Date created" },
+  { id: "due", label: "Due date" },
+];
+
+export function SortControlDemo() {
+  const [sort, setSort] = useState<SortState>({ optionId: "name", direction: "asc" });
+  return (
+    <SortControl options={SORT_OPTIONS} value={sort} onChange={setSort} label="Sort tasks by" />
+  );
+}
+
+export function ViewToggleDemo() {
+  const [mode, setMode] = useState<ViewMode>("list");
+  return <ViewToggle value={mode} onChange={setMode} label="Task list view" />;
 }

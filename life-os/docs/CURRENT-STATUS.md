@@ -140,9 +140,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0421 — Pagination added: a real `<nav>` of real `<button>` page controls, `aria-current="page"` on the current one, and Previous/Next genuinely disabled (not merely styled) at the real first/last page. A new pure `paginationRange` function (paired with `breadcrumbsCollapse.ts`'s precedent) collapses a long run of pages behind an ellipsis on either side of the current page, always keeping the first and last page one click away, verified live by jumping to page 5 of 20 and seeing the range recompute to `1 … 4 5 6 … 20`. `page`/`onPageChange` is a plain controlled pair, the same "URL integration is the caller's own choice of `useState` versus `useDeepLinkParam`" shape `Tabs` (LOS-0416) already established, confirmed live by watching a page click genuinely change `window.location.search` in the URL-synced demo.
 
+- LOS-0422 — SortControl and ViewToggle added. SortControl is one trigger showing the current sort as a stable label ("Sort: Name, ascending") — reusing `Menu` (LOS-0415) for the field picker rather than a second dropdown pattern; picking the already-selected field toggles its direction, and picking a different field keeps the current direction unchanged, since nothing in this component can guess which direction is more natural for a caller's own field — confirmed live by reselecting "Name" and watching the trigger flip to "descending". ViewToggle is a real `role="group"` of real buttons, each carrying `aria-pressed` for the selected view — the ARIA toggle-button-group pattern, not a `radiogroup`, since a view preference is presentation rather than a set of mutually exclusive answers — confirmed live that clicking "Grid view" moved `aria-pressed="true"` to it and nowhere else. The three view modes (list/grid/table) are read as this design system's own fixed vocabulary per the ticket's literal wording, not caller-supplied domain data the way `FilterBar`'s filter fields are.
+
 ## Next recommended ticket
 
-`LOS-0422 — Build SortControl and ViewToggle`.
+`LOS-0423 — Build Table primitives`.
 
 ## Known decisions requiring implementation-time values
 

@@ -32,3 +32,11 @@ export {
 } from "./filterUrlContract";
 export { Pagination, type PaginationProps } from "./Pagination";
 export { paginationRange, type PaginationEntry } from "./paginationRange";
+export {
+  SortControl,
+  type SortControlProps,
+  type SortDirection,
+  type SortOption,
+  type SortState,
+} from "./SortControl";
+export { ViewToggle, type ViewMode, type ViewToggleProps } from "./ViewToggle";
