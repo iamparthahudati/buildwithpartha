@@ -5,6 +5,7 @@ import { COMPOSED_CATALOG_ENTRIES } from "./composedEntries";
 import { FEEDBACK_CATALOG_ENTRIES } from "./feedbackEntries";
 import { FORM_CATALOG_ENTRIES } from "./formEntries";
 import { MESSAGING_CATALOG_ENTRIES } from "./messagingEntries";
+import { NAVIGATION_CATALOG_ENTRIES } from "./navigationEntries";
 import { STRUCTURE_CATALOG_ENTRIES } from "./structureEntries";
 import { Swatch } from "./Swatch";
 import type { CatalogEntry } from "./registry";
@@ -286,4 +287,5 @@ export const CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
   ...STRUCTURE_CATALOG_ENTRIES,
   ...COMPOSED_CATALOG_ENTRIES,
   ...MESSAGING_CATALOG_ENTRIES,
+  ...NAVIGATION_CATALOG_ENTRIES,
 ]);
