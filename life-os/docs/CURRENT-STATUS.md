@@ -118,9 +118,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0410 — EmptyState added on `Surface`. `variant` (first-use/filtered/search/permission/archived) only picks a default icon; title and description stay the caller's own copy, matching the tone guide's rule that a component must never invent feature copy internally. The title only joins the page's heading outline when an explicit `titleLevel` is given — a "No results" inside a dropdown is not a landmark, and forcing every instance into one would be a false structural claim.
 
+- LOS-0411 — ErrorState added, completing the "empty/error" pair `STRUCTURE.md` names alongside `EmptyState`. The tone guide's error message formula (what happened / what was preserved / next action) maps directly onto `title`/`description`/named recovery props; `onRetry`/`onGoBack`/`onSignIn` carry the tone guide's own canonical labels (`Try again`, `Sign in`) rather than trusting each call site to retype them consistently. `scope="region"` composes `Alert` directly, matching the tone guide's "keep the rest of the page visible" rule for a partial failure; `scope="page"` could not reuse `EmptyState`, since that component's `variant` type names reasons a list is empty, not reasons a load failed.
+
 ## Next recommended ticket
 
-`LOS-0411 — Build ErrorState`.
+`LOS-0412 — Build Dialog`.
 
 ## Known decisions requiring implementation-time values
 

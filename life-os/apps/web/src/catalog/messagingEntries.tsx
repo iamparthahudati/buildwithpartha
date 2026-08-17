@@ -1,4 +1,4 @@
-import { Alert, EmptyState, InlineMessage } from "@components/feedback";
+import { Alert, EmptyState, ErrorState, InlineMessage } from "@components/feedback";
 import { Button, Link } from "@components/ui";
 
 import { ToastDemo } from "./MessagingDemos";
@@ -183,6 +183,80 @@ export const MESSAGING_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze(
             variant="archived"
             title="Nothing archived yet"
             description="Archived Projects and Tasks will appear here."
+          />
+        ),
+      },
+    ],
+  },
+  {
+    id: "error-state",
+    name: "ErrorState",
+    group: "Composed",
+    summary:
+      "The tone guide's error formula — what happened, what was preserved, next action — mapped onto title/description/actions. Region composes Alert so the rest of the page stays visible around it; page is the larger centered block for a whole failed route.",
+    states: [
+      {
+        id: "error-state-region-retry",
+        name: "Region — partial failure",
+        description: "The rest of the page stays visible around it.",
+        render: () => (
+          <ErrorState
+            scope="region"
+            title="Today's schedule couldn't load."
+            description="Other Today sections are still available."
+            onRetry={() => {}}
+          />
+        ),
+      },
+      {
+        id: "error-state-page-retry",
+        name: "Page — load failed",
+        description: "A larger, centered block for a whole route or screen that failed.",
+        render: () => (
+          <ErrorState
+            scope="page"
+            title="LifeOS couldn't load Tasks right now."
+            onRetry={() => {}}
+          />
+        ),
+      },
+      {
+        id: "error-state-permission",
+        name: "Permission — go back only",
+        description: "States unavailability without confirming the record exists.",
+        render: () => (
+          <ErrorState
+            scope="page"
+            title="This item isn't available."
+            description="It may have been removed, or you may not have access."
+            onGoBack={() => {}}
+          />
+        ),
+      },
+      {
+        id: "error-state-session",
+        name: "Session expired",
+        description: "Sign in replaces retry entirely — retrying an expired session cannot help.",
+        render: () => (
+          <ErrorState
+            scope="page"
+            title="Your session expired."
+            description="Sign in again to continue."
+            onSignIn={() => {}}
+          />
+        ),
+      },
+      {
+        id: "error-state-unexpected",
+        name: "Unexpected, with a reference id",
+        description: "Never a stack trace or HTTP code — only the safe correlation id.",
+        render: () => (
+          <ErrorState
+            scope="page"
+            title="Something went wrong."
+            description="Try again."
+            onRetry={() => {}}
+            correlationId="8f2c-91ad"
           />
         ),
       },

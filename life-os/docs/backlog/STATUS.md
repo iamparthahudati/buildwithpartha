@@ -87,5 +87,6 @@ Last updated: 2026-08-17
 | LOS-0408 | Done          | `feature/LOS-0408-alert-inline-message`         | Alert and InlineMessage, first tickets in `components/feedback/`; `announce` role is an explicit caller-set prop defaulting to none rather than tone-derived, and both are tested to update in place rather than remount on new content. |
 | LOS-0409 | Done          | `feature/LOS-0409-toast-system`                 | Toast system, first ticket in `state/`; composes Alert with a pause-aware `useAutoDismissTimer`, id-based dedupe/refresh and a `maxVisible` queue that promotes the oldest waiting toast on dismissal. |
 | LOS-0410 | Done          | `feature/LOS-0410-empty-state`                  | EmptyState on Surface; `variant` picks only a default icon, never copy, and the title joins the page's heading outline only when an explicit `titleLevel` is given. |
+| LOS-0411 | Done          | `feature/LOS-0411-error-state`                  | ErrorState maps the tone guide's error formula onto title/description/named actions (onRetry/onGoBack/onSignIn, canonical labels); region composes Alert, page cannot reuse EmptyState's variant type. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
