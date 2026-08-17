@@ -1,0 +1,157 @@
+/* Timeline (LOS-0430). */
+
+.lifeos-timeline {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-timeline__entry {
+  position: relative;
+  display: flex;
+  gap: var(--lifeos-space-4);
+  padding-bottom: var(--lifeos-space-6);
+}
+
+/* The connecting line runs through every marker except the last entry's. */
+.lifeos-timeline__entry:last-child {
+  padding-bottom: 0;
+}
+
+/*
+ * `top`/`bottom` rather than `height: 100%`: this entry's own height is
+ * content-derived (a description can wrap to any number of lines), and a
+ * percentage height on an absolutely positioned element only resolves
+ * against a containing block whose height is *not* itself `auto` — against
+ * an auto-height container it computes as `auto` too, which is exactly why
+ * an earlier version of this rule rendered a zero-height line. Setting both
+ * offsets instead lets the box model solve the height from the entry's own
+ * real rendered size, auto or not.
+ */
+.lifeos-timeline__entry:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: var(--lifeos-space-6);
+  bottom: 0;
+  left: calc((var(--lifeos-space-6) - var(--lifeos-border-width-thick)) / 2);
+  width: var(--lifeos-border-width-thick);
+  background: var(--lifeos-chart-grid);
+}
+
+.lifeos-timeline__marker {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: var(--lifeos-space-6);
+  block-size: var(--lifeos-space-6);
+  border-radius: var(--lifeos-radius-pill);
+  border: var(--lifeos-border-width-thick) solid var(--lifeos-color-border);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-surface);
+}
+
+.lifeos-timeline__entry--completed .lifeos-timeline__marker {
+  border-color: var(--lifeos-color-success);
+  background: var(--lifeos-color-success);
+}
+
+.lifeos-timeline__entry--current .lifeos-timeline__marker {
+  border-color: var(--lifeos-color-primary);
+  background: var(--lifeos-color-primary-soft);
+  animation: lifeos-timeline-pulse var(--lifeos-motion-duration-deliberate)
+    var(--lifeos-motion-ease-standard) infinite;
+}
+
+.lifeos-timeline__entry--overdue .lifeos-timeline__marker {
+  border-color: var(--lifeos-color-danger);
+  color: var(--lifeos-color-danger);
+  background: var(--lifeos-color-surface);
+}
+
+@keyframes lifeos-timeline-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--lifeos-color-primary-soft);
+  }
+
+  50% {
+    box-shadow: 0 0 0 var(--lifeos-space-1) transparent;
+  }
+}
+
+.lifeos-timeline__content {
+  flex: 1;
+  min-width: 0;
+  padding-top: var(--lifeos-space-1);
+}
+
+.lifeos-timeline__heading-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-timeline__title {
+  margin: 0;
+}
+
+.lifeos-timeline__title--plain {
+  color: var(--lifeos-color-text);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.lifeos-timeline__date {
+  display: block;
+  margin-top: var(--lifeos-space-1);
+}
+
+.lifeos-timeline__description {
+  margin-top: var(--lifeos-space-2);
+}
+
+@media (width < 768px) {
+  .lifeos-timeline__entry {
+    gap: var(--lifeos-space-3);
+    padding-bottom: var(--lifeos-space-5);
+  }
+
+  .lifeos-timeline__heading-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--lifeos-space-1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-timeline__entry--current .lifeos-timeline__marker {
+    animation: none;
+  }
+}
+
+@media print {
+  .lifeos-timeline__marker,
+  .lifeos-timeline__marker::after {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-timeline__marker {
+    border-color: CanvasText;
+    background: Canvas;
+  }
+
+  .lifeos-timeline__entry--completed .lifeos-timeline__marker,
+  .lifeos-timeline__entry--current .lifeos-timeline__marker {
+    background: CanvasText;
+  }
+
+  .lifeos-timeline__marker::after {
+    background: CanvasText;
+  }
+}

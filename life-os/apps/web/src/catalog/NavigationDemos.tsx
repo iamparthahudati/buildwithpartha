@@ -26,6 +26,7 @@ import {
   TableSelectAllCell,
   TableSelectCell,
   Tabs,
+  Timeline,
   ViewToggle,
   type ActiveFilterChip,
   type BreadcrumbItem,
@@ -36,6 +37,7 @@ import {
   type SortOption,
   type SortState,
   type TabItem,
+  type TimelineEntry,
   type ViewMode,
 } from "@components/navigation";
 import { Badge, Button, CountBadge, Link, Select, Surface, Text, TextInput } from "@components/ui";
@@ -644,4 +646,38 @@ export function DonutChartEmptyDemo() {
   ];
 
   return <DonutChart data={data} label="Tasks by status" locale="en-US" />;
+}
+
+const TIMELINE_ENTRIES: readonly TimelineEntry[] = [
+  {
+    id: "kickoff",
+    title: "Kickoff",
+    description: "Project charter approved and the team assembled.",
+    date: "2026-01-05",
+    status: "completed",
+  },
+  {
+    id: "design-review",
+    title: "Design review",
+    description: "Walking the marketing team through the new homepage.",
+    date: "2026-08-20",
+    status: "current",
+  },
+  {
+    id: "content-freeze",
+    title: "Content freeze",
+    description: "All copy was due before the design review — still outstanding.",
+    date: "2026-08-10",
+    status: "overdue",
+  },
+  {
+    id: "launch",
+    title: "Launch",
+    date: "2026-09-15",
+    status: "future",
+  },
+];
+
+export function TimelineDemo() {
+  return <Timeline entries={TIMELINE_ENTRIES} label="Website refresh milestones" locale="en-US" />;
 }
