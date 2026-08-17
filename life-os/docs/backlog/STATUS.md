@@ -85,5 +85,6 @@ Last updated: 2026-08-17
 | LOS-0406 | Done          | `feature/LOS-0406-duration-field`               | DurationField splits/combines an Estimate's minute total into Hours/Minutes with automatic overflow normalization; bounds are reported as a message rather than clamped live, after live-clamping was caught mid-typing a field back to its minimum. |
 | LOS-0407 | Done          | `feature/LOS-0407-color-icon-picker`            | ColorIconPicker: two native radio groups reusing the eight frozen chart tokens (named output only) and a curated icon list; every swatch's AA contrast as a white-icon solid fill is computed and proven, not assumed. |
 | LOS-0408 | Done          | `feature/LOS-0408-alert-inline-message`         | Alert and InlineMessage, first tickets in `components/feedback/`; `announce` role is an explicit caller-set prop defaulting to none rather than tone-derived, and both are tested to update in place rather than remount on new content. |
+| LOS-0409 | Done          | `feature/LOS-0409-toast-system`                 | Toast system, first ticket in `state/`; composes Alert with a pause-aware `useAutoDismissTimer`, id-based dedupe/refresh and a `maxVisible` queue that promotes the oldest waiting toast on dismissal. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

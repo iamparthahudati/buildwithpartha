@@ -1,0 +1,33 @@
+/* Toast (LOS-0409). */
+
+/*
+ * `Alert`'s own border stays transparent by default (`alert.css`), so the
+ * shadow below is the only boundary a toast draws — its tone's soft
+ * background is what actually carries the color identity.
+ */
+.lifeos-toast {
+  width: 100%;
+  max-width: 24rem;
+  box-shadow: var(--lifeos-shadow-lg);
+  border-radius: var(--lifeos-radius-lg);
+  animation: lifeos-toast-enter var(--lifeos-motion-duration-normal)
+    var(--lifeos-motion-ease-entrance);
+}
+
+@keyframes lifeos-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-toast {
+    animation: none;
+  }
+}
