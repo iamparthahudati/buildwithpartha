@@ -69,3 +69,5 @@ export {
   type DataTableSortConfig,
   type DataTableStatus,
 } from "./DataTable";
+export { ChartFrame, type ChartFrameProps, type ChartFrameStatus } from "./ChartFrame";
+export { ChartLegend, type ChartLegendItem, type ChartLegendProps } from "./ChartLegend";
