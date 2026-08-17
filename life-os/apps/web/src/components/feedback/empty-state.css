@@ -1,0 +1,38 @@
+/* EmptyState (LOS-0410). */
+
+.lifeos-empty-state {
+  display: grid;
+  justify-items: center;
+  gap: var(--lifeos-space-2);
+  text-align: center;
+}
+
+.lifeos-empty-state__icon {
+  width: var(--lifeos-space-8);
+  height: var(--lifeos-space-8);
+  margin-block-end: var(--lifeos-space-1);
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-empty-state__title {
+  color: var(--lifeos-color-text);
+}
+
+/* Matches Heading's own weight/leading when no real heading is rendered. */
+.lifeos-empty-state__title--plain {
+  margin: 0;
+  font-weight: var(--lifeos-font-weight-semibold);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+.lifeos-empty-state__description {
+  max-width: 32rem;
+}
+
+.lifeos-empty-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--lifeos-space-3);
+  margin-block-start: var(--lifeos-space-2);
+}

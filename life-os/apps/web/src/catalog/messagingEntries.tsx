@@ -1,4 +1,4 @@
-import { Alert, InlineMessage } from "@components/feedback";
+import { Alert, EmptyState, InlineMessage } from "@components/feedback";
 import { Button, Link } from "@components/ui";
 
 import { ToastDemo } from "./MessagingDemos";
@@ -110,6 +110,81 @@ export const MESSAGING_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze(
         description:
           "Try pushing all three, then hover one — its countdown stops until the pointer leaves.",
         render: () => <ToastDemo />,
+      },
+    ],
+  },
+  {
+    id: "empty-state",
+    name: "EmptyState",
+    group: "Composed",
+    summary:
+      "A pure layout primitive: variant picks a sensible default icon and nothing else. Title and description are always the caller's own copy, matching the tone guide's rule that a component must not invent feature copy internally.",
+    states: [
+      {
+        id: "empty-state-first-use",
+        name: "First use",
+        description: "Names the benefit and offers the first safe action.",
+        render: () => (
+          <EmptyState
+            variant="first-use"
+            title="No projects yet"
+            titleLevel={3}
+            description="Add a project to organize related outcomes and Tasks."
+            primaryAction={<Button size="sm">Add project</Button>}
+          />
+        ),
+      },
+      {
+        id: "empty-state-filtered",
+        name: "Filtered",
+        description: "Names the filters and offers to clear them — never a forced action.",
+        render: () => (
+          <EmptyState
+            variant="filtered"
+            title="No tasks match these filters."
+            secondaryAction={
+              <Button size="sm" variant="secondary">
+                Clear filters
+              </Button>
+            }
+          />
+        ),
+      },
+      {
+        id: "empty-state-search",
+        name: "Search",
+        description: "Echoes the query only in this private view, plus a safe suggestion.",
+        render: () => (
+          <EmptyState
+            variant="search"
+            title={'No results for "Prepare weekly review".'}
+            description="Try fewer words or add a new record."
+          />
+        ),
+      },
+      {
+        id: "empty-state-permission",
+        name: "Permission",
+        description: "States unavailability without confirming whether the record exists.",
+        render: () => (
+          <EmptyState
+            variant="permission"
+            title="This item isn't available."
+            secondaryAction={<Link href="#">Back to tasks</Link>}
+          />
+        ),
+      },
+      {
+        id: "empty-state-archived",
+        name: "Archived",
+        description: "Confirms the condition; nothing to force here either.",
+        render: () => (
+          <EmptyState
+            variant="archived"
+            title="Nothing archived yet"
+            description="Archived Projects and Tasks will appear here."
+          />
+        ),
       },
     ],
   },

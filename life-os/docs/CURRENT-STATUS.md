@@ -116,9 +116,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0409 — Toast system added, the first ticket to populate the reserved `state/` category. `Toast` composes `Alert` rather than reinventing its box, and — unlike `Alert` itself — always announces, since a toast is by nature always a fresh reaction rather than static content. A new `useAutoDismissTimer` hook tracks the true remaining time across pause/resume rather than restarting a full countdown, and `Toast` corrects a subtle case the hook can't see on its own: a refreshed notification arriving while the pointer never left must stay paused, not silently resume underneath the user. `ToastProvider`'s queue dedupes by id (defaulting to tone+message) and caps how many show at once, promoting the oldest waiting toast the moment a slot frees up.
 
+- LOS-0410 — EmptyState added on `Surface`. `variant` (first-use/filtered/search/permission/archived) only picks a default icon; title and description stay the caller's own copy, matching the tone guide's rule that a component must never invent feature copy internally. The title only joins the page's heading outline when an explicit `titleLevel` is given — a "No results" inside a dropdown is not a landmark, and forcing every instance into one would be a false structural claim.
+
 ## Next recommended ticket
 
-`LOS-0410 — Build EmptyState`.
+`LOS-0411 — Build ErrorState`.
 
 ## Known decisions requiring implementation-time values
 
