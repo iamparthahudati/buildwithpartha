@@ -40,3 +40,22 @@ export {
   type SortState,
 } from "./SortControl";
 export { ViewToggle, type ViewMode, type ViewToggleProps } from "./ViewToggle";
+export {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+  TableSelectAllCell,
+  TableSelectCell,
+  type TableBodyProps,
+  type TableCellProps,
+  type TableDensity,
+  type TableHeadProps,
+  type TableHeaderCellProps,
+  type TableProps,
+  type TableRowProps,
+  type TableSelectAllCellProps,
+  type TableSelectCellProps,
+} from "./Table";
