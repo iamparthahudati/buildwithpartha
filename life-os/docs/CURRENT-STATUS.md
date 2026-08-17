@@ -108,9 +108,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0405 — DateTimeField added, grouping a DateInput and a TimeInput under one fieldset the way DateRangeField groups its two dates. `timeZone` is required input rather than a label, because a new `resolveLocalDateTime` (`lib/localDateTime.ts`) uses it to check whether the chosen date and time actually name a real moment: twice a year, in a zone with daylight saving, a spring-forward gap skips an hour that has no valid instant (an error) and a fall-back fold repeats one, giving two valid instants an hour apart (a non-blocking warning, resolved to the earlier one). A first version of the resolver silently missed the fold case — it refined from the naive instant's own offset instead of checking a day either side of it — caught and fixed by the 2026 fall-back test before it shipped.
 
+- LOS-0406 — DurationField added: two NumberInputs (Hours, Minutes) over one canonical minute total, matching Estimate's stored form. The two inputs are derived fresh from the total on every render, which is what makes an overflowing minutes entry normalize into whole hours automatically, with no "1h 90m" intermediate state to clean up. A first version clamped `min`/`max` live on every keystroke and shipped two failing tests before anything else: clearing a field below its minimum snapped the value back mid-edit, so the next digit typed landed appended to the snapped-back number. The fix reports out-of-bounds values as a message instead of rewriting them, the same "derive and display, never rewrite while the user is typing" shape `DateRangeField`'s order check and `DateTimeField`'s DST check already use. The readable summary (`lib/duration.ts`) uses `Intl.NumberFormat`'s `unit` style rather than the newer `Intl.DurationFormat`, which is not yet safe against the project's frozen Safari/Firefox browser target.
+
 ## Next recommended ticket
 
-`LOS-0406 — Build DurationField`.
+`LOS-0407 — Build ColorIconPicker`.
 
 ## Known decisions requiring implementation-time values
 

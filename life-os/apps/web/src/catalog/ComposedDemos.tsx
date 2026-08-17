@@ -9,6 +9,7 @@ import {
   type DateRangeValue,
   DateTimeField,
   type DateTimeValue,
+  DurationField,
   FormErrorSummary,
   FormField,
   FormFieldGroup,
@@ -284,6 +285,41 @@ export function DateTimeFieldFoldDemo() {
       timeZone="America/New_York"
       value={value}
       onValueChange={setValue}
+    />
+  );
+}
+
+export function DurationFieldDemo() {
+  const [value, setValue] = useState<number | null>(90);
+
+  return (
+    <div className="specimen-stack">
+      <DurationField
+        legend="Estimate (optional)"
+        locale="en-US"
+        value={value}
+        onValueChange={setValue}
+        description="Your expected effort. You can update it later."
+      />
+      <Text tone="secondary" size="sm">
+        Stored value: <code>{value === null ? "(none)" : `${value} minutes`}</code>
+      </Text>
+    </div>
+  );
+}
+
+export function DurationFieldBoundedDemo() {
+  const [value, setValue] = useState<number | null>(10);
+
+  return (
+    <DurationField
+      legend="Focus Session length"
+      locale="en-US"
+      value={value}
+      onValueChange={setValue}
+      min={15}
+      max={180}
+      description="Between 15 minutes and 3 hours."
     />
   );
 }

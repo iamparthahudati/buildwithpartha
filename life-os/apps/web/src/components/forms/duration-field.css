@@ -1,0 +1,68 @@
+/* DurationField (LOS-0406). */
+
+.lifeos-duration-field {
+  display: grid;
+  gap: var(--lifeos-space-2);
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+
+.lifeos-duration-field__legend {
+  padding: 0;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-duration-field__inputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-duration-field__inputs > * {
+  flex: 1 1 6rem;
+  min-width: 0;
+}
+
+@media (width < 480px) {
+  .lifeos-duration-field__inputs > * {
+    flex-basis: 100%;
+  }
+}
+
+/*
+ * A whole duration is cleared as one quantity, not "just the hours" or "just
+ * the minutes" — there is no meaning to half-clearing it — so this sits
+ * beside the pair rather than inside either input's own shell.
+ */
+.lifeos-duration-field__clear {
+  flex: none;
+  align-self: center;
+  padding: var(--lifeos-space-1) var(--lifeos-space-3);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-medium);
+  cursor: pointer;
+}
+
+.lifeos-duration-field__clear:hover {
+  border-color: var(--lifeos-color-border-interactive);
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-duration-field__summary {
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-3xs);
+  font-variant-numeric: var(--lifeos-font-numeric);
+  line-height: var(--lifeos-line-height-snug);
+}
+
+.lifeos-duration-field:disabled .lifeos-duration-field__legend {
+  color: var(--lifeos-color-text-muted);
+}
