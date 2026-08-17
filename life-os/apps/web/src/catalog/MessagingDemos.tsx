@@ -1,13 +1,17 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { FolderKanban, ListTodo, Plus } from "lucide-react";
 
 import {
   Alert,
+  CommandPalette,
   ConfirmDialog,
   DetailPanel,
   Dialog,
   Drawer,
   FormDialog,
   ToastViewport,
+  useCommandPaletteShortcut,
+  type CommandPaletteGroup,
 } from "@components/feedback";
 import { Button, Text, TextInput } from "@components/ui";
 import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
@@ -367,6 +371,104 @@ export function FormDialogDemo() {
           description="Try Escape or the backdrop once you've typed something, then submit to see the first attempt fail before a retry succeeds."
         />
       </FormDialog>
+    </>
+  );
+}
+
+interface CommandPaletteDatum {
+  readonly id: string;
+  readonly label: string;
+  readonly icon: typeof FolderKanban;
+  readonly shortcut?: string;
+  readonly disabled?: boolean;
+}
+
+const COMMAND_PALETTE_DATA: readonly {
+  readonly id: string;
+  readonly heading: string;
+  readonly items: readonly CommandPaletteDatum[];
+}[] = [
+  {
+    id: "projects",
+    heading: "Projects",
+    items: [
+      { id: "project-kitchen", label: "Kitchen remodel", icon: FolderKanban },
+      { id: "project-home", label: "Home records cleanup", icon: FolderKanban },
+      { id: "project-learning", label: "Learning plan", icon: FolderKanban },
+      { id: "project-archived", label: "Archived plan", icon: FolderKanban, disabled: true },
+    ],
+  },
+  {
+    id: "actions",
+    heading: "Actions",
+    items: [
+      { id: "action-new-task", label: "New task", icon: Plus, shortcut: "⌘N" },
+      { id: "action-new-project", label: "New project", icon: FolderKanban, shortcut: "⌘⇧N" },
+      { id: "action-view-tasks", label: "View all tasks", icon: ListTodo },
+    ],
+  },
+];
+
+export function CommandPaletteDemo() {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [committedQuery, setCommittedQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
+
+  // Cmd/Ctrl+K opens this from anywhere on the page, including while typing
+  // in the "Project name" field of the FormDialog demo above.
+  useCommandPaletteShortcut(() => setOpen(true));
+
+  function handleSearch(nextQuery: string) {
+    setLoading(true);
+    setTimeout(() => {
+      setCommittedQuery(nextQuery);
+      setLoading(false);
+    }, 300);
+  }
+
+  const needle = committedQuery.trim().toLowerCase();
+  const groups: readonly CommandPaletteGroup[] = COMMAND_PALETTE_DATA.map((group) => ({
+    id: group.id,
+    heading: group.heading,
+    items: group.items
+      .filter((item) => needle === "" || item.label.toLowerCase().includes(needle))
+      .map((item) => ({
+        id: item.id,
+        label: item.label,
+        icon: item.icon,
+        ...(item.shortcut ? { shortcut: item.shortcut } : {}),
+        ...(item.disabled ? { disabled: true } : {}),
+        onSelect: () => setSelected(item.label),
+      })),
+  }));
+
+  return (
+    <>
+      <Button
+        onClick={() => {
+          setQuery("");
+          setCommittedQuery("");
+          setOpen(true);
+        }}
+      >
+        Open command palette
+      </Button>
+      <Text size="xs" tone="secondary">
+        Or press ⌘K / Ctrl+K, even from inside another field on this page.
+        {selected ? ` Last selected: "${selected}".` : ""}
+      </Text>
+      <CommandPalette
+        open={open}
+        onClose={() => setOpen(false)}
+        query={query}
+        onQueryChange={setQuery}
+        onSearch={handleSearch}
+        groups={groups}
+        loading={loading}
+        placeholder="Search projects or run a command…"
+      />
     </>
   );
 }
