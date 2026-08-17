@@ -11,6 +11,8 @@ import {
   ChartFrameLoadingDemo,
   ChartFrameReadyDemo,
   ChartLegendDemo,
+  CommentDemo,
+  CommentEmptyDemo,
   DataTableDemo,
   DonutChartEmptyDemo,
   DonutChartReadyDemo,
@@ -388,6 +390,28 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "docs/31-PRIVACY-DATA-LIFECYCLE.md's own P4 \"optional high-risk\" gate: no picker renders at all, only the tone guide's exact explanation.",
         render: () => <AttachmentDisabledDemo />,
+      },
+    ],
+  },
+  {
+    id: "comment",
+    name: "CommentComposer / CommentList",
+    group: "Composed",
+    summary:
+      "A plain-text composer plus the list of what it's posted — never Markdown or HTML, so \"Markdown-safe\" means never attempting Markdown at all, the same reasoning BarChart/LineChart/DonutChart (LOS-0429) gave for hand-rolled SVG over a charting dependency. Plain Enter stays the textarea's own newline; Cmd/Ctrl+Enter is the one keyboard path that sends, held off during an IME composition. CommentComposer is reused as-is for CommentList's inline edit — only submitLabel and onCancel change. status mirrors DataTable's own ready/loading/error shape; edit and delete both stay local transient state (which row, and what's typed) the same way AttachmentList's own deleteTargetId does, with onEdit/onDelete gating whether their controls render at all.",
+    states: [
+      {
+        id: "comment-list",
+        name: "Two comments, one already edited, plus a live composer",
+        description:
+          "Post a comment to watch it appear after a real pending delay; edit or delete an existing one — both go through the same pending/confirm mechanics AttachmentList already established.",
+        render: () => <CommentDemo />,
+      },
+      {
+        id: "comment-empty",
+        name: "Empty",
+        description: "No comments yet, with no edit/delete handlers wired — a read-only view.",
+        render: () => <CommentEmptyDemo />,
       },
     ],
   },

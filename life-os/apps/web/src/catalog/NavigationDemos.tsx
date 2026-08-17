@@ -10,6 +10,8 @@ import {
   Breadcrumbs,
   ChartFrame,
   ChartLegend,
+  CommentComposer,
+  CommentList,
   DataTable,
   DonutChart,
   FilterBar,
@@ -35,6 +37,7 @@ import {
   type BreadcrumbItem,
   type ChartDatum,
   type ChartLegendItem,
+  type Comment,
   type DataTableColumn,
   type MenuItemDescriptor,
   type SortOption,
@@ -807,6 +810,118 @@ export function AttachmentDisabledDemo() {
       locale="en-US"
       enabled={false}
       onFilesSelected={() => {}}
+    />
+  );
+}
+
+function hoursAgo(hours: number): string {
+  return new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+}
+
+// Anchored to real "now" rather than a fixed date, so the catalog always
+// shows sensible past relative times ("2 hours ago") no matter when someone
+// actually opens it.
+function createInitialComments(): readonly Comment[] {
+  return [
+    {
+      id: "c1",
+      authorName: "Ada Lovelace",
+      body: "Looks good to me — the empty state copy is a lot clearer now.",
+      createdAt: hoursAgo(6),
+    },
+    {
+      id: "c2",
+      authorName: "Grace Hopper",
+      body: "One nit: the header still wraps oddly at 320px.\nCan you check the breadcrumbs row too?",
+      createdAt: hoursAgo(3),
+      editedAt: hoursAgo(2.5),
+    },
+  ];
+}
+
+function nextCommentId() {
+  return `comment-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+/**
+ * Owns a real pending delay for add/edit/delete, the same "the demo owns
+ * the async simulation" split `TimerRing`'s and `AttachmentDemo`'s own
+ * catalog demos already establish for their own real-feeling delays.
+ */
+export function CommentDemo() {
+  const [comments, setComments] = useState<readonly Comment[]>(createInitialComments);
+  const [draft, setDraft] = useState("");
+  const [addPending, setAddPending] = useState(false);
+  const [editPending, setEditPending] = useState(false);
+  const [deletePending, setDeletePending] = useState(false);
+
+  return (
+    <div className="specimen-stack">
+      <CommentComposer
+        value={draft}
+        onChange={setDraft}
+        pending={addPending}
+        onSubmit={() => {
+          setAddPending(true);
+          setTimeout(() => {
+            setComments((current) => [
+              ...current,
+              {
+                id: nextCommentId(),
+                authorName: "You",
+                body: draft,
+                createdAt: new Date().toISOString(),
+              },
+            ]);
+            setDraft("");
+            setAddPending(false);
+          }, 500);
+        }}
+      />
+
+      <CommentList
+        label="Task comments"
+        comments={comments}
+        locale="en-US"
+        timeZone="UTC"
+        emptyTitle="No comments yet"
+        emptyDescription="Add a comment when you have feedback to leave."
+        editPending={editPending}
+        onEdit={(id, body) => {
+          setEditPending(true);
+          setTimeout(() => {
+            setComments((current) =>
+              current.map((comment) =>
+                comment.id === id
+                  ? { ...comment, body, editedAt: new Date().toISOString() }
+                  : comment,
+              ),
+            );
+            setEditPending(false);
+          }, 500);
+        }}
+        deletePending={deletePending}
+        onDelete={(id) => {
+          setDeletePending(true);
+          setTimeout(() => {
+            setComments((current) => current.filter((comment) => comment.id !== id));
+            setDeletePending(false);
+          }, 500);
+        }}
+      />
+    </div>
+  );
+}
+
+export function CommentEmptyDemo() {
+  return (
+    <CommentList
+      label="Task comments"
+      comments={[]}
+      locale="en-US"
+      timeZone="UTC"
+      emptyTitle="No comments yet"
+      emptyDescription="Add a comment when you have feedback to leave."
     />
   );
 }
