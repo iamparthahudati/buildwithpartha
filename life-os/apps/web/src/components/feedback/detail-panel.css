@@ -1,0 +1,8 @@
+/* DetailPanel (LOS-0414). */
+
+.lifeos-detail-panel__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: var(--lifeos-space-8);
+}

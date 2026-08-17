@@ -124,9 +124,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0413 — ConfirmDialog added on Dialog, for an irreversible or high-impact action only. `description` and `confirmLabel` are required props, not stylistic defaults — the tone guide's "must name the record and exact consequence" and "button labels repeat the action, never Yes/Proceed" rules become type errors a caller cannot skip rather than review comments. State stays fully caller-controlled (`pending`/`error` as plain props, no internal try/catch), matching every other composed field in this design system. Default focus lands on Cancel, not the danger action or the dialog's own close button, so an accidental Enter press cannot confirm anything; `typedConfirmation` is the ticket's high-impact escalation, keeping the danger button disabled until an exact match.
 
+- LOS-0414 — Drawer and DetailPanel added. Drawer reuses Dialog's `useFocusTrap` and `dialogStack.ts` directly rather than reimplementing either — a Drawer is a Dialog with edge-anchored positioning, not a different set of accessibility guarantees, and closes only the topmost of a nested Drawer/Dialog pair the same proven way. `isDirty` guards Escape, the backdrop and the close button behind an internal ConfirmDialog before any of them actually close the panel. A new `useDeepLinkParam` hook builds a real URL sync directly on `history.pushState`/`popstate` rather than a router (none is wired in yet) — `open`/`close` genuinely change the URL and integrate with the browser's own Back button. DetailPanel takes that value as a plain controlled prop rather than owning the hook itself, and adds the loading/not-found shape every "show one record" panel needs, reusing Spinner and EmptyState's `permission` variant instead of inventing a third one.
+
 ## Next recommended ticket
 
-`LOS-0414 — Build Drawer and DetailPanel`.
+`LOS-0415 — Build Menu and AccountMenu pattern`.
 
 ## Known decisions requiring implementation-time values
 

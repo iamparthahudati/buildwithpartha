@@ -1,0 +1,155 @@
+/* Drawer (LOS-0414). */
+
+.lifeos-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--lifeos-z-drawer);
+  background: var(--lifeos-color-overlay);
+  animation: lifeos-drawer-backdrop-in var(--lifeos-motion-duration-fast)
+    var(--lifeos-motion-ease-entrance);
+}
+
+.lifeos-drawer {
+  position: fixed;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: var(--lifeos-space-3);
+  max-width: 28rem;
+  width: 100%;
+  padding: var(--lifeos-space-6);
+  overflow-y: auto;
+  border: none;
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-surface);
+  box-shadow: var(--lifeos-shadow-xl);
+}
+
+.lifeos-drawer:focus-visible {
+  outline: none;
+}
+
+/* Slides from the trailing edge — the right, in a left-to-right layout. */
+.lifeos-drawer--end {
+  inset-block: 0;
+  inset-inline-end: 0;
+  border-start-start-radius: var(--lifeos-radius-xl);
+  border-end-start-radius: var(--lifeos-radius-xl);
+  animation: lifeos-drawer-in-end var(--lifeos-motion-duration-normal)
+    var(--lifeos-motion-ease-entrance);
+}
+
+.lifeos-drawer--start {
+  inset-block: 0;
+  inset-inline-start: 0;
+  border-start-end-radius: var(--lifeos-radius-xl);
+  border-end-end-radius: var(--lifeos-radius-xl);
+  animation: lifeos-drawer-in-start var(--lifeos-motion-duration-normal)
+    var(--lifeos-motion-ease-entrance);
+}
+
+.lifeos-drawer--bottom {
+  inset-inline: 0;
+  inset-block-end: 0;
+  max-width: none;
+  max-height: 90dvh;
+  border-start-start-radius: var(--lifeos-radius-xl);
+  border-start-end-radius: var(--lifeos-radius-xl);
+  animation: lifeos-drawer-in-bottom var(--lifeos-motion-duration-normal)
+    var(--lifeos-motion-ease-entrance);
+}
+
+.lifeos-drawer__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-drawer__title {
+  margin: 0;
+}
+
+.lifeos-drawer__close {
+  flex: none;
+  margin: calc(var(--lifeos-space-2) * -1);
+}
+
+.lifeos-drawer__description {
+  margin: 0;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+  line-height: var(--lifeos-line-height-normal);
+}
+
+.lifeos-drawer__body {
+  min-height: 0;
+}
+
+@keyframes lifeos-drawer-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lifeos-drawer-in-end {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes lifeos-drawer-in-start {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes lifeos-drawer-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-drawer-backdrop,
+  .lifeos-drawer {
+    animation: none;
+  }
+}
+
+/*
+ * Below the small breakpoint, every placement becomes the same full-screen
+ * sheet — the ticket's "full-screen responsive variant" is automatic here,
+ * not a size a caller chooses.
+ */
+@media (width < 768px) {
+  .lifeos-drawer {
+    inset: 0;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    animation: lifeos-drawer-in-bottom var(--lifeos-motion-duration-normal)
+      var(--lifeos-motion-ease-entrance);
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-drawer {
+    border: var(--lifeos-border-width-hairline) solid CanvasText;
+  }
+}

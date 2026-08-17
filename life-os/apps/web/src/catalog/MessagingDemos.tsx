@@ -1,7 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
-import { Alert, ConfirmDialog, Dialog, ToastViewport } from "@components/feedback";
-import { Button, TextInput } from "@components/ui";
+import {
+  Alert,
+  ConfirmDialog,
+  DetailPanel,
+  Dialog,
+  Drawer,
+  ToastViewport,
+} from "@components/feedback";
+import { Button, Text, TextInput } from "@components/ui";
+import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
 import { ToastProvider } from "@state/ToastProvider";
 import { useToast } from "@state/toastQueue";
 
@@ -209,5 +217,95 @@ export function NestedDialogDemo() {
         </Dialog>
       </Dialog>
     </>
+  );
+}
+
+export function DrawerDemo() {
+  const [open, setOpen] = useState(false);
+  const [notes, setNotes] = useState("");
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Edit notes</Button>
+      <Drawer
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Edit notes"
+        description="Changes save automatically once you close this panel."
+        isDirty={notes.trim() !== ""}
+      >
+        <TextInput
+          label="Notes"
+          value={notes}
+          onChange={(event) => setNotes(event.target.value)}
+          description="Type something, then try Escape or the backdrop — the discard confirmation only appears while there is something to lose."
+        />
+      </Drawer>
+    </>
+  );
+}
+
+const TASK_FIXTURES: Readonly<Record<string, string>> = Object.freeze({
+  "task-1": "Due Friday. Estimated 30 minutes.",
+  "task-2": "No due date. Estimated 2 hours.",
+});
+
+/**
+ * `undefined` while "loading", `null` once known not to resolve — the exact
+ * three-way shape `DetailPanel` expects, produced here with a fake delay
+ * standing in for a real fetch.
+ */
+function useFixtureTask(id: string | null): ReactNode | null | undefined {
+  const [content, setContent] = useState<ReactNode | null | undefined>(undefined);
+
+  // Reset to "loading" the instant `id` changes, adjusted during render
+  // rather than in the effect below — the same pattern ConfirmDialog
+  // (LOS-0413) uses, since setting state synchronously inside an effect body
+  // risks a visible flash of the previous id's content first.
+  const [lastId, setLastId] = useState(id);
+  if (id !== lastId) {
+    setLastId(id);
+    setContent(undefined);
+  }
+
+  useEffect(() => {
+    if (id === null) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      setContent(id in TASK_FIXTURES ? <Text>{TASK_FIXTURES[id]}</Text> : null);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [id]);
+
+  return content;
+}
+
+export function DetailPanelDemo() {
+  const { value: taskId, open, close } = useDeepLinkParam("catalog-task");
+  const content = useFixtureTask(taskId);
+
+  return (
+    <div className="specimen-stack">
+      <div className="specimen-row">
+        <Button variant="secondary" onClick={() => open("task-1")}>
+          Open "Prepare weekly review"
+        </Button>
+        <Button variant="secondary" onClick={() => open("task-missing")}>
+          Open a deleted/inaccessible Task
+        </Button>
+      </div>
+      <Text tone="secondary" size="sm">
+        The URL's query string now reflects the open Task — reload this page or use the browser's
+        own Back button and the panel stays in sync.
+      </Text>
+
+      <DetailPanel
+        open={taskId !== null}
+        onClose={close}
+        title={taskId === "task-1" ? "Prepare weekly review" : "Task"}
+        content={content}
+      />
+    </div>
   );
 }
