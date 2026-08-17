@@ -9,6 +9,7 @@ import {
   Menu,
   MetricCard,
   PageHeader,
+  Pagination,
   Tabs,
   type ActiveFilterChip,
   type BreadcrumbItem,
@@ -267,5 +268,32 @@ export function FilterBarDemo() {
         onChange={(event) => setSearch(event.target.value)}
       />
     </FilterBar>
+  );
+}
+
+export function PaginationLocalDemo() {
+  const [page, setPage] = useState(1);
+  return (
+    <Pagination
+      page={page}
+      pageSize={10}
+      total={200}
+      onPageChange={setPage}
+      label="Tasks pagination"
+    />
+  );
+}
+
+export function PaginationUrlDemo() {
+  const { value, open } = useDeepLinkParam("catalog-page");
+  const page = value ? Number(value) : 1;
+  return (
+    <Pagination
+      page={page}
+      pageSize={10}
+      total={50}
+      onPageChange={(nextPage) => open(String(nextPage))}
+      label="Tasks pagination (URL-synced)"
+    />
   );
 }

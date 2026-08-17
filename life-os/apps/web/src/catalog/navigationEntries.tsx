@@ -10,6 +10,8 @@ import {
   MetricCardLoadingDemo,
   MetricCardReadyDemo,
   PageHeaderDemo,
+  PaginationLocalDemo,
+  PaginationUrlDemo,
   TabsLocalDemo,
   TabsUrlDemo,
 } from "./NavigationDemos";
@@ -168,6 +170,28 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Pick a status or type a search term, then try Clear all. Resize narrower to see the Filters button and Drawer.",
         render: () => <FilterBarDemo />,
+      },
+    ],
+  },
+  {
+    id: "pagination",
+    name: "Pagination",
+    group: "Composed",
+    summary:
+      'A real <nav> with real <button> page controls: the current page carries aria-current="page" and its own distinct style, and Previous/Next are genuinely disabled — not merely styled to look inert — at the real first/last page. A pure paginationRange function collapses a long run of pages behind an ellipsis on either side of the current page, always keeping the first and last page one click away. Like Tabs, page/onPageChange is a plain controlled pair, so "URL integration" is the caller\'s own choice of useState versus useDeepLinkParam (LOS-0414), not a feature this component adds.',
+    states: [
+      {
+        id: "pagination-local",
+        name: "Local state, 20 pages",
+        description: "Enough pages to see the collapse. Resize narrower for the compact label.",
+        render: () => <PaginationLocalDemo />,
+      },
+      {
+        id: "pagination-url",
+        name: "URL-synced",
+        description:
+          "Backed by useDeepLinkParam instead — reload the page or use the browser's Back button and the page stays correct.",
+        render: () => <PaginationUrlDemo />,
       },
     ],
   },

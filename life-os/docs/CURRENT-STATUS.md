@@ -138,9 +138,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0420 — FilterBar added. Like `PageHeader` and `DataTable`, it has no domain filters of its own, matching the "no domain columns hardcoded" principle — `children` is whatever fields the screen actually filters by; `FilterBar` supplies only the shell (active-filter chips, a result count, "Clear all" and the mobile collapse). The responsive collapse renders `children` twice — inline for a wide viewport, once more inside a `Drawer` (LOS-0414) behind a "Filters" button — with CSS choosing which is visible, since a Drawer is a real mounted overlay that `@media` alone cannot reposition the way it can a flex row; both copies read the same caller-owned controlled state, confirmed live by setting a filter through the inline control and reopening the Drawer to see the identical value already selected there. A new pure `filterUrlContract.ts` (`serializeFilters`/`parseFilters`) is the ticket's "URL serialization contract": a symmetric round-trip between a generic filter-state object and `URLSearchParams`, independent of any specific filter schema and deliberately not wired to `history.pushState` itself — that live-sync wiring is left to a caller or a future hook, the same way `useDeepLinkParam` handles a single value today.
 
+- LOS-0421 — Pagination added: a real `<nav>` of real `<button>` page controls, `aria-current="page"` on the current one, and Previous/Next genuinely disabled (not merely styled) at the real first/last page. A new pure `paginationRange` function (paired with `breadcrumbsCollapse.ts`'s precedent) collapses a long run of pages behind an ellipsis on either side of the current page, always keeping the first and last page one click away, verified live by jumping to page 5 of 20 and seeing the range recompute to `1 … 4 5 6 … 20`. `page`/`onPageChange` is a plain controlled pair, the same "URL integration is the caller's own choice of `useState` versus `useDeepLinkParam`" shape `Tabs` (LOS-0416) already established, confirmed live by watching a page click genuinely change `window.location.search` in the URL-synced demo.
+
 ## Next recommended ticket
 
-`LOS-0421 — Build Pagination`.
+`LOS-0422 — Build SortControl and ViewToggle`.
 
 ## Known decisions requiring implementation-time values
 
