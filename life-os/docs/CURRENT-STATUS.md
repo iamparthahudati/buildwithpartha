@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-18 (LOS-0433)
+Last updated: 2026-08-18 (LOS-0434)
 
 ## Phase
 
@@ -156,9 +156,11 @@ Phase 1 — Foundations and component library.
 - LOS-0432 — CommentComposer and CommentList added to `components/navigation/`. A comment body is plain text end to end — never Markdown or HTML, matching the same "a parser is its own reviewable ticket" reasoning BarChart/LineChart/DonutChart (LOS-0429) already gave for hand-rolled SVG over a charting dependency. Plain Enter stays the textarea's own newline; Cmd/Ctrl+Enter is the one path that sends, held off during an IME composition. CommentComposer is reused as-is for CommentList's own inline edit — only submitLabel/onCancel change. Edit and delete both stay local transient state (which row, and what's typed) the same way AttachmentList's own deleteTargetId does, with onEdit/onDelete gating whether their controls render at all. A new commentTimestamp.ts gives every timestamp two representations — a relative string as the visible text, a full localized absolute string as what a screen reader actually announces.
 - LOS-0433 — ActivityFeed added to `components/navigation/`: structured actor/action/object/time rendering, three separate slots rather than one pre-formatted sentence. A deleted or inaccessible object renders safe non-linked "a deleted item" text instead of a broken link. A new activityGrouping.ts groups events into real nested lists by calendar day (Today/Yesterday/a real date) by passing each event's own createdAt through todayLocalDate (LOS-0318), which already accepts an arbitrary Date; Pagination (LOS-0421) composes below exactly like DataTable already does. Every icon is decorative, and timestamps reuse commentTimestamp.ts (LOS-0432) directly. A live-browser pass caught the loading skeleton rendering at zero width — a flex-row child with no explicit width collapsed SkeletonText's percentage-widthed bars against it — fixed with a scoped flex: 1 on the loading list only.
 
+- LOS-0434 — Composed component phase gate passed (`docs/gates/COMPOSED-PHASE-GATE.md`): full `npm test` green (977 Vitest tests across 84 files, coverage above the 80% gate, 35 Node assertions), 38 `Composed`-group catalog entries covering every LOS-0401–LOS-0433 ticket, and the public export surface of `components/forms`/`components/feedback`/`components/navigation` is frozen for Epic 05.
+
 ## Next recommended ticket
 
-`LOS-0434 — Run composed component gate`.
+Epic 05 (`docs/backlog/EPIC-05-IDENTITY.md`).
 
 ## Known decisions requiring implementation-time values
 
