@@ -1,0 +1,129 @@
+/* Dialog (LOS-0412). */
+
+.lifeos-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--lifeos-z-dialog);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--lifeos-space-4);
+  background: var(--lifeos-color-overlay);
+  animation: lifeos-dialog-backdrop-in var(--lifeos-motion-duration-fast)
+    var(--lifeos-motion-ease-entrance);
+}
+
+.lifeos-dialog {
+  display: grid;
+  gap: var(--lifeos-space-3);
+  width: 100%;
+  max-height: calc(100dvh - var(--lifeos-space-8));
+  padding: var(--lifeos-space-6);
+  overflow-y: auto;
+  border: none;
+  border-radius: var(--lifeos-radius-xl);
+  color: var(--lifeos-color-text);
+  background: var(--lifeos-color-surface);
+  box-shadow: var(--lifeos-shadow-xl);
+  animation: lifeos-dialog-in var(--lifeos-motion-duration-normal)
+    var(--lifeos-motion-ease-entrance);
+}
+
+/* The trap's own fallback focus target; never meant to show a ring of its own. */
+.lifeos-dialog:focus-visible {
+  outline: none;
+}
+
+.lifeos-dialog--sm {
+  max-width: 24rem;
+}
+
+.lifeos-dialog--md {
+  max-width: 32rem;
+}
+
+.lifeos-dialog--lg {
+  max-width: 48rem;
+}
+
+.lifeos-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-dialog__title {
+  margin: 0;
+}
+
+.lifeos-dialog__close {
+  flex: none;
+  /* Pulled in slightly so its 44px target does not push the header wider. */
+  margin: calc(var(--lifeos-space-2) * -1);
+}
+
+.lifeos-dialog__description {
+  margin: 0;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+  line-height: var(--lifeos-line-height-normal);
+}
+
+.lifeos-dialog__body {
+  min-height: 0;
+}
+
+@keyframes lifeos-dialog-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lifeos-dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-dialog-backdrop,
+  .lifeos-dialog {
+    animation: none;
+  }
+}
+
+/*
+ * Full-width, edge-anchored sheet below the small breakpoint rather than a
+ * shrunk centered card — the same mobile treatment DateRangeField and
+ * DateTimeField already use for their own paired fields, applied here to a
+ * whole dialog.
+ */
+@media (width < 480px) {
+  .lifeos-dialog-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .lifeos-dialog {
+    max-width: none;
+    max-height: 90dvh;
+    border-radius: var(--lifeos-radius-xl) var(--lifeos-radius-xl) 0 0;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-dialog {
+    border: var(--lifeos-border-width-hairline) solid CanvasText;
+  }
+}
