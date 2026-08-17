@@ -104,3 +104,12 @@ export {
   type CommentListStatus,
 } from "./CommentList";
 export { formatAbsoluteCommentTime, formatRelativeCommentTime } from "./commentTimestamp";
+export {
+  ActivityFeed,
+  type ActivityEvent,
+  type ActivityFeedPaginationConfig,
+  type ActivityFeedProps,
+  type ActivityFeedStatus,
+  type ActivityObjectRef,
+} from "./ActivityFeed";
+export { groupActivityEventsByDay, type ActivityEventGroup } from "./activityGrouping";

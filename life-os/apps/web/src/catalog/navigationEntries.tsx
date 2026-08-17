@@ -1,5 +1,8 @@
 import {
   AccountMenuDemo,
+  ActivityFeedDemo,
+  ActivityFeedErrorDemo,
+  ActivityFeedLoadingDemo,
   AttachmentDemo,
   AttachmentDisabledDemo,
   BackLinkDemo,
@@ -412,6 +415,36 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         name: "Empty",
         description: "No comments yet, with no edit/delete handlers wired — a read-only view.",
         render: () => <CommentEmptyDemo />,
+      },
+    ],
+  },
+  {
+    id: "activity-feed",
+    name: "ActivityFeed",
+    group: "Composed",
+    summary:
+      "Structured actor/action/object rendering — three separate slots, never one pre-formatted sentence, the same no-domain-hardcoded principle FilterBar/DataTable already apply. object is undefined for a deleted or inaccessible record, rendering safe non-linked text rather than a broken link. Events group into real nested lists by calendar day (Today/Yesterday/a real date, using todayLocalDate LOS-0318 against each event's own createdAt) — a plain list tolerates that nesting natively, unlike CommandPalette's role=listbox grouping which needed role=presentation. Pagination (LOS-0421) composes below exactly like DataTable already does. Every icon is decorative; the actor/action/object text already carries the full meaning. Timestamps reuse commentTimestamp.ts (LOS-0432) directly — nothing about that formatting was ever comment-specific.",
+    states: [
+      {
+        id: "activity-feed-ready",
+        name: "Grouped by day, paginated, with a deleted-object fallback",
+        description:
+          "Five events across two days and three pages; one event's object was deleted and falls back to plain text instead of a broken link.",
+        render: () => <ActivityFeedDemo />,
+      },
+      {
+        id: "activity-feed-loading",
+        name: "Loading",
+        description:
+          "Skeleton rows are aria-hidden; a live region announces the real loading state.",
+        render: () => <ActivityFeedLoadingDemo />,
+      },
+      {
+        id: "activity-feed-error",
+        name: "Error, with retry",
+        description:
+          "The partial-failure copy docs/30-CONTENT-AND-TONE-GUIDE.md names for this exact case.",
+        render: () => <ActivityFeedErrorDemo />,
       },
     ],
   },
