@@ -1,0 +1,9 @@
+Hi {{displayName}},
+
+Confirm your email address to finish setting up your LifeOS account:
+
+{{verificationUrl}}
+
+This link expires in {{expiresInMinutes}} minutes. If you didn't create a LifeOS account, you can ignore this message.
+
+— LifeOS

@@ -17,7 +17,7 @@ From the repository root:
 
 ```bash
 docker compose --env-file life-os/infra/compose/.env.example \
-  -f life-os/infra/compose/compose.local.yml up -d postgres
+  -f life-os/infra/compose/compose.local.yml up -d postgres mailpit
 
 docker compose --env-file life-os/infra/compose/.env.example \
   -f life-os/infra/compose/compose.local.yml ps
@@ -41,6 +41,8 @@ FLYWAY_DATABASE_PASSWORD=lifeos_local_migrator_only
 ```
 
 The migration role owns the private `lifeos_internal` history schema and may create approved migration objects. The application role cannot create databases, schemas, roles, replication slots or superuser privileges and cannot read Flyway history. The local admin credential initializes the container and is not used by the API.
+
+Mailpit (LOS-1402) is a disposable local SMTP catcher: the API's `SMTP_HOST=localhost` / `SMTP_PORT=1025` defaults (see `apps/api/.env.example`) already point at it. No outbound mail ever leaves the machine. Read captured messages at `http://localhost:8025`; nothing needs to be configured there. Mailpit's minimal image has no shell, so unlike `postgres` it has no Compose `healthcheck:` — check readiness with `docker compose ... logs mailpit` or by opening the UI.
 
 ## Stop or reset
 
