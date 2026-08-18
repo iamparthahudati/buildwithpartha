@@ -1,0 +1,30 @@
+/*
+ * SignupScreen layout (LOS-0509).
+ *
+ * Mobile-first single column; a max-width keeps the form readable once the
+ * viewport is wide enough that a full-bleed form would stretch line lengths
+ * uncomfortably. No app shell exists yet, so this is the whole visible page.
+ */
+
+.lifeos-signup-screen {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 28rem;
+  margin-inline: auto;
+  padding: var(--lifeos-space-6) var(--lifeos-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-5);
+}
+
+.lifeos-signup-screen__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-signup-screen__consent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+}
