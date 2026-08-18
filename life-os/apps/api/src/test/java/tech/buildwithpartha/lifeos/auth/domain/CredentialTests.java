@@ -31,4 +31,20 @@ class CredentialTests {
     assertThatThrownBy(() -> Credential.issue(UUID.randomUUID(), UUID.randomUUID(), " ", NOW))
         .isInstanceOf(IllegalArgumentException.class);
   }
+
+  @Test
+  void rehashReplacesTheHashAndChangedAtButKeepsCreatedAt() {
+    Credential original =
+        Credential.issue(UUID.randomUUID(), UUID.randomUUID(), "$argon2id$old", NOW);
+    Instant rehashedAt = NOW.plusSeconds(3600);
+
+    Credential rehashed = original.rehash("$argon2id$new", rehashedAt);
+
+    assertThat(rehashed.id()).isEqualTo(original.id());
+    assertThat(rehashed.userId()).isEqualTo(original.userId());
+    assertThat(rehashed.passwordHash()).isEqualTo("$argon2id$new");
+    assertThat(rehashed.changedAt()).isEqualTo(rehashedAt);
+    assertThat(rehashed.updatedAt()).isEqualTo(rehashedAt);
+    assertThat(rehashed.createdAt()).isEqualTo(NOW);
+  }
 }

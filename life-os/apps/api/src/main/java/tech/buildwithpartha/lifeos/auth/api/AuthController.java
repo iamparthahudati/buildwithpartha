@@ -5,30 +5,49 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.Optional;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.auth.application.EmailVerificationService;
+import tech.buildwithpartha.lifeos.auth.application.LoginCommand;
+import tech.buildwithpartha.lifeos.auth.application.LoginResult;
+import tech.buildwithpartha.lifeos.auth.application.LoginService;
 import tech.buildwithpartha.lifeos.auth.application.SignupCommand;
 import tech.buildwithpartha.lifeos.auth.application.SignupService;
 import tech.buildwithpartha.lifeos.auth.application.VerifyEmailCommand;
 import tech.buildwithpartha.lifeos.auth.domain.RawPassword;
+import tech.buildwithpartha.lifeos.auth.domain.Session;
+import tech.buildwithpartha.lifeos.config.LifeOsEnvironmentProperties;
 
-/** Unauthenticated identity endpoints ({@code /auth/login}, {@code /auth/logout} land later). */
+/** Unauthenticated identity endpoints ({@code /auth/logout} lands in LOS-0506). */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
+  static final String SESSION_COOKIE_NAME = "lifeos_session";
+  private static final int MAX_DEVICE_HINT_LENGTH = 255;
+
   private final SignupService signupService;
   private final EmailVerificationService emailVerificationService;
+  private final LoginService loginService;
+  private final LifeOsEnvironmentProperties environmentProperties;
 
   public AuthController(
-      SignupService signupService, EmailVerificationService emailVerificationService) {
+      SignupService signupService,
+      EmailVerificationService emailVerificationService,
+      LoginService loginService,
+      LifeOsEnvironmentProperties environmentProperties) {
     this.signupService = signupService;
     this.emailVerificationService = emailVerificationService;
+    this.loginService = loginService;
+    this.environmentProperties = environmentProperties;
   }
 
   @Operation(
@@ -70,5 +89,52 @@ public class AuthController {
   public VerifyEmailResponse verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
     emailVerificationService.verify(new VerifyEmailCommand(request.token()));
     return VerifyEmailResponse.verified();
+  }
+
+  @Operation(
+      summary = "Log in",
+      description =
+          "Authenticates a verified, active account and issues a fresh session. Every rejection"
+              + " reason reports the same generic invalid-credentials failure.")
+  @SecurityRequirements
+  @ApiResponse(responseCode = "200", description = "A new session was issued.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "429", ref = "#/components/responses/TooManyRequests")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponse> login(
+      @Valid @RequestBody LoginRequest request, HttpServletRequest servletRequest) {
+    LoginResult result =
+        loginService.login(
+            new LoginCommand(
+                request.email(),
+                RawPassword.of(request.password()),
+                servletRequest.getRemoteAddr(),
+                deviceHint(servletRequest)));
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, sessionCookie(result.sessionToken().value()).toString())
+        .body(LoginResponse.of(result.user(), result.csrfToken().value()));
+  }
+
+  private ResponseCookie sessionCookie(String rawSessionToken) {
+    return ResponseCookie.from(SESSION_COOKIE_NAME, rawSessionToken)
+        .httpOnly(true)
+        .secure(environmentProperties.sessionCookieSecure())
+        .sameSite("Lax")
+        .path("/life-os")
+        .maxAge(Session.TTL)
+        .build();
+  }
+
+  private static Optional<String> deviceHint(HttpServletRequest servletRequest) {
+    String userAgent = servletRequest.getHeader("User-Agent");
+    if (userAgent == null || userAgent.isBlank()) {
+      return Optional.empty();
+    }
+    return Optional.of(
+        userAgent.length() > MAX_DEVICE_HINT_LENGTH
+            ? userAgent.substring(0, MAX_DEVICE_HINT_LENGTH)
+            : userAgent);
   }
 }

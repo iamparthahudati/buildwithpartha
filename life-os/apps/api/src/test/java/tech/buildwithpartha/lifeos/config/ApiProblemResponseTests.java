@@ -32,6 +32,7 @@ import tech.buildwithpartha.lifeos.common.error.CodedException;
 import tech.buildwithpartha.lifeos.common.error.ErrorCode;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.TokenAlreadyUsedException;
 import tech.buildwithpartha.lifeos.common.error.TokenExpiredException;
@@ -171,6 +172,16 @@ class ApiProblemResponseTests {
   }
 
   @Test
+  @WithMockUser
+  void mapsInvalidCredentialsExceptionsToUnauthorized() throws Exception {
+    mockMvc
+        .perform(get("/test/errors/invalid-credentials"))
+        .andExpect(status().isUnauthorized())
+        .andExpect(jsonPath("$.code").value("INVALID_CREDENTIALS"))
+        .andExpect(content().string(not(containsString("invalid-credentials-diagnostic-only"))));
+  }
+
+  @Test
   void mapsAuthenticationFailuresAndReplacesUnsafeCorrelationIds() throws Exception {
     mockMvc
         .perform(
@@ -226,6 +237,11 @@ class ApiProblemResponseTests {
     @GetMapping("/token-already-used")
     void tokenAlreadyUsed() {
       throw new TokenAlreadyUsedException("token-already-used-diagnostic-only");
+    }
+
+    @GetMapping("/invalid-credentials")
+    void invalidCredentials() {
+      throw new InvalidCredentialsException("invalid-credentials-diagnostic-only");
     }
   }
 

@@ -34,6 +34,17 @@ final class FakeUserRepository implements UserRepository {
     return Optional.ofNullable(latest);
   }
 
+  @Override
+  public Optional<User> findByEmailNormalized(String emailNormalized) {
+    User latest = null;
+    for (User user : saved) {
+      if (user.email().normalized().equals(emailNormalized)) {
+        latest = user;
+      }
+    }
+    return Optional.ofNullable(latest);
+  }
+
   List<User> all() {
     return List.copyOf(saved);
   }
