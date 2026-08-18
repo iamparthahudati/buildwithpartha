@@ -65,3 +65,16 @@ CREATE TABLE IF NOT EXISTS email_verification_tokens (
     consumed_at  TIMESTAMP WITH TIME ZONE,
     created_at   TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+-- Added by LOS-0505 alongside the project's first Session entity.
+CREATE TABLE IF NOT EXISTS user_sessions (
+    id            UUID                     NOT NULL PRIMARY KEY,
+    user_id       UUID                     NOT NULL,
+    token_hash    TEXT                     NOT NULL,
+    csrf_secret   TEXT                     NOT NULL,
+    created_at    TIMESTAMP WITH TIME ZONE NOT NULL,
+    last_seen_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+    expires_at    TIMESTAMP WITH TIME ZONE NOT NULL,
+    revoked_at    TIMESTAMP WITH TIME ZONE,
+    device_hint   TEXT
+);

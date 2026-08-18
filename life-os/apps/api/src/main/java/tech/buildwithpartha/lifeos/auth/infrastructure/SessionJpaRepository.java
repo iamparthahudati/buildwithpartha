@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-interface CredentialJpaRepository extends JpaRepository<CredentialEntity, UUID> {
+interface SessionJpaRepository extends JpaRepository<SessionEntity, UUID> {
 
-  Optional<CredentialEntity> findByUserId(UUID userId);
+  Optional<SessionEntity> findByTokenHash(String tokenHash);
 }

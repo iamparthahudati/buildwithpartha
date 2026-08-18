@@ -35,6 +35,17 @@ class JpaCredentialRepositoryTests {
     assertThat(reloaded.changedAt()).isEqualTo(NOW);
   }
 
+  @Test
+  void findByUserIdLocatesTheOneCredentialForThatUser() {
+    JpaCredentialRepository repository = new JpaCredentialRepository(jpaRepository);
+    UUID userId = UUID.randomUUID();
+    repository.save(Credential.issue(UUID.randomUUID(), userId, "$argon2id$hash", NOW));
+    jpaRepository.flush();
+
+    assertThat(repository.findByUserId(userId)).isPresent();
+    assertThat(repository.findByUserId(UUID.randomUUID())).isEmpty();
+  }
+
   private Credential toDomain(CredentialEntity entity) {
     return new Credential(
         entity.getId(),

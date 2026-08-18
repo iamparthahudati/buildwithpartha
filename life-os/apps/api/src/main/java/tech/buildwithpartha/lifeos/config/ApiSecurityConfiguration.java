@@ -3,6 +3,7 @@ package tech.buildwithpartha.lifeos.config;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Clock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import tech.buildwithpartha.lifeos.auth.domain.SecureTokenGenerator;
+import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
 import tech.buildwithpartha.lifeos.common.error.ApiProblem;
 import tech.buildwithpartha.lifeos.common.error.ErrorCode;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
@@ -24,10 +28,21 @@ public class ApiSecurityConfiguration {
 
   private final ApiProblemFactory problemFactory;
   private final ObjectMapper objectMapper;
+  private final SessionRepository sessionRepository;
+  private final SecureTokenGenerator tokenGenerator;
+  private final Clock clock;
 
-  public ApiSecurityConfiguration(ApiProblemFactory problemFactory, ObjectMapper objectMapper) {
+  public ApiSecurityConfiguration(
+      ApiProblemFactory problemFactory,
+      ObjectMapper objectMapper,
+      SessionRepository sessionRepository,
+      SecureTokenGenerator tokenGenerator,
+      Clock clock) {
     this.problemFactory = problemFactory;
     this.objectMapper = objectMapper;
+    this.sessionRepository = sessionRepository;
+    this.tokenGenerator = tokenGenerator;
+    this.clock = clock;
   }
 
   @Bean
@@ -40,17 +55,22 @@ public class ApiSecurityConfiguration {
                     .permitAll()
                     .requestMatchers("/actuator/**")
                     .denyAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/signup", "/auth/verify-email")
+                    .requestMatchers(
+                        HttpMethod.POST, "/auth/signup", "/auth/verify-email", "/auth/login")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
         // Spring Security's default CSRF protection is session-bound
-        // (HttpSessionCsrfTokenRepository) and this application has no HttpSession-based login
-        // yet — signup is pre-session by definition, and LOS-0505 owns the real cookie/CSRF
-        // bootstrap scheme 06-SECURITY.md describes (the `X-CSRF-TOKEN` header already documented
-        // in OpenApiConfiguration). Disabling the incompatible default here is a deliberate,
-        // narrow decision, not a broader opt-out of CSRF protection.
+        // (HttpSessionCsrfTokenRepository) and this application has no HttpSession-based login —
+        // it uses the opaque cookie-bound scheme LOS-0505 built (SessionAuthenticationFilter plus
+        // the X-CSRF-TOKEN header already documented in OpenApiConfiguration). Disabling the
+        // incompatible default here is a deliberate, narrow decision, not a broader opt-out of
+        // CSRF protection; enforcing the X-CSRF-TOKEN header itself belongs to whichever ticket
+        // first has an authenticated mutating endpoint to protect (LOS-0506).
         .csrf(AbstractHttpConfigurer::disable)
+        .addFilterBefore(
+            new SessionAuthenticationFilter(sessionRepository, tokenGenerator, clock),
+            AuthorizationFilter.class)
         .exceptionHandling(
             exceptions ->
                 exceptions

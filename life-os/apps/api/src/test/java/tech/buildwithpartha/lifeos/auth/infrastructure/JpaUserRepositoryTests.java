@@ -68,4 +68,15 @@ class JpaUserRepositoryTests {
     assertThat(reloaded.accountStatus().name()).isEqualTo("ACTIVE");
     assertThat(reloaded.verifiedAt()).contains(verifiedAt);
   }
+
+  @Test
+  void findByEmailNormalizedLocatesTheMatchingRowOnly() {
+    JpaUserRepository repository = new JpaUserRepository(jpaRepository);
+    repository.save(
+        User.signup(UUID.randomUUID(), EmailAddress.of("Find.Me@Example.test"), "Find Me", NOW));
+    jpaRepository.flush();
+
+    assertThat(repository.findByEmailNormalized("find.me@example.test")).isPresent();
+    assertThat(repository.findByEmailNormalized("absent@example.test")).isEmpty();
+  }
 }

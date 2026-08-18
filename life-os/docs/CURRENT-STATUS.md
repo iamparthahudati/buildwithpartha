@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-18 (LOS-0504)
+Last updated: 2026-08-18 (LOS-0505)
 
 ## Phase
 
@@ -168,9 +168,11 @@ Phase 2 — Identity and application shell.
 
 - LOS-0504 — Email verification API added: `POST /auth/verify-email` consumes the single-use `EmailVerificationToken` LOS-0503 issues and transitions the account `UNVERIFIED` → `ACTIVE`. `EmailVerificationTokenRepository.consume` is a single conditional `UPDATE ... WHERE consumed_at IS NULL`, not a read-then-write in `auth.application` — two concurrent requests presenting the same token can only let one call win, which is what makes `EmailVerificationService.verify` activate an account at most once per token (the acceptance contract's "does not create unintended parallel accounts/sessions" line), verified directly with a test that forces the losing side of that race. Expiry is checked before attempting to consume, so an expired token is left unconsumed — expired and already-used stay distinguishable outcomes (`24-CRITICAL-USER-JOURNEYS.md`: "Expired/used verification links offer safe resend/login paths"). Three new generically-named `common.error` types (`TokenInvalidException`/`TokenExpiredException`/`TokenAlreadyUsedException`, codes `TOKEN_INVALID`/`TOKEN_EXPIRED`/`TOKEN_ALREADY_USED` → 400/400/409) are deliberately reusable by LOS-0507's own single-use reset token rather than email-verification-specific; the 409 case is the first real use of the `Conflict` shared OpenAPI response component LOS-0213/0214 registered but nothing had used yet. A real bug surfaced during verification, not just coding: without `@Modifying(clearAutomatically = true)` on the conditional-update query, a bulk JPA update left an already-loaded token entity reporting its stale pre-update state to a same-transaction re-read — the standard bulk-update-bypasses-the-persistence-context pitfall, caught by a real-H2 test asserting a second `consume` call for the same token returns `false`.
 
+- LOS-0505 — Login/session API added: `POST /auth/login`, plus `config.SessionAuthenticationFilter`, the counterpart that makes the session it issues actually authenticate later requests (without it, `.anyRequest().authenticated()` — active since LOS-0213 — could never succeed for anything). `LoginService` rate limits, requires `AccountStatus.ACTIVE`, verifies the password (applying and persisting LOS-0502's rehash-on-login path in the same transaction), and always issues a brand-new `Session` — proven never reused across two logins for the same account, the session-fixation guarantee the ticket names. Every rejection reason (unknown email, unverified account, wrong password) throws the identical `InvalidCredentialsException`, matching signup's own enumeration-safety precedent. A second `SecureTokenGenerator`-minted token is the CSRF bootstrap: its hash is stored as the session's existing `csrf_secret` column and its raw value returned once in the login response body, never the session token itself. The cookie (`Set-Cookie`, built inline in `AuthController`) is `HttpOnly`/`Secure` (driven by the `sessionCookieSecure` property provisioned back in LOS-0202)/`SameSite=Lax`/`Path=/life-os`/30-day `Max-Age`. `SessionAuthenticationFilter` is registered via `HttpSecurity.addFilterBefore(..., AuthorizationFilter.class)` rather than `@Component`, since it must run inside Spring Security's own chain or its `SecurityContextHolder` write could be silently overwritten by Security's own context-loading step. CSRF header *enforcement* is deliberately not built here — LOS-0506 (logout) is the first ticket with an authenticated mutating endpoint to protect, and its own acceptance line already claims that job.
+
 ## Next recommended ticket
 
-LOS-0505 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement the login/session API. Its dependencies, LOS-0502 and LOS-0504, are now both done.
+LOS-0506 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement logout and session revocation. Its only stated dependency, LOS-0505, is now done.
 
 ## Known decisions requiring implementation-time values
 

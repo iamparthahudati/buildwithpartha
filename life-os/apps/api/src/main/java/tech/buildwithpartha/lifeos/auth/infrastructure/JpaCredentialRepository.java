@@ -1,5 +1,7 @@
 package tech.buildwithpartha.lifeos.auth.infrastructure;
 
+import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 import tech.buildwithpartha.lifeos.auth.domain.Credential;
 import tech.buildwithpartha.lifeos.auth.domain.CredentialRepository;
@@ -16,6 +18,11 @@ class JpaCredentialRepository implements CredentialRepository {
   @Override
   public Credential save(Credential credential) {
     return toDomain(jpaRepository.save(toEntity(credential)));
+  }
+
+  @Override
+  public Optional<Credential> findByUserId(UUID userId) {
+    return jpaRepository.findByUserId(userId).map(JpaCredentialRepository::toDomain);
   }
 
   private static CredentialEntity toEntity(Credential credential) {

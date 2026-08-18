@@ -15,6 +15,7 @@ import tech.buildwithpartha.lifeos.common.error.ApiProblem;
 import tech.buildwithpartha.lifeos.common.error.CodedException;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
 import tech.buildwithpartha.lifeos.common.error.TokenAlreadyUsedException;
@@ -54,6 +55,18 @@ public final class ApiExceptionHandler {
             exception.code(),
             "Too many requests",
             "Try again later."));
+  }
+
+  @ExceptionHandler(InvalidCredentialsException.class)
+  ResponseEntity<ApiProblem> handleInvalidCredentials(
+      InvalidCredentialsException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.UNAUTHORIZED,
+            exception.code(),
+            "Invalid credentials",
+            "Check your email and password and try again."));
   }
 
   @ExceptionHandler(TokenInvalidException.class)
