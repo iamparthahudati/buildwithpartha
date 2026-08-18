@@ -40,6 +40,7 @@ public class OpenApiConfiguration {
             .addResponses("Forbidden", problemResponse("The action is not permitted."))
             .addResponses("NotFound", problemResponse("The resource is unavailable."))
             .addResponses("Conflict", problemResponse("The request conflicts with current state."))
+            .addResponses("TooManyRequests", problemResponse("The caller exceeded a rate limit."))
             .addResponses("InternalError", problemResponse("The request could not be completed."));
 
     return new OpenAPI()

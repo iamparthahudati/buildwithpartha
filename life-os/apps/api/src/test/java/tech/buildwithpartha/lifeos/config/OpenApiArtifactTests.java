@@ -44,7 +44,7 @@ class OpenApiArtifactTests {
 
   @Test
   @WithMockUser
-  void validatesAndWritesTheEmptyBaseline() throws Exception {
+  void validatesAndWritesTheBaselineIncludingSignup() throws Exception {
     MvcResult result =
         mockMvc
             .perform(get("/openapi"))
@@ -56,7 +56,16 @@ class OpenApiArtifactTests {
             .andExpect(jsonPath("$.info.description").value(containsString("CSRF header")))
             .andExpect(jsonPath("$.servers[0].url").value("/life-os/api/v1"))
             .andExpect(jsonPath("$.paths").isMap())
-            .andExpect(jsonPath("$.paths").isEmpty())
+            .andExpect(jsonPath("$.paths['/auth/signup'].post.operationId").value("signup"))
+            .andExpect(jsonPath("$.paths['/auth/signup'].post.security").isEmpty())
+            .andExpect(jsonPath("$.paths['/auth/signup'].post.responses['202'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/signup'].post.responses['400'].$ref")
+                    .value("#/components/responses/BadRequest"))
+            .andExpect(
+                jsonPath("$.paths['/auth/signup'].post.responses['429'].$ref")
+                    .value("#/components/responses/TooManyRequests"))
+            .andExpect(jsonPath("$.components.responses.TooManyRequests").exists())
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))
