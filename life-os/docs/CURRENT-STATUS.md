@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-18 (LOS-0505)
+Last updated: 2026-08-18 (LOS-0506)
 
 ## Phase
 
@@ -170,9 +170,11 @@ Phase 2 — Identity and application shell.
 
 - LOS-0505 — Login/session API added: `POST /auth/login`, plus `config.SessionAuthenticationFilter`, the counterpart that makes the session it issues actually authenticate later requests (without it, `.anyRequest().authenticated()` — active since LOS-0213 — could never succeed for anything). `LoginService` rate limits, requires `AccountStatus.ACTIVE`, verifies the password (applying and persisting LOS-0502's rehash-on-login path in the same transaction), and always issues a brand-new `Session` — proven never reused across two logins for the same account, the session-fixation guarantee the ticket names. Every rejection reason (unknown email, unverified account, wrong password) throws the identical `InvalidCredentialsException`, matching signup's own enumeration-safety precedent. A second `SecureTokenGenerator`-minted token is the CSRF bootstrap: its hash is stored as the session's existing `csrf_secret` column and its raw value returned once in the login response body, never the session token itself. The cookie (`Set-Cookie`, built inline in `AuthController`) is `HttpOnly`/`Secure` (driven by the `sessionCookieSecure` property provisioned back in LOS-0202)/`SameSite=Lax`/`Path=/life-os`/30-day `Max-Age`. `SessionAuthenticationFilter` is registered via `HttpSecurity.addFilterBefore(..., AuthorizationFilter.class)` rather than `@Component`, since it must run inside Spring Security's own chain or its `SecurityContextHolder` write could be silently overwritten by Security's own context-loading step. CSRF header *enforcement* is deliberately not built here — LOS-0506 (logout) is the first ticket with an authenticated mutating endpoint to protect, and its own acceptance line already claims that job.
 
+- LOS-0506 — Logout and session revocation added: `POST /auth/logout` (current session) and `POST /auth/logout-all` ("sign out all devices"). Both are `permitAll()` rather than gated by `.anyRequest().authenticated()`, deliberately, so they stay safely callable with no session at all — every call returns `200`/`LOGGED_OUT` and a cookie-clearing `Set-Cookie` header whether or not there was anything to revoke, satisfying "clear cookie idempotently" literally. `LogoutService` resolves the session from the raw cookie itself; only when an active session is actually found does a CSRF check apply (`06-SECURITY.md`'s "require CSRF as applicable"), and a missing/mismatched `X-CSRF-TOKEN` throws before any revocation or cookie-clearing happens, leaving state untouched. `SessionRepository.revoke`/`revokeAllForUser` mirror LOS-0504's `EmailVerificationTokenRepository.consume` conditional-update shape exactly. New `CsrfTokenInvalidException` (403, `CSRF_TOKEN_INVALID`) is this ticket's first real CSRF *enforcement* — LOS-0505 only built the bootstrap (issuing the token) — implemented directly in `LogoutService` rather than the shared filter, since no other endpoint yet has an authenticated mutation to protect; a second real caller is the right trigger to extract it, not this one alone.
+
 ## Next recommended ticket
 
-LOS-0506 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement logout and session revocation. Its only stated dependency, LOS-0505, is now done.
+LOS-0507 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement forgot/reset password. Its dependencies, LOS-0502 and LOS-1402, are both done.
 
 ## Known decisions requiring implementation-time values
 

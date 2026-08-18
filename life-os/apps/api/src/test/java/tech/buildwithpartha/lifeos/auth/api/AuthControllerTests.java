@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import jakarta.servlet.http.Cookie;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
@@ -30,18 +31,21 @@ import tech.buildwithpartha.lifeos.auth.domain.PasswordHasher;
 import tech.buildwithpartha.lifeos.auth.domain.RawPassword;
 import tech.buildwithpartha.lifeos.auth.domain.RawToken;
 import tech.buildwithpartha.lifeos.auth.domain.SecureTokenGenerator;
+import tech.buildwithpartha.lifeos.auth.domain.Session;
+import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
 import tech.buildwithpartha.lifeos.auth.domain.User;
 import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
 
 /**
- * Exercises {@code POST /auth/signup}, {@code POST /auth/verify-email} and {@code POST /auth/login}
- * through the real filter chain (no {@code @WithMockUser}: the whole point of all three endpoints
- * is that they are reachable without a session) and the real {@code SignupService}/{@code
- * EmailVerificationService}/{@code LoginService}/JPA/Argon2/wordlist beans, matching the
- * full-context style {@code ApiProblemResponseTests} and {@code OpenApiArtifactTests} already use.
- * Whether the session cookie a successful login issues actually authenticates a later request is
- * {@code SessionAuthenticationFilterTests}' job, not this class's — everything here stays scoped to
- * the login endpoint's own request/response contract.
+ * Exercises {@code POST /auth/signup}, {@code POST /auth/verify-email}, {@code POST /auth/login}
+ * and {@code POST /auth/logout}[{@code -all}] through the real filter chain (no
+ * {@code @WithMockUser}: the whole point of every one of these endpoints is that it is reachable
+ * without a session) and the real {@code SignupService}/{@code EmailVerificationService}/{@code
+ * LoginService}/{@code LogoutService}/JPA/Argon2/wordlist beans, matching the full-context style
+ * {@code ApiProblemResponseTests} and {@code OpenApiArtifactTests} already use. Whether the session
+ * cookie a successful login issues actually authenticates a later request is {@code
+ * SessionAuthenticationFilterTests}' job, not this class's — everything here stays scoped to each
+ * endpoint's own request/response contract.
  *
  * <p>Every test here that reaches {@code SignupService} spends one unit of {@code
  * InMemorySignupRateLimiter}'s budget for MockMvc's constant {@code 127.0.0.1} caller address; this
@@ -73,6 +77,7 @@ class AuthControllerTests {
   private final UserRepository userRepository;
   private final CredentialRepository credentialRepository;
   private final EmailVerificationTokenRepository tokenRepository;
+  private final SessionRepository sessionRepository;
   private final SecureTokenGenerator tokenGenerator;
   private final PasswordHasher passwordHasher;
 
@@ -82,12 +87,14 @@ class AuthControllerTests {
       UserRepository userRepository,
       CredentialRepository credentialRepository,
       EmailVerificationTokenRepository tokenRepository,
+      SessionRepository sessionRepository,
       SecureTokenGenerator tokenGenerator,
       PasswordHasher passwordHasher) {
     this.mockMvc = mockMvc;
     this.userRepository = userRepository;
     this.credentialRepository = credentialRepository;
     this.tokenRepository = tokenRepository;
+    this.sessionRepository = sessionRepository;
     this.tokenGenerator = tokenGenerator;
     this.passwordHasher = passwordHasher;
   }
@@ -262,6 +269,97 @@ class AuthControllerTests {
                 .content(loginBody("controller-login-unknown@example.test", LOGIN_PASSWORD)))
         .andExpect(status().isUnauthorized())
         .andExpect(jsonPath("$.code").value("INVALID_CREDENTIALS"));
+  }
+
+  @Test
+  void logoutIsReachableWithoutAuthenticationRevokesTheSessionAndClearsTheCookie()
+      throws Exception {
+    UUID userId = seedUnverifiedUser("controller-logout-happy-path@example.test");
+    RawToken sessionToken = tokenGenerator.generate();
+    RawToken csrfToken = tokenGenerator.generate();
+    Session session = seedSession(userId, sessionToken, csrfToken);
+
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/auth/logout")
+                    .cookie(new Cookie("lifeos_session", sessionToken.value()))
+                    .header("X-CSRF-TOKEN", csrfToken.value()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.status").value("LOGGED_OUT"))
+            .andExpect(header().exists("Set-Cookie"))
+            .andReturn();
+
+    String setCookie = result.getResponse().getHeader("Set-Cookie");
+    assertThat(setCookie).contains("lifeos_session=");
+    assertThat(setCookie).containsAnyOf("Max-Age=0", "Max-Age=0;");
+    assertThat(sessionRepository.findByTokenHash(session.tokenHash()).orElseThrow().revokedAt())
+        .isPresent();
+  }
+
+  @Test
+  void logoutWithNoSessionCookieIsIdempotentAndStillClearsTheCookie() throws Exception {
+    mockMvc
+        .perform(post("/auth/logout"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("LOGGED_OUT"))
+        .andExpect(header().exists("Set-Cookie"));
+  }
+
+  @Test
+  void logoutRejectsAMismatchedCsrfTokenAndLeavesTheSessionActive() throws Exception {
+    UUID userId = seedUnverifiedUser("controller-logout-bad-csrf@example.test");
+    RawToken sessionToken = tokenGenerator.generate();
+    RawToken csrfToken = tokenGenerator.generate();
+    Session session = seedSession(userId, sessionToken, csrfToken);
+
+    mockMvc
+        .perform(
+            post("/auth/logout")
+                .cookie(new Cookie("lifeos_session", sessionToken.value()))
+                .header("X-CSRF-TOKEN", "wrong-csrf-value"))
+        .andExpect(status().isForbidden())
+        .andExpect(jsonPath("$.code").value("CSRF_TOKEN_INVALID"))
+        .andExpect(header().doesNotExist("Set-Cookie"));
+
+    assertThat(sessionRepository.findByTokenHash(session.tokenHash()).orElseThrow().revokedAt())
+        .isEmpty();
+  }
+
+  @Test
+  void logoutAllRevokesEverySessionForTheAccount() throws Exception {
+    UUID userId = seedUnverifiedUser("controller-logout-all@example.test");
+    RawToken sessionToken = tokenGenerator.generate();
+    RawToken csrfToken = tokenGenerator.generate();
+    Session firstSession = seedSession(userId, sessionToken, csrfToken);
+    Session secondSession =
+        seedSession(userId, RawToken.of("second-value", "sha256:second-hash"), csrfToken);
+
+    mockMvc
+        .perform(
+            post("/auth/logout-all")
+                .cookie(new Cookie("lifeos_session", sessionToken.value()))
+                .header("X-CSRF-TOKEN", csrfToken.value()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("LOGGED_OUT"));
+
+    assertThat(
+            sessionRepository.findByTokenHash(firstSession.tokenHash()).orElseThrow().revokedAt())
+        .isPresent();
+    assertThat(
+            sessionRepository.findByTokenHash(secondSession.tokenHash()).orElseThrow().revokedAt())
+        .isPresent();
+  }
+
+  private Session seedSession(UUID userId, RawToken sessionToken, RawToken csrfToken) {
+    return sessionRepository.save(
+        Session.issue(
+            UUID.randomUUID(),
+            userId,
+            sessionToken.hash(),
+            csrfToken.hash(),
+            Instant.now(),
+            Optional.empty()));
   }
 
   private void seedActiveUser(String email) {

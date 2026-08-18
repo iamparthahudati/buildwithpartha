@@ -1,6 +1,8 @@
 package tech.buildwithpartha.lifeos.auth.infrastructure;
 
+import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 import tech.buildwithpartha.lifeos.auth.domain.Session;
 import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
@@ -22,6 +24,16 @@ class JpaSessionRepository implements SessionRepository {
   @Override
   public Optional<Session> findByTokenHash(String tokenHash) {
     return jpaRepository.findByTokenHash(tokenHash).map(JpaSessionRepository::toDomain);
+  }
+
+  @Override
+  public boolean revoke(UUID sessionId, Instant revokedAt) {
+    return jpaRepository.revokeIfActive(sessionId, revokedAt) == 1;
+  }
+
+  @Override
+  public int revokeAllForUser(UUID userId, Instant revokedAt) {
+    return jpaRepository.revokeAllForUser(userId, revokedAt);
   }
 
   private static SessionEntity toEntity(Session session) {
