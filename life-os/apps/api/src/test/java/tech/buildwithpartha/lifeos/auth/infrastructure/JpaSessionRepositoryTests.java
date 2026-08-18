@@ -65,4 +65,60 @@ class JpaSessionRepositoryTests {
     assertThat(repository.findByTokenHash("sha256:present")).isPresent();
     assertThat(repository.findByTokenHash("sha256:absent")).isEmpty();
   }
+
+  @Test
+  void revokeSucceedsOnceAndFailsOnASecondAttemptForTheSameSession() {
+    JpaSessionRepository repository = new JpaSessionRepository(jpaRepository);
+    Session saved =
+        repository.save(
+            Session.issue(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                "sha256:revoke-me",
+                "sha256:csrf",
+                NOW,
+                Optional.empty()));
+    jpaRepository.flush();
+
+    boolean firstAttempt = repository.revoke(saved.id(), NOW.plusSeconds(60));
+    jpaRepository.flush();
+    boolean secondAttempt = repository.revoke(saved.id(), NOW.plusSeconds(120));
+
+    assertThat(firstAttempt).isTrue();
+    assertThat(secondAttempt).isFalse();
+    assertThat(jpaRepository.findById(saved.id()).orElseThrow().getRevokedAt())
+        .isEqualTo(NOW.plusSeconds(60));
+  }
+
+  @Test
+  void revokeAllForUserRevokesOnlyThatUsersActiveSessions() {
+    JpaSessionRepository repository = new JpaSessionRepository(jpaRepository);
+    UUID userId = UUID.randomUUID();
+    UUID otherUserId = UUID.randomUUID();
+    Session first =
+        repository.save(
+            Session.issue(
+                UUID.randomUUID(), userId, "sha256:first", "sha256:csrf", NOW, Optional.empty()));
+    Session second =
+        repository.save(
+            Session.issue(
+                UUID.randomUUID(), userId, "sha256:second", "sha256:csrf", NOW, Optional.empty()));
+    Session othersSession =
+        repository.save(
+            Session.issue(
+                UUID.randomUUID(),
+                otherUserId,
+                "sha256:others",
+                "sha256:csrf",
+                NOW,
+                Optional.empty()));
+    jpaRepository.flush();
+
+    int revokedCount = repository.revokeAllForUser(userId, NOW.plusSeconds(60));
+
+    assertThat(revokedCount).isEqualTo(2);
+    assertThat(jpaRepository.findById(first.id()).orElseThrow().getRevokedAt()).isNotNull();
+    assertThat(jpaRepository.findById(second.id()).orElseThrow().getRevokedAt()).isNotNull();
+    assertThat(jpaRepository.findById(othersSession.id()).orElseThrow().getRevokedAt()).isNull();
+  }
 }

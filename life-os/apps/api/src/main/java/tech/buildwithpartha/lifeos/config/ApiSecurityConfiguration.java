@@ -56,7 +56,12 @@ public class ApiSecurityConfiguration {
                     .requestMatchers("/actuator/**")
                     .denyAll()
                     .requestMatchers(
-                        HttpMethod.POST, "/auth/signup", "/auth/verify-email", "/auth/login")
+                        HttpMethod.POST,
+                        "/auth/signup",
+                        "/auth/verify-email",
+                        "/auth/login",
+                        "/auth/logout",
+                        "/auth/logout-all")
                     .permitAll()
                     .anyRequest()
                     .authenticated())
@@ -65,8 +70,9 @@ public class ApiSecurityConfiguration {
         // it uses the opaque cookie-bound scheme LOS-0505 built (SessionAuthenticationFilter plus
         // the X-CSRF-TOKEN header already documented in OpenApiConfiguration). Disabling the
         // incompatible default here is a deliberate, narrow decision, not a broader opt-out of
-        // CSRF protection; enforcing the X-CSRF-TOKEN header itself belongs to whichever ticket
-        // first has an authenticated mutating endpoint to protect (LOS-0506).
+        // CSRF protection: logout/logout-all (LOS-0506) are permitAll rather than authenticated()
+        // specifically so they stay safely callable with no session at all (idempotent logout),
+        // so their CSRF check happens inside LogoutService itself, not this filter chain.
         .csrf(AbstractHttpConfigurer::disable)
         .addFilterBefore(
             new SessionAuthenticationFilter(sessionRepository, tokenGenerator, clock),

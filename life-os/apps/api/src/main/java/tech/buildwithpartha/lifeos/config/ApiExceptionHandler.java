@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import tech.buildwithpartha.lifeos.common.error.ApiProblem;
 import tech.buildwithpartha.lifeos.common.error.CodedException;
+import tech.buildwithpartha.lifeos.common.error.CsrfTokenInvalidException;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
@@ -103,6 +104,18 @@ public final class ApiExceptionHandler {
             exception.code(),
             "Link already used",
             "The link has already been used."));
+  }
+
+  @ExceptionHandler(CsrfTokenInvalidException.class)
+  ResponseEntity<ApiProblem> handleCsrfTokenInvalid(
+      CsrfTokenInvalidException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.FORBIDDEN,
+            exception.code(),
+            "CSRF token invalid",
+            "Refresh and try again."));
   }
 
   @ExceptionHandler(CodedException.class)

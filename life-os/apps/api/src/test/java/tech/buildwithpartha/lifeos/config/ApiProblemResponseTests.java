@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.common.error.CodedException;
+import tech.buildwithpartha.lifeos.common.error.CsrfTokenInvalidException;
 import tech.buildwithpartha.lifeos.common.error.ErrorCode;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
@@ -182,6 +183,16 @@ class ApiProblemResponseTests {
   }
 
   @Test
+  @WithMockUser
+  void mapsCsrfTokenInvalidExceptionsToForbidden() throws Exception {
+    mockMvc
+        .perform(get("/test/errors/csrf-token-invalid"))
+        .andExpect(status().isForbidden())
+        .andExpect(jsonPath("$.code").value("CSRF_TOKEN_INVALID"))
+        .andExpect(content().string(not(containsString("csrf-token-invalid-diagnostic-only"))));
+  }
+
+  @Test
   void mapsAuthenticationFailuresAndReplacesUnsafeCorrelationIds() throws Exception {
     mockMvc
         .perform(
@@ -242,6 +253,11 @@ class ApiProblemResponseTests {
     @GetMapping("/invalid-credentials")
     void invalidCredentials() {
       throw new InvalidCredentialsException("invalid-credentials-diagnostic-only");
+    }
+
+    @GetMapping("/csrf-token-invalid")
+    void csrfTokenInvalid() {
+      throw new CsrfTokenInvalidException("csrf-token-invalid-diagnostic-only");
     }
   }
 

@@ -3,8 +3,10 @@ package tech.buildwithpartha.lifeos.auth.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.util.Arrays;
 import java.util.Optional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,8 @@ import tech.buildwithpartha.lifeos.auth.application.EmailVerificationService;
 import tech.buildwithpartha.lifeos.auth.application.LoginCommand;
 import tech.buildwithpartha.lifeos.auth.application.LoginResult;
 import tech.buildwithpartha.lifeos.auth.application.LoginService;
+import tech.buildwithpartha.lifeos.auth.application.LogoutCommand;
+import tech.buildwithpartha.lifeos.auth.application.LogoutService;
 import tech.buildwithpartha.lifeos.auth.application.SignupCommand;
 import tech.buildwithpartha.lifeos.auth.application.SignupService;
 import tech.buildwithpartha.lifeos.auth.application.VerifyEmailCommand;
@@ -26,27 +30,31 @@ import tech.buildwithpartha.lifeos.auth.domain.RawPassword;
 import tech.buildwithpartha.lifeos.auth.domain.Session;
 import tech.buildwithpartha.lifeos.config.LifeOsEnvironmentProperties;
 
-/** Unauthenticated identity endpoints ({@code /auth/logout} lands in LOS-0506). */
+/** Unauthenticated identity endpoints. */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
   static final String SESSION_COOKIE_NAME = "lifeos_session";
+  private static final String CSRF_HEADER_NAME = "X-CSRF-TOKEN";
   private static final int MAX_DEVICE_HINT_LENGTH = 255;
 
   private final SignupService signupService;
   private final EmailVerificationService emailVerificationService;
   private final LoginService loginService;
+  private final LogoutService logoutService;
   private final LifeOsEnvironmentProperties environmentProperties;
 
   public AuthController(
       SignupService signupService,
       EmailVerificationService emailVerificationService,
       LoginService loginService,
+      LogoutService logoutService,
       LifeOsEnvironmentProperties environmentProperties) {
     this.signupService = signupService;
     this.emailVerificationService = emailVerificationService;
     this.loginService = loginService;
+    this.logoutService = logoutService;
     this.environmentProperties = environmentProperties;
   }
 
@@ -117,6 +125,57 @@ public class AuthController {
         .body(LoginResponse.of(result.user(), result.csrfToken().value()));
   }
 
+  @Operation(
+      summary = "Log out",
+      description =
+          "Revokes the current session and clears the session cookie. Safe to call with no"
+              + " active session at all.")
+  @SecurityRequirements
+  @ApiResponse(responseCode = "200", description = "The current session is no longer valid.")
+  @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/logout")
+  public ResponseEntity<LogoutResponse> logout(HttpServletRequest servletRequest) {
+    logoutService.logout(logoutCommand(servletRequest));
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, clearedSessionCookie().toString())
+        .body(LogoutResponse.loggedOut());
+  }
+
+  @Operation(
+      summary = "Log out everywhere",
+      description =
+          "Revokes every session belonging to the current account, including this one, and"
+              + " clears the session cookie. Safe to call with no active session at all.")
+  @SecurityRequirements
+  @ApiResponse(responseCode = "200", description = "No session for this account remains valid.")
+  @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/logout-all")
+  public ResponseEntity<LogoutResponse> logoutAll(HttpServletRequest servletRequest) {
+    logoutService.logoutAll(logoutCommand(servletRequest));
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, clearedSessionCookie().toString())
+        .body(LogoutResponse.loggedOut());
+  }
+
+  private static LogoutCommand logoutCommand(HttpServletRequest servletRequest) {
+    return new LogoutCommand(
+        sessionCookieValue(servletRequest),
+        Optional.ofNullable(servletRequest.getHeader(CSRF_HEADER_NAME)));
+  }
+
+  private static Optional<String> sessionCookieValue(HttpServletRequest servletRequest) {
+    Cookie[] cookies = servletRequest.getCookies();
+    if (cookies == null) {
+      return Optional.empty();
+    }
+    return Arrays.stream(cookies)
+        .filter(cookie -> SESSION_COOKIE_NAME.equals(cookie.getName()))
+        .map(Cookie::getValue)
+        .findFirst();
+  }
+
   private ResponseCookie sessionCookie(String rawSessionToken) {
     return ResponseCookie.from(SESSION_COOKIE_NAME, rawSessionToken)
         .httpOnly(true)
@@ -124,6 +183,16 @@ public class AuthController {
         .sameSite("Lax")
         .path("/life-os")
         .maxAge(Session.TTL)
+        .build();
+  }
+
+  private ResponseCookie clearedSessionCookie() {
+    return ResponseCookie.from(SESSION_COOKIE_NAME, "")
+        .httpOnly(true)
+        .secure(environmentProperties.sessionCookieSecure())
+        .sameSite("Lax")
+        .path("/life-os")
+        .maxAge(0)
         .build();
   }
 

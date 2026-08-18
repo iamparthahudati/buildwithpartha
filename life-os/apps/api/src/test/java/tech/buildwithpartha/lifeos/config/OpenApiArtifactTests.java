@@ -44,7 +44,8 @@ class OpenApiArtifactTests {
 
   @Test
   @WithMockUser
-  void validatesAndWritesTheBaselineIncludingSignupEmailVerificationAndLogin() throws Exception {
+  void validatesAndWritesTheBaselineIncludingSignupEmailVerificationLoginAndLogout()
+      throws Exception {
     MvcResult result =
         mockMvc
             .perform(get("/openapi"))
@@ -88,6 +89,17 @@ class OpenApiArtifactTests {
                 jsonPath("$.paths['/auth/login'].post.responses['429'].$ref")
                     .value("#/components/responses/TooManyRequests"))
             .andExpect(jsonPath("$.components.responses.Unauthorized").exists())
+            .andExpect(jsonPath("$.paths['/auth/logout'].post.operationId").value("logout"))
+            .andExpect(jsonPath("$.paths['/auth/logout'].post.security").isEmpty())
+            .andExpect(jsonPath("$.paths['/auth/logout'].post.responses['200'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/logout'].post.responses['403'].$ref")
+                    .value("#/components/responses/Forbidden"))
+            .andExpect(jsonPath("$.paths['/auth/logout-all'].post.operationId").value("logoutAll"))
+            .andExpect(jsonPath("$.paths['/auth/logout-all'].post.security").isEmpty())
+            .andExpect(
+                jsonPath("$.paths['/auth/logout-all'].post.responses['200'].content").exists())
+            .andExpect(jsonPath("$.components.responses.Forbidden").exists())
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))
