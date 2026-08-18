@@ -58,6 +58,11 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:3.0.3")
 
+    // Argon2PasswordEncoder (LOS-0502) delegates to Bouncy Castle's Argon2 implementation;
+    // spring-security-crypto declares it compileOnly, so the application must supply it at
+    // runtime.
+    runtimeOnly("org.bouncycastle:bcprov-jdk18on:1.79")
+
     runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
