@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-18 (LOS-0506)
+Last updated: 2026-08-19 (LOS-0508)
 
 ## Phase
 
@@ -172,9 +172,11 @@ Phase 2 — Identity and application shell.
 
 - LOS-0506 — Logout and session revocation added: `POST /auth/logout` (current session) and `POST /auth/logout-all` ("sign out all devices"). Both are `permitAll()` rather than gated by `.anyRequest().authenticated()`, deliberately, so they stay safely callable with no session at all — every call returns `200`/`LOGGED_OUT` and a cookie-clearing `Set-Cookie` header whether or not there was anything to revoke, satisfying "clear cookie idempotently" literally. `LogoutService` resolves the session from the raw cookie itself; only when an active session is actually found does a CSRF check apply (`06-SECURITY.md`'s "require CSRF as applicable"), and a missing/mismatched `X-CSRF-TOKEN` throws before any revocation or cookie-clearing happens, leaving state untouched. `SessionRepository.revoke`/`revokeAllForUser` mirror LOS-0504's `EmailVerificationTokenRepository.consume` conditional-update shape exactly. New `CsrfTokenInvalidException` (403, `CSRF_TOKEN_INVALID`) is this ticket's first real CSRF *enforcement* — LOS-0505 only built the bootstrap (issuing the token) — implemented directly in `LogoutService` rather than the shared filter, since no other endpoint yet has an authenticated mutation to protect; a second real caller is the right trigger to extract it, not this one alone.
 
+- LOS-0508 — Frontend auth route guard and API client added: the first frontend ticket to call the backend. `lib/apiClient.ts` is the one `fetch` wrapper every feature's API module calls through — same-origin credentials, automatic `X-CSRF-TOKEN` on mutating verbs once a token is known, and a single `401 AUTHENTICATION_REQUIRED` check reported through a configured callback (never for a `login` endpoint's own unrelated `401 INVALID_CREDENTIALS`). `state/authSession.ts`/`AuthSessionProvider.tsx` hold the current user and CSRF token in memory only — proven by a test that `Storage.prototype.setItem` is never called — split into a context/hook file and a component file for the same `react-refresh/only-export-components` reason `toastQueue.ts`/`ToastProvider.tsx` already are. `AuthSessionProvider` clears the entire TanStack Query cache (`@tanstack/react-query@5.101.4`, newly added, fulfilling `02-ARCHITECTURE.md`'s existing rule rather than deciding something new) on logout and on an account switch without an intervening logout, but not on a same-account session refresh. `lib/returnPath.ts`'s `isSafeReturnPath` closes the open-redirect shape a `returnTo` query parameter invites (protocol-relative `//`, embedded `://`, control characters, or a path merely string-prefixed by rather than nested under the app's own base path are all rejected); `features/auth/components/RequireAuth.tsx` is the route guard itself, built on `window.location`/`history` directly since no router is wired into LifeOS yet (matching `useDeepLinkParam`'s own precedent) — `LOS-0603` is where a real router will compose it. `features/auth/api/authApi.ts` plus `useLogin`/`useLogout` (`useMutation` wrappers) complete the auth API client, ready for LOS-0510's login screen and a future sign-out action; neither is wired to a UI caller yet. The known gap LOS-0506's own handoff already flagged — no `GET /auth/session` endpoint exists to restore the in-memory session after a page reload, despite `05-API-CONVENTIONS.md` documenting one — is deliberately left as a frontend-only judgment call (treat "no CSRF token in memory" as logged out; `RequireAuth` redirects to login) rather than adding a backend endpoint outside this ticket's scope.
+
 ## Next recommended ticket
 
-LOS-0507 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement forgot/reset password. Its dependencies, LOS-0502 and LOS-1402, are both done.
+LOS-0509 (`docs/backlog/EPIC-05-IDENTITY.md`) — build the signup form and screen. Its dependencies, LOS-0333, LOS-0434 and LOS-0503, are all done, and it will reuse this ticket's `apiClient`/`authApi`.
 
 ## Known decisions requiring implementation-time values
 
