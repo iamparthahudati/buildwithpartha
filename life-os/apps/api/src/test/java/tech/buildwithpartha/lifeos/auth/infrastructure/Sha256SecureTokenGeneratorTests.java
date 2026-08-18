@@ -34,4 +34,19 @@ class Sha256SecureTokenGeneratorTests {
         MessageDigest.getInstance("SHA-256").digest(token.value().getBytes(StandardCharsets.UTF_8));
     assertThat(token.hash()).isEqualTo("sha256:" + HexFormat.of().formatHex(expected));
   }
+
+  @Test
+  void hashOfAPresentedRawValueMatchesTheHashComputedAtGenerationTime() {
+    Sha256SecureTokenGenerator generator = new Sha256SecureTokenGenerator();
+    RawToken token = generator.generate();
+
+    assertThat(generator.hash(token.value())).isEqualTo(token.hash());
+  }
+
+  @Test
+  void hashOfADifferentValueNeverMatches() {
+    Sha256SecureTokenGenerator generator = new Sha256SecureTokenGenerator();
+
+    assertThat(generator.hash("value-one")).isNotEqualTo(generator.hash("value-two"));
+  }
 }

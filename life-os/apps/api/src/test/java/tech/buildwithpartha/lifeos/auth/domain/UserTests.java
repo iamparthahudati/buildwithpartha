@@ -40,6 +40,29 @@ class UserTests {
   }
 
   @Test
+  void verifyActivatesAnUnverifiedAccountAndRecordsWhenItWasVerified() {
+    User unverified = User.signup(UUID.randomUUID(), EmailAddress.of("a@example.test"), "A", NOW);
+    Instant verifiedAt = NOW.plusSeconds(3600);
+
+    User verified = unverified.verify(verifiedAt);
+
+    assertThat(verified.accountStatus()).isEqualTo(AccountStatus.ACTIVE);
+    assertThat(verified.verifiedAt()).contains(verifiedAt);
+    assertThat(verified.updatedAt()).isEqualTo(verifiedAt);
+    assertThat(verified.createdAt()).isEqualTo(NOW);
+  }
+
+  @Test
+  void verifyIsANoOpOnceAlreadyActive() {
+    User unverified = User.signup(UUID.randomUUID(), EmailAddress.of("a@example.test"), "A", NOW);
+    User verified = unverified.verify(NOW.plusSeconds(3600));
+
+    User verifiedAgain = verified.verify(NOW.plusSeconds(7200));
+
+    assertThat(verifiedAgain).isEqualTo(verified);
+  }
+
+  @Test
   void rejectsAWeekStartOutsideOneToSeven() {
     EmailAddress email = EmailAddress.of("a@example.test");
     assertThatThrownBy(

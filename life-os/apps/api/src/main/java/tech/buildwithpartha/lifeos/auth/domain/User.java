@@ -66,4 +66,29 @@ public record User(
         now,
         0L);
   }
+
+  /**
+   * Activates the account (LOS-0504 email verification). Idempotent if already {@link
+   * AccountStatus#ACTIVE}: the single-use token that guards this call is consumed exactly once
+   * ({@code EmailVerificationTokenRepository#consume}), so this method only ever runs for a
+   * genuinely new verification, but stays a safe no-op rather than overwriting an existing {@link
+   * #verifiedAt()} if it were ever called again.
+   */
+  public User verify(Instant now) {
+    if (accountStatus == AccountStatus.ACTIVE) {
+      return this;
+    }
+    return new User(
+        id,
+        email,
+        displayName,
+        timeZone,
+        locale,
+        weekStart,
+        AccountStatus.ACTIVE,
+        Optional.of(now),
+        createdAt,
+        now,
+        version);
+  }
 }

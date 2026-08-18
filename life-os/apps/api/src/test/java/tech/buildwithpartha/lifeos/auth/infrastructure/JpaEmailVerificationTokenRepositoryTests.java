@@ -38,4 +38,36 @@ class JpaEmailVerificationTokenRepositoryTests {
     EmailVerificationTokenEntity reloaded = jpaRepository.findById(saved.id()).orElseThrow();
     assertThat(reloaded.getConsumedAt()).isNull();
   }
+
+  @Test
+  void findByTokenHashLocatesTheMatchingRowOnly() {
+    JpaEmailVerificationTokenRepository repository =
+        new JpaEmailVerificationTokenRepository(jpaRepository);
+    repository.save(
+        EmailVerificationToken.issue(UUID.randomUUID(), UUID.randomUUID(), "sha256:present", NOW));
+    jpaRepository.flush();
+
+    assertThat(repository.findByTokenHash("sha256:present")).isPresent();
+    assertThat(repository.findByTokenHash("sha256:absent")).isEmpty();
+  }
+
+  @Test
+  void consumeSucceedsOnceAndFailsOnASecondAttemptForTheSameToken() {
+    JpaEmailVerificationTokenRepository repository =
+        new JpaEmailVerificationTokenRepository(jpaRepository);
+    EmailVerificationToken saved =
+        repository.save(
+            EmailVerificationToken.issue(
+                UUID.randomUUID(), UUID.randomUUID(), "sha256:consume-me", NOW));
+    jpaRepository.flush();
+
+    boolean firstAttempt = repository.consume(saved.id(), NOW.plusSeconds(60));
+    jpaRepository.flush();
+    boolean secondAttempt = repository.consume(saved.id(), NOW.plusSeconds(120));
+
+    assertThat(firstAttempt).isTrue();
+    assertThat(secondAttempt).isFalse();
+    assertThat(jpaRepository.findById(saved.id()).orElseThrow().getConsumedAt())
+        .isEqualTo(NOW.plusSeconds(60));
+  }
 }

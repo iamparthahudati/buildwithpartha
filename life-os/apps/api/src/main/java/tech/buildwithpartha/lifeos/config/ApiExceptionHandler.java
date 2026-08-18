@@ -17,6 +17,9 @@ import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
+import tech.buildwithpartha.lifeos.common.error.TokenAlreadyUsedException;
+import tech.buildwithpartha.lifeos.common.error.TokenExpiredException;
+import tech.buildwithpartha.lifeos.common.error.TokenInvalidException;
 
 /** Maps server failures to safe, versioned Problem Details responses. */
 @RestControllerAdvice
@@ -51,6 +54,42 @@ public final class ApiExceptionHandler {
             exception.code(),
             "Too many requests",
             "Try again later."));
+  }
+
+  @ExceptionHandler(TokenInvalidException.class)
+  ResponseEntity<ApiProblem> handleTokenInvalid(
+      TokenInvalidException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.BAD_REQUEST,
+            exception.code(),
+            "Invalid link",
+            "The link is invalid."));
+  }
+
+  @ExceptionHandler(TokenExpiredException.class)
+  ResponseEntity<ApiProblem> handleTokenExpired(
+      TokenExpiredException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.BAD_REQUEST,
+            exception.code(),
+            "Link expired",
+            "The link has expired."));
+  }
+
+  @ExceptionHandler(TokenAlreadyUsedException.class)
+  ResponseEntity<ApiProblem> handleTokenAlreadyUsed(
+      TokenAlreadyUsedException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Link already used",
+            "The link has already been used."));
   }
 
   @ExceptionHandler(CodedException.class)

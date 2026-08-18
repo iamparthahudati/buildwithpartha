@@ -1,6 +1,8 @@
 package tech.buildwithpartha.lifeos.auth.infrastructure;
 
+import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 import tech.buildwithpartha.lifeos.auth.domain.EmailVerificationToken;
 import tech.buildwithpartha.lifeos.auth.domain.EmailVerificationTokenRepository;
@@ -17,6 +19,18 @@ class JpaEmailVerificationTokenRepository implements EmailVerificationTokenRepos
   @Override
   public EmailVerificationToken save(EmailVerificationToken token) {
     return toDomain(jpaRepository.save(toEntity(token)));
+  }
+
+  @Override
+  public Optional<EmailVerificationToken> findByTokenHash(String tokenHash) {
+    return jpaRepository
+        .findByTokenHash(tokenHash)
+        .map(JpaEmailVerificationTokenRepository::toDomain);
+  }
+
+  @Override
+  public boolean consume(UUID tokenId, Instant consumedAt) {
+    return jpaRepository.consumeIfUnconsumed(tokenId, consumedAt) == 1;
   }
 
   private static EmailVerificationTokenEntity toEntity(EmailVerificationToken token) {

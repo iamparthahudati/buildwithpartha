@@ -50,4 +50,22 @@ class JpaUserRepositoryTests {
     assertThat(repository.existsByEmailNormalized("present@example.test")).isTrue();
     assertThat(repository.existsByEmailNormalized("absent@example.test")).isFalse();
   }
+
+  @Test
+  void findByIdReturnsTheCurrentRowAndReflectsAVerifiedTransition() {
+    JpaUserRepository repository = new JpaUserRepository(jpaRepository);
+    EmailAddress email = EmailAddress.of("verify-me@example.test");
+    User created = repository.save(User.signup(UUID.randomUUID(), email, "Verify Me", NOW));
+    jpaRepository.flush();
+
+    assertThat(repository.findById(UUID.randomUUID())).isEmpty();
+
+    Instant verifiedAt = NOW.plusSeconds(60);
+    repository.save(created.verify(verifiedAt));
+    jpaRepository.flush();
+
+    User reloaded = repository.findById(created.id()).orElseThrow();
+    assertThat(reloaded.accountStatus().name()).isEqualTo("ACTIVE");
+    assertThat(reloaded.verifiedAt()).contains(verifiedAt);
+  }
 }
