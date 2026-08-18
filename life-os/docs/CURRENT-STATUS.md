@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-18 (LOS-0501)
+Last updated: 2026-08-18 (LOS-0502)
 
 ## Phase
 
@@ -160,9 +160,11 @@ Phase 2 — Identity and application shell.
 
 - LOS-0501 — Identity schema added via Flyway `V2__identity_schema.sql`: `users`, `credentials`, `user_sessions`, `email_verification_tokens`, `password_reset_tokens` and `terms_acceptances`, each cascading on user deletion. Token and session tables store only a hash of the raw secret, never the raw value, and each carries a partial index (`WHERE revoked_at/consumed_at IS NULL`) sized for its own expiry-cleanup query — proven by `IdentitySchemaIT` inserting an expired, a live and (for sessions) a revoked row and asserting the query returns exactly the expired one, for all three token/session tables. `scripts/verify-flyway-postgres.sh` now asserts 6 product tables exist after `V2`.
 
+- LOS-0502 — Password policy and Argon2id hashing added as the first real `auth.domain`/`auth.application`/`auth.infrastructure` code, proving out the LOS-0206 layering for a business domain: `auth.domain` (`EmailAddress`, `RawPassword`, `PasswordPolicy`, `PasswordHasher`, `CommonPasswordChecker`, `PasswordVerification`) has no Spring/JPA dependency; `auth.application` (`PasswordService`, `PasswordAuthenticationService`) orchestrates it; `auth.infrastructure` adapts it to Spring Security's `Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8()` (16 MiB, t=2, p=1 — in the OWASP-recommended range, confirmed by decoding a sample hash) and a bundled common-password wordlist. `PasswordAuthenticationService.verify` is the rehash-on-login path the ticket names: it returns a replacement hash only when the stored hash's own embedded parameters are weaker than current (via `PasswordEncoder.upgradeEncoding`), so a future login (LOS-0505) can persist it without hashing on every login regardless. `RawPassword.toString()` is redacted so a log line or assertion-failure message can never print the plaintext password, with a test proving it. Argon2 needed an explicit `bcprov-jdk18on` runtime dependency — `spring-security-crypto` declares Bouncy Castle `compileOnly`, so hashing threw `NoClassDefFoundError` until it was added.
+
 ## Next recommended ticket
 
-LOS-0502 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement password policy and Argon2id hashing. Its only stated dependency, LOS-0501, is now done.
+LOS-1402 (`docs/backlog/EPIC-14-BACKEND-OPERATIONS.md`) — implement the transactional outbox and mail worker signup's mail enqueue will depend on. Its dependency, LOS-0502, is now done.
 
 ## Known decisions requiring implementation-time values
 

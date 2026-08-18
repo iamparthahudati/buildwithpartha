@@ -76,6 +76,7 @@ org.apiguardian:apiguardian-api:1.1.2=testCompileClasspath
 org.aspectj:aspectjweaver:1.9.25.1=compileClasspath,productionRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.assertj:assertj-core:3.27.7=testCompileClasspath,testRuntimeClasspath
 org.awaitility:awaitility:4.3.0=testCompileClasspath,testRuntimeClasspath
+org.bouncycastle:bcprov-jdk18on:1.79=productionRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
 org.codehaus.plexus:plexus-classworlds:2.6.0=checkstyle
 org.codehaus.plexus:plexus-component-annotations:2.1.0=checkstyle
 org.codehaus.plexus:plexus-container-default:2.1.0=checkstyle
