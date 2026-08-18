@@ -1,10 +1,10 @@
 # Current status
 
-Last updated: 2026-08-18 (LOS-0434)
+Last updated: 2026-08-18 (LOS-0501)
 
 ## Phase
 
-Phase 1 — Foundations and component library.
+Phase 2 — Identity and application shell.
 
 ## Completed
 
@@ -158,9 +158,11 @@ Phase 1 — Foundations and component library.
 
 - LOS-0434 — Composed component phase gate passed (`docs/gates/COMPOSED-PHASE-GATE.md`): full `npm test` green (977 Vitest tests across 84 files, coverage above the 80% gate, 35 Node assertions), 38 `Composed`-group catalog entries covering every LOS-0401–LOS-0433 ticket, and the public export surface of `components/forms`/`components/feedback`/`components/navigation` is frozen for Epic 05.
 
+- LOS-0501 — Identity schema added via Flyway `V2__identity_schema.sql`: `users`, `credentials`, `user_sessions`, `email_verification_tokens`, `password_reset_tokens` and `terms_acceptances`, each cascading on user deletion. Token and session tables store only a hash of the raw secret, never the raw value, and each carries a partial index (`WHERE revoked_at/consumed_at IS NULL`) sized for its own expiry-cleanup query — proven by `IdentitySchemaIT` inserting an expired, a live and (for sessions) a revoked row and asserting the query returns exactly the expired one, for all three token/session tables. `scripts/verify-flyway-postgres.sh` now asserts 6 product tables exist after `V2`.
+
 ## Next recommended ticket
 
-Epic 05 (`docs/backlog/EPIC-05-IDENTITY.md`).
+LOS-0502 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement password policy and Argon2id hashing. Its only stated dependency, LOS-0501, is now done.
 
 ## Known decisions requiring implementation-time values
 
