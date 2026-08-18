@@ -40,7 +40,7 @@ public class ApiSecurityConfiguration {
                     .permitAll()
                     .requestMatchers("/actuator/**")
                     .denyAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/signup")
+                    .requestMatchers(HttpMethod.POST, "/auth/signup", "/auth/verify-email")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

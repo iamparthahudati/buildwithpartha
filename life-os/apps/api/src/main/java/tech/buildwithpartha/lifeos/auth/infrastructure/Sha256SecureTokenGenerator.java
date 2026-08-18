@@ -33,10 +33,11 @@ class Sha256SecureTokenGenerator implements SecureTokenGenerator {
     return RawToken.of(value, hash(value));
   }
 
-  private static String hash(String value) {
+  @Override
+  public String hash(String rawValue) {
     try {
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
-      byte[] hashed = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+      byte[] hashed = digest.digest(rawValue.getBytes(StandardCharsets.UTF_8));
       return HASH_PREFIX + HexFormat.of().formatHex(hashed);
     } catch (NoSuchAlgorithmException e) {
       throw new IllegalStateException("SHA-256 must be available on every supported JVM", e);

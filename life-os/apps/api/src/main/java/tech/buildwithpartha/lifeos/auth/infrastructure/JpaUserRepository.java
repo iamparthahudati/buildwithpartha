@@ -1,6 +1,7 @@
 package tech.buildwithpartha.lifeos.auth.infrastructure;
 
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 import tech.buildwithpartha.lifeos.auth.domain.EmailAddress;
 import tech.buildwithpartha.lifeos.auth.domain.User;
@@ -23,6 +24,11 @@ class JpaUserRepository implements UserRepository {
   @Override
   public User save(User user) {
     return toDomain(jpaRepository.save(toEntity(user)));
+  }
+
+  @Override
+  public Optional<User> findById(UUID id) {
+    return jpaRepository.findById(id).map(JpaUserRepository::toDomain);
   }
 
   private static UserEntity toEntity(User user) {

@@ -33,6 +33,9 @@ import tech.buildwithpartha.lifeos.common.error.ErrorCode;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
+import tech.buildwithpartha.lifeos.common.error.TokenAlreadyUsedException;
+import tech.buildwithpartha.lifeos.common.error.TokenExpiredException;
+import tech.buildwithpartha.lifeos.common.error.TokenInvalidException;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -138,6 +141,36 @@ class ApiProblemResponseTests {
   }
 
   @Test
+  @WithMockUser
+  void mapsTokenInvalidExceptionsToBadRequest() throws Exception {
+    mockMvc
+        .perform(get("/test/errors/token-invalid"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("TOKEN_INVALID"))
+        .andExpect(content().string(not(containsString("token-invalid-diagnostic-only"))));
+  }
+
+  @Test
+  @WithMockUser
+  void mapsTokenExpiredExceptionsToBadRequest() throws Exception {
+    mockMvc
+        .perform(get("/test/errors/token-expired"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("TOKEN_EXPIRED"))
+        .andExpect(content().string(not(containsString("token-expired-diagnostic-only"))));
+  }
+
+  @Test
+  @WithMockUser
+  void mapsTokenAlreadyUsedExceptionsToConflict() throws Exception {
+    mockMvc
+        .perform(get("/test/errors/token-already-used"))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.code").value("TOKEN_ALREADY_USED"))
+        .andExpect(content().string(not(containsString("token-already-used-diagnostic-only"))));
+  }
+
+  @Test
   void mapsAuthenticationFailuresAndReplacesUnsafeCorrelationIds() throws Exception {
     mockMvc
         .perform(
@@ -178,6 +211,21 @@ class ApiProblemResponseTests {
     @GetMapping("/rate-limited")
     void rateLimited() {
       throw new RateLimitedException("rate-limit-diagnostic-only");
+    }
+
+    @GetMapping("/token-invalid")
+    void tokenInvalid() {
+      throw new TokenInvalidException("token-invalid-diagnostic-only");
+    }
+
+    @GetMapping("/token-expired")
+    void tokenExpired() {
+      throw new TokenExpiredException("token-expired-diagnostic-only");
+    }
+
+    @GetMapping("/token-already-used")
+    void tokenAlreadyUsed() {
+      throw new TokenAlreadyUsedException("token-already-used-diagnostic-only");
     }
   }
 

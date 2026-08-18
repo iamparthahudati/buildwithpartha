@@ -11,4 +11,12 @@ package tech.buildwithpartha.lifeos.auth.domain;
 public interface SecureTokenGenerator {
 
   RawToken generate();
+
+  /**
+   * Hashes a raw token value presented back by a caller (LOS-0504: the value from a verification
+   * link), with the same deterministic digest {@link #generate()} used to compute {@link
+   * RawToken#hash()} — a token is looked up by re-hashing and matching, never by decrypting a
+   * stored value.
+   */
+  String hash(String rawValue);
 }
