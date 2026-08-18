@@ -28,6 +28,8 @@ import tech.buildwithpartha.lifeos.auth.domain.EmailAddress;
 import tech.buildwithpartha.lifeos.auth.domain.EmailVerificationToken;
 import tech.buildwithpartha.lifeos.auth.domain.EmailVerificationTokenRepository;
 import tech.buildwithpartha.lifeos.auth.domain.PasswordHasher;
+import tech.buildwithpartha.lifeos.auth.domain.PasswordResetToken;
+import tech.buildwithpartha.lifeos.auth.domain.PasswordResetTokenRepository;
 import tech.buildwithpartha.lifeos.auth.domain.RawPassword;
 import tech.buildwithpartha.lifeos.auth.domain.RawToken;
 import tech.buildwithpartha.lifeos.auth.domain.SecureTokenGenerator;
@@ -37,15 +39,16 @@ import tech.buildwithpartha.lifeos.auth.domain.User;
 import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
 
 /**
- * Exercises {@code POST /auth/signup}, {@code POST /auth/verify-email}, {@code POST /auth/login}
- * and {@code POST /auth/logout}[{@code -all}] through the real filter chain (no
- * {@code @WithMockUser}: the whole point of every one of these endpoints is that it is reachable
- * without a session) and the real {@code SignupService}/{@code EmailVerificationService}/{@code
- * LoginService}/{@code LogoutService}/JPA/Argon2/wordlist beans, matching the full-context style
- * {@code ApiProblemResponseTests} and {@code OpenApiArtifactTests} already use. Whether the session
- * cookie a successful login issues actually authenticates a later request is {@code
- * SessionAuthenticationFilterTests}' job, not this class's — everything here stays scoped to each
- * endpoint's own request/response contract.
+ * Exercises {@code POST /auth/signup}, {@code POST /auth/verify-email}, {@code POST /auth/login},
+ * {@code POST /auth/logout}[{@code -all}] and {@code POST /auth/forgot-password}/{@code
+ * /reset-password} through the real filter chain (no {@code @WithMockUser}: the whole point of
+ * every one of these endpoints is that it is reachable without a session) and the real {@code
+ * SignupService}/{@code EmailVerificationService}/{@code LoginService}/{@code LogoutService}/
+ * {@code ForgotPasswordService}/{@code ResetPasswordService}/JPA/Argon2/wordlist beans, matching
+ * the full-context style {@code ApiProblemResponseTests} and {@code OpenApiArtifactTests} already
+ * use. Whether the session cookie a successful login issues actually authenticates a later request
+ * is {@code SessionAuthenticationFilterTests}' job, not this class's — everything here stays scoped
+ * to each endpoint's own request/response contract.
  *
  * <p>Every test here that reaches {@code SignupService} spends one unit of {@code
  * InMemorySignupRateLimiter}'s budget for MockMvc's constant {@code 127.0.0.1} caller address; this
@@ -78,6 +81,7 @@ class AuthControllerTests {
   private final CredentialRepository credentialRepository;
   private final EmailVerificationTokenRepository tokenRepository;
   private final SessionRepository sessionRepository;
+  private final PasswordResetTokenRepository resetTokenRepository;
   private final SecureTokenGenerator tokenGenerator;
   private final PasswordHasher passwordHasher;
 
@@ -88,6 +92,7 @@ class AuthControllerTests {
       CredentialRepository credentialRepository,
       EmailVerificationTokenRepository tokenRepository,
       SessionRepository sessionRepository,
+      PasswordResetTokenRepository resetTokenRepository,
       SecureTokenGenerator tokenGenerator,
       PasswordHasher passwordHasher) {
     this.mockMvc = mockMvc;
@@ -95,6 +100,7 @@ class AuthControllerTests {
     this.credentialRepository = credentialRepository;
     this.tokenRepository = tokenRepository;
     this.sessionRepository = sessionRepository;
+    this.resetTokenRepository = resetTokenRepository;
     this.tokenGenerator = tokenGenerator;
     this.passwordHasher = passwordHasher;
   }
@@ -349,6 +355,111 @@ class AuthControllerTests {
     assertThat(
             sessionRepository.findByTokenHash(secondSession.tokenHash()).orElseThrow().revokedAt())
         .isPresent();
+  }
+
+  @Test
+  void forgotPasswordIsReachableWithoutAuthenticationAndReturnsTheGenericAcceptedResponse()
+      throws Exception {
+    mockMvc
+        .perform(
+            post("/auth/forgot-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\": \"controller-forgot-unknown@example.test\"}"))
+        .andExpect(status().isAccepted())
+        .andExpect(jsonPath("$.status").value("REQUESTED"));
+  }
+
+  @Test
+  void forgotPasswordReturnsTheIdenticalResponseForAKnownActiveAccount() throws Exception {
+    seedActiveUser("controller-forgot-known@example.test");
+
+    mockMvc
+        .perform(
+            post("/auth/forgot-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\": \"controller-forgot-known@example.test\"}"))
+        .andExpect(status().isAccepted())
+        .andExpect(jsonPath("$.status").value("REQUESTED"));
+  }
+
+  @Test
+  void resetPasswordIsReachableWithoutAuthenticationAndUpdatesTheCredential() throws Exception {
+    UUID userId = seedUnverifiedUser("controller-reset-happy-path@example.test");
+    credentialRepository.save(
+        Credential.issue(
+            UUID.randomUUID(),
+            userId,
+            passwordHasher.hash(RawPassword.of(LOGIN_PASSWORD)),
+            Instant.now()));
+    RawToken token = seedResetToken(userId, Instant.now());
+
+    mockMvc
+        .perform(
+            post("/auth/reset-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    "{\"token\": \""
+                        + token.value()
+                        + "\", \"newPassword\": \"a brand new replacement passphrase 2026\"}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("PASSWORD_RESET"));
+
+    String updatedHash = credentialRepository.findByUserId(userId).orElseThrow().passwordHash();
+    assertThat(
+            passwordHasher.matches(
+                RawPassword.of("a brand new replacement passphrase 2026"), updatedHash))
+        .isTrue();
+  }
+
+  @Test
+  void resetPasswordRejectsAnUnknownTokenAsInvalid() throws Exception {
+    mockMvc
+        .perform(
+            post("/auth/reset-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    "{\"token\": \"not-a-real-token\", \"newPassword\": \""
+                        + LOGIN_PASSWORD
+                        + "\"}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("TOKEN_INVALID"));
+  }
+
+  @Test
+  void resetPasswordReportsAPasswordPolicyViolationWithoutConsumingTheToken() throws Exception {
+    UUID userId = seedUnverifiedUser("controller-reset-weak-password@example.test");
+    credentialRepository.save(
+        Credential.issue(
+            UUID.randomUUID(),
+            userId,
+            passwordHasher.hash(RawPassword.of(LOGIN_PASSWORD)),
+            Instant.now()));
+    RawToken token = seedResetToken(userId, Instant.now());
+
+    mockMvc
+        .perform(
+            post("/auth/reset-password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"token\": \"" + token.value() + "\", \"newPassword\": \"short\"}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[?(@.field == 'newPassword')]").exists());
+
+    assertThat(resetTokenRepository.findByTokenHash(token.hash()).orElseThrow().consumedAt())
+        .isEmpty();
+  }
+
+  private RawToken seedResetToken(UUID userId, Instant issuedAt) {
+    RawToken token = tokenGenerator.generate();
+    resetTokenRepository.save(
+        new PasswordResetToken(
+            UUID.randomUUID(),
+            userId,
+            token.hash(),
+            issuedAt.plus(PasswordResetToken.TTL),
+            Optional.empty(),
+            issuedAt));
+    return token;
   }
 
   private Session seedSession(UUID userId, RawToken sessionToken, RawToken csrfToken) {

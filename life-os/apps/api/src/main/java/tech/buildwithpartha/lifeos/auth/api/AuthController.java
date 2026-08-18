@@ -18,11 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.auth.application.EmailVerificationService;
+import tech.buildwithpartha.lifeos.auth.application.ForgotPasswordCommand;
+import tech.buildwithpartha.lifeos.auth.application.ForgotPasswordService;
 import tech.buildwithpartha.lifeos.auth.application.LoginCommand;
 import tech.buildwithpartha.lifeos.auth.application.LoginResult;
 import tech.buildwithpartha.lifeos.auth.application.LoginService;
 import tech.buildwithpartha.lifeos.auth.application.LogoutCommand;
 import tech.buildwithpartha.lifeos.auth.application.LogoutService;
+import tech.buildwithpartha.lifeos.auth.application.ResetPasswordCommand;
+import tech.buildwithpartha.lifeos.auth.application.ResetPasswordService;
 import tech.buildwithpartha.lifeos.auth.application.SignupCommand;
 import tech.buildwithpartha.lifeos.auth.application.SignupService;
 import tech.buildwithpartha.lifeos.auth.application.VerifyEmailCommand;
@@ -43,6 +47,8 @@ public class AuthController {
   private final EmailVerificationService emailVerificationService;
   private final LoginService loginService;
   private final LogoutService logoutService;
+  private final ForgotPasswordService forgotPasswordService;
+  private final ResetPasswordService resetPasswordService;
   private final LifeOsEnvironmentProperties environmentProperties;
 
   public AuthController(
@@ -50,11 +56,15 @@ public class AuthController {
       EmailVerificationService emailVerificationService,
       LoginService loginService,
       LogoutService logoutService,
+      ForgotPasswordService forgotPasswordService,
+      ResetPasswordService resetPasswordService,
       LifeOsEnvironmentProperties environmentProperties) {
     this.signupService = signupService;
     this.emailVerificationService = emailVerificationService;
     this.loginService = loginService;
     this.logoutService = logoutService;
+    this.forgotPasswordService = forgotPasswordService;
+    this.resetPasswordService = resetPasswordService;
     this.environmentProperties = environmentProperties;
   }
 
@@ -157,6 +167,42 @@ public class AuthController {
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, clearedSessionCookie().toString())
         .body(LogoutResponse.loggedOut());
+  }
+
+  @Operation(
+      summary = "Request a password reset",
+      description =
+          "Enqueues a reset email when the address belongs to an active account. The response is"
+              + " the same whether or not it does.")
+  @SecurityRequirements
+  @ApiResponse(responseCode = "202", description = "The request was accepted.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "429", ref = "#/components/responses/TooManyRequests")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/forgot-password")
+  @ResponseStatus(HttpStatus.ACCEPTED)
+  public ForgotPasswordResponse forgotPassword(
+      @Valid @RequestBody ForgotPasswordRequest request, HttpServletRequest servletRequest) {
+    forgotPasswordService.request(
+        new ForgotPasswordCommand(request.email(), servletRequest.getRemoteAddr()));
+    return ForgotPasswordResponse.requested();
+  }
+
+  @Operation(
+      summary = "Reset a password",
+      description =
+          "Consumes a single-use password reset token, sets a new password, and revokes every"
+              + " session for the account.")
+  @SecurityRequirements
+  @ApiResponse(responseCode = "200", description = "The password was reset.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "409", ref = "#/components/responses/Conflict")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/reset-password")
+  public ResetPasswordResponse resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    resetPasswordService.reset(
+        new ResetPasswordCommand(request.token(), RawPassword.of(request.newPassword())));
+    return ResetPasswordResponse.passwordReset();
   }
 
   private static LogoutCommand logoutCommand(HttpServletRequest servletRequest) {

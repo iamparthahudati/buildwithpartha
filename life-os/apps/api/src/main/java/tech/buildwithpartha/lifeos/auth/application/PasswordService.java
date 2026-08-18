@@ -11,8 +11,9 @@ import tech.buildwithpartha.lifeos.auth.domain.PasswordValidationResult;
 import tech.buildwithpartha.lifeos.auth.domain.RawPassword;
 
 /**
- * Validates and hashes a new or changed password. Used by signup (LOS-0503) and change-password
- * (LOS-0516); login verification is {@link PasswordAuthenticationService}.
+ * Validates and hashes a new or changed password. Used by signup (LOS-0503), password reset
+ * (LOS-0507) and change-password (LOS-0516); login verification is {@link
+ * PasswordAuthenticationService}.
  */
 @Service
 public class PasswordService {

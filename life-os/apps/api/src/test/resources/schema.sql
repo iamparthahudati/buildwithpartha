@@ -78,3 +78,13 @@ CREATE TABLE IF NOT EXISTS user_sessions (
     revoked_at    TIMESTAMP WITH TIME ZONE,
     device_hint   TEXT
 );
+
+-- Added by LOS-0507 alongside the project's PasswordResetToken entity.
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id           UUID                     NOT NULL PRIMARY KEY,
+    user_id      UUID                     NOT NULL,
+    token_hash   TEXT                     NOT NULL,
+    expires_at   TIMESTAMP WITH TIME ZONE NOT NULL,
+    consumed_at  TIMESTAMP WITH TIME ZONE,
+    created_at   TIMESTAMP WITH TIME ZONE NOT NULL
+);
