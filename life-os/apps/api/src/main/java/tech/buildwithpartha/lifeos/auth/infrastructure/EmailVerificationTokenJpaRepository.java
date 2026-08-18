@@ -19,9 +19,15 @@ interface EmailVerificationTokenJpaRepository
    * bypasses the persistence context — without it, a managed {@code EmailVerificationTokenEntity}
    * already loaded in the same transaction (as {@code EmailVerificationService.verify} always has,
    * from its own {@code findByTokenHash} lookup) would keep reporting the pre-update, unconsumed
-   * value if read again.
+   * value if read again. {@code flushAutomatically = true} is just as necessary and easy to miss:
+   * without it, {@code clearAutomatically} detaches every managed entity in the persistence context
+   * — including any *other* entity's still-unflushed change from earlier in the same transaction —
+   * before that change is ever written, silently discarding it (LOS-0507's {@code
+   * ResetPasswordService} is what actually caught this: a credential rehash issued right before
+   * {@code SessionRepository#revokeAllForUser}'s own bulk update was lost until this flag was added
+   * here too).
    */
-  @Modifying(clearAutomatically = true)
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
   @Query(
       "update EmailVerificationTokenEntity t set t.consumedAt = :consumedAt "
           + "where t.id = :id and t.consumedAt is null")

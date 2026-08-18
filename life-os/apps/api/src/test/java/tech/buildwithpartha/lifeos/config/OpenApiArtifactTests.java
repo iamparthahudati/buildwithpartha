@@ -44,7 +44,7 @@ class OpenApiArtifactTests {
 
   @Test
   @WithMockUser
-  void validatesAndWritesTheBaselineIncludingSignupEmailVerificationLoginAndLogout()
+  void validatesAndWritesTheBaselineIncludingSignupEmailVerificationLoginLogoutAndPasswordReset()
       throws Exception {
     MvcResult result =
         mockMvc
@@ -100,6 +100,20 @@ class OpenApiArtifactTests {
             .andExpect(
                 jsonPath("$.paths['/auth/logout-all'].post.responses['200'].content").exists())
             .andExpect(jsonPath("$.components.responses.Forbidden").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/forgot-password'].post.operationId")
+                    .value("forgotPassword"))
+            .andExpect(jsonPath("$.paths['/auth/forgot-password'].post.security").isEmpty())
+            .andExpect(
+                jsonPath("$.paths['/auth/forgot-password'].post.responses['202'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/reset-password'].post.operationId").value("resetPassword"))
+            .andExpect(jsonPath("$.paths['/auth/reset-password'].post.security").isEmpty())
+            .andExpect(
+                jsonPath("$.paths['/auth/reset-password'].post.responses['200'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/reset-password'].post.responses['409'].$ref")
+                    .value("#/components/responses/Conflict"))
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))

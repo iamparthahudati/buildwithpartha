@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-18 (LOS-0506)
+Last updated: 2026-08-18 (LOS-0507)
 
 ## Phase
 
@@ -172,9 +172,11 @@ Phase 2 — Identity and application shell.
 
 - LOS-0506 — Logout and session revocation added: `POST /auth/logout` (current session) and `POST /auth/logout-all` ("sign out all devices"). Both are `permitAll()` rather than gated by `.anyRequest().authenticated()`, deliberately, so they stay safely callable with no session at all — every call returns `200`/`LOGGED_OUT` and a cookie-clearing `Set-Cookie` header whether or not there was anything to revoke, satisfying "clear cookie idempotently" literally. `LogoutService` resolves the session from the raw cookie itself; only when an active session is actually found does a CSRF check apply (`06-SECURITY.md`'s "require CSRF as applicable"), and a missing/mismatched `X-CSRF-TOKEN` throws before any revocation or cookie-clearing happens, leaving state untouched. `SessionRepository.revoke`/`revokeAllForUser` mirror LOS-0504's `EmailVerificationTokenRepository.consume` conditional-update shape exactly. New `CsrfTokenInvalidException` (403, `CSRF_TOKEN_INVALID`) is this ticket's first real CSRF *enforcement* — LOS-0505 only built the bootstrap (issuing the token) — implemented directly in `LogoutService` rather than the shared filter, since no other endpoint yet has an authenticated mutation to protect; a second real caller is the right trigger to extract it, not this one alone.
 
+- LOS-0507 — Forgot/reset password added: `POST /auth/forgot-password` and `POST /auth/reset-password`, completing the identity epic's password-recovery flow. `ForgotPasswordService` is enumeration-safe the same way signup's duplicate-email handling is — an unknown email or a not-yet-`ACTIVE` account returns normally with no token issued and no mail sent. `ResetPasswordService` validates the new password's policy *before* consuming the token (so a rejected password doesn't burn a still-valid link), then rehashes the credential, revokes *every* session for the account (`24-CRITICAL-USER-JOURNEYS.md`), and sends a `SECURITY_ALERT` mail; no new session is issued. `PasswordResetToken` mirrors `EmailVerificationToken` with a shorter 1-hour TTL, and reuses `TokenInvalidException`/`TokenExpiredException`/`TokenAlreadyUsedException` exactly as LOS-0504 anticipated. A real bug surfaced here, not just for this ticket: `@Modifying(clearAutomatically = true)` without `flushAutomatically = true` silently discards any *other* entity's pending, unflushed change in the same transaction — `ResetPasswordService` rehashes a credential then immediately calls `SessionRepository.revokeAllForUser`, and the credential update was being dropped. Fixed by adding `flushAutomatically = true` to all three existing conditional-update queries (this ticket's new one, plus LOS-0504's and LOS-0505/0506's, which had the same latent bug), with a dedicated regression test reproducing the mechanism independent of any one service.
+
 ## Next recommended ticket
 
-LOS-0507 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement forgot/reset password. Its dependencies, LOS-0502 and LOS-1402, are both done.
+LOS-0508 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement the frontend auth route guard and API client. Its dependencies, LOS-0505 and LOS-0207, are both done.
 
 ## Known decisions requiring implementation-time values
 
