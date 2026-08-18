@@ -1,0 +1,9 @@
+Hi {{displayName}},
+
+We're letting you know about a security event on your LifeOS account:
+
+{{eventDescription}}
+
+This happened at {{occurredAt}}. If this wasn't you, review your account's active sessions and change your password.
+
+— LifeOS

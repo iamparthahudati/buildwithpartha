@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-18 (LOS-0502)
+Last updated: 2026-08-18 (LOS-1402)
 
 ## Phase
 
@@ -162,9 +162,11 @@ Phase 2 — Identity and application shell.
 
 - LOS-0502 — Password policy and Argon2id hashing added as the first real `auth.domain`/`auth.application`/`auth.infrastructure` code, proving out the LOS-0206 layering for a business domain: `auth.domain` (`EmailAddress`, `RawPassword`, `PasswordPolicy`, `PasswordHasher`, `CommonPasswordChecker`, `PasswordVerification`) has no Spring/JPA dependency; `auth.application` (`PasswordService`, `PasswordAuthenticationService`) orchestrates it; `auth.infrastructure` adapts it to Spring Security's `Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8()` (16 MiB, t=2, p=1 — in the OWASP-recommended range, confirmed by decoding a sample hash) and a bundled common-password wordlist. `PasswordAuthenticationService.verify` is the rehash-on-login path the ticket names: it returns a replacement hash only when the stored hash's own embedded parameters are weaker than current (via `PasswordEncoder.upgradeEncoding`), so a future login (LOS-0505) can persist it without hashing on every login regardless. `RawPassword.toString()` is redacted so a log line or assertion-failure message can never print the plaintext password, with a test proving it. Argon2 needed an explicit `bcprov-jdk18on` runtime dependency — `spring-security-crypto` declares Bouncy Castle `compileOnly`, so hashing threw `NoClassDefFoundError` until it was added.
 
+- LOS-1402 — Transactional outbox and mail worker added via `notification.domain`/`application`/`infrastructure` (Flyway `V3__outbox_schema.sql`), plus a new domain-neutral `common.mail` package (`TransactionalMailPort`, `MailMessageKind`, `MailRecipient`, `MailTemplateVariables`) so a future `auth.application` caller (LOS-0503/LOS-0507) can enqueue mail without depending on `notification` internals, per `PackageBoundaryRules.domainIsolation()`. `RetryPolicy` is a pure exponential backoff (30s→30m capped, dead-letter at attempt 8, ~61 minutes total); `MailDispatchWorker` polls every 15s (single-instance deployment, so no row-leasing is needed) and `OutboxCleanupJob` purges terminal rows after 7 days per retention class R1. `OutboxMessage.templateVariables` — which may carry a raw verification/reset token — is wiped the instant a message reaches a terminal state, not just at cleanup. This is the project's first JPA `@Entity` and first `@Scheduled` usage; the latter surfaced a real bug caught during verification (not just coding): Spring's default scheduler thread pool is non-daemon, which hung `scripts/verify-flyway-postgres.sh`'s headless (`web-application-type: none`) startup check forever — fixed with an explicit daemon `TaskScheduler` bean in the new `SchedulingConfiguration`. Mailpit was added to `infra/compose/compose.local.yml` as the local SMTP catcher. No caller wires into the outbox yet — that is explicitly LOS-0503/LOS-0507's job.
+
 ## Next recommended ticket
 
-LOS-1402 (`docs/backlog/EPIC-14-BACKEND-OPERATIONS.md`) — implement the transactional outbox and mail worker signup's mail enqueue will depend on. Its dependency, LOS-0502, is now done.
+LOS-0503 (`docs/backlog/EPIC-05-IDENTITY.md`) — implement the signup API on top of LOS-0502's password service and this ticket's mail outbox. Both of its stated dependencies (LOS-0502, LOS-1402) are now done.
 
 ## Known decisions requiring implementation-time values
 

@@ -142,8 +142,8 @@ if [ "$test_extension_count" != "1" ]; then
   exit 1
 fi
 
-if [ "$test_product_table_count" != "6" ]; then
-  echo "Expected exactly 6 identity product tables after V2 migration; found $test_product_table_count." >&2
+if [ "$test_product_table_count" != "7" ]; then
+  echo "Expected exactly 7 identity+outbox product tables after V2+V3 migration; found $test_product_table_count." >&2
   exit 1
 fi
 
