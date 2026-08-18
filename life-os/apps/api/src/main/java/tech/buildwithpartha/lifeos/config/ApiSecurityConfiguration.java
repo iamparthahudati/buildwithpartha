@@ -40,8 +40,17 @@ public class ApiSecurityConfiguration {
                     .permitAll()
                     .requestMatchers("/actuator/**")
                     .denyAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/signup")
+                    .permitAll()
                     .anyRequest()
                     .authenticated())
+        // Spring Security's default CSRF protection is session-bound
+        // (HttpSessionCsrfTokenRepository) and this application has no HttpSession-based login
+        // yet — signup is pre-session by definition, and LOS-0505 owns the real cookie/CSRF
+        // bootstrap scheme 06-SECURITY.md describes (the `X-CSRF-TOKEN` header already documented
+        // in OpenApiConfiguration). Disabling the incompatible default here is a deliberate,
+        // narrow decision, not a broader opt-out of CSRF protection.
+        .csrf(AbstractHttpConfigurer::disable)
         .exceptionHandling(
             exceptions ->
                 exceptions

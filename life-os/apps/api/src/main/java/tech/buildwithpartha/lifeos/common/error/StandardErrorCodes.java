@@ -7,6 +7,7 @@ public final class StandardErrorCodes {
   public static final ErrorCode AUTHENTICATION_REQUIRED = ErrorCode.of("AUTHENTICATION_REQUIRED");
   public static final ErrorCode INTERNAL_ERROR = ErrorCode.of("INTERNAL_ERROR");
   public static final ErrorCode INVALID_REQUEST = ErrorCode.of("INVALID_REQUEST");
+  public static final ErrorCode RATE_LIMITED = ErrorCode.of("RATE_LIMITED");
   public static final ErrorCode RESOURCE_NOT_FOUND = ErrorCode.of("RESOURCE_NOT_FOUND");
   public static final ErrorCode VALIDATION_FAILED = ErrorCode.of("VALIDATION_FAILED");
 

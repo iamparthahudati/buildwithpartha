@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +30,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.common.error.CodedException;
 import tech.buildwithpartha.lifeos.common.error.ErrorCode;
+import tech.buildwithpartha.lifeos.common.error.FieldProblem;
+import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -112,6 +116,28 @@ class ApiProblemResponseTests {
   }
 
   @Test
+  @WithMockUser
+  void mapsFieldValidationExceptionsWithSafeFieldCodes() throws Exception {
+    mockMvc
+        .perform(get("/test/errors/field-validation"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("password"))
+        .andExpect(jsonPath("$.errors[0].code").value("TOO_SHORT"))
+        .andExpect(content().string(not(containsString("diagnostic-only-message"))));
+  }
+
+  @Test
+  @WithMockUser
+  void mapsRateLimitedExceptionsToTooManyRequests() throws Exception {
+    mockMvc
+        .perform(get("/test/errors/rate-limited"))
+        .andExpect(status().isTooManyRequests())
+        .andExpect(jsonPath("$.code").value("RATE_LIMITED"))
+        .andExpect(content().string(not(containsString("rate-limit-diagnostic-only"))));
+  }
+
+  @Test
   void mapsAuthenticationFailuresAndReplacesUnsafeCorrelationIds() throws Exception {
     mockMvc
         .perform(
@@ -141,6 +167,17 @@ class ApiProblemResponseTests {
     @GetMapping("/unexpected")
     void unexpected() {
       throw new IllegalStateException("token-secret-cause");
+    }
+
+    @GetMapping("/field-validation")
+    void fieldValidation() {
+      throw new FieldValidationException(
+          "diagnostic-only-message", List.of(new FieldProblem("password", "TOO_SHORT")));
+    }
+
+    @GetMapping("/rate-limited")
+    void rateLimited() {
+      throw new RateLimitedException("rate-limit-diagnostic-only");
     }
   }
 

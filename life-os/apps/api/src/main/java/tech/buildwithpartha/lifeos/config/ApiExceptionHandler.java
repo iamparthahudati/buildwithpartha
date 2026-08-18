@@ -14,6 +14,8 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import tech.buildwithpartha.lifeos.common.error.ApiProblem;
 import tech.buildwithpartha.lifeos.common.error.CodedException;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
+import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
 
 /** Maps server failures to safe, versioned Problem Details responses. */
@@ -24,6 +26,31 @@ public final class ApiExceptionHandler {
 
   public ApiExceptionHandler(ApiProblemFactory problemFactory) {
     this.problemFactory = problemFactory;
+  }
+
+  @ExceptionHandler(FieldValidationException.class)
+  ResponseEntity<ApiProblem> handleFieldValidation(
+      FieldValidationException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.BAD_REQUEST,
+            exception.code(),
+            "Validation failed",
+            "One or more fields are invalid.",
+            exception.errors()));
+  }
+
+  @ExceptionHandler(RateLimitedException.class)
+  ResponseEntity<ApiProblem> handleRateLimited(
+      RateLimitedException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.TOO_MANY_REQUESTS,
+            exception.code(),
+            "Too many requests",
+            "Try again later."));
   }
 
   @ExceptionHandler(CodedException.class)
