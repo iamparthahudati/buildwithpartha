@@ -43,6 +43,7 @@ import {
   Tabs,
   Timeline,
   ViewToggle,
+  Sidebar,
   type ActiveFilterChip,
   type ActivityEvent,
   type Attachment,
@@ -1033,5 +1034,144 @@ export function ActivityFeedErrorDemo() {
       emptyTitle="No activity yet"
       status={{ type: "error", message: "Project activity couldn't load.", onRetry: () => {} }}
     />
+  );
+}
+
+export function SidebarExpandedDemo() {
+  const [currentPath, setCurrentPath] = useState("/life-os/app/today");
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        minHeight: "28rem",
+        border: "1px solid var(--lifeos-color-border)",
+        borderRadius: "var(--lifeos-radius-lg)",
+        overflow: "hidden",
+      }}
+    >
+      <Sidebar
+        currentPath={currentPath}
+        collapsed={false}
+        onNavigate={(href, e) => {
+          e.preventDefault();
+          setCurrentPath(href);
+        }}
+      />
+      <div
+        style={{
+          flex: 1,
+          padding: "var(--lifeos-space-6)",
+          background: "var(--lifeos-color-canvas)",
+        }}
+      >
+        <Text weight="medium">Active destination: {currentPath}</Text>
+        <Text tone="secondary" size="sm">
+          Click any sidebar item to test active-state navigation.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function SidebarCollapsedDemo() {
+  const [currentPath, setCurrentPath] = useState("/life-os/app/tasks");
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        minHeight: "28rem",
+        border: "1px solid var(--lifeos-color-border)",
+        borderRadius: "var(--lifeos-radius-lg)",
+        overflow: "hidden",
+      }}
+    >
+      <Sidebar
+        currentPath={currentPath}
+        collapsed={true}
+        onNavigate={(href, e) => {
+          e.preventDefault();
+          setCurrentPath(href);
+        }}
+      />
+      <div
+        style={{
+          flex: 1,
+          padding: "var(--lifeos-space-6)",
+          background: "var(--lifeos-color-canvas)",
+        }}
+      >
+        <Text weight="medium">Compact rail mode (collapsed)</Text>
+        <Text tone="secondary" size="sm">
+          Hover or focus the icon buttons to see destination tooltips.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function SidebarInteractiveDemo() {
+  const [currentPath, setCurrentPath] = useState("/life-os/app/today");
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        minHeight: "28rem",
+        border: "1px solid var(--lifeos-color-border)",
+        borderRadius: "var(--lifeos-radius-lg)",
+        overflow: "hidden",
+      }}
+    >
+      <Sidebar
+        currentPath={currentPath}
+        onNavigate={(href, e) => {
+          e.preventDefault();
+          setCurrentPath(href);
+        }}
+      />
+      <div
+        style={{
+          flex: 1,
+          padding: "var(--lifeos-space-6)",
+          background: "var(--lifeos-color-canvas)",
+        }}
+      >
+        <Text weight="medium">Interactive Sidebar with Remembered Collapse Preference</Text>
+        <Text tone="secondary" size="sm">
+          Toggle collapse with the header chevron button or click any destination.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function SidebarDrawerDemo() {
+  const [open, setOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState("/life-os/app/today");
+
+  return (
+    <div>
+      <Button variant="secondary" onClick={() => setOpen(true)}>
+        Open navigation drawer
+      </Button>
+      <div style={{ marginTop: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="sm">
+          Current destination: {currentPath}
+        </Text>
+      </div>
+      <Sidebar
+        drawer={true}
+        drawerOpen={open}
+        onDrawerClose={() => setOpen(false)}
+        currentPath={currentPath}
+        onNavigate={(href, e) => {
+          e.preventDefault();
+          setCurrentPath(href);
+          setOpen(false);
+        }}
+      />
+    </div>
   );
 }

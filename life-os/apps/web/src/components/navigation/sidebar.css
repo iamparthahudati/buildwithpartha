@@ -1,0 +1,212 @@
+/*
+ * Responsive sidebar navigation stylesheet (LOS-0601).
+ *
+ * Uses strictly semantic --lifeos-* custom properties.
+ * Adheres to 03-DESIGN-SYSTEM.md and 32-DESIGN-TOKENS.md.
+ */
+
+.lifeos-sidebar {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  min-height: 100vh;
+  width: var(--lifeos-layout-sidebar-width);
+  background: var(--lifeos-color-surface);
+  border-right: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  box-sizing: border-box;
+  z-index: var(--lifeos-z-navigation);
+  transition: width var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-sidebar--collapsed {
+  width: 4rem;
+}
+
+.lifeos-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-2);
+  min-height: 3.5rem;
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  border-bottom: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  box-sizing: border-box;
+}
+
+.lifeos-sidebar--collapsed .lifeos-sidebar__header {
+  padding: var(--lifeos-space-3) var(--lifeos-space-2);
+  justify-content: center;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-sidebar__brand {
+  display: inline-flex;
+  align-items: center;
+  color: var(--lifeos-color-text);
+  text-decoration: none;
+  border-radius: var(--lifeos-radius-sm);
+  outline: none;
+}
+
+.lifeos-sidebar__brand:focus-visible {
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: var(--lifeos-focus-ring-offset);
+}
+
+.lifeos-sidebar__toggle {
+  flex-shrink: 0;
+}
+
+.lifeos-sidebar__body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--lifeos-space-3) var(--lifeos-space-2);
+}
+
+.lifeos-sidebar--collapsed .lifeos-sidebar__body {
+  padding: var(--lifeos-space-3) var(--lifeos-space-1);
+}
+
+.lifeos-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-sidebar__group {
+  display: flex;
+  flex-direction: column;
+}
+
+.lifeos-sidebar__group-title {
+  margin: 0;
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  font-size: var(--lifeos-font-size-3xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+  letter-spacing: var(--lifeos-letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--lifeos-color-text-muted);
+  line-height: var(--lifeos-line-height-normal);
+  user-select: none;
+}
+
+.lifeos-sidebar__group-divider {
+  margin: var(--lifeos-space-2) var(--lifeos-space-2);
+}
+
+.lifeos-sidebar__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-sidebar__list-item {
+  margin: 0;
+  padding: 0;
+}
+
+.lifeos-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  border-radius: var(--lifeos-radius-md);
+  color: var(--lifeos-color-text-secondary);
+  text-decoration: none;
+  font-size: var(--lifeos-font-size-sm);
+  font-weight: var(--lifeos-font-weight-medium);
+  min-height: 2.25rem;
+  box-sizing: border-box;
+  outline: none;
+  transition:
+    background-color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard),
+    color var(--lifeos-motion-duration-fast) var(--lifeos-motion-ease-standard);
+}
+
+.lifeos-sidebar__link:hover {
+  background: var(--lifeos-color-surface-muted);
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-sidebar__link:focus-visible {
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: var(--lifeos-focus-ring-offset);
+}
+
+.lifeos-sidebar__link--active {
+  background: var(--lifeos-color-primary-soft);
+  color: var(--lifeos-color-on-primary-soft);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.lifeos-sidebar__link--active:hover {
+  background: var(--lifeos-color-primary-soft);
+  color: var(--lifeos-color-on-primary-soft);
+}
+
+.lifeos-sidebar__link--rail {
+  justify-content: center;
+  padding: var(--lifeos-space-2);
+  width: 100%;
+}
+
+.lifeos-sidebar__icon-frame {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.lifeos-sidebar__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lifeos-sidebar__badge {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.lifeos-sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  padding: var(--lifeos-space-3) var(--lifeos-space-2);
+  border-top: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  background: var(--lifeos-color-surface);
+  box-sizing: border-box;
+}
+
+.lifeos-sidebar--collapsed .lifeos-sidebar__footer {
+  align-items: center;
+  padding: var(--lifeos-space-3) var(--lifeos-space-1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Mobile Drawer Variant Styling                                       */
+/* ------------------------------------------------------------------ */
+
+.lifeos-sidebar-drawer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.lifeos-sidebar-drawer .lifeos-sidebar__body {
+  padding: var(--lifeos-space-2) 0;
+}
+
+.lifeos-sidebar-drawer .lifeos-sidebar__footer {
+  padding: var(--lifeos-space-3) 0 0 0;
+}

@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-19 (LOS-0515)
+Last updated: 2026-08-19 (LOS-0601)
 
 ## Phase
 
@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-0601 — Implemented responsive sidebar navigation component for LifeOS: LifeOS wordmark, 4 canonical groups (Execute, Plan, Capture and grow, Reflect) and 14 destinations, active route styling with `aria-current="page"`, responsive collapse to a compact rail with tooltips, mobile slide-out navigation drawer with focus trap, first-tab-stop skip link, and non-sensitive collapse preference saved in localStorage.
 - LOS-0515 — Implemented profile and localization settings screens, live date/time recalculation preview, IANA timezone selection, and mutation hooks connecting to user profile/preferences endpoints in `@features/settings` and `@features/user`.
 - LOS-0514 — Implemented four-step onboarding UI (Welcome, Time and week with IANA timezone picker and live preview, Planning defaults with schedule and skip, Start LifeOS empty default), responsive progress rail, mutation hooks, and comprehensive unit/screen tests.
 - LOS-0513 — Implemented onboarding persistence and user profile/preferences management (backend V4 migration, domain models, services, REST controllers at `/onboarding` and `/user`, CSRF enforcement, OpenAPI assertions, and typed frontend client in `@features/onboarding` and `@features/user`).

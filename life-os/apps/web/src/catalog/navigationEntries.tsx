@@ -35,6 +35,10 @@ import {
   TabsUrlDemo,
   TimelineDemo,
   ViewToggleDemo,
+  SidebarExpandedDemo,
+  SidebarCollapsedDemo,
+  SidebarInteractiveDemo,
+  SidebarDrawerDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -445,6 +449,43 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "The partial-failure copy docs/30-CONTENT-AND-TONE-GUIDE.md names for this exact case.",
         render: () => <ActivityFeedErrorDemo />,
+      },
+    ],
+  },
+  {
+    id: "sidebar",
+    name: "Sidebar",
+    group: "Composed",
+    summary:
+      'The primary navigation rail for LifeOS: LifeOS wordmark linking to Today, 4 canonical groups (Execute, Plan, Capture and grow, Reflect) and 14 destinations, active-route styling with aria-current="page", responsive collapse to a compact rail with tooltips, mobile modal drawer, first-tab-stop skip link, and non-sensitive collapse preference saved in localStorage.',
+    states: [
+      {
+        id: "sidebar-expanded",
+        name: "Expanded desktop sidebar",
+        description:
+          "Full 240px persistent navigation showing group titles, item labels, and active route highlight.",
+        render: () => <SidebarExpandedDemo />,
+      },
+      {
+        id: "sidebar-collapsed",
+        name: "Compact rail mode",
+        description:
+          "Icon-only rail for tablet or user preference; hover or focus items to reveal destination tooltips.",
+        render: () => <SidebarCollapsedDemo />,
+      },
+      {
+        id: "sidebar-interactive",
+        name: "Interactive collapse and destination navigation",
+        description:
+          "Toggle collapse using the header chevron button, or click destinations to observe active state changes and localStorage persistence.",
+        render: () => <SidebarInteractiveDemo />,
+      },
+      {
+        id: "sidebar-drawer",
+        name: "Mobile navigation drawer",
+        description:
+          "Slide-out modal drawer with focus trap, backdrop dismissal, and accessible close button for small viewports.",
+        render: () => <SidebarDrawerDemo />,
       },
     ],
   },
