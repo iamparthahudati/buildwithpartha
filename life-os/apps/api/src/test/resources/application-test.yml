@@ -21,3 +21,4 @@ lifeos:
   public-url: https://lifeos.example.test/life-os
   session-cookie-secure: true
   mail-from: lifeos@example.test
+  export-storage-path: build/tmp/test-exports

@@ -72,3 +72,4 @@ lifeos:
   public-url: ${APP_PUBLIC_URL}
   session-cookie-secure: ${APP_SESSION_COOKIE_SECURE}
   mail-from: ${APP_MAIL_FROM}
+  export-storage-path: ${APP_EXPORT_STORAGE_PATH:/tmp/lifeos-exports}

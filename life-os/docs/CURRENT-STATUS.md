@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-1405 — Implemented private generated-file lifecycle framework (V6 schema migration for `public.export_files`, `ExportFile` domain aggregate, `ExportFilePort` in `common.export`, `ExportFileService` quota and token management, `ExportDownloadService` authenticated streaming, `LocalExportFileStorage` private storage path, and daily R1 retention cleanup).
 - LOS-1403 — Implemented persistent background job framework (V5 schema migration for `public.background_jobs`, `BackgroundJob` domain aggregate with state machine and automatic payload erasure on terminal state, `BackgroundJobPort` transactional enqueue port in `common.job`, `BackgroundJobWorker` scheduled poller/runner with exponential backoff and dead-lettering, `JobHandlerRegistry` strategy router, and daily R1 retention cleanup).
 - LOS-0601 — Implemented responsive sidebar navigation component for LifeOS: LifeOS wordmark, 4 canonical groups (Execute, Plan, Capture and grow, Reflect) and 14 destinations, active route styling with `aria-current="page"`, responsive collapse to a compact rail with tooltips, mobile slide-out navigation drawer with focus trap, first-tab-stop skip link, and non-sensitive collapse preference saved in localStorage.
 - LOS-0516 — Implemented security settings (change password with policy enforcement, active sessions listing, single-session revocation, and bulk sign-out of all other devices) with full frontend and backend integration in `@features/settings` and `@features/auth`.

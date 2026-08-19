@@ -126,3 +126,20 @@ CREATE TABLE IF NOT EXISTS background_jobs (
     created_at          TIMESTAMP WITH TIME ZONE NOT NULL,
     updated_at          TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+-- Added by LOS-1405 alongside ExportFileEntity.
+CREATE TABLE IF NOT EXISTS export_files (
+    id                         UUID                     NOT NULL PRIMARY KEY,
+    user_id                    UUID                     NOT NULL,
+    job_id                     UUID,
+    export_kind                VARCHAR(64)              NOT NULL,
+    file_name                  TEXT                     NOT NULL,
+    file_size_bytes            BIGINT,
+    status                     VARCHAR(32)              NOT NULL,
+    download_token_hash        TEXT,
+    download_token_expires_at  TIMESTAMP WITH TIME ZONE,
+    expires_at                 TIMESTAMP WITH TIME ZONE NOT NULL,
+    downloaded_at              TIMESTAMP WITH TIME ZONE,
+    created_at                 TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at                 TIMESTAMP WITH TIME ZONE NOT NULL
+);
