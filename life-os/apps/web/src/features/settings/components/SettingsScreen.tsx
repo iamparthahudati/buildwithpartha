@@ -2,10 +2,11 @@ import { useState, type ReactNode } from "react";
 
 import { ErrorState } from "@components/feedback";
 import { PageHeader, Tabs, type TabItem } from "@components/navigation";
-import { Heading, Skeleton, Surface, Text } from "@components/ui";
+import { Skeleton } from "@components/ui";
 import { useUserProfile, type UserProfileResponse } from "@features/user";
 
 import { LocalizationSettingsPanel } from "./LocalizationSettingsPanel";
+import { PrivacySettingsPanel } from "./PrivacySettingsPanel";
 import { ProfileSettingsPanel } from "./ProfileSettingsPanel";
 import { SecuritySettingsPanel } from "./SecuritySettingsPanel";
 import "./settings-screen.css";
@@ -99,14 +100,7 @@ export function SettingsScreen({
     {
       id: "data",
       label: "Data & privacy",
-      panel: dataPanel ?? (
-        <Surface tone="default" padding="md" className="lifeos-settings-placeholder">
-          <Heading level={3} size="sm">
-            Data & privacy
-          </Heading>
-          <Text tone="secondary">Data export and account deletion options are managed here.</Text>
-        </Surface>
-      ),
+      panel: dataPanel ?? <PrivacySettingsPanel profile={profile} />,
     },
   ];
 

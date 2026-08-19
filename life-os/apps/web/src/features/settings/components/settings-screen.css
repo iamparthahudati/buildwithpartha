@@ -147,3 +147,53 @@
   gap: var(--lifeos-space-2);
   margin-top: var(--lifeos-space-4);
 }
+
+.lifeos-settings-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  margin-top: var(--lifeos-space-4);
+}
+
+.lifeos-export-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-export-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+  border-radius: var(--lifeos-radius-md);
+  border: 1px solid var(--lifeos-color-border-subtle);
+}
+
+.lifeos-export-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-export-status {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-download-link {
+  text-decoration: none;
+}
+
+.lifeos-delete-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+  padding-top: var(--lifeos-space-2);
+}
+
+.lifeos-settings-danger-zone {
+  border-left: 3px solid var(--lifeos-color-danger);
+  padding-left: var(--lifeos-space-4);
+}

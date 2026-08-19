@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-0519 — Implemented privacy and data settings UI (data export trigger and live archive listing with status badges, privacy posture statement, destructive account deletion confirmation dialog with required name confirmation and password re-authentication, and React Query hooks).
 - LOS-0518 — Implemented account deletion lifecycle (password re-authentication, confirmation phrase verification, immediate session revocation across all devices, security notice email, `ACCOUNT_DELETION` background job dispatch, database cascade removal, and `POST /auth/account/delete` endpoint with session cookie clearance).
 - LOS-0517 — Implemented data export request lifecycle (asynchronous packaging via `ExportArchiveBuilder`, quota enforcement via `ExportFilePort`, cross-domain `UserDataExportContributor` SPI in `auth` and `user`, private download token issuance and authenticated streaming endpoint `GET /auth/export/download`, security audit logging, and `data-export.schema.json`).
 - LOS-1405 — Implemented private generated-file lifecycle framework (V6 schema migration for `public.export_files`, `ExportFile` domain aggregate, `ExportFilePort` in `common.export`, `ExportFileService` quota and token management, `ExportDownloadService` authenticated streaming, `LocalExportFileStorage` private storage path, and daily R1 retention cleanup).
