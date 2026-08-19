@@ -159,6 +159,44 @@ export const DEFAULT_NAV_GROUPS: readonly NavGroup[] = Object.freeze([
 ]);
 
 /**
+ * Destinations reachable in the app but deliberately absent from the
+ * sidebar (LOS-0107/`22-INFORMATION-ARCHITECTURE.md`: Search, Notifications
+ * and Settings are opened from `TopBar`/`AccountMenu` triggers, not a
+ * sidebar link) plus Onboarding, which has no persistent nav entry at all.
+ * Kept here rather than duplicated, so `resolveRouteTitle` has one list to
+ * search alongside `DEFAULT_NAV_GROUPS`.
+ */
+const EXTRA_ROUTE_DESTINATIONS: readonly Pick<NavDestination, "href" | "label">[] = Object.freeze([
+  { href: "/life-os/app/onboarding", label: "Onboarding" },
+  { href: "/life-os/app/settings", label: "Settings" },
+  { href: "/life-os/app/search", label: "Search" },
+  { href: "/life-os/app/notifications", label: "Notifications" },
+]);
+
+/**
+ * Resolves the current route's product-facing title (LOS-0603).
+ *
+ * The one place `AppShell` and every not-yet-built placeholder route ask
+ * "what page is this," reusing the same prefix-matching
+ * `isNavDestinationActive` already uses for the sidebar's own active state
+ * rather than a second, divergent notion of "current route." Doubles as
+ * `TopBar`'s `contextLabel` and the text moved into the route-change live
+ * region, so the two always agree.
+ */
+export function resolveRouteTitle(pathname: string): string {
+  const allDestinations = [
+    ...DEFAULT_NAV_GROUPS.flatMap((group) => group.items),
+    ...EXTRA_ROUTE_DESTINATIONS,
+  ];
+
+  const match = allDestinations.find((destination) =>
+    isNavDestinationActive(pathname, destination.href),
+  );
+
+  return match?.label ?? "LifeOS";
+}
+
+/**
  * Resolves whether a destination is currently active based on the current pathname.
  * Handles exact matches, nested detail sub-routes (e.g. `/tasks/:id`), and default `/life-os/app`.
  */

@@ -117,6 +117,7 @@ export { Sidebar, type SidebarProps } from "./Sidebar";
 export {
   DEFAULT_NAV_GROUPS,
   isNavDestinationActive,
+  resolveRouteTitle,
   type NavDestination,
   type NavGroup,
 } from "./navigationDestinations";

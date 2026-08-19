@@ -3,21 +3,22 @@ import type { ReactNode } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 import { AuthSessionProvider } from "@state/AuthSessionProvider";
+import { ToastProvider } from "@state/ToastProvider";
 
 import { queryClient } from "./queryClient";
 
 /**
- * AppProviders (LOS-0508).
+ * AppProviders (LOS-0508, extended by LOS-0603).
  *
- * Composes the query client and the auth session together, in the order
- * `AuthSessionProvider`'s own contract requires: it calls `useQueryClient()`
+ * Composes every provider `AppRouter`'s tree needs, in the order each one's
+ * own contract requires: `AuthSessionProvider` calls `useQueryClient()`
  * internally, so it must render underneath `QueryClientProvider`.
- *
- * Not yet mounted by `main.tsx`/`App.tsx`: `App.tsx` is still LOS-0201's
- * placeholder foundation view, and real composition — the application shell,
- * routing and where a `RequireAuth`-guarded route actually lives — is
- * LOS-0603's job. This component exists now, fully tested on its own, so
- * that ticket composes it rather than re-deriving the same provider order.
+ * `ToastProvider` (LOS-0409) only owns the toast queue's state — nothing
+ * mounted it anywhere before this ticket, since `ToastViewport` (the surface
+ * that actually renders it) had nowhere to live until `AppShell` existed to
+ * host it. Ordered outermost here since toasts are meant to survive an
+ * account switch/logout, unlike the query cache and session `AuthSession`
+ * already clears on those events.
  */
 export interface AppProvidersProps {
   readonly children: ReactNode;
@@ -25,8 +26,10 @@ export interface AppProvidersProps {
 
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthSessionProvider>{children}</AuthSessionProvider>
-    </QueryClientProvider>
+    <ToastProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthSessionProvider>{children}</AuthSessionProvider>
+      </QueryClientProvider>
+    </ToastProvider>
   );
 }

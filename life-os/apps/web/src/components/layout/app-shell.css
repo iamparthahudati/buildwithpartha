@@ -1,0 +1,61 @@
+/*
+ * AppShell stylesheet (LOS-0603).
+ *
+ * Uses strictly semantic --lifeos-* custom properties.
+ * Adheres to 03-DESIGN-SYSTEM.md and 32-DESIGN-TOKENS.md.
+ */
+
+.lifeos-app-shell {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  min-width: var(--lifeos-layout-min-width);
+  background: var(--lifeos-color-canvas, var(--lifeos-color-surface));
+}
+
+.lifeos-app-shell__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.lifeos-app-shell__header {
+  display: flex;
+  align-items: stretch;
+  position: sticky;
+  top: 0;
+  z-index: var(--lifeos-z-navigation);
+}
+
+.lifeos-app-shell__menu-trigger {
+  display: none;
+}
+
+.lifeos-app-shell__topbar {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.lifeos-app-shell__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--lifeos-space-6);
+  box-sizing: border-box;
+}
+
+.lifeos-app-shell__overlay-root {
+  display: contents;
+}
+
+@media (width < 768px) {
+  .lifeos-app-shell__menu-trigger {
+    display: inline-flex;
+    align-self: center;
+    margin-inline-start: var(--lifeos-space-2);
+  }
+
+  .lifeos-app-shell__main {
+    padding: var(--lifeos-space-4);
+  }
+}
