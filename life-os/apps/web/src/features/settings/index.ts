@@ -7,3 +7,4 @@ export {
   LocalizationSettingsPanel,
   type LocalizationSettingsPanelProps,
 } from "./components/LocalizationSettingsPanel";
+export { SecuritySettingsPanel } from "./components/SecuritySettingsPanel";

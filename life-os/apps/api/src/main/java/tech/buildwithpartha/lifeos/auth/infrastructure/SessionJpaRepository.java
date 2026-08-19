@@ -1,6 +1,7 @@
 package tech.buildwithpartha.lifeos.auth.infrastructure;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,13 @@ import org.springframework.data.repository.query.Param;
 interface SessionJpaRepository extends JpaRepository<SessionEntity, UUID> {
 
   Optional<SessionEntity> findByTokenHash(String tokenHash);
+
+  @Query(
+      "select s from SessionEntity s "
+          + "where s.userId = :userId and s.revokedAt is null and s.expiresAt > :now "
+          + "order by s.lastSeenAt desc")
+  List<SessionEntity> findActiveByUserId(
+      @Param("userId") UUID userId, @Param("now") Instant now);
 
   /**
    * The same single-use conditional-update guard {@code EmailVerificationTokenJpaRepository
@@ -36,4 +44,13 @@ interface SessionJpaRepository extends JpaRepository<SessionEntity, UUID> {
       "update SessionEntity s set s.revokedAt = :revokedAt "
           + "where s.userId = :userId and s.revokedAt is null")
   int revokeAllForUser(@Param("userId") UUID userId, @Param("revokedAt") Instant revokedAt);
+
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Query(
+      "update SessionEntity s set s.revokedAt = :revokedAt "
+          + "where s.userId = :userId and s.id <> :currentSessionId and s.revokedAt is null")
+  int revokeAllOtherSessionsForUser(
+      @Param("userId") UUID userId,
+      @Param("currentSessionId") UUID currentSessionId,
+      @Param("revokedAt") Instant revokedAt);
 }

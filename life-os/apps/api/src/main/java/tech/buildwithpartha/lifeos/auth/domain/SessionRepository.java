@@ -1,6 +1,7 @@
 package tech.buildwithpartha.lifeos.auth.domain;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,6 +13,14 @@ public interface SessionRepository {
   Session save(Session session);
 
   Optional<Session> findByTokenHash(String tokenHash);
+
+  Optional<Session> findById(UUID sessionId);
+
+  /**
+   * Returns every currently active (non-revoked and non-expired) session for the user, ordered
+   * most recently seen first.
+   */
+  List<Session> findActiveSessionsByUserId(UUID userId, Instant now);
 
   /**
    * Atomically revokes one session, but only if it is not already revoked ({@code UPDATE ... WHERE
@@ -28,4 +37,10 @@ public interface SessionRepository {
    * sessions actually revoked.
    */
   int revokeAllForUser(UUID userId, Instant revokedAt);
+
+  /**
+   * Revokes every active session belonging to the user EXCEPT the specified current session.
+   * Used when changing passwords or clicking "Sign out of all other sessions".
+   */
+  int revokeAllOtherSessionsForUser(UUID userId, UUID currentSessionId, Instant revokedAt);
 }

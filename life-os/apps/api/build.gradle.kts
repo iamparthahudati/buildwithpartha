@@ -36,7 +36,7 @@ checkstyle {
 
 spotless {
     java {
-        googleJavaFormat("1.36.1")
+        googleJavaFormat()
         formatAnnotations()
         trimTrailingWhitespace()
         endWithNewline()

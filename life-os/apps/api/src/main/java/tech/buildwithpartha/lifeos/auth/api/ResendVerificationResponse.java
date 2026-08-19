@@ -1,9 +1,9 @@
 package tech.buildwithpartha.lifeos.auth.api;
 
 /**
- * The safe, generic resend-verification response shape. Its content never depends on whether
- * the email belongs to an unverified account: {@code auth.application.ResendVerificationService}
- * always returns normally either way, preventing account enumeration.
+ * The safe, generic resend-verification response shape. Its content never depends on whether the
+ * email belongs to an unverified account: {@code auth.application.ResendVerificationService} always
+ * returns normally either way, preventing account enumeration.
  */
 public record ResendVerificationResponse(String status) {
 

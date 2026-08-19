@@ -1,7 +1,7 @@
 import { apiRequest } from "@lib/apiClient";
 
 /**
- * Typed calls against `/auth/*` (LOS-0508), mirroring the request/response
+ * Typed calls against `/auth/*` (LOS-0508, LOS-0516), mirroring the request/response
  * record shapes in `tech.buildwithpartha.lifeos.auth.api` field for field —
  * see `SignupRequest`, `LoginRequest`, `VerifyEmailRequest`, and each
  * matching `*Response` record. Every call goes through `apiRequest`
@@ -122,5 +122,57 @@ export function resetPassword(request: ResetPasswordRequest): Promise<ResetPassw
   return apiRequest<ResetPasswordResponse>("/auth/reset-password", {
     method: "POST",
     body: request,
+  });
+}
+
+export interface ChangePasswordRequest {
+  readonly currentPassword: string;
+  readonly newPassword: string;
+}
+
+export interface ChangePasswordResponse {
+  readonly status: string;
+}
+
+export function changePassword(request: ChangePasswordRequest): Promise<ChangePasswordResponse> {
+  return apiRequest<ChangePasswordResponse>("/auth/change-password", {
+    method: "POST",
+    body: request,
+  });
+}
+
+export interface SessionInfo {
+  readonly id: string;
+  readonly deviceHint: string | null;
+  readonly createdAt: string;
+  readonly lastSeenAt: string;
+  readonly isCurrent: boolean;
+}
+
+export interface SessionListResponse {
+  readonly sessions: readonly SessionInfo[];
+}
+
+export function listSessions(): Promise<SessionListResponse> {
+  return apiRequest<SessionListResponse>("/auth/sessions", { method: "GET" });
+}
+
+export interface RevokeSessionResponse {
+  readonly revoked: boolean;
+}
+
+export function revokeSession(sessionId: string): Promise<RevokeSessionResponse> {
+  return apiRequest<RevokeSessionResponse>(`/auth/sessions/${sessionId}`, {
+    method: "DELETE",
+  });
+}
+
+export interface RevokeAllOtherSessionsResponse {
+  readonly revokedCount: number;
+}
+
+export function revokeAllOtherSessions(): Promise<RevokeAllOtherSessionsResponse> {
+  return apiRequest<RevokeAllOtherSessionsResponse>("/auth/sessions/revoke-others", {
+    method: "POST",
   });
 }

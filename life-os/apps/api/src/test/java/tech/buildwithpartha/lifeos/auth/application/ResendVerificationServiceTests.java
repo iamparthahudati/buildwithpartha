@@ -85,8 +85,7 @@ class ResendVerificationServiceTests {
     private final FakeEmailVerificationTokenRepository tokens =
         new FakeEmailVerificationTokenRepository();
     private final FakeTransactionalMailPort mailPort = new FakeTransactionalMailPort();
-    private final RawToken rawToken =
-        RawToken.of("raw-verify-token", "sha256:fixture-verify-hash");
+    private final RawToken rawToken = RawToken.of("raw-verify-token", "sha256:fixture-verify-hash");
     private final ResendVerificationService service;
 
     private Fixture() {
@@ -106,8 +105,7 @@ class ResendVerificationServiceTests {
     }
 
     private User seedActiveUser(String email) {
-      User user =
-          User.signup(UUID.randomUUID(), EmailAddress.of(email), "Active", NOW).verify(NOW);
+      User user = User.signup(UUID.randomUUID(), EmailAddress.of(email), "Active", NOW).verify(NOW);
       users.save(user);
       return user;
     }

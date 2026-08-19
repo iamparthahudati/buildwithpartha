@@ -109,6 +109,7 @@ Last updated: 2026-08-17
 | LOS-0513 | Done          | `feature/LOS-0513-onboarding-persistence`       | Backend V4 schema, domain models, OnboardingService/UserProfileService, REST controllers, CSRF validation, and frontend API client in @features/onboarding and @features/user. |
 | LOS-0514 | Done          | `feature/LOS-0514-onboarding-flow-ui`           | Four-step onboarding UI (Welcome, Time and week with IANA timezone picker and live preview, Planning defaults with schedule and skip, Start LifeOS empty default), responsive progress rail, mutation hooks, and comprehensive unit/screen tests. |
 | LOS-0515 | Done          | `develop`                                       | Profile and localization settings screens/panels, avatar display, dirty state tracking, live preview recalculation, and mutation hooks for /user/profile and /user/preferences. |
+| LOS-0516 | Done          | `develop`                                       | Security settings (change password with policy enforcement, active sessions listing, single-session revocation, and bulk sign-out of all other devices) with full frontend and backend integration. |
 | LOS-0601 | Done          | `feature/LOS-0601-sidebar-navigation`           | Responsive sidebar navigation component (expanded desktop sidebar, compact rail with tooltips, mobile drawer with focus trap, canonical grouped destinations, active state detection, skip link, and remembered collapse state). |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

@@ -26,8 +26,8 @@ import tech.buildwithpartha.lifeos.config.LifeOsEnvironmentProperties;
 
 /**
  * Requests resending an email verification link (LOS-0511): rate limit, and — only for an email
- * that belongs to an {@link AccountStatus#UNVERIFIED} account — issue a new single-use
- * {@link EmailVerificationToken} and enqueue the verification mail.
+ * that belongs to an {@link AccountStatus#UNVERIFIED} account — issue a new single-use {@link
+ * EmailVerificationToken} and enqueue the verification mail.
  *
  * <p>An unknown email, or one belonging to an account that is already active, suspended, or
  * deleted, is not an error: {@link #resend} returns normally either way, mirroring {@code

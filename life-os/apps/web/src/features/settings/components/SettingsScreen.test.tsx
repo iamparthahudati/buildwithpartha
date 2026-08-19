@@ -158,4 +158,21 @@ describe("SettingsScreen", () => {
     await user.click(dataTab);
     expect(screen.getByTestId("custom-data")).toBeInTheDocument();
   });
+
+  it("renders SecuritySettingsPanel when clicking Security tab by default", async () => {
+    const user = userEvent.setup();
+    const queryClient = new QueryClient();
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(jsonResponse(200, mockProfile))
+      .mockResolvedValueOnce(jsonResponse(200, { sessions: [] }));
+
+    render(<SettingsScreen profile={mockProfile} />, {
+      wrapper: createWrapper(queryClient),
+    });
+
+    const securityTab = screen.getByRole("tab", { name: "Security" });
+    await user.click(securityTab);
+
+    expect(screen.getByTestId("security-settings-panel")).toBeInTheDocument();
+  });
 });

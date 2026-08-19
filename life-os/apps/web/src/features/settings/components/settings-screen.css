@@ -26,6 +26,12 @@
   gap: var(--lifeos-space-1);
 }
 
+.lifeos-settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
 .lifeos-profile-avatar-row {
   display: flex;
   align-items: center;
@@ -87,6 +93,48 @@
   align-items: center;
   gap: var(--lifeos-space-3);
   margin-top: var(--lifeos-space-4);
+}
+
+.lifeos-sessions-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-sessions-loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-session-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+  padding: var(--lifeos-space-4);
+  border-radius: var(--lifeos-radius-md);
+  background-color: var(--lifeos-color-bg-subtle);
+  border: 1px solid var(--lifeos-color-border-subtle);
+}
+
+.lifeos-session-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-session-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
 }
 
 .lifeos-settings-skeleton {

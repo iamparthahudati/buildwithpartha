@@ -23,7 +23,21 @@ export { useVerifyEmail } from "./hooks/useVerifyEmail";
 export { useResendVerification } from "./hooks/useResendVerification";
 export { useForgotPassword } from "./hooks/useForgotPassword";
 export { useResetPassword } from "./hooks/useResetPassword";
+export { useChangePassword } from "./hooks/useChangePassword";
+export { useUserSessions, SESSIONS_QUERY_KEY } from "./hooks/useUserSessions";
+export { useRevokeSession } from "./hooks/useRevokeSession";
+export { useRevokeAllOtherSessions } from "./hooks/useRevokeAllOtherSessions";
+export {
+  validateChangePasswordForm,
+  hasChangePasswordErrors,
+  type ChangePasswordFormData,
+  type ChangePasswordErrors,
+  type ChangePasswordField,
+} from "./model/securityValidation";
+export { resolveChangePasswordFieldErrors } from "./model/securityFieldErrors";
 export type {
+  ChangePasswordRequest,
+  ChangePasswordResponse,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   LoginRequest,
@@ -33,6 +47,10 @@ export type {
   ResendVerificationResponse,
   ResetPasswordRequest,
   ResetPasswordResponse,
+  RevokeAllOtherSessionsResponse,
+  RevokeSessionResponse,
+  SessionInfo,
+  SessionListResponse,
   SignupRequest,
   SignupResponse,
   VerifyEmailRequest,

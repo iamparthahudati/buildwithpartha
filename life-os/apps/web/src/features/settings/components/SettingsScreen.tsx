@@ -2,11 +2,12 @@ import { useState, type ReactNode } from "react";
 
 import { ErrorState } from "@components/feedback";
 import { PageHeader, Tabs, type TabItem } from "@components/navigation";
-import { Skeleton, Surface, Heading, Text } from "@components/ui";
+import { Heading, Skeleton, Surface, Text } from "@components/ui";
 import { useUserProfile, type UserProfileResponse } from "@features/user";
 
 import { LocalizationSettingsPanel } from "./LocalizationSettingsPanel";
 import { ProfileSettingsPanel } from "./ProfileSettingsPanel";
+import { SecuritySettingsPanel } from "./SecuritySettingsPanel";
 import "./settings-screen.css";
 
 export interface SettingsScreenProps {
@@ -93,16 +94,7 @@ export function SettingsScreen({
     {
       id: "security",
       label: "Security",
-      panel: securityPanel ?? (
-        <Surface tone="default" padding="md" className="lifeos-settings-placeholder">
-          <Heading level={3} size="sm">
-            Security settings
-          </Heading>
-          <Text tone="secondary">
-            Password change and active session management are configured here.
-          </Text>
-        </Surface>
-      ),
+      panel: securityPanel ?? <SecuritySettingsPanel />,
     },
     {
       id: "data",

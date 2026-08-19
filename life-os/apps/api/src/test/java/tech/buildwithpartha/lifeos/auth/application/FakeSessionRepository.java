@@ -2,6 +2,7 @@ package tech.buildwithpartha.lifeos.auth.application;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,6 +22,19 @@ final class FakeSessionRepository implements SessionRepository {
   @Override
   public Optional<Session> findByTokenHash(String tokenHash) {
     return saved.stream().filter(session -> session.tokenHash().equals(tokenHash)).findFirst();
+  }
+
+  @Override
+  public Optional<Session> findById(UUID sessionId) {
+    return saved.stream().filter(session -> session.id().equals(sessionId)).findFirst();
+  }
+
+  @Override
+  public List<Session> findActiveSessionsByUserId(UUID userId, Instant now) {
+    return saved.stream()
+        .filter(session -> session.userId().equals(userId) && session.isActive(now))
+        .sorted(Comparator.comparing(Session::lastSeenAt).reversed())
+        .toList();
   }
 
   @Override
@@ -44,6 +58,21 @@ final class FakeSessionRepository implements SessionRepository {
     for (int i = 0; i < saved.size(); i++) {
       Session session = saved.get(i);
       if (session.userId().equals(userId) && session.revokedAt().isEmpty()) {
+        saved.set(i, withRevokedAt(session, revokedAt));
+        revokedCount++;
+      }
+    }
+    return revokedCount;
+  }
+
+  @Override
+  public int revokeAllOtherSessionsForUser(UUID userId, UUID currentSessionId, Instant revokedAt) {
+    int revokedCount = 0;
+    for (int i = 0; i < saved.size(); i++) {
+      Session session = saved.get(i);
+      if (session.userId().equals(userId)
+          && !session.id().equals(currentSessionId)
+          && session.revokedAt().isEmpty()) {
         saved.set(i, withRevokedAt(session, revokedAt));
         revokedCount++;
       }
