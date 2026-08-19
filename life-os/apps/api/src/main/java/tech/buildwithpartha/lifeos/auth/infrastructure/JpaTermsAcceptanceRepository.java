@@ -1,6 +1,8 @@
 package tech.buildwithpartha.lifeos.auth.infrastructure;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 import tech.buildwithpartha.lifeos.auth.domain.TermsAcceptance;
 import tech.buildwithpartha.lifeos.auth.domain.TermsAcceptanceRepository;
@@ -17,6 +19,13 @@ class JpaTermsAcceptanceRepository implements TermsAcceptanceRepository {
   @Override
   public TermsAcceptance save(TermsAcceptance acceptance) {
     return toDomain(jpaRepository.save(toEntity(acceptance)));
+  }
+
+  @Override
+  public List<TermsAcceptance> findByUserId(UUID userId) {
+    return jpaRepository.findByUserId(userId).stream()
+        .map(JpaTermsAcceptanceRepository::toDomain)
+        .toList();
   }
 
   private static TermsAcceptanceEntity toEntity(TermsAcceptance acceptance) {

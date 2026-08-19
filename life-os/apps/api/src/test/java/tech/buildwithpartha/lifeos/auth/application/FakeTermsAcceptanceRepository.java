@@ -15,6 +15,11 @@ final class FakeTermsAcceptanceRepository implements TermsAcceptanceRepository {
     return acceptance;
   }
 
+  @Override
+  public List<TermsAcceptance> findByUserId(java.util.UUID userId) {
+    return saved.stream().filter(t -> t.userId().equals(userId)).toList();
+  }
+
   List<TermsAcceptance> all() {
     return List.copyOf(saved);
   }

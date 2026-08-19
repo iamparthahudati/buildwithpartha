@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lifeos.example.test/schemas/data-export.schema.json",
+  "title": "LifeOS Data Export Archive Manifest",
+  "description": "JSON schema definition for the manifest and contents of a LifeOS user data export package (LOS-0517).",
+  "type": "object",
+  "required": [
+    "exportVersion",
+    "accountId",
+    "generatedAt",
+    "timeZone",
+    "locale",
+    "files"
+  ],
+  "properties": {
+    "exportVersion": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "Semantic version of the export archive schema."
+    },
+    "accountId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier of the account."
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Canonical UTC timestamp when the archive was assembled."
+    },
+    "timeZone": {
+      "type": "string",
+      "description": "IANA timezone identifier configured at time of export."
+    },
+    "locale": {
+      "type": "string",
+      "description": "BCP 47 language tag configured at time of export."
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of relative filenames included in the ZIP root."
+    }
+  },
+  "additionalProperties": false
+}

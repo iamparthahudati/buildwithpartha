@@ -177,4 +177,24 @@ public class ExportFileService {
     log.info("purged terminal export records count={} cutoff={}", purged, cutoff);
     return purged;
   }
+
+  /**
+   * Retrieves summary details of all exports requested by the user.
+   */
+  @Transactional(readOnly = true)
+  public List<tech.buildwithpartha.lifeos.common.export.ExportSummary> getExportsForUser(
+      UUID userId) {
+    return repository.findByUserId(userId).stream()
+        .map(
+            f ->
+                new tech.buildwithpartha.lifeos.common.export.ExportSummary(
+                    f.id(),
+                    f.fileName(),
+                    f.fileSizeBytes(),
+                    f.status().name(),
+                    f.expiresAt(),
+                    f.downloadedAt(),
+                    f.createdAt()))
+        .toList();
+  }
 }

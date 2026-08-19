@@ -3,8 +3,11 @@ package tech.buildwithpartha.lifeos.job.application;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import tech.buildwithpartha.lifeos.common.job.BackgroundJobKind;
+import tech.buildwithpartha.lifeos.common.job.JobHandler;
+import tech.buildwithpartha.lifeos.common.job.JobHandlerFor;
 
 /**
  * Discovers all {@link JobHandler} beans and routes each {@link BackgroundJobKind} to its handler.
@@ -26,7 +29,8 @@ public class JobHandlerRegistry {
                 Collectors.toUnmodifiableMap(
                     handler -> {
                       JobHandlerFor annotation =
-                          handler.getClass().getAnnotation(JobHandlerFor.class);
+                          AnnotationUtils.findAnnotation(
+                              handler.getClass(), JobHandlerFor.class);
                       if (annotation == null) {
                         throw new IllegalStateException(
                             "JobHandler " + handler.getClass().getName()

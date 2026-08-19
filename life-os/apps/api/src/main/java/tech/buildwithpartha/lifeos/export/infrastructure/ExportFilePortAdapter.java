@@ -50,4 +50,10 @@ class ExportFilePortAdapter implements ExportFilePort {
   public void deleteExport(UUID exportFileId, UUID userId) {
     exportFileService.deleteExport(exportFileId, userId);
   }
+
+  @Override
+  public java.util.List<tech.buildwithpartha.lifeos.common.export.ExportSummary> getExportsForUser(
+      UUID userId) {
+    return exportFileService.getExportsForUser(userId);
+  }
 }

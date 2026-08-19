@@ -6,19 +6,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import tech.buildwithpartha.lifeos.common.job.BackgroundJobKind;
-import tech.buildwithpartha.lifeos.job.domain.BackgroundJob;
+import tech.buildwithpartha.lifeos.common.job.JobHandler;
+import tech.buildwithpartha.lifeos.common.job.JobHandlerFor;
 
 class JobHandlerRegistryTests {
 
   @JobHandlerFor(BackgroundJobKind.DATA_EXPORT)
   private static final class ValidHandler implements JobHandler {
     @Override
-    public void execute(BackgroundJob job) {}
+    public void execute(JobContext context) {}
   }
 
   private static final class UnannotatedHandler implements JobHandler {
     @Override
-    public void execute(BackgroundJob job) {}
+    public void execute(JobContext context) {}
   }
 
   @Test

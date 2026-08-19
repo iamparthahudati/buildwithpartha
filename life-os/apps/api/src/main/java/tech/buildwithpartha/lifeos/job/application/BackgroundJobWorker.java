@@ -5,43 +5,55 @@ import java.time.Instant;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import tech.buildwithpartha.lifeos.common.job.JobHandler;
 import tech.buildwithpartha.lifeos.job.domain.BackgroundJob;
 import tech.buildwithpartha.lifeos.job.domain.BackgroundJobRepository;
 import tech.buildwithpartha.lifeos.job.domain.JobRetryPolicy;
 
 /**
  * Polls for due {@link BackgroundJob}s and dispatches them to registered {@link JobHandler}s.
- *
- * <p>The deployment is a single backend instance ({@code 02-ARCHITECTURE.md}), so row-level
- * leasing via {@code FOR UPDATE SKIP LOCKED} is included for correctness but not strictly required.
- * {@link Scheduled#fixedDelay()} (not {@code fixedRate}) guarantees one poll always finishes before
- * the next starts.
- *
- * <p>Log lines never include payload content or raw exception messages — only the job id, kind,
- * status, attempt count, and a sanitized failure class name ({@code 06-SECURITY.md}).
+ * Scheduled worker that polls due pending {@link BackgroundJob}s, executes their registered
+ * handlers, applies exponential backoff on transient failures, and dead-letters on exhaustion.
  */
 @Component
-class BackgroundJobWorker {
+public class BackgroundJobWorker {
 
   private static final Logger log = LoggerFactory.getLogger(BackgroundJobWorker.class);
-  private static final int BATCH_SIZE = 5;
+  private static final int BATCH_SIZE = 10;
 
   private final BackgroundJobRepository repository;
   private final JobHandlerRegistry handlerRegistry;
-  private final Clock clock;
   private final JobRetryPolicy retryPolicy;
+  private final Clock clock;
 
-  BackgroundJobWorker(
+  @Autowired
+  public BackgroundJobWorker(
       BackgroundJobRepository repository, JobHandlerRegistry handlerRegistry, Clock clock) {
-    this.repository = repository;
-    this.handlerRegistry = handlerRegistry;
-    this.clock = clock;
-    this.retryPolicy = new JobRetryPolicy();
+    this(repository, handlerRegistry, new JobRetryPolicy(), clock);
   }
 
+  BackgroundJobWorker(
+      BackgroundJobRepository repository,
+      JobHandlerRegistry handlerRegistry,
+      JobRetryPolicy retryPolicy,
+      Clock clock) {
+    this.repository = repository;
+    this.handlerRegistry = handlerRegistry;
+    this.retryPolicy = retryPolicy;
+    this.clock = clock;
+  }
+
+  /**
+   * Polls due pending jobs every 30 seconds.
+   */
   @Scheduled(fixedDelay = 30_000)
+  public void runWorker() {
+    pollAndDispatch();
+  }
+
   void pollAndDispatch() {
     Instant now = clock.instant();
     List<BackgroundJob> due = repository.findDuePending(now, BATCH_SIZE);
@@ -60,7 +72,13 @@ class BackgroundJobWorker {
 
     try {
       JobHandler handler = handlerRegistry.handlerFor(job.kind());
-      handler.execute(running);
+      handler.execute(
+          new JobHandler.JobContext(
+              running.id(),
+              running.userId(),
+              running.kind(),
+              running.payload(),
+              running.createdAt()));
       BackgroundJob succeeded = repository.save(running.recordSuccess(clock.instant()));
       log.info(
           "job succeeded id={} kind={} attempt={}",

@@ -69,4 +69,12 @@ public interface ExportFilePort {
    * @param userId the requesting user id (must own the export)
    */
   void deleteExport(UUID exportFileId, UUID userId);
+
+  /**
+   * Retrieves summary details of all exports requested by the user, ordered newest first.
+   *
+   * @param userId the user id
+   * @return list of export summaries
+   */
+  java.util.List<ExportSummary> getExportsForUser(UUID userId);
 }

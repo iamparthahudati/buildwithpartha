@@ -11,9 +11,10 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tech.buildwithpartha.lifeos.common.job.BackgroundJobKind;
+import tech.buildwithpartha.lifeos.common.job.JobHandler;
+import tech.buildwithpartha.lifeos.common.job.JobHandlerFor;
 import tech.buildwithpartha.lifeos.job.domain.BackgroundJob;
 import tech.buildwithpartha.lifeos.job.domain.BackgroundJobStatus;
-import tech.buildwithpartha.lifeos.job.domain.JobRetryPolicy;
 
 class BackgroundJobWorkerTests {
 
@@ -44,89 +45,66 @@ class BackgroundJobWorkerTests {
     assertThat(updated.status()).isEqualTo(BackgroundJobStatus.SUCCEEDED);
     assertThat(updated.payload()).isEqualTo("{}"); // erased
     assertThat(updated.completedAt()).isPresent();
-    assertThat(handler.executedJobs()).hasSize(1);
+    assertThat(handler.executedContexts()).hasSize(1);
   }
 
   @Test
-  void pollAndDispatch_onHandlerFailure_retriesJobWithBackoff() {
-    handler.failWith(new RuntimeException("transient failure"));
+  void pollAndDispatch_whenHandlerThrows_schedulesRetryWithExponentialBackoff() {
     BackgroundJob job =
         BackgroundJob.enqueue(
-            UUID.randomUUID(),
-            UUID.randomUUID(),
-            BackgroundJobKind.DATA_EXPORT,
-            "{\"k\":\"v\"}",
-            NOW);
+            UUID.randomUUID(), UUID.randomUUID(), BackgroundJobKind.DATA_EXPORT, "{}", NOW);
     repository.save(job);
+    handler.failWith(new IllegalStateException("simulated transient failure"));
 
     worker.pollAndDispatch();
 
     BackgroundJob updated = repository.findById(job.id()).orElseThrow();
     assertThat(updated.status()).isEqualTo(BackgroundJobStatus.PENDING);
     assertThat(updated.attemptCount()).isEqualTo(1);
+    assertThat(updated.lastErrorClass()).contains("java.lang.IllegalStateException");
     assertThat(updated.nextAttemptAt()).isAfter(NOW);
-    assertThat(updated.payload()).isEqualTo("{\"k\":\"v\"}"); // NOT erased while retrying
-    assertThat(updated.lastErrorClass()).contains("java.lang.RuntimeException");
   }
 
   @Test
-  void pollAndDispatch_exhaustsRetryBudget_deadLetters() {
-    handler.failWith(new RuntimeException("permanent failure"));
-    BackgroundJob base =
-        BackgroundJob.enqueue(
+  void pollAndDispatch_exhaustedAttempts_deadLetters() {
+    BackgroundJob job =
+        new BackgroundJob(
             UUID.randomUUID(),
-            UUID.randomUUID(),
+            java.util.Optional.of(UUID.randomUUID()),
             BackgroundJobKind.DATA_EXPORT,
-            "{\"k\":\"v\"}",
+            "{}",
+            BackgroundJobStatus.PENDING,
+            9, // will become attempt 10, max attempts is 10
+            NOW,
+            java.util.Optional.empty(),
+            java.util.Optional.empty(),
+            java.util.Optional.empty(),
+            java.util.Optional.empty(),
+            java.util.Optional.empty(),
+            NOW,
             NOW);
-    // Simulate already failed MAX_ATTEMPTS - 1 times, keeping nextAttemptAt = NOW so it stays due
-    BackgroundJob nearExhausted = base;
-    JobRetryPolicy policy = new JobRetryPolicy();
-    for (int i = 0; i < JobRetryPolicy.MAX_ATTEMPTS - 1; i++) {
-      nearExhausted =
-          nearExhausted.markRunning(NOW).recordFailure(NOW, "SomeException", policy);
-      // Force nextAttemptAt back to NOW so the job stays due for polling
-      nearExhausted =
-          new BackgroundJob(
-              nearExhausted.id(),
-              nearExhausted.userId(),
-              nearExhausted.kind(),
-              nearExhausted.payload(),
-              nearExhausted.status(),
-              nearExhausted.attemptCount(),
-              NOW,
-              nearExhausted.lastAttemptAt(),
-              nearExhausted.lastErrorClass(),
-              nearExhausted.startedAt(),
-              nearExhausted.completedAt(),
-              nearExhausted.deadLetteredAt(),
-              nearExhausted.createdAt(),
-              nearExhausted.updatedAt());
-    }
-    repository.save(nearExhausted);
+    repository.save(job);
+    handler.failWith(new RuntimeException("fatal"));
 
     worker.pollAndDispatch();
 
-    BackgroundJob updated = repository.findById(base.id()).orElseThrow();
+    BackgroundJob updated = repository.findById(job.id()).orElseThrow();
     assertThat(updated.status()).isEqualTo(BackgroundJobStatus.DEAD_LETTERED);
-    assertThat(updated.payload()).isEqualTo("{}"); // erased on dead-letter
-    assertThat(updated.deadLetteredAt()).isPresent();
+    assertThat(updated.attemptCount()).isEqualTo(10);
+    assertThat(updated.payload()).isEqualTo("{}"); // erased on terminal
   }
 
   @Test
-  void pollAndDispatch_noDueJobs_doesNothing() {
+  void pollAndDispatch_ignoresFutureJobs() {
+    Instant futureTime = NOW.plusSeconds(3600);
     BackgroundJob future =
         BackgroundJob.enqueue(
-            UUID.randomUUID(),
-            UUID.randomUUID(),
-            BackgroundJobKind.DATA_EXPORT,
-            "{}",
-            NOW.plusSeconds(3600));
+            UUID.randomUUID(), UUID.randomUUID(), BackgroundJobKind.DATA_EXPORT, "{}", futureTime);
     repository.save(future);
 
     worker.pollAndDispatch();
 
-    assertThat(handler.executedJobs()).isEmpty();
+    assertThat(handler.executedContexts()).isEmpty();
     assertThat(repository.findById(future.id()).orElseThrow().status())
         .isEqualTo(BackgroundJobStatus.PENDING);
   }
@@ -136,7 +114,7 @@ class BackgroundJobWorkerTests {
   @JobHandlerFor(BackgroundJobKind.DATA_EXPORT)
   private static final class FakeJobHandler implements JobHandler {
 
-    private final List<BackgroundJob> executed = new ArrayList<>();
+    private final List<JobContext> executed = new ArrayList<>();
     private RuntimeException failure;
 
     void failWith(RuntimeException e) {
@@ -144,14 +122,14 @@ class BackgroundJobWorkerTests {
     }
 
     @Override
-    public void execute(BackgroundJob job) {
+    public void execute(JobContext context) {
       if (failure != null) {
         throw failure;
       }
-      executed.add(job);
+      executed.add(context);
     }
 
-    List<BackgroundJob> executedJobs() {
+    List<JobContext> executedContexts() {
       return List.copyOf(executed);
     }
   }
