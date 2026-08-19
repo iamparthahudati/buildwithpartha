@@ -242,6 +242,7 @@
   --lifeos-layout-min-width: 320px;
   --lifeos-layout-content-max: 90rem;
   --lifeos-layout-sidebar-width: 15rem; /* 240px, inside the 232–256px band */
+  --lifeos-layout-topbar-height: 3.5rem; /* 56px, matches Sidebar's own header block */
   --lifeos-layout-reading-max: 68ch;
 
   /* ---------------------------------------------------------------- */

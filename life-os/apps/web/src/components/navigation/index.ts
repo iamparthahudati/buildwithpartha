@@ -125,3 +125,4 @@ export {
   getStoredSidebarCollapsed,
   setStoredSidebarCollapsed,
 } from "./sidebarStorage";
+export { TopBar, type TopBarProps } from "./TopBar";

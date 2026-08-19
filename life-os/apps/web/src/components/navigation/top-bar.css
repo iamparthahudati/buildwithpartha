@@ -1,0 +1,106 @@
+/*
+ * TopBar stylesheet (LOS-0602).
+ *
+ * Uses strictly semantic --lifeos-* custom properties.
+ * Adheres to 03-DESIGN-SYSTEM.md and 32-DESIGN-TOKENS.md.
+ */
+
+.lifeos-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-4);
+  position: sticky;
+  top: 0;
+  min-height: var(--lifeos-layout-topbar-height);
+  padding: var(--lifeos-space-2) var(--lifeos-space-4);
+  background: var(--lifeos-color-surface);
+  border-bottom: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  box-sizing: border-box;
+  z-index: var(--lifeos-z-navigation);
+}
+
+.lifeos-topbar__context {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lifeos-space-2);
+  min-width: 0;
+}
+
+.lifeos-topbar__context-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lifeos-topbar__date {
+  white-space: nowrap;
+}
+
+.lifeos-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  margin-inline-start: auto;
+}
+
+.lifeos-topbar__secondary {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-topbar__notifications {
+  position: relative;
+  display: inline-flex;
+}
+
+.lifeos-topbar__notifications-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(35%, -35%);
+  pointer-events: none;
+}
+
+.lifeos-topbar__focus {
+  display: inline-flex;
+  align-items: center;
+}
+
+.lifeos-topbar__overflow-trigger {
+  display: none;
+}
+
+.lifeos-topbar__date-drawer {
+  padding-block-end: var(--lifeos-space-3);
+  border-bottom: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  margin-block-end: var(--lifeos-space-3);
+}
+
+.lifeos-topbar__secondary--drawer {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--lifeos-space-4);
+}
+
+/*
+ * Below the small breakpoint, the date and the Notifications/Focus/Account
+ * row give way to a single "More" trigger that opens the same content
+ * inside a Drawer — the same dual-render, hide-one-of-two-copies pattern
+ * FilterBar (LOS-0420) already uses, not a media query deciding whether the
+ * Drawer exists at all. contextLabel, Search, and Quick Add stay visible:
+ * they are the "essential mobile actions" the ticket's spec line protects.
+ */
+@media (width < 768px) {
+  .lifeos-topbar__date {
+    display: none;
+  }
+
+  .lifeos-topbar__secondary--inline {
+    display: none;
+  }
+
+  .lifeos-topbar__overflow-trigger {
+    display: inline-flex;
+  }
+}

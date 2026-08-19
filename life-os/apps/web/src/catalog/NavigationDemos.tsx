@@ -44,6 +44,7 @@ import {
   Timeline,
   ViewToggle,
   Sidebar,
+  TopBar,
   type ActiveFilterChip,
   type ActivityEvent,
   type Attachment,
@@ -59,7 +60,17 @@ import {
   type TimelineEntry,
   type ViewMode,
 } from "@components/navigation";
-import { Badge, Button, CountBadge, Link, Select, Surface, Text, TextInput } from "@components/ui";
+import {
+  Badge,
+  Button,
+  CountBadge,
+  Link,
+  Select,
+  StatusDot,
+  Surface,
+  Text,
+  TextInput,
+} from "@components/ui";
 import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
 
 /**
@@ -1172,6 +1183,117 @@ export function SidebarDrawerDemo() {
           setOpen(false);
         }}
       />
+    </div>
+  );
+}
+
+const TOPBAR_ACCOUNT_ITEMS: readonly MenuItemDescriptor[] = [
+  { type: "item", id: "profile", label: "View profile", onSelect: () => {} },
+  { type: "item", id: "settings", label: "Settings", onSelect: () => {} },
+  { type: "separator", id: "sep-1" },
+  { type: "item", id: "sign-out", label: "Sign out", destructive: true, onSelect: () => {} },
+];
+
+const TOPBAR_ACCOUNT = {
+  name: "Priya Sharma",
+  email: "priya@example.com",
+  items: TOPBAR_ACCOUNT_ITEMS,
+};
+
+const TOPBAR_STAGE_STYLE = {
+  border: "1px solid var(--lifeos-color-border)",
+  borderRadius: "var(--lifeos-radius-lg)",
+} as const;
+
+export function TopBarDemo() {
+  const [log, setLog] = useState<string | null>(null);
+
+  return (
+    <div style={TOPBAR_STAGE_STYLE}>
+      <TopBar
+        contextLabel="Today"
+        timeZone="Asia/Kolkata"
+        locale="en-US"
+        onSearchTriggerClick={() => setLog("Search trigger clicked (or Cmd/Ctrl+K anywhere)")}
+        onQuickAddTriggerClick={() => setLog("Quick Add trigger clicked")}
+        onNotificationsTriggerClick={() => setLog("Notifications trigger clicked")}
+        account={TOPBAR_ACCOUNT}
+      />
+      <div style={{ padding: "var(--lifeos-space-4)" }}>
+        <Text tone="secondary" size="sm">
+          {log ?? "Click a trigger, or press Cmd/Ctrl+K, to see its callback fire."}
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function TopBarWithNotificationsDemo() {
+  return (
+    <div style={TOPBAR_STAGE_STYLE}>
+      <TopBar
+        contextLabel="Tasks"
+        timeZone="America/New_York"
+        locale="en-US"
+        notificationCount={128}
+        onSearchTriggerClick={() => {}}
+        onQuickAddTriggerClick={() => {}}
+        onNotificationsTriggerClick={() => {}}
+        account={TOPBAR_ACCOUNT}
+      />
+      <div style={{ padding: "var(--lifeos-space-4)" }}>
+        <Text tone="secondary" size="sm">
+          128 unread clamps the bell&rsquo;s CountBadge to &ldquo;99+&rdquo; while still announcing
+          the exact count.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function TopBarWithFocusSlotDemo() {
+  return (
+    <div style={TOPBAR_STAGE_STYLE}>
+      <TopBar
+        contextLabel="Today"
+        timeZone="Asia/Kolkata"
+        locale="en-US"
+        focusSlot={<StatusDot tone="success" label="Focus session active, 18 minutes remaining" />}
+        onSearchTriggerClick={() => {}}
+        onQuickAddTriggerClick={() => {}}
+        onNotificationsTriggerClick={() => {}}
+        account={TOPBAR_ACCOUNT}
+      />
+      <div style={{ padding: "var(--lifeos-space-4)" }}>
+        <Text tone="secondary" size="sm">
+          focusSlot is caller-owned; TopBar renders nothing here on its own. LOS-0605&apos;s real
+          mini-player is expected to fill this slot later.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function TopBarOverflowOpenDemo() {
+  return (
+    <div>
+      <Text tone="secondary" size="sm">
+        Resize the catalog stage below 768px to see Notifications, Focus, and Account collapse
+        behind the &ldquo;More&rdquo; trigger, or click it directly below.
+      </Text>
+      <div style={{ ...TOPBAR_STAGE_STYLE, marginTop: "var(--lifeos-space-3)" }}>
+        <TopBar
+          contextLabel="Today"
+          timeZone="Asia/Kolkata"
+          locale="en-US"
+          notificationCount={3}
+          focusSlot={<StatusDot tone="success" label="Focus session active" />}
+          onSearchTriggerClick={() => {}}
+          onQuickAddTriggerClick={() => {}}
+          onNotificationsTriggerClick={() => {}}
+          account={TOPBAR_ACCOUNT}
+        />
+      </div>
     </div>
   );
 }

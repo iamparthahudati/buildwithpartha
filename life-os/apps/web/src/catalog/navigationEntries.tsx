@@ -39,6 +39,10 @@ import {
   SidebarCollapsedDemo,
   SidebarInteractiveDemo,
   SidebarDrawerDemo,
+  TopBarDemo,
+  TopBarWithNotificationsDemo,
+  TopBarWithFocusSlotDemo,
+  TopBarOverflowOpenDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -486,6 +490,40 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Slide-out modal drawer with focus trap, backdrop dismissal, and accessible close button for small viewports.",
         render: () => <SidebarDrawerDemo />,
+      },
+    ],
+  },
+  {
+    id: "topbar",
+    name: "TopBar",
+    group: "Composed",
+    summary:
+      "The shell's top utility row: context label and local date, a global search trigger (click or Cmd/Ctrl+K), Quick Add, Notifications with an unread CountBadge, an optional focus-status slot, and AccountMenu. Renders no CommandPalette, notification list, or focus UI of its own — every action item is a caller-controlled trigger. Below 768px, everything but the context label, Search, and Quick Add collapses behind a single 'More' overflow into a Drawer.",
+    states: [
+      {
+        id: "topbar-default",
+        name: "Default desktop row",
+        description: "Context label, date, and all utility triggers inline.",
+        render: () => <TopBarDemo />,
+      },
+      {
+        id: "topbar-with-notifications",
+        name: "Unread notifications",
+        description: "The bell shows an unread CountBadge, clamped above its max.",
+        render: () => <TopBarWithNotificationsDemo />,
+      },
+      {
+        id: "topbar-with-focus",
+        name: "Active focus status",
+        description: "A caller-supplied focusSlot renders between Notifications and AccountMenu.",
+        render: () => <TopBarWithFocusSlotDemo />,
+      },
+      {
+        id: "topbar-overflow",
+        name: "Mobile overflow drawer",
+        description:
+          "Below 768px, Notifications/Focus/Account collapse behind a 'More' trigger into a Drawer; resize the stage to see the swap, or use this state's button to open it directly.",
+        render: () => <TopBarOverflowOpenDemo />,
       },
     ],
   },

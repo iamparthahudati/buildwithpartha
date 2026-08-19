@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-20 (LOS-0518 grace-period follow-up)
+Last updated: 2026-08-20 (LOS-0602 top utility bar)
 
 ## Phase
 
@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-0602 — Implemented the shell's top utility bar component for LifeOS: context label and local date (computed from required `timeZone`/`locale` via the canonical `todayLocalDate`/`formatLocalDate` helpers), a global search trigger with Cmd/Ctrl+K, Quick Add and Notifications triggers, a caller-owned focus-status slot reserved for LOS-0605, and `AccountMenu` composed as-is. Every action item is a trigger only — no `CommandPalette`, notification list, or focus UI rendered internally. Below 768px the context label, Search, and Quick Add stay visible while the date, Notifications, focus slot, and AccountMenu collapse behind a single "More" trigger into a Drawer, the same dual-render pattern FilterBar (LOS-0420) already uses. A live-browser check caught and fixed a demo-styling bug (an `overflow: hidden` wrapper clipping AccountMenu's popover), not a defect in the component itself. See `docs/handoffs/LOS-0602.md`.
 - LOS-0518 grace-period follow-up — Corrected account deletion: the version shipped as LOS-0518 purged the account row synchronously with no recovery window, contradicting its own "grace period/cancel path" acceptance contract and `31-PRIVACY-DATA-LIFECYCLE.md`'s accepted ADR-012 state machine (`ACTIVE -> DELETE_REQUESTED -> GRACE_PERIOD -> PURGE_IN_PROGRESS -> PURGED_LIVE`). Added `account_deletion_requests` (V7 migration) tracking a 30-day grace period and single-use cancellation token, mirroring `EmailVerificationToken`'s race-safe conditional-update shape; a new `PENDING_DELETION` account status (which `LoginService` already refuses to authenticate, since it only accepts `ACTIVE`) replaces immediate deletion; `POST /auth/cancel-deletion` restores the account from the emailed link; a daily `AccountDeletionPurgeJob` performs the actual purge once the grace period elapses uncancelled. `PrivacySettingsPanel`'s copy and success flow, and the new `AccountDeletionCancelScreen`, were updated to match. See `docs/handoffs/LOS-0518-grace-period-followup.md`.
 - LOS-0520 — Executed identity threat-model and security gate verification (`IdentitySecurityGateIntegrationTests.java` covering full lifecycle signup→verify→login→export→delete, CSRF validation, session fixation protection, enumeration resistance, cross-user isolation, token replay rejection, cookie flags, and sensitive data protection).
 - LOS-0519 — Implemented privacy and data settings UI (data export trigger and live archive listing with status badges, privacy posture statement, destructive account deletion confirmation dialog with required name confirmation and password re-authentication, and React Query hooks).
