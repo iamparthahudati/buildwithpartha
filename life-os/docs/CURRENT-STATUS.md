@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-19 (LOS-0601)
+Last updated: 2026-08-20 (LOS-0518 grace-period follow-up)
 
 ## Phase
 
@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-0518 grace-period follow-up — Corrected account deletion: the version shipped as LOS-0518 purged the account row synchronously with no recovery window, contradicting its own "grace period/cancel path" acceptance contract and `31-PRIVACY-DATA-LIFECYCLE.md`'s accepted ADR-012 state machine (`ACTIVE -> DELETE_REQUESTED -> GRACE_PERIOD -> PURGE_IN_PROGRESS -> PURGED_LIVE`). Added `account_deletion_requests` (V7 migration) tracking a 30-day grace period and single-use cancellation token, mirroring `EmailVerificationToken`'s race-safe conditional-update shape; a new `PENDING_DELETION` account status (which `LoginService` already refuses to authenticate, since it only accepts `ACTIVE`) replaces immediate deletion; `POST /auth/cancel-deletion` restores the account from the emailed link; a daily `AccountDeletionPurgeJob` performs the actual purge once the grace period elapses uncancelled. `PrivacySettingsPanel`'s copy and success flow, and the new `AccountDeletionCancelScreen`, were updated to match. See `docs/handoffs/LOS-0518-grace-period-followup.md`.
 - LOS-0520 — Executed identity threat-model and security gate verification (`IdentitySecurityGateIntegrationTests.java` covering full lifecycle signup→verify→login→export→delete, CSRF validation, session fixation protection, enumeration resistance, cross-user isolation, token replay rejection, cookie flags, and sensitive data protection).
 - LOS-0519 — Implemented privacy and data settings UI (data export trigger and live archive listing with status badges, privacy posture statement, destructive account deletion confirmation dialog with required name confirmation and password re-authentication, and React Query hooks).
 - LOS-0518 — Implemented account deletion lifecycle (password re-authentication, confirmation phrase verification, immediate session revocation across all devices, security notice email, `ACCOUNT_DELETION` background job dispatch, database cascade removal, and `POST /auth/account/delete` endpoint with session cookie clearance).
