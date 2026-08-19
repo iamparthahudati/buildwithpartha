@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { resetApiClientConfiguration } from "@lib/apiClient";
 
-import { login, logout, logoutAll, signup, verifyEmail } from "./authApi";
+import { login, logout, logoutAll, resendVerification, signup, verifyEmail } from "./authApi";
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -53,6 +53,18 @@ describe("authApi", () => {
     expect(response).toEqual({ status: "VERIFIED" });
     const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
     expect(url).toBe("/life-os/api/v1/auth/verify-email");
+  });
+
+  it("posts to /auth/resend-verification with the email", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(jsonResponse(202, { status: "PENDING_VERIFICATION" }));
+
+    const response = await resendVerification({ email: "person@example.test" });
+
+    expect(response).toEqual({ status: "PENDING_VERIFICATION" });
+    const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    expect(url).toBe("/life-os/api/v1/auth/resend-verification");
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(init.body as string)).toEqual({ email: "person@example.test" });
   });
 
   it("posts to /auth/login and returns the safe user fields plus the CSRF bootstrap", async () => {

@@ -383,6 +383,43 @@ class AuthControllerTests {
   }
 
   @Test
+  void resendVerificationIsReachableWithoutAuthenticationAndReturnsGenericAcceptedResponse()
+      throws Exception {
+    mockMvc
+        .perform(
+            post("/auth/resend-verification")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\": \"controller-resend-unknown@example.test\"}"))
+        .andExpect(status().isAccepted())
+        .andExpect(jsonPath("$.status").value("PENDING_VERIFICATION"));
+  }
+
+  @Test
+  void resendVerificationReturnsTheIdenticalResponseForAnUnverifiedAccount() throws Exception {
+    seedUnverifiedUser("controller-resend-unverified@example.test");
+
+    mockMvc
+        .perform(
+            post("/auth/resend-verification")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\": \"controller-resend-unverified@example.test\"}"))
+        .andExpect(status().isAccepted())
+        .andExpect(jsonPath("$.status").value("PENDING_VERIFICATION"));
+  }
+
+  @Test
+  void resendVerificationRejectsAnInvalidEmailWithValidationFailedProblem() throws Exception {
+    mockMvc
+        .perform(
+            post("/auth/resend-verification")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\": \"not-an-email\"}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[?(@.field == 'email')]").exists());
+  }
+
+  @Test
   void resetPasswordIsReachableWithoutAuthenticationAndUpdatesTheCredential() throws Exception {
     UUID userId = seedUnverifiedUser("controller-reset-happy-path@example.test");
     credentialRepository.save(
