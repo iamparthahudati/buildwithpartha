@@ -27,4 +27,13 @@ export interface AccountDeletionResponse {
   readonly status: string;
   readonly message: string;
   readonly requestedAt: string;
+  readonly scheduledPurgeAt: string;
+}
+
+export interface CancelAccountDeletionRequest {
+  readonly token: string;
+}
+
+export interface CancelAccountDeletionResponse {
+  readonly status: string;
 }

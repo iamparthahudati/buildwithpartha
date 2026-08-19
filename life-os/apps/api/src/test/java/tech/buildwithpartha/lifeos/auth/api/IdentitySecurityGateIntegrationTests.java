@@ -42,13 +42,14 @@ import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
  * End-to-end security gate and threat-model verification suite (LOS-0520).
  *
  * <p>Validates the complete identity threat model across EPIC-05 (LOS-0501 to LOS-0519):
+ *
  * <ul>
- *   <li>Full lifecycle: Signup -> Verification -> Login -> Auth -> Export -> Deletion</li>
- *   <li>CSRF protection and token enforcement on state-changing endpoints</li>
- *   <li>Session fixation and cookie flags (HttpOnly, Secure, SameSite=Lax, Path=/)</li>
- *   <li>Account enumeration resistance on public auth endpoints</li>
- *   <li>Cross-user resource isolation</li>
- *   <li>Token replay and token expiry rejection</li>
+ *   <li>Full lifecycle: Signup -> Verification -> Login -> Auth -> Export -> Deletion
+ *   <li>CSRF protection and token enforcement on state-changing endpoints
+ *   <li>Session fixation and cookie flags (HttpOnly, Secure, SameSite=Lax, Path=/)
+ *   <li>Account enumeration resistance on public auth endpoints
+ *   <li>Cross-user resource isolation
+ *   <li>Token replay and token expiry rejection
  * </ul>
  */
 @ActiveProfiles("test")
@@ -113,9 +114,7 @@ class IdentitySecurityGateIntegrationTests {
 
     mockMvc
         .perform(
-            post("/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(signupPayload))
+            post("/auth/signup").contentType(MediaType.APPLICATION_JSON).content(signupPayload))
         .andExpect(status().isAccepted())
         .andExpect(jsonPath("$.status").value("PENDING_VERIFICATION"));
 
@@ -126,10 +125,7 @@ class IdentitySecurityGateIntegrationTests {
     RawToken verificationRawToken = tokenGenerator.generate();
     verificationTokenRepository.save(
         EmailVerificationToken.issue(
-            UUID.randomUUID(),
-            unverifiedUser.id(),
-            verificationRawToken.hash(),
-            Instant.now()));
+            UUID.randomUUID(), unverifiedUser.id(), verificationRawToken.hash(), Instant.now()));
 
     String verifyPayload =
         """
@@ -163,9 +159,7 @@ class IdentitySecurityGateIntegrationTests {
     MvcResult loginResult =
         mockMvc
             .perform(
-                post("/auth/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(loginPayload))
+                post("/auth/login").contentType(MediaType.APPLICATION_JSON).content(loginPayload))
             .andExpect(status().isOk())
             .andExpect(cookie().exists(SESSION_COOKIE_NAME))
             .andExpect(cookie().httpOnly(SESSION_COOKIE_NAME, true))
@@ -181,22 +175,18 @@ class IdentitySecurityGateIntegrationTests {
 
     // 4. Authenticated sessions listing
     mockMvc
-        .perform(
-            get("/auth/sessions")
-                .cookie(sessionCookie))
+        .perform(get("/auth/sessions").cookie(sessionCookie))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.sessions").isArray());
 
     // 5. Data export request (requires CSRF)
     mockMvc
-        .perform(
-            post("/auth/export")
-                .cookie(sessionCookie)
-                .header(CSRF_HEADER_NAME, csrfToken))
+        .perform(post("/auth/export").cookie(sessionCookie).header(CSRF_HEADER_NAME, csrfToken))
         .andExpect(status().isAccepted())
         .andExpect(jsonPath("$.status").value("GENERATING"));
 
-    // 6. Delete account permanently
+    // 6. Request account deletion: enters a cancellable 30-day grace period, not an immediate
+    // purge (31-PRIVACY-DATA-LIFECYCLE.md's accepted ADR-012 state machine).
     String deletePayload =
         """
         {
@@ -214,17 +204,34 @@ class IdentitySecurityGateIntegrationTests {
                 .cookie(sessionCookie)
                 .header(CSRF_HEADER_NAME, csrfToken))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.status").value("DELETED"));
+        .andExpect(jsonPath("$.status").value("GRACE_PERIOD"));
 
-    // 7. Post-deletion verification: account & sessions removed, subsequent requests unauthorized
-    assertThat(userRepository.findById(verifiedUser.id())).isEmpty();
+    // 7. Post-request verification: the account record survives the grace period but is no
+    // longer authenticatable — sessions are revoked and login is rejected identically to a
+    // wrong password, so a pending deletion cannot be distinguished from any other failure.
+    assertThat(userRepository.findById(verifiedUser.id())).isPresent();
+    assertThat(userRepository.findById(verifiedUser.id()).orElseThrow().accountStatus())
+        .isEqualTo(AccountStatus.PENDING_DELETION);
     assertThat(sessionRepository.findActiveSessionsByUserId(verifiedUser.id(), Instant.now()))
         .isEmpty();
 
     mockMvc
+        .perform(get("/auth/sessions").cookie(sessionCookie))
+        .andExpect(status().isUnauthorized());
+
+    String loginAfterDeletionPayload =
+        """
+        {
+          "email": "%s",
+          "password": "%s"
+        }
+        """
+            .formatted(email, password);
+    mockMvc
         .perform(
-            get("/auth/sessions")
-                .cookie(sessionCookie))
+            post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(loginAfterDeletionPayload))
         .andExpect(status().isUnauthorized());
   }
 
@@ -261,18 +268,12 @@ class IdentitySecurityGateIntegrationTests {
     Cookie sessionCookie = new Cookie(SESSION_COOKIE_NAME, sessionToken.value());
 
     // 1. Mutating POST without CSRF header -> 403 Forbidden
-    mockMvc
-        .perform(
-            post("/auth/export")
-                .cookie(sessionCookie))
-        .andExpect(status().isForbidden());
+    mockMvc.perform(post("/auth/export").cookie(sessionCookie)).andExpect(status().isForbidden());
 
     // 2. Mutating POST with invalid CSRF header -> 403 Forbidden
     mockMvc
         .perform(
-            post("/auth/export")
-                .cookie(sessionCookie)
-                .header(CSRF_HEADER_NAME, "wrong-csrf-token"))
+            post("/auth/export").cookie(sessionCookie).header(CSRF_HEADER_NAME, "wrong-csrf-token"))
         .andExpect(status().isForbidden());
 
     // 3. Mutating POST with valid CSRF header -> 202 Accepted
@@ -409,11 +410,7 @@ class IdentitySecurityGateIntegrationTests {
 
     RawToken resetRawToken = tokenGenerator.generate();
     PasswordResetToken resetToken =
-        PasswordResetToken.issue(
-            UUID.randomUUID(),
-            userId,
-            resetRawToken.hash(),
-            Instant.now());
+        PasswordResetToken.issue(UUID.randomUUID(), userId, resetRawToken.hash(), Instant.now());
     resetTokenRepository.save(resetToken);
 
     String resetPayload =

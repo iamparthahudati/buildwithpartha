@@ -91,4 +91,47 @@ public record User(
         now,
         version);
   }
+
+  /**
+   * Enters the deletion grace period (LOS-0518): the account stays on record, but {@code
+   * LoginService} will no longer authenticate it. {@code AccountDeletionGracePeriod} tracks the
+   * cancellation window; {@code AccountDeletionPurgeJob} deletes this row once it expires.
+   */
+  public User requestDeletion(Instant now) {
+    return new User(
+        id,
+        email,
+        displayName,
+        timeZone,
+        locale,
+        weekStart,
+        AccountStatus.PENDING_DELETION,
+        verifiedAt,
+        createdAt,
+        now,
+        version);
+  }
+
+  /**
+   * Reverses {@link #requestDeletion}, restoring normal access after the verified owner cancels
+   * within the grace period. A no-op if the account is not currently {@link
+   * AccountStatus#PENDING_DELETION} (e.g. a cancellation token consumed twice concurrently).
+   */
+  public User restoreFromPendingDeletion(Instant now) {
+    if (accountStatus != AccountStatus.PENDING_DELETION) {
+      return this;
+    }
+    return new User(
+        id,
+        email,
+        displayName,
+        timeZone,
+        locale,
+        weekStart,
+        AccountStatus.ACTIVE,
+        verifiedAt,
+        createdAt,
+        now,
+        version);
+  }
 }

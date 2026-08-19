@@ -10,10 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.buildwithpartha.lifeos.auth.domain.AccountDeletionGracePeriod;
+import tech.buildwithpartha.lifeos.auth.domain.AccountDeletionGracePeriodRepository;
 import tech.buildwithpartha.lifeos.auth.domain.Credential;
 import tech.buildwithpartha.lifeos.auth.domain.CredentialRepository;
 import tech.buildwithpartha.lifeos.auth.domain.PasswordHasher;
 import tech.buildwithpartha.lifeos.auth.domain.RawPassword;
+import tech.buildwithpartha.lifeos.auth.domain.RawToken;
+import tech.buildwithpartha.lifeos.auth.domain.SecureTokenGenerator;
 import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
 import tech.buildwithpartha.lifeos.auth.domain.User;
 import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
@@ -25,10 +29,19 @@ import tech.buildwithpartha.lifeos.common.mail.MailMessageKind;
 import tech.buildwithpartha.lifeos.common.mail.MailRecipient;
 import tech.buildwithpartha.lifeos.common.mail.MailTemplateVariables;
 import tech.buildwithpartha.lifeos.common.mail.TransactionalMailPort;
+import tech.buildwithpartha.lifeos.config.LifeOsEnvironmentProperties;
 
 /**
- * Service managing the verified account deletion lifecycle, credential re-authentication,
- * session revocation, and data purge scheduling (LOS-0518).
+ * Requests account deletion under the accepted ADR-012 state machine ({@code
+ * 31-PRIVACY-DATA-LIFECYCLE.md}: {@code ACTIVE -> DELETE_REQUESTED -> GRACE_PERIOD (30 days,
+ * cancellable) -> PURGE_IN_PROGRESS -> PURGED_LIVE}, LOS-0518).
+ *
+ * <p>Re-authenticates the caller, revokes every session and moves the account to {@link
+ * tech.buildwithpartha.lifeos.auth.domain.AccountStatus#PENDING_DELETION} immediately — {@code
+ * LoginService} will no longer authenticate it — but does not delete the user row. A single-use
+ * cancellation token travels in a security-alert email; {@link CancelAccountDeletionService}
+ * consumes it. {@code AccountDeletionPurgeJob} performs the actual purge once the grace period
+ * ({@link AccountDeletionGracePeriod#GRACE_PERIOD}) elapses uncancelled.
  */
 @Service
 public class AccountDeletionService {
@@ -39,40 +52,49 @@ public class AccountDeletionService {
   private final UserRepository userRepository;
   private final CredentialRepository credentialRepository;
   private final SessionRepository sessionRepository;
+  private final AccountDeletionGracePeriodRepository gracePeriodRepository;
   private final PasswordHasher passwordHasher;
+  private final SecureTokenGenerator tokenGenerator;
   private final BackgroundJobPort backgroundJobPort;
   private final TransactionalMailPort mailPort;
+  private final LifeOsEnvironmentProperties environmentProperties;
   private final Clock clock;
 
   public AccountDeletionService(
       UserRepository userRepository,
       CredentialRepository credentialRepository,
       SessionRepository sessionRepository,
+      AccountDeletionGracePeriodRepository gracePeriodRepository,
       PasswordHasher passwordHasher,
+      SecureTokenGenerator tokenGenerator,
       BackgroundJobPort backgroundJobPort,
       TransactionalMailPort mailPort,
+      LifeOsEnvironmentProperties environmentProperties,
       Clock clock) {
     this.userRepository = userRepository;
     this.credentialRepository = credentialRepository;
     this.sessionRepository = sessionRepository;
+    this.gracePeriodRepository = gracePeriodRepository;
     this.passwordHasher = passwordHasher;
+    this.tokenGenerator = tokenGenerator;
     this.backgroundJobPort = backgroundJobPort;
     this.mailPort = mailPort;
+    this.environmentProperties = environmentProperties;
     this.clock = clock;
   }
 
   /**
-   * Re-authenticates the user with their password, validates confirmation phrase, revokes all
-   * active sessions, enqueues an account deletion background job, sends a security alert email, and
-   * deletes the user record.
+   * Re-authenticates the user with their password, validates the confirmation phrase, revokes all
+   * active sessions, enters the 30-day grace period, and emails a single-use cancellation link.
    *
    * @param userId the user id
    * @param rawPassword the current account password
    * @param confirmationText confirmation phrase matching account email or display name
-   * @return canonical deletion instant
+   * @return the request and scheduled purge instants
    */
   @Transactional
-  public Instant deleteAccount(UUID userId, RawPassword rawPassword, String confirmationText) {
+  public AccountDeletionOutcome deleteAccount(
+      UUID userId, RawPassword rawPassword, String confirmationText) {
     User user =
         userRepository
             .findById(userId)
@@ -102,31 +124,51 @@ public class AccountDeletionService {
 
     Instant now = clock.instant();
 
-    // 1. Revoke all active sessions immediately
+    // 1. Revoke all active sessions immediately — the account becomes inaccessible for the
+    // duration of the grace period regardless of the eventual outcome.
     int revokedSessions = sessionRepository.revokeAllForUser(userId, now);
 
-    // 2. Send security alert email before deletion completes
+    // 2. Enter the grace period and mint a single-use cancellation token.
+    RawToken cancellationToken = tokenGenerator.generate();
+    AccountDeletionGracePeriod gracePeriod =
+        gracePeriodRepository.save(
+            AccountDeletionGracePeriod.request(
+                UUID.randomUUID(), userId, cancellationToken.hash(), now));
+
+    // 3. Move the account out of ACTIVE so LoginService stops authenticating it, without
+    // deleting the row: cancellation restores it exactly as it was.
+    userRepository.save(user.requestDeletion(now));
+
+    // 4. Security alert carrying the cancellation link and the grace-period deadline.
+    String cancelUrl =
+        environmentProperties.publicUrl() + "/cancel-deletion?token=" + cancellationToken.value();
     mailPort.enqueue(
         userId,
         MailMessageKind.SECURITY_ALERT,
         MailRecipient.of(user.email().raw()),
         MailTemplateVariables.of(
             Map.of(
-                "displayName", user.displayName(),
+                "displayName",
+                user.displayName(),
                 "eventDescription",
-                "Your LifeOS account has been deleted as requested. All active sessions have been"
-                    + " revoked.",
-                "occurredAt", DateTimeFormatter.ISO_INSTANT.format(now))));
+                "Your LifeOS account is scheduled for deletion in 30 days. All active sessions"
+                    + " have been revoked. If this wasn't you, use the link below to cancel"
+                    + " before then.",
+                "occurredAt",
+                DateTimeFormatter.ISO_INSTANT.format(now),
+                "cancelUrl",
+                cancelUrl)));
 
-    // 3. Enqueue background job for any downstream asynchronous purges
+    // 5. Audit-trail marker only — AccountDeletionPurgeJob's daily sweep performs the actual
+    // purge once the grace period elapses uncancelled, not this job.
     backgroundJobPort.enqueue(userId, BackgroundJobKind.ACCOUNT_DELETION, "{}");
 
-    // 4. Delete user record (database ON DELETE CASCADE purges all child records)
-    userRepository.deleteById(userId);
-
     AUDIT_LOGGER.info(
-        "event=account_deleted userId={} revokedSessions={}", userId, revokedSessions);
+        "event=account_deletion_requested userId={} revokedSessions={} scheduledPurgeAt={}",
+        userId,
+        revokedSessions,
+        gracePeriod.scheduledPurgeAt());
 
-    return now;
+    return new AccountDeletionOutcome(now, gracePeriod.scheduledPurgeAt());
   }
 }

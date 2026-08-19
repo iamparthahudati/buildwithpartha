@@ -143,3 +143,16 @@ CREATE TABLE IF NOT EXISTS export_files (
     created_at                 TIMESTAMP WITH TIME ZONE NOT NULL,
     updated_at                 TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+-- Added by the LOS-0518 grace-period follow-up alongside AccountDeletionGracePeriodEntity.
+CREATE TABLE IF NOT EXISTS account_deletion_requests (
+    id                       UUID                     NOT NULL PRIMARY KEY,
+    user_id                  UUID                     NOT NULL,
+    status                   VARCHAR(32)              NOT NULL,
+    cancellation_token_hash  TEXT                     NOT NULL,
+    requested_at             TIMESTAMP WITH TIME ZONE NOT NULL,
+    scheduled_purge_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    cancelled_at             TIMESTAMP WITH TIME ZONE,
+    purged_at                TIMESTAMP WITH TIME ZONE,
+    created_at               TIMESTAMP WITH TIME ZONE NOT NULL
+);

@@ -43,6 +43,7 @@ class SessionAuthenticationFilter extends OncePerRequestFilter {
           "/auth/login",
           "/auth/forgot-password",
           "/auth/reset-password",
+          "/auth/cancel-deletion",
           "/auth/logout",
           "/auth/logout-all");
 

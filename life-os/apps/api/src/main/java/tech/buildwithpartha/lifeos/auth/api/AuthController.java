@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import tech.buildwithpartha.lifeos.auth.application.CancelAccountDeletionService;
 import tech.buildwithpartha.lifeos.auth.application.EmailVerificationService;
 import tech.buildwithpartha.lifeos.auth.application.ForgotPasswordCommand;
 import tech.buildwithpartha.lifeos.auth.application.ForgotPasswordService;
@@ -52,6 +53,7 @@ public class AuthController {
   private final LogoutService logoutService;
   private final ForgotPasswordService forgotPasswordService;
   private final ResetPasswordService resetPasswordService;
+  private final CancelAccountDeletionService cancelAccountDeletionService;
   private final LifeOsEnvironmentProperties environmentProperties;
 
   public AuthController(
@@ -62,6 +64,7 @@ public class AuthController {
       LogoutService logoutService,
       ForgotPasswordService forgotPasswordService,
       ResetPasswordService resetPasswordService,
+      CancelAccountDeletionService cancelAccountDeletionService,
       LifeOsEnvironmentProperties environmentProperties) {
     this.signupService = signupService;
     this.emailVerificationService = emailVerificationService;
@@ -70,6 +73,7 @@ public class AuthController {
     this.logoutService = logoutService;
     this.forgotPasswordService = forgotPasswordService;
     this.resetPasswordService = resetPasswordService;
+    this.cancelAccountDeletionService = cancelAccountDeletionService;
     this.environmentProperties = environmentProperties;
   }
 
@@ -227,6 +231,23 @@ public class AuthController {
     resetPasswordService.reset(
         new ResetPasswordCommand(request.token(), RawPassword.of(request.newPassword())));
     return ResetPasswordResponse.passwordReset();
+  }
+
+  @Operation(
+      summary = "Cancel a pending account deletion",
+      description =
+          "Consumes a single-use cancellation token emailed when deletion was requested and"
+              + " restores the account before its 30-day grace period elapses.")
+  @SecurityRequirements
+  @ApiResponse(responseCode = "200", description = "The account was restored.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "409", ref = "#/components/responses/Conflict")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/cancel-deletion")
+  public CancelAccountDeletionResponse cancelDeletion(
+      @Valid @RequestBody CancelAccountDeletionRequest request) {
+    cancelAccountDeletionService.cancel(request.token());
+    return CancelAccountDeletionResponse.cancelled();
   }
 
   private static LogoutCommand logoutCommand(HttpServletRequest servletRequest) {

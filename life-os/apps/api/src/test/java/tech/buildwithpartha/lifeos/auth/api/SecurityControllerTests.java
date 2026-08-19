@@ -19,6 +19,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import tech.buildwithpartha.lifeos.auth.domain.AccountStatus;
 import tech.buildwithpartha.lifeos.auth.domain.Credential;
 import tech.buildwithpartha.lifeos.auth.domain.CredentialRepository;
 import tech.buildwithpartha.lifeos.auth.domain.EmailAddress;
@@ -124,8 +125,7 @@ class SecurityControllerTests {
 
     Credential updated = credentialRepository.findByUserId(userId).orElseThrow();
     assertThat(
-            passwordHasher.matches(
-                RawPassword.of("NewValidPassword456!"), updated.passwordHash()))
+            passwordHasher.matches(RawPassword.of("NewValidPassword456!"), updated.passwordHash()))
         .isTrue();
   }
 
@@ -155,9 +155,7 @@ class SecurityControllerTests {
   @Test
   void listsActiveSessions() throws Exception {
     mockMvc
-        .perform(
-            get("/auth/sessions")
-                .cookie(sessionCookie))
+        .perform(get("/auth/sessions").cookie(sessionCookie))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.sessions").isArray())
         .andExpect(jsonPath("$.sessions[0].isCurrent").value(true))
@@ -220,13 +218,11 @@ class SecurityControllerTests {
 
   @Test
   void rejectsUnauthenticatedRequests() throws Exception {
-    mockMvc
-        .perform(get("/auth/sessions"))
-        .andExpect(status().isUnauthorized());
+    mockMvc.perform(get("/auth/sessions")).andExpect(status().isUnauthorized());
   }
 
   @Test
-  void deleteAccount_validCredentialsAndConfirmation_deletesAccountAndClearsCookie()
+  void deleteAccount_validCredentialsAndConfirmation_entersGracePeriodAndClearsCookie()
       throws Exception {
     String payload =
         """
@@ -244,9 +240,19 @@ class SecurityControllerTests {
                 .cookie(sessionCookie)
                 .header(CSRF_HEADER_NAME, csrfToken.value()))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.status").value("DELETED"));
+        .andExpect(jsonPath("$.status").value("GRACE_PERIOD"))
+        .andExpect(jsonPath("$.scheduledPurgeAt").exists());
 
-    assertThat(userRepository.findById(userId)).isEmpty();
+    // The account record survives the grace period, but is no longer authenticatable.
+    assertThat(userRepository.findById(userId)).isPresent();
+    assertThat(userRepository.findById(userId).orElseThrow().accountStatus())
+        .isEqualTo(AccountStatus.PENDING_DELETION);
+    assertThat(sessionRepository.findActiveSessionsByUserId(userId, Instant.now())).isEmpty();
+
+    // The revoked session cookie no longer authenticates any request.
+    mockMvc
+        .perform(get("/auth/sessions").cookie(sessionCookie))
+        .andExpect(status().isUnauthorized());
   }
 
   @Test

@@ -24,10 +24,7 @@ export interface PrivacySettingsPanelProps {
   readonly onAccountDeleted?: () => void;
 }
 
-export function PrivacySettingsPanel({
-  profile,
-  onAccountDeleted,
-}: PrivacySettingsPanelProps) {
+export function PrivacySettingsPanel({ profile, onAccountDeleted }: PrivacySettingsPanelProps) {
   const {
     data: exportData,
     isLoading: isExportLoading,
@@ -42,6 +39,7 @@ export function PrivacySettingsPanel({
   const [deletePassword, setDeletePassword] = useState("");
   const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
   const [localDeleteError, setLocalDeleteError] = useState<string | null>(null);
+  const [scheduledPurgeAt, setScheduledPurgeAt] = useState<string | null>(null);
 
   const exports = exportData?.exports ?? [];
 
@@ -80,19 +78,24 @@ export function PrivacySettingsPanel({
         confirmationText: deleteConfirmationText,
       },
       {
-        onSuccess: () => {
-          setDeleteDialogOpen(false);
-          if (onAccountDeleted) {
-            onAccountDeleted();
-          } else {
-            window.location.href = "/life-os/login";
-          }
+        onSuccess: (response) => {
+          setScheduledPurgeAt(response.scheduledPurgeAt);
         },
         onError: (err) => {
-          setLocalDeleteError(err.message || "Failed to delete account. Please verify credentials.");
+          setLocalDeleteError(
+            err.message || "Failed to delete account. Please verify credentials.",
+          );
         },
       },
     );
+  };
+
+  const handleReturnToSignIn = () => {
+    if (onAccountDeleted) {
+      onAccountDeleted();
+    } else {
+      window.location.href = "/life-os/login";
+    }
   };
 
   const formatFileSize = (bytes: number | null): string => {
@@ -192,9 +195,7 @@ export function PrivacySettingsPanel({
                   </div>
 
                   <div className="lifeos-export-status">
-                    <Badge tone={getStatusBadgeTone(item.status)}>
-                      {item.status}
-                    </Badge>
+                    <Badge tone={getStatusBadgeTone(item.status)}>{item.status}</Badge>
 
                     {item.status === "READY" && (
                       <a
@@ -239,8 +240,9 @@ export function PrivacySettingsPanel({
             Delete account
           </Heading>
           <Text tone="secondary">
-            Permanently delete your LifeOS account and all associated personal records. This action
-            is irreversible and will immediately revoke all active sessions across all your devices.
+            Delete your LifeOS account and all associated personal records. Sessions on all your
+            devices are revoked immediately, and your data is permanently purged after a 30-day
+            grace period. You can cancel any time before then using the link we email you.
           </Text>
         </div>
 
@@ -267,89 +269,116 @@ export function PrivacySettingsPanel({
             setDeletePassword("");
             setDeleteConfirmationText("");
             setLocalDeleteError(null);
+            setScheduledPurgeAt(null);
           }
         }}
-        title="Permanently delete account?"
-        description={`This will permanently purge your account and all associated projects, tasks, notes, habits, and preferences. To proceed, please enter your display name ("${profile.displayName}") and current password.`}
+        title={scheduledPurgeAt ? "Deletion scheduled" : "Delete account?"}
+        {...(scheduledPurgeAt
+          ? {}
+          : {
+              description: `Your account enters a 30-day cancellable grace period; it is not deleted immediately. To proceed, please enter your display name ("${profile.displayName}") and current password.`,
+            })}
         size="sm"
       >
-        <form onSubmit={handleDeleteSubmit} className="lifeos-delete-form" data-testid="delete-account-form">
-          {localDeleteError && (
-            <Alert tone="danger" heading="Account deletion error">
-              {localDeleteError}
-            </Alert>
-          )}
+        {scheduledPurgeAt ? (
+          <div className="lifeos-delete-scheduled" data-testid="delete-scheduled-confirmation">
+            <Text>
+              Your account will be permanently deleted on{" "}
+              <strong>{new Date(scheduledPurgeAt).toLocaleString()}</strong>. All sessions have been
+              revoked. If this wasn&rsquo;t you, or you change your mind, use the cancellation link
+              we&rsquo;ve emailed you before then.
+            </Text>
 
-          <FormFieldGroup>
-            <FormField
-              name="confirmationText"
-              label={`Type your display name ("${profile.displayName}") to confirm`}
-              required
-            >
-              {(field) => (
-                <TextInput
-                  {...field}
-                  value={deleteConfirmationText}
-                  onChange={(e) => {
-                    setDeleteConfirmationText(e.target.value);
-                    setLocalDeleteError(null);
-                  }}
-                  placeholder={profile.displayName}
-                  autoComplete="off"
-                  data-testid="delete-confirmation-input"
-                />
-              )}
-            </FormField>
-
-            <FormField
-              name="currentPassword"
-              label="Current account password"
-              required
-            >
-              {(field) => (
-                <PasswordInput
-                  {...field}
-                  value={deletePassword}
-                  onChange={(e) => {
-                    setDeletePassword(e.target.value);
-                    setLocalDeleteError(null);
-                  }}
-                  placeholder="Enter current password"
-                  autoComplete="current-password"
-                  data-testid="delete-password-input"
-                />
-              )}
-            </FormField>
-          </FormFieldGroup>
-
-          <div className="lifeos-settings-actions">
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={deleteAccountMutation.isPending}
-              onClick={() => {
-                setDeleteDialogOpen(false);
-                setDeletePassword("");
-                setDeleteConfirmationText("");
-                setLocalDeleteError(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="danger"
-              loading={deleteAccountMutation.isPending}
-              disabled={
-                deleteAccountMutation.isPending ||
-                deleteConfirmationText.trim().toLowerCase() !== profile.displayName.trim().toLowerCase() ||
-                !deletePassword
-              }
-            >
-              Yes, permanently delete
-            </Button>
+            <div className="lifeos-settings-actions">
+              <Button
+                variant="primary"
+                onClick={handleReturnToSignIn}
+                data-testid="delete-scheduled-continue"
+              >
+                Continue to sign in
+              </Button>
+            </div>
           </div>
-        </form>
+        ) : (
+          <form
+            onSubmit={handleDeleteSubmit}
+            className="lifeos-delete-form"
+            data-testid="delete-account-form"
+          >
+            {localDeleteError && (
+              <Alert tone="danger" heading="Account deletion error">
+                {localDeleteError}
+              </Alert>
+            )}
+
+            <FormFieldGroup>
+              <FormField
+                name="confirmationText"
+                label={`Type your display name ("${profile.displayName}") to confirm`}
+                required
+              >
+                {(field) => (
+                  <TextInput
+                    {...field}
+                    value={deleteConfirmationText}
+                    onChange={(e) => {
+                      setDeleteConfirmationText(e.target.value);
+                      setLocalDeleteError(null);
+                    }}
+                    placeholder={profile.displayName}
+                    autoComplete="off"
+                    data-testid="delete-confirmation-input"
+                  />
+                )}
+              </FormField>
+
+              <FormField name="currentPassword" label="Current account password" required>
+                {(field) => (
+                  <PasswordInput
+                    {...field}
+                    value={deletePassword}
+                    onChange={(e) => {
+                      setDeletePassword(e.target.value);
+                      setLocalDeleteError(null);
+                    }}
+                    placeholder="Enter current password"
+                    autoComplete="current-password"
+                    data-testid="delete-password-input"
+                  />
+                )}
+              </FormField>
+            </FormFieldGroup>
+
+            <div className="lifeos-settings-actions">
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={deleteAccountMutation.isPending}
+                onClick={() => {
+                  setDeleteDialogOpen(false);
+                  setDeletePassword("");
+                  setDeleteConfirmationText("");
+                  setLocalDeleteError(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="danger"
+                loading={deleteAccountMutation.isPending}
+                disabled={
+                  deleteAccountMutation.isPending ||
+                  deleteConfirmationText.trim().toLowerCase() !==
+                    profile.displayName.trim().toLowerCase() ||
+                  !deletePassword
+                }
+              >
+                Yes, schedule deletion
+              </Button>
+            </div>
+          </form>
+        )}
       </Dialog>
     </div>
   );

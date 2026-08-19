@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import jakarta.servlet.http.HttpServletResponse;
+import tech.buildwithpartha.lifeos.auth.application.AccountDeletionOutcome;
 import tech.buildwithpartha.lifeos.auth.application.AccountDeletionService;
 import tech.buildwithpartha.lifeos.auth.application.ChangePasswordCommand;
 import tech.buildwithpartha.lifeos.auth.application.ChangePasswordService;
@@ -87,9 +87,7 @@ public class SecurityController {
     return SessionListResponse.of(sessions.stream().map(SessionResponse::from).toList());
   }
 
-  @Operation(
-      summary = "Revoke session",
-      description = "Revokes an active session by its ID.")
+  @Operation(summary = "Revoke session", description = "Revokes an active session by its ID.")
   @ApiResponse(responseCode = "200", description = "Session revoked.")
   @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
   @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
@@ -117,11 +115,12 @@ public class SecurityController {
   }
 
   @Operation(
-      summary = "Delete account",
+      summary = "Request account deletion",
       description =
-          "Permanently deletes the account, revokes all active sessions, cascades removal of all"
-              + " associated personal data, and clears the session cookie.")
-  @ApiResponse(responseCode = "200", description = "Account deleted successfully.")
+          "Re-authenticates the account, revokes all active sessions, and starts a cancellable"
+              + " 30-day grace period before the account and its data are purged. A cancellation"
+              + " link is emailed; the account is not deleted by this call.")
+  @ApiResponse(responseCode = "200", description = "The account entered its deletion grace period.")
   @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
   @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
   @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
@@ -131,7 +130,7 @@ public class SecurityController {
       @AuthenticationPrincipal UUID userId,
       @Valid @RequestBody AccountDeletionRequest request,
       HttpServletResponse response) {
-    Instant deletedAt =
+    AccountDeletionOutcome outcome =
         accountDeletionService.deleteAccount(
             userId, RawPassword.of(request.currentPassword()), request.confirmationText());
 
@@ -144,9 +143,11 @@ public class SecurityController {
 
     return ResponseEntity.ok(
         new AccountDeletionResponse(
-            "DELETED",
-            "Your account has been deleted and all sessions have been revoked.",
-            deletedAt));
+            "GRACE_PERIOD",
+            "Your account is scheduled for deletion in 30 days and all sessions have been"
+                + " revoked. Check your email to cancel before then.",
+            outcome.requestedAt(),
+            outcome.scheduledPurgeAt()));
   }
 
   private static Optional<String> sessionCookieValue(HttpServletRequest servletRequest) {

@@ -126,7 +126,7 @@ describe("PrivacySettingsPanel", () => {
     });
   });
 
-  it("opens deletion dialog and validates matching display name and password", async () => {
+  it("opens deletion dialog, validates inputs, and shows the grace-period confirmation", async () => {
     const user = userEvent.setup();
     const onAccountDeleted = vi.fn();
 
@@ -142,11 +142,11 @@ describe("PrivacySettingsPanel", () => {
 
     await user.click(screen.getByTestId("open-delete-account-button"));
 
-    expect(screen.getByText("Permanently delete account?")).toBeInTheDocument();
+    expect(screen.getByText("Delete account?")).toBeInTheDocument();
 
     const nameInput = screen.getByTestId("delete-confirmation-input");
     const passwordInput = screen.getByTestId("delete-password-input");
-    const confirmButton = screen.getByRole("button", { name: "Yes, permanently delete" });
+    const confirmButton = screen.getByRole("button", { name: "Yes, schedule deletion" });
 
     expect(confirmButton).toBeDisabled();
 
@@ -157,13 +157,20 @@ describe("PrivacySettingsPanel", () => {
 
     vi.mocked(fetch).mockResolvedValueOnce(
       jsonResponse(200, {
-        status: "DELETED",
-        message: "Account deleted",
+        status: "GRACE_PERIOD",
+        message: "Your account is scheduled for deletion in 30 days.",
         requestedAt: "2026-08-19T12:00:00Z",
+        scheduledPurgeAt: "2026-09-18T12:00:00Z",
       }),
     );
 
     await user.click(confirmButton);
+
+    // Deletion isn't final yet: the panel shows the grace-period outcome, not an immediate redirect.
+    expect(await screen.findByTestId("delete-scheduled-confirmation")).toBeInTheDocument();
+    expect(onAccountDeleted).not.toHaveBeenCalled();
+
+    await user.click(screen.getByTestId("delete-scheduled-continue"));
 
     await waitFor(() => {
       expect(onAccountDeleted).toHaveBeenCalledTimes(1);
@@ -185,7 +192,7 @@ describe("PrivacySettingsPanel", () => {
 
     const nameInput = screen.getByTestId("delete-confirmation-input");
     const passwordInput = screen.getByTestId("delete-password-input");
-    const confirmButton = screen.getByRole("button", { name: "Yes, permanently delete" });
+    const confirmButton = screen.getByRole("button", { name: "Yes, schedule deletion" });
 
     await user.type(nameInput, "Partha Hudati");
     await user.type(passwordInput, "WrongPassword123!");

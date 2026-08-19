@@ -64,7 +64,8 @@ public class ApiSecurityConfiguration {
                         "/auth/logout",
                         "/auth/logout-all",
                         "/auth/forgot-password",
-                        "/auth/reset-password")
+                        "/auth/reset-password",
+                        "/auth/cancel-deletion")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

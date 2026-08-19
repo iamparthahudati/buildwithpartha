@@ -3,6 +3,8 @@ import { apiRequest } from "@lib/apiClient";
 import type {
   AccountDeletionRequest,
   AccountDeletionResponse,
+  CancelAccountDeletionRequest,
+  CancelAccountDeletionResponse,
   ExportItem,
   ExportListResponse,
 } from "../model/privacy";
@@ -23,6 +25,15 @@ export function deleteAccountApi(
   request: AccountDeletionRequest,
 ): Promise<AccountDeletionResponse> {
   return apiRequest<AccountDeletionResponse>("/auth/account/delete", {
+    method: "POST",
+    body: request,
+  });
+}
+
+export function cancelAccountDeletionApi(
+  request: CancelAccountDeletionRequest,
+): Promise<CancelAccountDeletionResponse> {
+  return apiRequest<CancelAccountDeletionResponse>("/auth/cancel-deletion", {
     method: "POST",
     body: request,
   });
