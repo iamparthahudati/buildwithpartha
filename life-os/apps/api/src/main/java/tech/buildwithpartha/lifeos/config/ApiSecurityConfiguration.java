@@ -59,6 +59,7 @@ public class ApiSecurityConfiguration {
                         HttpMethod.POST,
                         "/auth/signup",
                         "/auth/verify-email",
+                        "/auth/resend-verification",
                         "/auth/login",
                         "/auth/logout",
                         "/auth/logout-all",

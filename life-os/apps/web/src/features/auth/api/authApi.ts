@@ -37,6 +37,23 @@ export function verifyEmail(request: VerifyEmailRequest): Promise<VerifyEmailRes
   return apiRequest<VerifyEmailResponse>("/auth/verify-email", { method: "POST", body: request });
 }
 
+export interface ResendVerificationRequest {
+  readonly email: string;
+}
+
+export interface ResendVerificationResponse {
+  readonly status: "PENDING_VERIFICATION";
+}
+
+export function resendVerification(
+  request: ResendVerificationRequest,
+): Promise<ResendVerificationResponse> {
+  return apiRequest<ResendVerificationResponse>("/auth/resend-verification", {
+    method: "POST",
+    body: request,
+  });
+}
+
 export interface LoginRequest {
   readonly email: string;
   readonly password: string;

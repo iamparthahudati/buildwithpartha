@@ -79,6 +79,19 @@ class OpenApiArtifactTests {
                 jsonPath("$.paths['/auth/verify-email'].post.responses['409'].$ref")
                     .value("#/components/responses/Conflict"))
             .andExpect(jsonPath("$.components.responses.Conflict").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/resend-verification'].post.operationId")
+                    .value("resendVerification"))
+            .andExpect(jsonPath("$.paths['/auth/resend-verification'].post.security").isEmpty())
+            .andExpect(
+                jsonPath("$.paths['/auth/resend-verification'].post.responses['202'].content")
+                    .exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/resend-verification'].post.responses['400'].$ref")
+                    .value("#/components/responses/BadRequest"))
+            .andExpect(
+                jsonPath("$.paths['/auth/resend-verification'].post.responses['429'].$ref")
+                    .value("#/components/responses/TooManyRequests"))
             .andExpect(jsonPath("$.paths['/auth/login'].post.operationId").value("login"))
             .andExpect(jsonPath("$.paths['/auth/login'].post.security").isEmpty())
             .andExpect(jsonPath("$.paths['/auth/login'].post.responses['200'].content").exists())

@@ -180,9 +180,11 @@ Phase 2 — Identity and application shell.
 
 - LOS-0510 — Login form and screen added: `LoginScreen` composes `FormFieldGroup`/`FormErrorSummary`/`FormField` (LOS-0401), `TextInput`/`PasswordInput` (LOS-0314/0315), `Button` (LOS-0306), `Alert` (LOS-0408), and `Link` (LOS-0308). Wires up LOS-0508's `useLogin` and `resolveReturnTarget` to `POST /auth/login` (LOS-0505), redirecting safely to a validated `returnTo` target or falling back to `/life-os/app/today` (closing open-redirect vulnerabilities). Implements generic failure copy for `401 INVALID_CREDENTIALS` (`"Email or password is incorrect."`) to prevent account enumeration, rate limiting (`429 RATE_LIMITED`), unexpected server failure fallback, pending submit deduplication, inline+summary error handling with callback-ref focus management, and links to `/life-os/forgot-password` and `/life-os/signup`.
 
+- LOS-0511 — Verification screens added: Implemented the verification lifecycle with all required states (`sent`, `resend cooldown`, `verifying`, `verified`, `invalid`, `expired`, `already-used`, `request`). Backend added `POST /life-os/api/v1/auth/resend-verification` (`ResendVerificationService`, `ResendVerificationRateLimiter`, 5 attempts / 15 min per IP/email) with transactional verification token generation, outbox email dispatch, and unconditional `202 ACCEPTED` generic responses for anti-enumeration. Frontend added `resendVerification` API client, `useVerifyEmail` and `useResendVerification` mutation hooks, and `VerifyEmailScreen` (+ `verify-email-screen.css`). Features auto-verification on mount when token is present, 60-second cooldown timer for resend actions, accessible alert messages with focus management, and full WCAG 2.2 AA compliance across all states.
+
 ## Next recommended ticket
 
-LOS-0511 (`docs/backlog/EPIC-05-IDENTITY.md`) — build verification screens (`Sent`, `resend cooldown`, `verifying`, `verified`, `invalid/expired` and `already-used` states).
+LOS-0512 (`docs/backlog/EPIC-05-IDENTITY.md`) — build forgot/reset password screens.
 
 ## Known decisions requiring implementation-time values
 

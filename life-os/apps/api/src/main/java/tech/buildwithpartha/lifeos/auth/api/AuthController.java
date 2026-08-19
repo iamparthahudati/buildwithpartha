@@ -25,6 +25,8 @@ import tech.buildwithpartha.lifeos.auth.application.LoginResult;
 import tech.buildwithpartha.lifeos.auth.application.LoginService;
 import tech.buildwithpartha.lifeos.auth.application.LogoutCommand;
 import tech.buildwithpartha.lifeos.auth.application.LogoutService;
+import tech.buildwithpartha.lifeos.auth.application.ResendVerificationCommand;
+import tech.buildwithpartha.lifeos.auth.application.ResendVerificationService;
 import tech.buildwithpartha.lifeos.auth.application.ResetPasswordCommand;
 import tech.buildwithpartha.lifeos.auth.application.ResetPasswordService;
 import tech.buildwithpartha.lifeos.auth.application.SignupCommand;
@@ -45,6 +47,7 @@ public class AuthController {
 
   private final SignupService signupService;
   private final EmailVerificationService emailVerificationService;
+  private final ResendVerificationService resendVerificationService;
   private final LoginService loginService;
   private final LogoutService logoutService;
   private final ForgotPasswordService forgotPasswordService;
@@ -54,6 +57,7 @@ public class AuthController {
   public AuthController(
       SignupService signupService,
       EmailVerificationService emailVerificationService,
+      ResendVerificationService resendVerificationService,
       LoginService loginService,
       LogoutService logoutService,
       ForgotPasswordService forgotPasswordService,
@@ -61,6 +65,7 @@ public class AuthController {
       LifeOsEnvironmentProperties environmentProperties) {
     this.signupService = signupService;
     this.emailVerificationService = emailVerificationService;
+    this.resendVerificationService = resendVerificationService;
     this.loginService = loginService;
     this.logoutService = logoutService;
     this.forgotPasswordService = forgotPasswordService;
@@ -107,6 +112,25 @@ public class AuthController {
   public VerifyEmailResponse verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
     emailVerificationService.verify(new VerifyEmailCommand(request.token()));
     return VerifyEmailResponse.verified();
+  }
+
+  @Operation(
+      summary = "Resend a verification email",
+      description =
+          "Enqueues a verification email when the address belongs to an unverified account."
+              + " The response is the same whether or not it does.")
+  @SecurityRequirements
+  @ApiResponse(responseCode = "202", description = "The request was accepted.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "429", ref = "#/components/responses/TooManyRequests")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/resend-verification")
+  @ResponseStatus(HttpStatus.ACCEPTED)
+  public ResendVerificationResponse resendVerification(
+      @Valid @RequestBody ResendVerificationRequest request, HttpServletRequest servletRequest) {
+    resendVerificationService.resend(
+        new ResendVerificationCommand(request.email(), servletRequest.getRemoteAddr()));
+    return ResendVerificationResponse.pendingVerification();
   }
 
   @Operation(
