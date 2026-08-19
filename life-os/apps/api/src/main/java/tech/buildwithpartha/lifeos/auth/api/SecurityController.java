@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -19,13 +20,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.HttpServletResponse;
+import tech.buildwithpartha.lifeos.auth.application.AccountDeletionService;
 import tech.buildwithpartha.lifeos.auth.application.ChangePasswordCommand;
 import tech.buildwithpartha.lifeos.auth.application.ChangePasswordService;
 import tech.buildwithpartha.lifeos.auth.application.SessionDto;
 import tech.buildwithpartha.lifeos.auth.application.SessionManagementService;
 import tech.buildwithpartha.lifeos.auth.domain.RawPassword;
 
-/** Authenticated security and session management endpoints (LOS-0516). */
+/** Authenticated security and session management endpoints (LOS-0516, LOS-0518). */
 @RestController
 @RequestMapping("/auth")
 @SecurityRequirement(name = "sessionCookie")
@@ -35,12 +38,15 @@ public class SecurityController {
 
   private final ChangePasswordService changePasswordService;
   private final SessionManagementService sessionManagementService;
+  private final AccountDeletionService accountDeletionService;
 
   public SecurityController(
       ChangePasswordService changePasswordService,
-      SessionManagementService sessionManagementService) {
+      SessionManagementService sessionManagementService,
+      AccountDeletionService accountDeletionService) {
     this.changePasswordService = changePasswordService;
     this.sessionManagementService = sessionManagementService;
+    this.accountDeletionService = accountDeletionService;
   }
 
   @Operation(
@@ -108,6 +114,39 @@ public class SecurityController {
     int count =
         sessionManagementService.revokeAllOtherSessions(userId, sessionCookieValue(servletRequest));
     return RevokeAllOtherSessionsResponse.of(count);
+  }
+
+  @Operation(
+      summary = "Delete account",
+      description =
+          "Permanently deletes the account, revokes all active sessions, cascades removal of all"
+              + " associated personal data, and clears the session cookie.")
+  @ApiResponse(responseCode = "200", description = "Account deleted successfully.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "403", ref = "#/components/responses/Forbidden")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/account/delete")
+  public ResponseEntity<AccountDeletionResponse> deleteAccount(
+      @AuthenticationPrincipal UUID userId,
+      @Valid @RequestBody AccountDeletionRequest request,
+      HttpServletResponse response) {
+    Instant deletedAt =
+        accountDeletionService.deleteAccount(
+            userId, RawPassword.of(request.currentPassword()), request.confirmationText());
+
+    Cookie sessionCookie = new Cookie(SESSION_COOKIE_NAME, "");
+    sessionCookie.setPath("/");
+    sessionCookie.setMaxAge(0);
+    sessionCookie.setHttpOnly(true);
+    sessionCookie.setSecure(true);
+    response.addCookie(sessionCookie);
+
+    return ResponseEntity.ok(
+        new AccountDeletionResponse(
+            "DELETED",
+            "Your account has been deleted and all sessions have been revoked.",
+            deletedAt));
   }
 
   private static Optional<String> sessionCookieValue(HttpServletRequest servletRequest) {

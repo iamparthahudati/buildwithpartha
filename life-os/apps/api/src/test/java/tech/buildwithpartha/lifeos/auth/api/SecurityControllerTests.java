@@ -224,4 +224,51 @@ class SecurityControllerTests {
         .perform(get("/auth/sessions"))
         .andExpect(status().isUnauthorized());
   }
+
+  @Test
+  void deleteAccount_validCredentialsAndConfirmation_deletesAccountAndClearsCookie()
+      throws Exception {
+    String payload =
+        """
+        {
+          "currentPassword": "OldValidPassword123!",
+          "confirmationText": "Security User"
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/auth/account/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload)
+                .cookie(sessionCookie)
+                .header(CSRF_HEADER_NAME, csrfToken.value()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("DELETED"));
+
+    assertThat(userRepository.findById(userId)).isEmpty();
+  }
+
+  @Test
+  void deleteAccount_invalidPassword_returnsBadRequest() throws Exception {
+    String payload =
+        """
+        {
+          "currentPassword": "WrongPassword123!",
+          "confirmationText": "Security User"
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/auth/account/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload)
+                .cookie(sessionCookie)
+                .header(CSRF_HEADER_NAME, csrfToken.value()))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("currentPassword"))
+        .andExpect(jsonPath("$.errors[0].code").value("INVALID_CURRENT_PASSWORD"));
+  }
 }

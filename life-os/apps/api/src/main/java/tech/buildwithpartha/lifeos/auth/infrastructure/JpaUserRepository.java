@@ -36,6 +36,11 @@ class JpaUserRepository implements UserRepository {
     return jpaRepository.findByEmailNormalized(emailNormalized).map(JpaUserRepository::toDomain);
   }
 
+  @Override
+  public void deleteById(UUID id) {
+    jpaRepository.deleteById(id);
+  }
+
   private static UserEntity toEntity(User user) {
     return new UserEntity(
         user.id(),

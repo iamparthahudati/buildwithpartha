@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-0518 — Implemented account deletion lifecycle (password re-authentication, confirmation phrase verification, immediate session revocation across all devices, security notice email, `ACCOUNT_DELETION` background job dispatch, database cascade removal, and `POST /auth/account/delete` endpoint with session cookie clearance).
 - LOS-0517 — Implemented data export request lifecycle (asynchronous packaging via `ExportArchiveBuilder`, quota enforcement via `ExportFilePort`, cross-domain `UserDataExportContributor` SPI in `auth` and `user`, private download token issuance and authenticated streaming endpoint `GET /auth/export/download`, security audit logging, and `data-export.schema.json`).
 - LOS-1405 — Implemented private generated-file lifecycle framework (V6 schema migration for `public.export_files`, `ExportFile` domain aggregate, `ExportFilePort` in `common.export`, `ExportFileService` quota and token management, `ExportDownloadService` authenticated streaming, `LocalExportFileStorage` private storage path, and daily R1 retention cleanup).
 - LOS-1403 — Implemented persistent background job framework (V5 schema migration for `public.background_jobs`, `BackgroundJob` domain aggregate with state machine and automatic payload erasure on terminal state, `BackgroundJobPort` transactional enqueue port in `common.job`, `BackgroundJobWorker` scheduled poller/runner with exponential backoff and dead-lettering, `JobHandlerRegistry` strategy router, and daily R1 retention cleanup).

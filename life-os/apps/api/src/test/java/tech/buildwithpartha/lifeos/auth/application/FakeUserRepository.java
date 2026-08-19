@@ -45,6 +45,11 @@ final class FakeUserRepository implements UserRepository {
     return Optional.ofNullable(latest);
   }
 
+  @Override
+  public void deleteById(UUID id) {
+    saved.removeIf(user -> user.id().equals(id));
+  }
+
   List<User> all() {
     return List.copyOf(saved);
   }
