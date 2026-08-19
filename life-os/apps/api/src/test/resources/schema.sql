@@ -108,3 +108,21 @@ CREATE TABLE IF NOT EXISTS user_preferences (
     updated_at                  TIMESTAMP WITH TIME ZONE NOT NULL,
     version                     BIGINT                   NOT NULL
 );
+
+-- Added by LOS-1403 alongside BackgroundJobEntity.
+CREATE TABLE IF NOT EXISTS background_jobs (
+    id                  UUID                     NOT NULL PRIMARY KEY,
+    user_id             UUID,
+    job_kind            VARCHAR(64)              NOT NULL,
+    payload             TEXT                     NOT NULL,
+    status              VARCHAR(32)              NOT NULL,
+    attempt_count       INTEGER                  NOT NULL,
+    next_attempt_at     TIMESTAMP WITH TIME ZONE NOT NULL,
+    last_attempt_at     TIMESTAMP WITH TIME ZONE,
+    last_error_class    VARCHAR(512),
+    started_at          TIMESTAMP WITH TIME ZONE,
+    completed_at        TIMESTAMP WITH TIME ZONE,
+    dead_lettered_at    TIMESTAMP WITH TIME ZONE,
+    created_at          TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at          TIMESTAMP WITH TIME ZONE NOT NULL
+);

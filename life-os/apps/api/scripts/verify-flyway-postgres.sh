@@ -12,7 +12,9 @@ test_postgres_app_password="lifeos_flyway_test_app_only"
 test_postgres_root=$(mktemp -d "${TMPDIR:-/tmp}/lifeos-flyway-test.XXXXXX")
 test_postgres_started=0
 
-if [ -n "${JAVA_HOME:-}" ] && [ -x "$JAVA_HOME/bin/java" ]; then
+if command -v /usr/libexec/java_home >/dev/null 2>&1 && /usr/libexec/java_home -v 21 >/dev/null 2>&1; then
+  test_java_command="$(/usr/libexec/java_home -v 21)/bin/java"
+elif [ -n "${JAVA_HOME:-}" ] && [ -x "$JAVA_HOME/bin/java" ]; then
   test_java_command="$JAVA_HOME/bin/java"
 else
   test_java_command="java"
@@ -142,8 +144,8 @@ if [ "$test_extension_count" != "1" ]; then
   exit 1
 fi
 
-if [ "$test_product_table_count" != "7" ]; then
-  echo "Expected exactly 7 identity+outbox product tables after V2+V3 migration; found $test_product_table_count." >&2
+if [ "$test_product_table_count" != "9" ]; then
+  echo "Expected exactly 9 product tables after V2-V5 migrations; found $test_product_table_count." >&2
   exit 1
 fi
 
