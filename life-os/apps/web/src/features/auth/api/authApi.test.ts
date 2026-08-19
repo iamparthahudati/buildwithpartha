@@ -2,7 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { resetApiClientConfiguration } from "@lib/apiClient";
 
-import { login, logout, logoutAll, resendVerification, signup, verifyEmail } from "./authApi";
+import {
+  forgotPassword,
+  login,
+  logout,
+  logoutAll,
+  resendVerification,
+  resetPassword,
+  signup,
+  verifyEmail,
+} from "./authApi";
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -104,5 +113,35 @@ describe("authApi", () => {
 
     const [url] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
     expect(url).toBe("/life-os/api/v1/auth/logout-all");
+  });
+
+  it("posts to /auth/forgot-password with the email", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(jsonResponse(202, { status: "REQUESTED" }));
+
+    const response = await forgotPassword({ email: "person@example.test" });
+
+    expect(response).toEqual({ status: "REQUESTED" });
+    const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    expect(url).toBe("/life-os/api/v1/auth/forgot-password");
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(init.body as string)).toEqual({ email: "person@example.test" });
+  });
+
+  it("posts to /auth/reset-password with token and new password", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(jsonResponse(200, { status: "PASSWORD_RESET" }));
+
+    const response = await resetPassword({
+      token: "raw-reset-token",
+      newPassword: "new-secret-password-123",
+    });
+
+    expect(response).toEqual({ status: "PASSWORD_RESET" });
+    const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    expect(url).toBe("/life-os/api/v1/auth/reset-password");
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(init.body as string)).toEqual({
+      token: "raw-reset-token",
+      newPassword: "new-secret-password-123",
+    });
   });
 });

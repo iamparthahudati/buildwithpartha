@@ -93,3 +93,34 @@ export function logout(): Promise<LogoutResponse> {
 export function logoutAll(): Promise<LogoutResponse> {
   return apiRequest<LogoutResponse>("/auth/logout-all", { method: "POST" });
 }
+
+export interface ForgotPasswordRequest {
+  readonly email: string;
+}
+
+export interface ForgotPasswordResponse {
+  readonly status: "REQUESTED";
+}
+
+export function forgotPassword(request: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
+  return apiRequest<ForgotPasswordResponse>("/auth/forgot-password", {
+    method: "POST",
+    body: request,
+  });
+}
+
+export interface ResetPasswordRequest {
+  readonly token: string;
+  readonly newPassword: string;
+}
+
+export interface ResetPasswordResponse {
+  readonly status: "PASSWORD_RESET";
+}
+
+export function resetPassword(request: ResetPasswordRequest): Promise<ResetPasswordResponse> {
+  return apiRequest<ResetPasswordResponse>("/auth/reset-password", {
+    method: "POST",
+    body: request,
+  });
+}
