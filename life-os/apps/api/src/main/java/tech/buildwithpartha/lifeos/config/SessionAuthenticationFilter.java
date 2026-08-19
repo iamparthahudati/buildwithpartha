@@ -10,62 +10,107 @@ import java.time.Clock;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tech.buildwithpartha.lifeos.auth.domain.SecureTokenGenerator;
 import tech.buildwithpartha.lifeos.auth.domain.Session;
 import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
+import tech.buildwithpartha.lifeos.common.error.ApiProblem;
+import tech.buildwithpartha.lifeos.common.error.ErrorCode;
+import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
+import tools.jackson.databind.ObjectMapper;
 
 /**
- * The counterpart {@code auth.application.LoginService} (LOS-0505) needs to make the session it
- * issues mean anything: reads the {@code lifeos_session} cookie, and — only when it names an active
- * {@link Session} — authenticates the request with the session's {@code userId} as the principal,
- * matching {@code 06-SECURITY.md}'s "Repositories/services require authenticated userId;
- * controllers do not accept a user ID for ownership" (a later controller reads it via
- * {@code @AuthenticationPrincipal UUID}, never a request parameter).
+ * Reads the {@code lifeos_session} cookie and authenticates active sessions (LOS-0505, LOS-0508).
  *
- * <p>Registered with {@code HttpSecurity.addFilterBefore(..., AuthorizationFilter.class)} in {@link
- * ApiSecurityConfiguration} rather than as a bare {@code @Component}: it must run inside Spring
- * Security's own filter chain, after the context is loaded but before the authorization decision,
- * or a plain servlet-container-ordered filter could have its {@link SecurityContextHolder} write
- * silently overwritten by Security's own context-loading step.
- *
- * <p>Deliberately does nothing when a cookie is missing, unknown, expired, or revoked — it leaves
- * the request unauthenticated rather than rejecting it itself, so the existing {@code
- * authenticationEntryPoint} in {@link ApiSecurityConfiguration} is what actually produces the
- * generic 401 for a route that turns out to require authentication.
+ * <p>For mutating requests on authenticated routes, verifies the {@code X-CSRF-TOKEN} header
+ * matches the session's CSRF secret before proceeding (LOS-0513, 05-API-CONVENTIONS.md).
  */
 class SessionAuthenticationFilter extends OncePerRequestFilter {
 
   static final String SESSION_COOKIE_NAME = "lifeos_session";
+  private static final String CSRF_HEADER_NAME = "X-CSRF-TOKEN";
+  private static final Set<String> MUTATING_METHODS = Set.of("POST", "PUT", "PATCH", "DELETE");
+  private static final Set<String> UNPROTECTED_AUTH_PATHS =
+      Set.of(
+          "/auth/signup",
+          "/auth/verify-email",
+          "/auth/resend-verification",
+          "/auth/login",
+          "/auth/forgot-password",
+          "/auth/reset-password",
+          "/auth/logout",
+          "/auth/logout-all");
 
   private final SessionRepository sessionRepository;
   private final SecureTokenGenerator tokenGenerator;
   private final Clock clock;
+  private final ApiProblemFactory problemFactory;
+  private final ObjectMapper objectMapper;
 
   SessionAuthenticationFilter(
-      SessionRepository sessionRepository, SecureTokenGenerator tokenGenerator, Clock clock) {
+      SessionRepository sessionRepository,
+      SecureTokenGenerator tokenGenerator,
+      Clock clock,
+      ApiProblemFactory problemFactory,
+      ObjectMapper objectMapper) {
     this.sessionRepository = sessionRepository;
     this.tokenGenerator = tokenGenerator;
     this.clock = clock;
+    this.problemFactory = problemFactory;
+    this.objectMapper = objectMapper;
   }
 
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    sessionCookieValue(request)
-        .map(tokenGenerator::hash)
-        .flatMap(sessionRepository::findByTokenHash)
-        .filter(session -> session.isActive(clock.instant()))
-        .ifPresent(
-            session ->
-                SecurityContextHolder.getContext()
-                    .setAuthentication(
-                        new UsernamePasswordAuthenticationToken(
-                            session.userId(), null, List.of())));
+    Optional<Session> activeSession =
+        sessionCookieValue(request)
+            .map(tokenGenerator::hash)
+            .flatMap(sessionRepository::findByTokenHash)
+            .filter(session -> session.isActive(clock.instant()));
+
+    if (activeSession.isPresent()) {
+      Session session = activeSession.get();
+
+      if (requiresCsrfValidation(request)) {
+        String csrfHeader = request.getHeader(CSRF_HEADER_NAME);
+        boolean matches =
+            csrfHeader != null
+                && !csrfHeader.isBlank()
+                && session.csrfSecretHash().equals(tokenGenerator.hash(csrfHeader));
+
+        if (!matches) {
+          writeProblem(
+              request,
+              response,
+              HttpStatus.FORBIDDEN,
+              StandardErrorCodes.CSRF_TOKEN_INVALID,
+              "CSRF token invalid",
+              "Refresh and try again.");
+          return;
+        }
+      }
+
+      SecurityContextHolder.getContext()
+          .setAuthentication(
+              new UsernamePasswordAuthenticationToken(session.userId(), null, List.of()));
+    }
+
     filterChain.doFilter(request, response);
+  }
+
+  private boolean requiresCsrfValidation(HttpServletRequest request) {
+    if (!MUTATING_METHODS.contains(request.getMethod())) {
+      return false;
+    }
+    String path = request.getRequestURI();
+    return !UNPROTECTED_AUTH_PATHS.contains(path);
   }
 
   private static Optional<String> sessionCookieValue(HttpServletRequest request) {
@@ -77,5 +122,20 @@ class SessionAuthenticationFilter extends OncePerRequestFilter {
         .filter(cookie -> SESSION_COOKIE_NAME.equals(cookie.getName()))
         .map(Cookie::getValue)
         .findFirst();
+  }
+
+  private void writeProblem(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      HttpStatus status,
+      ErrorCode code,
+      String title,
+      String detail)
+      throws IOException {
+    ApiProblem problem = problemFactory.create(request, status, code, title, detail);
+    response.setStatus(status.value());
+    response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+    response.setCharacterEncoding("UTF-8");
+    objectMapper.writeValue(response.getOutputStream(), problem);
   }
 }

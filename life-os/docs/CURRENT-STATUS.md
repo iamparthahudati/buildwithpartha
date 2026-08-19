@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-19 (LOS-0509)
+Last updated: 2026-08-19 (LOS-0513)
 
 ## Phase
 
@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-0513 — Implemented onboarding persistence and user profile/preferences management (backend V4 migration, domain models, services, REST controllers at `/onboarding` and `/user`, CSRF enforcement, OpenAPI assertions, and typed frontend client in `@features/onboarding` and `@features/user`).
 - LOS-0001 — Project charter approved by the owner on 2026-08-16.
 - LOS-0002 — Permanent product context approved on 2026-08-16.
 - LOS-0003 — Local/remote `master` and `develop` branch foundation established without changing or deleting `main`; LOS-0212 completed remote protection.

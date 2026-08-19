@@ -18,6 +18,7 @@ import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
+import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
 import tech.buildwithpartha.lifeos.common.error.TokenAlreadyUsedException;
 import tech.buildwithpartha.lifeos.common.error.TokenExpiredException;
@@ -163,7 +164,7 @@ public final class ApiExceptionHandler {
             "The request body could not be read."));
   }
 
-  @ExceptionHandler(NoResourceFoundException.class)
+  @ExceptionHandler({NoResourceFoundException.class, ResourceNotFoundException.class})
   ResponseEntity<ApiProblem> handleNotFound(HttpServletRequest request) {
     return response(
         problemFactory.create(

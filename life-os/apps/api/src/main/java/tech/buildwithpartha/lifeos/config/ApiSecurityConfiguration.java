@@ -78,7 +78,8 @@ public class ApiSecurityConfiguration {
         // so their CSRF check happens inside LogoutService itself, not this filter chain.
         .csrf(AbstractHttpConfigurer::disable)
         .addFilterBefore(
-            new SessionAuthenticationFilter(sessionRepository, tokenGenerator, clock),
+            new SessionAuthenticationFilter(
+                sessionRepository, tokenGenerator, clock, problemFactory, objectMapper),
             AuthorizationFilter.class)
         .exceptionHandling(
             exceptions ->

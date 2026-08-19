@@ -88,3 +88,23 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
     consumed_at  TIMESTAMP WITH TIME ZONE,
     created_at   TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+-- Added by LOS-0513 alongside UserPreferencesEntity.
+CREATE TABLE IF NOT EXISTS user_preferences (
+    id                          UUID                     NOT NULL PRIMARY KEY,
+    user_id                     UUID                     NOT NULL,
+    onboarding_version          INT                      NOT NULL,
+    onboarding_status           VARCHAR(32)              NOT NULL,
+    last_completed_step         VARCHAR(32),
+    onboarding_completed_at     TIMESTAMP WITH TIME ZONE,
+    working_days                INTEGER ARRAY            NOT NULL,
+    work_start_time             TIME,
+    work_end_time               TIME,
+    overnight_schedule          BOOLEAN                  NOT NULL,
+    daily_focus_target_minutes  INT,
+    focus_duration_minutes      INT                      NOT NULL,
+    break_duration_minutes      INT                      NOT NULL,
+    created_at                  TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at                  TIMESTAMP WITH TIME ZONE NOT NULL,
+    version                     BIGINT                   NOT NULL
+);

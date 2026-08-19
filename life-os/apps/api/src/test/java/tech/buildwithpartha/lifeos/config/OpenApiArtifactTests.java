@@ -127,6 +127,24 @@ class OpenApiArtifactTests {
             .andExpect(
                 jsonPath("$.paths['/auth/reset-password'].post.responses['409'].$ref")
                     .value("#/components/responses/Conflict"))
+            .andExpect(jsonPath("$.paths['/onboarding'].get.operationId").value("getOnboarding"))
+            .andExpect(
+                jsonPath("$.paths['/onboarding/welcome'].put.operationId").value("updateWelcome"))
+            .andExpect(
+                jsonPath("$.paths['/onboarding/time-and-week'].put.operationId")
+                    .value("updateTimeAndWeek"))
+            .andExpect(
+                jsonPath("$.paths['/onboarding/planning-defaults'].put.operationId")
+                    .value("updatePlanningDefaults"))
+            .andExpect(
+                jsonPath("$.paths['/onboarding/complete'].post.operationId")
+                    .value("completeOnboarding"))
+            .andExpect(jsonPath("$.paths['/user/profile'].get.operationId").value("getProfile"))
+            .andExpect(jsonPath("$.paths['/user/profile'].put.operationId").value("updateProfile"))
+            .andExpect(
+                jsonPath("$.paths['/user/preferences'].get.operationId").value("getPreferences"))
+            .andExpect(
+                jsonPath("$.paths['/user/preferences'].put.operationId").value("updatePreferences"))
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))
