@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-19 (LOS-0513)
+Last updated: 2026-08-19 (LOS-0515)
 
 ## Phase
 
@@ -8,6 +8,8 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-0515 — Implemented profile and localization settings screens, live date/time recalculation preview, IANA timezone selection, and mutation hooks connecting to user profile/preferences endpoints in `@features/settings` and `@features/user`.
+- LOS-0514 — Implemented four-step onboarding UI (Welcome, Time and week with IANA timezone picker and live preview, Planning defaults with schedule and skip, Start LifeOS empty default), responsive progress rail, mutation hooks, and comprehensive unit/screen tests.
 - LOS-0513 — Implemented onboarding persistence and user profile/preferences management (backend V4 migration, domain models, services, REST controllers at `/onboarding` and `/user`, CSRF enforcement, OpenAPI assertions, and typed frontend client in `@features/onboarding` and `@features/user`).
 - LOS-0001 — Project charter approved by the owner on 2026-08-16.
 - LOS-0002 — Permanent product context approved on 2026-08-16.
