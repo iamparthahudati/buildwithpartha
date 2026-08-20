@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-20 (LOS-0608 Today header and metric strip)
+Last updated: 2026-08-20 (LOS-0611 Today sprint/week component)
 
 ## Phase
 
@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-0611 — Built the reusable Today Sprint/week summary with independently loadable Sprint and Weekly Plan regions. The Sprint view renders localized dates, named point progress through the shared accessible `DonutChart`, an honest missing-denominator state, and canonical navigation. The Week view renders the caller-ordered seven-local-date strip, goal completion, planned time versus capacity, explicit over-capacity language, and no-percent empty denominators. Both regions cover ready/loading/empty/error states, isolated retries, responsive 320px behavior, catalog specimens, and focused accessibility tests. See `docs/handoffs/LOS-0611.md`.
 - LOS-0608 — Built the routed Today header and responsive metric strip. The header renders a timezone-aware morning/afternoon/evening greeting, localized date, approved Today helper, and a Quick Add trigger sharing the shell-owned dialog through outlet context. The metric strip composes six shared `MetricCard` instances with independent ready/loading/empty/error states, optional per-card retry, honest zero-data production defaults until LOS-0615 integration, and responsive six-column/wrapping/horizontal-scroll behavior. Added development catalog specimens and focused accessibility/component/route coverage. See `docs/handoffs/LOS-0608.md`.
 - LOS-0607 — Implemented the authenticated Today dashboard foundation endpoint (`GET /today`), timezone resolution, provider composition shell, zero-safe default domain providers, provider failure isolation, and explicit cache headers. Created `UserTimeZoneProvider` in `common.user` and implemented `UserTimeZoneAdapter` in `user.application` querying `UserProfileService` to resolve the user's preferred timezone without violating domain package boundaries. Created 13 widget provider interfaces in `report.application.provider` and 13 default zero-safe providers in `report.infrastructure.provider`. Added `TodayQueryResult` in `report.application` mapped to `TodayResponse` in `report.api` with isolated try-catch exception handling per provider. Configured `Cache-Control: private, no-store, max-age=0, must-revalidate` response headers on `/today`. See `docs/handoffs/LOS-0607.md`.
 - LOS-0606 — Defined the stable Today aggregation contract: created `WidgetStatus` enum (`SUCCESS`, `EMPTY`, `ERROR`), `TodayResponse` record envelope, and 13 nested widget records modeling local date, MIT, metrics, tasks, blocks, schedule, sprint/week summary, overdue queue, focus summary, review status, brain dump, habits, and active projects. Created stub `TodayController` mapped to `/today` (protected by session authentication cookie) returning zero-safe empty widget structures rather than invented mock data. Fixed servlet/path-info resolution in `SessionAuthenticationFilter.java` so MockMvc and production paths evaluate unprotected routes consistently. Exported and verified `/today` OpenAPI schemas in `life-os-openapi.json`. See `docs/handoffs/LOS-0606.md`.
@@ -204,7 +205,7 @@ Phase 2 — Identity and application shell.
 
 ## Next recommended ticket
 
-LOS-0609 (`docs/backlog/EPIC-06-SHELL-TODAY.md`) — build the Today plan component.
+LOS-0612 (`docs/backlog/EPIC-06-SHELL-TODAY.md`) — build Today projects and next-up components. LOS-0609 and LOS-0610 are already implemented on their parallel feature branches.
 
 ## Known decisions requiring implementation-time values
 

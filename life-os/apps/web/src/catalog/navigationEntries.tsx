@@ -50,6 +50,8 @@ import {
   TodayMetricStripReadyDemo,
   TodayMetricStripMixedDemo,
   TodayHeaderSectionDemo,
+  SprintWeekSummaryReadyDemo,
+  SprintWeekSummaryMixedDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -613,6 +615,29 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Morning greeting, local date, approved Today helper, Quick Add trigger, and six honest zero-data cards below.",
         render: () => <TodayHeaderSectionDemo />,
+      },
+    ],
+  },
+  {
+    id: "sprint-week-summary",
+    name: "SprintWeekSummary",
+    group: "Composed",
+    summary:
+      "The Today dashboard's current Sprint and Weekly Plan context. Sprint and Week keep independent loading, empty, error and ready states; named progress measures never turn a missing denominator into a judgmental zero percentage. The ready view combines an accessible Sprint donut, a seven-local-date day strip, weekly Goals, capacity and canonical links.",
+    states: [
+      {
+        id: "sprint-week-summary-ready",
+        name: "Current Sprint and Weekly Plan",
+        description:
+          "A named Sprint progress measure, seven-day strip, Goals and capacity using the en-IN locale.",
+        render: () => <SprintWeekSummaryReadyDemo />,
+      },
+      {
+        id: "sprint-week-summary-mixed",
+        name: "Sprint error and no Weekly Plan",
+        description:
+          "The Sprint's recoverable error stays isolated while the Week presents an honest first-use state.",
+        render: () => <SprintWeekSummaryMixedDemo />,
       },
     ],
   },

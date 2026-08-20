@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthSessionProvider } from "@state/AuthSessionProvider";
 import { FocusMiniPlayer } from "@features/focus";
-import { TodayHeader, TodayMetricStrip, TodayHeaderSection } from "@features/today";
+import {
+  SprintWeekSummary,
+  TodayHeader,
+  TodayMetricStrip,
+  TodayHeaderSection,
+  type TodayWeekData,
+} from "@features/today";
 import {
   AlertTriangle,
   Archive,
@@ -1404,6 +1410,60 @@ export function TodayHeaderSectionDemo() {
       focusTimeStatus={{ type: "empty", message: "No focus time recorded today." }}
       activeProjectsStatus={{ type: "empty", message: "No active projects yet." }}
       weekProgressStatus={{ type: "empty", message: "No Weekly Plan yet." }}
+    />
+  );
+}
+
+const TODAY_WEEK_DEMO: TodayWeekData = {
+  startDate: "2026-08-17",
+  endDate: "2026-08-23",
+  days: [
+    { localDate: "2026-08-17", completedTasksCount: 3, totalTasksCount: 3 },
+    { localDate: "2026-08-18", completedTasksCount: 2, totalTasksCount: 3 },
+    { localDate: "2026-08-19", completedTasksCount: 1, totalTasksCount: 2 },
+    { localDate: "2026-08-20", completedTasksCount: 1, totalTasksCount: 4, isToday: true },
+    { localDate: "2026-08-21", completedTasksCount: 0, totalTasksCount: 2 },
+    { localDate: "2026-08-22", completedTasksCount: 0, totalTasksCount: 0 },
+    { localDate: "2026-08-23", completedTasksCount: 0, totalTasksCount: 1 },
+  ],
+  goals: [
+    { id: "goal-course", title: "Complete the accessibility course", completed: true },
+    { id: "goal-notes", title: "Publish learning notes", completed: false },
+  ],
+  plannedMinutes: 1_020,
+  capacityMinutes: 1_200,
+};
+
+export function SprintWeekSummaryReadyDemo() {
+  return (
+    <SprintWeekSummary
+      locale="en-IN"
+      sprintState={{
+        type: "ready",
+        sprint: {
+          sprintId: "accessibility-course",
+          name: "Accessibility course",
+          startDate: "2026-08-17",
+          endDate: "2026-08-28",
+          completedStoryPoints: 5,
+          totalStoryPoints: 8,
+        },
+      }}
+      weekState={{ type: "ready", week: TODAY_WEEK_DEMO }}
+    />
+  );
+}
+
+export function SprintWeekSummaryMixedDemo() {
+  return (
+    <SprintWeekSummary
+      locale="en-IN"
+      sprintState={{
+        type: "error",
+        message: "Other Today sections are still available.",
+      }}
+      weekState={{ type: "empty" }}
+      onRetrySprint={() => {}}
     />
   );
 }
