@@ -4,7 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +19,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
 import tech.buildwithpartha.lifeos.project.application.CreateProjectCommand;
 import tech.buildwithpartha.lifeos.project.application.ProjectService;
 import tech.buildwithpartha.lifeos.project.application.UpdateProjectCommand;
 import tech.buildwithpartha.lifeos.project.domain.Project;
 import tech.buildwithpartha.lifeos.project.domain.ProjectHealth;
 import tech.buildwithpartha.lifeos.project.domain.ProjectPriority;
+import tech.buildwithpartha.lifeos.project.domain.ProjectQuery;
+import tech.buildwithpartha.lifeos.project.domain.ProjectQueryResult;
 import tech.buildwithpartha.lifeos.project.domain.ProjectStatus;
+import tech.buildwithpartha.lifeos.project.domain.ProjectSummaryCounts;
 
 /** Controller exposing REST endpoints for managing Projects (LOS-0702). */
 @RestController
@@ -38,6 +46,131 @@ public class ProjectController {
 
   public ProjectController(ProjectService projectService) {
     this.projectService = projectService;
+  }
+
+  private static final Set<String> ALLOWED_SORT_FIELDS =
+      Set.of("name", "status", "priority", "health", "deadlineDate", "createdAt", "updatedAt");
+
+  @Operation(
+      summary = "Query projects",
+      description = "Search, filter, paginate and retrieve summary counts for projects.")
+  @ApiResponse(responseCode = "200", description = "Query results.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping
+  public ProjectQueryResponse queryProjects(
+      @AuthenticationPrincipal UUID userId,
+      @RequestParam(name = "q", required = false) String q,
+      @RequestParam(name = "status", required = false) Set<String> statusStrings,
+      @RequestParam(name = "priority", required = false) Set<String> priorityStrings,
+      @RequestParam(name = "health", required = false) Set<String> healthStrings,
+      @RequestParam(name = "labelId", required = false) Set<UUID> labelIds,
+      @RequestParam(name = "deadlineBefore", required = false) LocalDate deadlineBefore,
+      @RequestParam(name = "deadlineAfter", required = false) LocalDate deadlineAfter,
+      @RequestParam(name = "archived", required = false) Boolean archived,
+      @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+      @RequestParam(name = "size", required = false, defaultValue = "20") int size,
+      @RequestParam(name = "sortBy", required = false, defaultValue = "updatedAt") String sortBy,
+      @RequestParam(name = "sortDirection", required = false, defaultValue = "DESC")
+          String sortDirection) {
+
+    // Validations
+    if (page < 0) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("page", "INVALID")));
+    }
+    if (size < 1 || size > 100) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("size", "INVALID")));
+    }
+    if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("sortBy", "INVALID")));
+    }
+    if (!"ASC".equalsIgnoreCase(sortDirection) && !"DESC".equalsIgnoreCase(sortDirection)) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("sortDirection", "INVALID")));
+    }
+
+    Set<ProjectStatus> statuses = parseStatuses(statusStrings);
+    Set<ProjectPriority> priorities = parsePriorities(priorityStrings);
+    Set<ProjectHealth> healths = parseHealths(healthStrings);
+
+    ProjectQuery query =
+        new ProjectQuery(
+            userId,
+            q,
+            statuses,
+            priorities,
+            healths,
+            labelIds,
+            deadlineBefore,
+            deadlineAfter,
+            archived,
+            page,
+            size,
+            sortBy,
+            sortDirection);
+
+    ProjectQueryResult queryResult = projectService.queryProjects(query);
+    ProjectSummaryCounts summary = projectService.getSummaryCounts(userId);
+
+    List<ProjectResponse> items =
+        queryResult.projects().stream().map(ProjectResponse::fromDomain).toList();
+
+    PageResponse<ProjectResponse> pageResponse =
+        PageResponse.of(items, page, size, queryResult.totalItems());
+
+    return new ProjectQueryResponse(pageResponse, summary);
+  }
+
+  private Set<ProjectStatus> parseStatuses(Set<String> values) {
+    if (values == null || values.isEmpty()) {
+      return Set.of();
+    }
+    Set<ProjectStatus> result = new HashSet<>();
+    for (String val : values) {
+      try {
+        result.add(ProjectStatus.valueOf(val.toUpperCase()));
+      } catch (IllegalArgumentException e) {
+        throw new FieldValidationException(
+            "Validation failed", List.of(new FieldProblem("status", "INVALID")));
+      }
+    }
+    return result;
+  }
+
+  private Set<ProjectPriority> parsePriorities(Set<String> values) {
+    if (values == null || values.isEmpty()) {
+      return Set.of();
+    }
+    Set<ProjectPriority> result = new HashSet<>();
+    for (String val : values) {
+      try {
+        result.add(ProjectPriority.valueOf(val.toUpperCase()));
+      } catch (IllegalArgumentException e) {
+        throw new FieldValidationException(
+            "Validation failed", List.of(new FieldProblem("priority", "INVALID")));
+      }
+    }
+    return result;
+  }
+
+  private Set<ProjectHealth> parseHealths(Set<String> values) {
+    if (values == null || values.isEmpty()) {
+      return Set.of();
+    }
+    Set<ProjectHealth> result = new HashSet<>();
+    for (String val : values) {
+      try {
+        result.add(ProjectHealth.valueOf(val.toUpperCase()));
+      } catch (IllegalArgumentException e) {
+        throw new FieldValidationException(
+            "Validation failed", List.of(new FieldProblem("health", "INVALID")));
+      }
+    }
+    return result;
   }
 
   @Operation(

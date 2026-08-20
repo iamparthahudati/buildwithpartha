@@ -17,7 +17,10 @@ import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.common.label.LabelOwnershipValidator;
 import tech.buildwithpartha.lifeos.project.domain.Project;
+import tech.buildwithpartha.lifeos.project.domain.ProjectQuery;
+import tech.buildwithpartha.lifeos.project.domain.ProjectQueryResult;
 import tech.buildwithpartha.lifeos.project.domain.ProjectRepository;
+import tech.buildwithpartha.lifeos.project.domain.ProjectSummaryCounts;
 
 /** Application service managing the transactional lifecycle of Projects (LOS-0702). */
 @Service
@@ -37,6 +40,16 @@ public class ProjectService {
     this.projectRepository = projectRepository;
     this.labelOwnershipValidator = labelOwnershipValidator;
     this.clock = clock;
+  }
+
+  @Transactional(readOnly = true)
+  public ProjectQueryResult queryProjects(ProjectQuery query) {
+    return projectRepository.query(query);
+  }
+
+  @Transactional(readOnly = true)
+  public ProjectSummaryCounts getSummaryCounts(UUID userId) {
+    return projectRepository.getSummaryCounts(userId);
   }
 
   @Transactional(readOnly = true)

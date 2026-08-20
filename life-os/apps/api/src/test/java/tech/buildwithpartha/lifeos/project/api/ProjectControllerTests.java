@@ -471,4 +471,428 @@ class ProjectControllerTests {
         .andExpect(status().isNotFound());
   }
 
+  private Project saveProjectWithDetails(
+      UUID ownerId,
+      String name,
+      String description,
+      ProjectStatus status,
+      ProjectPriority priority,
+      ProjectHealth health,
+      Set<UUID> labelIds,
+      LocalDate deadline,
+      Instant archivedAt) {
+    return projectRepository.save(
+        new Project(
+            UUID.randomUUID(),
+            ownerId,
+            name,
+            Optional.ofNullable(description),
+            status,
+            priority,
+            health,
+            Optional.of("blue"),
+            Optional.of("star"),
+            Optional.of(LocalDate.now().minusDays(5)),
+            Optional.ofNullable(deadline),
+            Optional.of(60),
+            Optional.ofNullable(archivedAt),
+            Instant.now(),
+            Instant.now(),
+            labelIds != null ? labelIds : Set.of(),
+            0L));
+  }
+
+  @Test
+  void queryProjectsRequiresAuthentication() throws Exception {
+    mockMvc.perform(get("/projects")).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void queryProjectsSuccessfulWithFilters() throws Exception {
+    Label label1 = createLabelFor(userId, "LabelOne");
+    Label label2 = createLabelFor(userId, "LabelTwo");
+
+    Project p1 =
+        saveProjectWithDetails(
+            userId,
+            "Alpha Project",
+            "Special alpha task",
+            ProjectStatus.ACTIVE,
+            ProjectPriority.P1,
+            ProjectHealth.ON_TRACK,
+            Set.of(label1.id()),
+            LocalDate.of(2026, 9, 1),
+            null);
+    Project p2 =
+        saveProjectWithDetails(
+            userId,
+            "Beta Project",
+            "Normal beta task",
+            ProjectStatus.PLANNED,
+            ProjectPriority.P2,
+            ProjectHealth.AT_RISK,
+            Set.of(label2.id()),
+            LocalDate.of(2026, 10, 1),
+            null);
+    Project p3 =
+        saveProjectWithDetails(
+            userId,
+            "Gamma Project",
+            "Alpha version",
+            ProjectStatus.COMPLETED,
+            ProjectPriority.P3,
+            ProjectHealth.OFF_TRACK,
+            Set.of(label1.id(), label2.id()),
+            LocalDate.of(2026, 11, 1),
+            null);
+
+    // 1. Filter by status
+    mockMvc
+        .perform(get("/projects?status=ACTIVE").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(1))
+        .andExpect(jsonPath("$.page.items[0].id").value(p1.id().toString()));
+
+    // 2. Filter by priority and health
+    mockMvc
+        .perform(get("/projects?priority=P2&health=AT_RISK").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(1))
+        .andExpect(jsonPath("$.page.items[0].id").value(p2.id().toString()));
+
+    // 3. Text search q matching description
+    mockMvc
+        .perform(get("/projects?q=alpha").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(2));
+
+    // 4. Filter by label
+    mockMvc
+        .perform(get("/projects?labelId=" + label1.id()).cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(2));
+
+    // 5. Filter by deadlineBefore
+    mockMvc
+        .perform(get("/projects?deadlineBefore=2026-10-15").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(2));
+  }
+
+  @Test
+  void queryProjectsVerifySummaryCounts() throws Exception {
+    saveProjectWithDetails(
+        userId,
+        "P1",
+        "D1",
+        ProjectStatus.ACTIVE,
+        ProjectPriority.P1,
+        ProjectHealth.ON_TRACK,
+        Set.of(),
+        null,
+        null);
+    saveProjectWithDetails(
+        userId,
+        "P2",
+        "D2",
+        ProjectStatus.COMPLETED,
+        ProjectPriority.P1,
+        ProjectHealth.ON_TRACK,
+        Set.of(),
+        null,
+        null);
+    saveProjectWithDetails(
+        userId,
+        "P3",
+        "D3",
+        ProjectStatus.ON_HOLD,
+        ProjectPriority.P1,
+        ProjectHealth.AT_RISK,
+        Set.of(),
+        null,
+        null);
+    saveProjectWithDetails(
+        userId,
+        "P4",
+        "D4",
+        ProjectStatus.ACTIVE,
+        ProjectPriority.P1,
+        ProjectHealth.OFF_TRACK,
+        Set.of(),
+        null,
+        null);
+    saveProjectWithDetails(
+        userId,
+        "P5",
+        "D5",
+        ProjectStatus.ACTIVE,
+        ProjectPriority.P1,
+        ProjectHealth.AT_RISK,
+        Set.of(),
+        null,
+        Instant.now()); // archived
+
+    mockMvc
+        .perform(get("/projects").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.summary.total").value(4))
+        .andExpect(jsonPath("$.summary.active").value(2))
+        .andExpect(jsonPath("$.summary.completed").value(1))
+        .andExpect(jsonPath("$.summary.onHold").value(1))
+        .andExpect(jsonPath("$.summary.atRisk").value(2));
+  }
+
+  @Test
+  void queryProjectsStableSort() throws Exception {
+    Project p1 =
+        saveProjectWithDetails(
+            userId,
+            "C Project",
+            "D",
+            ProjectStatus.PLANNED,
+            ProjectPriority.P1,
+            ProjectHealth.NOT_SET,
+            Set.of(),
+            null,
+            null);
+    Project p2 =
+        saveProjectWithDetails(
+            userId,
+            "A Project",
+            "D",
+            ProjectStatus.PLANNED,
+            ProjectPriority.P1,
+            ProjectHealth.NOT_SET,
+            Set.of(),
+            null,
+            null);
+    Project p3 =
+        saveProjectWithDetails(
+            userId,
+            "B Project",
+            "D",
+            ProjectStatus.PLANNED,
+            ProjectPriority.P1,
+            ProjectHealth.NOT_SET,
+            Set.of(),
+            null,
+            null);
+
+    mockMvc
+        .perform(get("/projects?sortBy=name&sortDirection=ASC").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items[0].id").value(p2.id().toString()))
+        .andExpect(jsonPath("$.page.items[1].id").value(p3.id().toString()))
+        .andExpect(jsonPath("$.page.items[2].id").value(p1.id().toString()));
+  }
+
+  @Test
+  void queryProjectsPagination() throws Exception {
+    for (int i = 0; i < 5; i++) {
+      saveProjectWithDetails(
+          userId,
+          "Proj " + i,
+          "D",
+          ProjectStatus.PLANNED,
+          ProjectPriority.P2,
+          ProjectHealth.NOT_SET,
+          Set.of(),
+          null,
+          null);
+    }
+
+    mockMvc
+        .perform(get("/projects?page=0&size=2&sortBy=name&sortDirection=ASC").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(2))
+        .andExpect(jsonPath("$.page.totalItems").value(5))
+        .andExpect(jsonPath("$.page.totalPages").value(3))
+        .andExpect(jsonPath("$.page.page").value(0))
+        .andExpect(jsonPath("$.page.size").value(2));
+
+    mockMvc
+        .perform(get("/projects?page=2&size=2&sortBy=name&sortDirection=ASC").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(1));
+  }
+
+  @Test
+  void queryProjectsEnforcesUserIsolation() throws Exception {
+    saveProjectWithDetails(
+        userId,
+        "My Project",
+        "D",
+        ProjectStatus.ACTIVE,
+        ProjectPriority.P2,
+        ProjectHealth.NOT_SET,
+        Set.of(),
+        null,
+        null);
+    saveProjectWithDetails(
+        otherUserId,
+        "Other Project",
+        "D",
+        ProjectStatus.ACTIVE,
+        ProjectPriority.P2,
+        ProjectHealth.NOT_SET,
+        Set.of(),
+        null,
+        null);
+
+    mockMvc
+        .perform(get("/projects").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(1))
+        .andExpect(jsonPath("$.page.items[0].name").value("My Project"))
+        .andExpect(jsonPath("$.summary.total").value(1));
+  }
+
+  @Test
+  void queryProjectsRejectsInvalidFilters() throws Exception {
+    mockMvc
+        .perform(get("/projects?status=INVALID_STATUS").cookie(sessionCookie))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("status"))
+        .andExpect(jsonPath("$.errors[0].code").value("INVALID"));
+
+    mockMvc
+        .perform(get("/projects?priority=INVALID_PRIORITY").cookie(sessionCookie))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("priority"))
+        .andExpect(jsonPath("$.errors[0].code").value("INVALID"));
+
+    mockMvc
+        .perform(get("/projects?health=INVALID_HEALTH").cookie(sessionCookie))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("health"))
+        .andExpect(jsonPath("$.errors[0].code").value("INVALID"));
+
+    mockMvc
+        .perform(get("/projects?sortBy=invalidField").cookie(sessionCookie))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("sortBy"))
+        .andExpect(jsonPath("$.errors[0].code").value("INVALID"));
+
+    mockMvc
+        .perform(get("/projects?page=-1").cookie(sessionCookie))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("page"))
+        .andExpect(jsonPath("$.errors[0].code").value("INVALID"));
+
+    mockMvc
+        .perform(get("/projects?size=150").cookie(sessionCookie))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("size"))
+        .andExpect(jsonPath("$.errors[0].code").value("INVALID"));
+
+    mockMvc
+        .perform(get("/projects?size=0").cookie(sessionCookie))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("size"))
+        .andExpect(jsonPath("$.errors[0].code").value("INVALID"));
+
+    mockMvc
+        .perform(get("/projects?sortDirection=INVALID_DIRECTION").cookie(sessionCookie))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("sortDirection"))
+        .andExpect(jsonPath("$.errors[0].code").value("INVALID"));
+  }
+
+  @Test
+  void queryProjectsWithBlankSearchAndNullFilters() throws Exception {
+    saveProjectWithDetails(
+        userId,
+        "Project X",
+        "D",
+        ProjectStatus.PLANNED,
+        ProjectPriority.P2,
+        ProjectHealth.NOT_SET,
+        Set.of(),
+        null,
+        null);
+
+    mockMvc
+        .perform(get("/projects?q=   &sortDirection=DESC").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(1));
+  }
+
+  @Test
+  void queryProjectsSuccessfulWithArchivedFilters() throws Exception {
+    Project p1 =
+        saveProjectWithDetails(
+            userId,
+            "Active Proj",
+            "D",
+            ProjectStatus.PLANNED,
+            ProjectPriority.P2,
+            ProjectHealth.NOT_SET,
+            Set.of(),
+            null,
+            null);
+    Project p2 =
+        saveProjectWithDetails(
+            userId,
+            "Archived Proj",
+            "D",
+            ProjectStatus.PLANNED,
+            ProjectPriority.P2,
+            ProjectHealth.NOT_SET,
+            Set.of(),
+            null,
+            Instant.now());
+
+    // 1. archived=true
+    mockMvc
+        .perform(get("/projects?archived=true").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(1))
+        .andExpect(jsonPath("$.page.items[0].id").value(p2.id().toString()));
+
+    // 2. archived=null (meaning return all, both active and archived)
+    mockMvc
+        .perform(get("/projects?archived=").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(2));
+  }
+
+  @Test
+  void queryProjectsDeadlineAfterOnly() throws Exception {
+    Project p1 =
+        saveProjectWithDetails(
+            userId,
+            "Proj A",
+            "D",
+            ProjectStatus.PLANNED,
+            ProjectPriority.P2,
+            ProjectHealth.NOT_SET,
+            Set.of(),
+            LocalDate.of(2026, 9, 1),
+            null);
+    Project p2 =
+        saveProjectWithDetails(
+            userId,
+            "Proj B",
+            "D",
+            ProjectStatus.PLANNED,
+            ProjectPriority.P2,
+            ProjectHealth.NOT_SET,
+            Set.of(),
+            LocalDate.of(2026, 11, 1),
+            null);
+
+    mockMvc
+        .perform(get("/projects?deadlineAfter=2026-10-15").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.items.length()").value(1))
+        .andExpect(jsonPath("$.page.items[0].id").value(p2.id().toString()));
+  }
 }

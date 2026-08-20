@@ -14,4 +14,8 @@ public interface ProjectRepository {
   Project save(Project project);
 
   void delete(Project project);
+
+  ProjectQueryResult query(ProjectQuery query);
+
+  ProjectSummaryCounts getSummaryCounts(UUID userId);
 }
