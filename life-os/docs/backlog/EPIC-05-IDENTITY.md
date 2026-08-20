@@ -22,4 +22,4 @@
 | LOS-0518 | Implement account deletion lifecycle | Confirm/re-auth, grace period/cancel path, revoke sessions, hide account, purge/anonymize with backup policy, audit without retaining unnecessary personal data. | LOS-0516, LOS-0113 | 8 |
 | LOS-0519 | Build privacy/data settings | Export status/download, deletion request/cancel, clear consequences/retention and failure recovery. Destructive confirmation names the account. | LOS-0517, LOS-0518 | 6 |
 | LOS-0520 | Run identity threat-model and gate | Test signup→verify→login→logout→recover, CSRF, fixation, enumeration, brute force, cross-user, token replay, expiry, cookies, privacy flows. No protected route/data leaks. | LOS-0501–LOS-0519 | 10 |
-
+| LOS-0521 | Fix reliable auth/settings mutation outcomes | Replace unreliable call-time mutation callbacks with promise handling and preserve the in-memory session through client-side post-login navigation. Real-backend flows surface success/error and navigate reliably. | LOS-0508, LOS-0615 | 4 |
