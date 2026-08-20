@@ -12,6 +12,8 @@ None.
 
 ## Completed
 
+- LOS-0801 — Modeled core Task and Subtask domain aggregates, persistence entities, repositories, validation invariants, Flyway V9 schema (`V9__tasks_and_subtasks_schema.sql`), and contract reconciliation with calculation-facing `ProjectTask`. Verified via 100% clean `./gradlew check`. See `docs/handoffs/LOS-0801.md`.
+
 - LOS-0717 — Executed Projects phase gate verification and sign-off. All backend Java tests and checks (`./gradlew check`) and all frontend tests, quality checks, accessibility audits, design tokens, and build verification (`npm test`) pass 100%. Generated `docs/PROJECTS-PHASE-GATE.md`. See `docs/handoffs/LOS-0717.md`.
 - LOS-0716 — Integrate Project Details (`getProjectDetail` API client, `useProjectDetail` query hook, `ProjectDetailsRoute.tsx` mounted at `/life-os/app/projects/:projectId`, URL tab state, and milestone/project mutations). See `docs/handoffs/LOS-0716.md`.
 - LOS-0715 — Implement project detail aggregation API (`GET /projects/{id}/detail` returning `ProjectDetailResponse` with metadata and milestones). See `docs/handoffs/LOS-0715.md`.

@@ -23,6 +23,13 @@ public record ProjectTask(
     }
   }
 
+  public static ProjectTask fromStatusName(
+      UUID id, String statusName, int estimateMinutes, Optional<Instant> dueAt, boolean archived) {
+    Objects.requireNonNull(statusName, "statusName must not be null");
+    return new ProjectTask(
+        id, ProjectTaskStatus.valueOf(statusName), estimateMinutes, dueAt, archived);
+  }
+
   public boolean isCancelled() {
     return status == ProjectTaskStatus.CANCELLED;
   }

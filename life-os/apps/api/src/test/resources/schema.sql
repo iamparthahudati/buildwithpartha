@@ -205,3 +205,36 @@ CREATE TABLE IF NOT EXISTS milestones (
     updated_at    TIMESTAMP WITH TIME ZONE NOT NULL,
     version       BIGINT                   NOT NULL
 );
+
+-- Added by LOS-0801: Tasks and subtasks.
+CREATE TABLE IF NOT EXISTS tasks (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    user_id          UUID                     NOT NULL,
+    project_id       UUID,
+    title            TEXT                     NOT NULL,
+    description      TEXT,
+    status           VARCHAR(32)              NOT NULL,
+    priority         VARCHAR(32)              NOT NULL,
+    due_at           TIMESTAMP WITH TIME ZONE,
+    estimate_minutes INT                      NOT NULL,
+    spent_minutes    INT                      NOT NULL,
+    progress         INT                      NOT NULL,
+    mit_date         DATE,
+    position         INT                      NOT NULL,
+    archived_at      TIMESTAMP WITH TIME ZONE,
+    deleted_at       TIMESTAMP WITH TIME ZONE,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    version          BIGINT                   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS subtasks (
+    id         UUID                     NOT NULL PRIMARY KEY,
+    task_id    UUID                     NOT NULL,
+    title      TEXT                     NOT NULL,
+    completed  BOOLEAN                  NOT NULL,
+    position   INT                      NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    version    BIGINT                   NOT NULL
+);
