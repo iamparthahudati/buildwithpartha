@@ -1,0 +1,71 @@
+/* Quick Add Dialog (LOS-0604). */
+
+.lifeos-quick-add {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-quick-add__chooser-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+  margin-bottom: var(--lifeos-space-2);
+}
+
+.lifeos-quick-add__chooser-legend {
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-quick-add__chooser {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--lifeos-space-2);
+}
+
+@media (min-width: 768px) {
+  .lifeos-quick-add__chooser {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.lifeos-quick-add__chooser-select {
+  grid-column: span 2;
+}
+
+@media (min-width: 768px) {
+  .lifeos-quick-add__chooser-select {
+    grid-column: span 1;
+  }
+}
+
+/* Style for active select input when a "More" type is active */
+.lifeos-quick-add__chooser-select.is-active select {
+  border-color: var(--lifeos-color-primary);
+  border-width: var(--lifeos-border-width-thick);
+}
+
+.lifeos-quick-add__offline-warning {
+  margin-bottom: var(--lifeos-space-2);
+}
+
+/* Compact specific field structures */
+.lifeos-quick-add__fields-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--lifeos-space-4);
+}
+
+@media (min-width: 768px) {
+  .lifeos-quick-add__fields-grid--two-columns {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.lifeos-quick-add__more-options {
+  margin-top: var(--lifeos-space-2);
+  display: flex;
+  justify-content: flex-start;
+}

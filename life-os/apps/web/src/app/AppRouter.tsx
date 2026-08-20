@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "@components/layout";
+import { QuickAddDialog, useQuickAddShortcut } from "@components/feedback";
 import { RequireAuth, useLogout } from "@features/auth";
 import { useAuthSession } from "@state/authSession";
 import { useToast } from "@state/toastQueue";
@@ -32,7 +34,10 @@ import {
 function ProtectedShell() {
   const { user } = useAuthSession();
   const logout = useLogout();
-  const toast = useToast();
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
+
+  // Bind global keyboard shortcut to open Quick Add dialog
+  useQuickAddShortcut(() => setQuickAddOpen(true), { enabled: !quickAddOpen });
 
   if (user === null) {
     // Unreachable in practice — RequireAuth renders nothing while
@@ -42,16 +47,21 @@ function ProtectedShell() {
   }
 
   return (
-    <AppShell
-      displayName={user.displayName}
-      email={user.email}
-      timeZone={user.timeZone}
-      locale={user.locale}
-      onQuickAddTriggerClick={() =>
-        toast.push({ tone: "info", message: "Quick Add isn't available yet." })
-      }
-      onSignOut={() => logout.mutate()}
-    />
+    <>
+      <AppShell
+        displayName={user.displayName}
+        email={user.email}
+        timeZone={user.timeZone}
+        locale={user.locale}
+        onQuickAddTriggerClick={() => setQuickAddOpen(true)}
+        onSignOut={() => logout.mutate()}
+      />
+      <QuickAddDialog
+        open={quickAddOpen}
+        onClose={() => setQuickAddOpen(false)}
+        timeZone={user.timeZone}
+      />
+    </>
   );
 }
 

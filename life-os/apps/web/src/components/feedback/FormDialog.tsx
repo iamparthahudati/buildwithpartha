@@ -100,6 +100,7 @@ export function FormDialog({
         className={["lifeos-form-dialog", className].filter(Boolean).join(" ")}
       >
         <form
+          noValidate
           onSubmit={(event) => {
             event.preventDefault();
             if (!pending) {
