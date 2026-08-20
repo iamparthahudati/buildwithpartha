@@ -1,0 +1,33 @@
+/* TodayBrainCapture (LOS-0613). */
+
+.lifeos-today-brain-capture {
+  min-width: 0;
+}
+
+.lifeos-today-brain-capture__form {
+  display: grid;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-today-brain-capture__count-error,
+.lifeos-today-brain-capture__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-today-brain-capture__count-error p {
+  margin: 0;
+}
+
+.lifeos-today-brain-capture__actions {
+  margin-block-start: var(--lifeos-space-1);
+}
+
+@media (max-width: 30rem) {
+  .lifeos-today-brain-capture__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
