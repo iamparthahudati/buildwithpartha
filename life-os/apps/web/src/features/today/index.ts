@@ -4,6 +4,24 @@ export {
   type TodayMetricStripProps,
   type TodayMetricsData,
 } from "./components/TodayMetricStrip";
+export {
+  ActiveProjectRow,
+  type ActiveProjectRowProps,
+  type TodayActiveProject,
+} from "./components/ActiveProjectRow";
+export {
+  TodayActiveProjects,
+  type TodayActiveProjectsProps,
+  type TodayActiveProjectsStatus,
+} from "./components/TodayActiveProjects";
+export {
+  TodayNextUp,
+  type ProductPriority,
+  type TodayNextTask,
+  type TodayNextUpAvailability,
+  type TodayNextUpProps,
+  type TodayNextUpStatus,
+} from "./components/TodayNextUp";
 export { TodayHeaderSection, type TodayHeaderSectionProps } from "./components/TodayHeaderSection";
 export { TodayPlan, type TodayPlanProps } from "./components/TodayPlan";
 export { TodayMitCard, type TodayMitCardProps } from "./components/TodayMitCard";

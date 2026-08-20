@@ -1,0 +1,53 @@
+/* ActiveProjectRow (LOS-0612). */
+
+.lifeos-active-project-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, 0.8fr);
+  align-items: center;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-active-project-row__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  min-width: 0;
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-active-project-row__name-group {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  min-width: 0;
+}
+
+.lifeos-active-project-row__name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--lifeos-color-text);
+  font-weight: var(--lifeos-font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lifeos-active-project-row__progress {
+  min-width: 0;
+}
+
+.lifeos-active-project-row__empty-progress {
+  margin: 0;
+}
+
+@media (max-width: 36rem) {
+  .lifeos-active-project-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--lifeos-space-3);
+  }
+
+  .lifeos-active-project-row__name-group {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--lifeos-space-1);
+  }
+}
