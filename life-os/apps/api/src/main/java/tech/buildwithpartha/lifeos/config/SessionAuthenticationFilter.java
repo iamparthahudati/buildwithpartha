@@ -110,7 +110,16 @@ class SessionAuthenticationFilter extends OncePerRequestFilter {
     if (!MUTATING_METHODS.contains(request.getMethod())) {
       return false;
     }
-    String path = request.getRequestURI();
+    // getServletPath(), not getRequestURI(): the latter includes the
+    // `server.servlet.context-path` (`/life-os/api/v1`) prefix, which never
+    // matches UNPROTECTED_AUTH_PATHS's bare `/auth/...` entries — this
+    // silently applied CSRF validation to every "unprotected" auth endpoint
+    // whenever an active session cookie happened to be present (e.g. a
+    // signed-in browser tab re-submitting /auth/login, or requesting
+    // /auth/forgot-password), verified live against a running instance.
+    String servletPath = request.getServletPath();
+    String pathInfo = request.getPathInfo();
+    String path = servletPath + (pathInfo != null ? pathInfo : "");
     return !UNPROTECTED_AUTH_PATHS.contains(path);
   }
 

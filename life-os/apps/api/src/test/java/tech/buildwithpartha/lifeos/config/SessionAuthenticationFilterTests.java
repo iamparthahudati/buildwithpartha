@@ -1,7 +1,9 @@
 package tech.buildwithpartha.lifeos.config;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import jakarta.servlet.http.Cookie;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -91,6 +94,36 @@ class SessionAuthenticationFilterTests {
     mockMvc
         .perform(get("/test/session/whoami").cookie(new Cookie("lifeos_session", token.value())))
         .andExpect(status().isUnauthorized());
+  }
+
+  /**
+   * {@code UNPROTECTED_AUTH_PATHS} holds bare paths like {@code /auth/login} — this proves {@link
+   * #requiresCsrfValidation} actually matches them. Comparing against {@code getRequestURI()}
+   * (which includes {@code server.servlet.context-path}, {@code /life-os/api/v1}) instead of {@code
+   * getServletPath()} meant no bare entry ever matched, so CSRF validation silently applied to
+   * every "unprotected" auth endpoint whenever a request happened to carry an active session cookie
+   * — invisible until exactly that combination was hit, since a first-time
+   * signup/login/forgot-password request has no session cookie yet. Verified live against a running
+   * instance: a signed-in browser tab re-submitting {@code /auth/login}, or requesting {@code
+   * /auth/forgot-password}, got {@code 403 CSRF_TOKEN_INVALID} instead of ever reaching the
+   * controller.
+   */
+  @Test
+  void anActiveSessionCookieDoesNotBlockAnUnprotectedAuthPathWithoutACsrfHeader() throws Exception {
+    UUID userId = seedActiveUser();
+    RawToken token = seedSession(userId, Instant.now());
+
+    mockMvc
+        .perform(
+            post("/auth/login")
+                .cookie(new Cookie("lifeos_session", token.value()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {"email":"not-a-real-account@example.test","password":"wrong-password-123"}
+                    """))
+        .andExpect(status().isUnauthorized())
+        .andExpect(jsonPath("$.code").value("INVALID_CREDENTIALS"));
   }
 
   private UUID seedActiveUser() {

@@ -145,6 +145,10 @@ class OpenApiArtifactTests {
                 jsonPath("$.paths['/user/preferences'].get.operationId").value("getPreferences"))
             .andExpect(
                 jsonPath("$.paths['/user/preferences'].put.operationId").value("updatePreferences"))
+            .andExpect(jsonPath("$.paths['/today'].get.operationId").value("getToday"))
+            .andExpect(jsonPath("$.components.schemas.TodayResponse").exists())
+            .andExpect(jsonPath("$.components.schemas.MitWidget").exists())
+            .andExpect(jsonPath("$.components.schemas.TasksWidget").exists())
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))
