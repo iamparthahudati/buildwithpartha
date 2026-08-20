@@ -132,31 +132,33 @@ export function SignupScreen() {
     setErrors({});
     setSubmitError(null);
 
-    signupMutation.mutate(
-      {
+    // `mutateAsync().catch()` rather than `.mutate(vars, { onError })`:
+    // verified live against a real backend, the call-time callback form is
+    // unreliable (success already reads `signupMutation.isSuccess`
+    // reactively above, which is unaffected). See VerifyEmailScreen/
+    // LoginScreen.
+    signupMutation
+      .mutateAsync({
         email: values.email.trim(),
         password: values.password,
         displayName: values.displayName.trim(),
         termsVersion: TERMS_VERSION,
         privacyVersion: PRIVACY_VERSION,
-      },
-      {
-        onError: (error) => {
-          if (error instanceof ApiError && error.problem?.code === "VALIDATION_FAILED") {
-            const grouped = groupFieldProblems(error.problem.errors);
-            const mapped: Record<string, string> = {};
-            for (const [field, code] of Object.entries(grouped)) {
-              mapped[field] = resolveSignupFieldError(field, code);
-            }
-            applyFailure({ fieldErrors: mapped });
-          } else if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
-            applyFailure({ alertMessage: RATE_LIMITED_MESSAGE });
-          } else {
-            applyFailure({ alertMessage: GENERIC_FAILURE_MESSAGE });
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.problem?.code === "VALIDATION_FAILED") {
+          const grouped = groupFieldProblems(error.problem.errors);
+          const mapped: Record<string, string> = {};
+          for (const [field, code] of Object.entries(grouped)) {
+            mapped[field] = resolveSignupFieldError(field, code);
           }
-        },
-      },
-    );
+          applyFailure({ fieldErrors: mapped });
+        } else if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
+          applyFailure({ alertMessage: RATE_LIMITED_MESSAGE });
+        } else {
+          applyFailure({ alertMessage: GENERIC_FAILURE_MESSAGE });
+        }
+      });
   }
 
   const appBasePath = readPublicEnvironment().appBasePath.replace(/\/$/, "");

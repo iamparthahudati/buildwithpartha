@@ -117,36 +117,37 @@ export function LoginScreen({ navigate = defaultNavigate }: LoginScreenProps) {
     setErrors({});
     setSubmitError(null);
 
-    loginMutation.mutate(
-      {
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable here. Every prior test of this screen ran
+    // against a mocked `fetch`, which never exposed it.
+    loginMutation
+      .mutateAsync({
         email: values.email.trim(),
         password: values.password,
-      },
-      {
-        onSuccess: () => {
-          const searchParams = new URLSearchParams(window.location.search);
-          const rawReturnTo = searchParams.get("returnTo");
-          const target = resolveReturnTarget(rawReturnTo);
-          navigateRef.current(target);
-        },
-        onError: (error) => {
-          if (error instanceof ApiError && error.problem?.code === "INVALID_CREDENTIALS") {
-            applyFailure({ alertMessage: INVALID_CREDENTIALS_MESSAGE });
-          } else if (error instanceof ApiError && error.problem?.code === "VALIDATION_FAILED") {
-            const grouped = groupFieldProblems(error.problem.errors);
-            const mapped: Record<string, string> = {};
-            for (const [field, code] of Object.entries(grouped)) {
-              mapped[field] = resolveLoginFieldError(field, code);
-            }
-            applyFailure({ fieldErrors: mapped });
-          } else if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
-            applyFailure({ alertMessage: RATE_LIMITED_MESSAGE });
-          } else {
-            applyFailure({ alertMessage: GENERIC_FAILURE_MESSAGE });
+      })
+      .then(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const rawReturnTo = searchParams.get("returnTo");
+        const target = resolveReturnTarget(rawReturnTo);
+        navigateRef.current(target);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.problem?.code === "INVALID_CREDENTIALS") {
+          applyFailure({ alertMessage: INVALID_CREDENTIALS_MESSAGE });
+        } else if (error instanceof ApiError && error.problem?.code === "VALIDATION_FAILED") {
+          const grouped = groupFieldProblems(error.problem.errors);
+          const mapped: Record<string, string> = {};
+          for (const [field, code] of Object.entries(grouped)) {
+            mapped[field] = resolveLoginFieldError(field, code);
           }
-        },
-      },
-    );
+          applyFailure({ fieldErrors: mapped });
+        } else if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
+          applyFailure({ alertMessage: RATE_LIMITED_MESSAGE });
+        } else {
+          applyFailure({ alertMessage: GENERIC_FAILURE_MESSAGE });
+        }
+      });
   }
 
   const appBasePath = readPublicEnvironment().appBasePath.replace(/\/$/, "");

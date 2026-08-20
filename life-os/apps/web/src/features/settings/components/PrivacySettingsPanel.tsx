@@ -45,13 +45,20 @@ export function PrivacySettingsPanel({ profile, onAccountDeleted }: PrivacySetti
 
   const handleRequestExport = () => {
     setRequestSuccessMessage(null);
-    requestExportMutation.mutate(undefined, {
-      onSuccess: () => {
+    // `mutateAsync().then()` rather than `.mutate(vars, { onSuccess })`:
+    // verified live against a real backend, the call-time callback form is
+    // unreliable. See VerifyEmailScreen/LoginScreen.
+    requestExportMutation
+      .mutateAsync(undefined)
+      .then(() => {
         setRequestSuccessMessage(
           "Your data export archive is being prepared in the background. It will appear below when ready.",
         );
-      },
-    });
+      })
+      .catch(() => {
+        // No local error handling here — `requestExportMutation.error` is
+        // read directly in render below for that.
+      });
   };
 
   const handleDeleteSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -72,22 +79,20 @@ export function PrivacySettingsPanel({ profile, onAccountDeleted }: PrivacySetti
       return;
     }
 
-    deleteAccountMutation.mutate(
-      {
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable. See VerifyEmailScreen/LoginScreen.
+    deleteAccountMutation
+      .mutateAsync({
         currentPassword: deletePassword,
         confirmationText: deleteConfirmationText,
-      },
-      {
-        onSuccess: (response) => {
-          setScheduledPurgeAt(response.scheduledPurgeAt);
-        },
-        onError: (err) => {
-          setLocalDeleteError(
-            err.message || "Failed to delete account. Please verify credentials.",
-          );
-        },
-      },
-    );
+      })
+      .then((response) => {
+        setScheduledPurgeAt(response.scheduledPurgeAt);
+      })
+      .catch((err: Error) => {
+        setLocalDeleteError(err.message || "Failed to delete account. Please verify credentials.");
+      });
   };
 
   const handleReturnToSignIn = () => {

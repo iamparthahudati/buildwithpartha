@@ -137,42 +137,42 @@ export function ResetPasswordScreen({
     setFormErrors({});
     setSubmitError(null);
 
-    resetPasswordMutation.mutate(
-      {
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable. See VerifyEmailScreen/LoginScreen.
+    resetPasswordMutation
+      .mutateAsync({
         token: resolvedToken,
         newPassword: values.newPassword,
-      },
-      {
-        onSuccess: () => {
-          setScreenState("success");
-          setSubmitError(null);
-        },
-        onError: (error) => {
-          if (error instanceof ApiError && error.problem?.code === "TOKEN_EXPIRED") {
-            setScreenState("expired");
-          } else if (error instanceof ApiError && error.problem?.code === "TOKEN_ALREADY_USED") {
-            setScreenState("already-used");
-          } else if (error instanceof ApiError && error.problem?.code === "TOKEN_INVALID") {
-            setScreenState("invalid");
-          } else if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
-            applyFailure({ alertMessage: RATE_LIMITED_MESSAGE });
-          } else if (
-            error instanceof ApiError &&
-            (error.problem?.code === "VALIDATION_FAILED" ||
-              error.problem?.code === "FIELD_VALIDATION_FAILED")
-          ) {
-            const grouped = groupFieldProblems(error.problem.errors);
-            const mapped: Record<string, string> = {};
-            for (const [field, code] of Object.entries(grouped)) {
-              mapped[field] = resolveResetPasswordFieldError(field, code);
-            }
-            applyFailure({ fieldErrors: mapped });
-          } else {
-            applyFailure({ alertMessage: GENERIC_FAILURE_MESSAGE });
+      })
+      .then(() => {
+        setScreenState("success");
+        setSubmitError(null);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.problem?.code === "TOKEN_EXPIRED") {
+          setScreenState("expired");
+        } else if (error instanceof ApiError && error.problem?.code === "TOKEN_ALREADY_USED") {
+          setScreenState("already-used");
+        } else if (error instanceof ApiError && error.problem?.code === "TOKEN_INVALID") {
+          setScreenState("invalid");
+        } else if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
+          applyFailure({ alertMessage: RATE_LIMITED_MESSAGE });
+        } else if (
+          error instanceof ApiError &&
+          (error.problem?.code === "VALIDATION_FAILED" ||
+            error.problem?.code === "FIELD_VALIDATION_FAILED")
+        ) {
+          const grouped = groupFieldProblems(error.problem.errors);
+          const mapped: Record<string, string> = {};
+          for (const [field, code] of Object.entries(grouped)) {
+            mapped[field] = resolveResetPasswordFieldError(field, code);
           }
-        },
-      },
-    );
+          applyFailure({ fieldErrors: mapped });
+        } else {
+          applyFailure({ alertMessage: GENERIC_FAILURE_MESSAGE });
+        }
+      });
   }
 
   // 1. Success State (with Session Revocation notice)

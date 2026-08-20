@@ -45,34 +45,34 @@ export function SecuritySettingsPanel() {
     }
 
     setFormErrors({});
-    changePasswordMutation.mutate(
-      {
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable. See VerifyEmailScreen/LoginScreen.
+    changePasswordMutation
+      .mutateAsync({
         currentPassword,
         newPassword,
-      },
-      {
-        onSuccess: () => {
-          setPasswordSuccessMessage(
-            "Password changed successfully. All other sessions have been signed out.",
-          );
-          setCurrentPassword("");
-          setNewPassword("");
-          setConfirmPassword("");
-          void sessionsQuery.refetch();
-        },
-        onError: (error) => {
-          const resolved = resolveChangePasswordFieldErrors(error);
-          if (Object.keys(resolved).length > 0) {
-            setFormErrors(resolved);
-          } else {
-            setFormErrors({
-              currentPassword:
-                error.message || "Failed to change password. Please check your credentials.",
-            });
-          }
-        },
-      },
-    );
+      })
+      .then(() => {
+        setPasswordSuccessMessage(
+          "Password changed successfully. All other sessions have been signed out.",
+        );
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        void sessionsQuery.refetch();
+      })
+      .catch((error: Error) => {
+        const resolved = resolveChangePasswordFieldErrors(error);
+        if (Object.keys(resolved).length > 0) {
+          setFormErrors(resolved);
+        } else {
+          setFormErrors({
+            currentPassword:
+              error.message || "Failed to change password. Please check your credentials.",
+          });
+        }
+      });
   };
 
   const handleConfirmRevokeSession = () => {

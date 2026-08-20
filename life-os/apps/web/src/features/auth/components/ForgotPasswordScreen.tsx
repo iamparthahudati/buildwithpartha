@@ -116,32 +116,32 @@ export function ForgotPasswordScreen({
     setFormErrors({});
     setSubmitError(null);
 
-    forgotPasswordMutation.mutate(
-      { email: trimmed },
-      {
-        onSuccess: () => {
-          setScreenState("sent");
-        },
-        onError: (error) => {
-          if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
-            applyFailure({ alertMessage: RATE_LIMITED_MESSAGE });
-          } else if (
-            error instanceof ApiError &&
-            (error.problem?.code === "VALIDATION_FAILED" ||
-              error.problem?.code === "FIELD_VALIDATION_FAILED")
-          ) {
-            const grouped = groupFieldProblems(error.problem.errors);
-            const mapped: Record<string, string> = {};
-            for (const [field, code] of Object.entries(grouped)) {
-              mapped[field] = resolveForgotPasswordFieldError(field, code);
-            }
-            applyFailure({ fieldErrors: mapped });
-          } else {
-            applyFailure({ alertMessage: GENERIC_FAILURE_MESSAGE });
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable. See VerifyEmailScreen/LoginScreen.
+    forgotPasswordMutation
+      .mutateAsync({ email: trimmed })
+      .then(() => {
+        setScreenState("sent");
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
+          applyFailure({ alertMessage: RATE_LIMITED_MESSAGE });
+        } else if (
+          error instanceof ApiError &&
+          (error.problem?.code === "VALIDATION_FAILED" ||
+            error.problem?.code === "FIELD_VALIDATION_FAILED")
+        ) {
+          const grouped = groupFieldProblems(error.problem.errors);
+          const mapped: Record<string, string> = {};
+          for (const [field, code] of Object.entries(grouped)) {
+            mapped[field] = resolveForgotPasswordFieldError(field, code);
           }
-        },
-      },
-    );
+          applyFailure({ fieldErrors: mapped });
+        } else {
+          applyFailure({ alertMessage: GENERIC_FAILURE_MESSAGE });
+        }
+      });
   }
 
   // Sent State (Check your email / confirmation)

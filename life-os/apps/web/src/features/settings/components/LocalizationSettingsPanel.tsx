@@ -71,27 +71,27 @@ export function LocalizationSettingsPanel({ profile }: LocalizationSettingsPanel
     }
 
     setErrors({});
-    updateProfileMutation.mutate(
-      {
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable. See VerifyEmailScreen/LoginScreen.
+    updateProfileMutation
+      .mutateAsync({
         displayName: profile.displayName,
         timeZone,
         locale,
         weekStart,
-      },
-      {
-        onSuccess: () => {
-          setSuccessMessage("Localization settings updated.");
-        },
-        onError: (error) => {
-          const resolved = resolveLocalizationFieldErrors(error);
-          if (Object.keys(resolved).length > 0) {
-            setErrors(resolved);
-          } else {
-            setErrors({ timeZone: error.message || "Failed to update localization settings." });
-          }
-        },
-      },
-    );
+      })
+      .then(() => {
+        setSuccessMessage("Localization settings updated.");
+      })
+      .catch((error: Error) => {
+        const resolved = resolveLocalizationFieldErrors(error);
+        if (Object.keys(resolved).length > 0) {
+          setErrors(resolved);
+        } else {
+          setErrors({ timeZone: error.message || "Failed to update localization settings." });
+        }
+      });
   };
 
   return (

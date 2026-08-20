@@ -33,27 +33,27 @@ export function ProfileSettingsPanel({ profile }: ProfileSettingsPanelProps) {
     }
 
     setErrors({});
-    updateProfileMutation.mutate(
-      {
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable. See VerifyEmailScreen/LoginScreen.
+    updateProfileMutation
+      .mutateAsync({
         displayName: displayName.trim(),
         timeZone: profile.timeZone,
         locale: profile.locale,
         weekStart: profile.weekStart,
-      },
-      {
-        onSuccess: () => {
-          setSuccessMessage("Profile settings saved.");
-        },
-        onError: (error) => {
-          const resolved = resolveProfileFieldErrors(error);
-          if (Object.keys(resolved).length > 0) {
-            setErrors(resolved);
-          } else {
-            setErrors({ displayName: error.message || "Failed to update profile." });
-          }
-        },
-      },
-    );
+      })
+      .then(() => {
+        setSuccessMessage("Profile settings saved.");
+      })
+      .catch((error: Error) => {
+        const resolved = resolveProfileFieldErrors(error);
+        if (Object.keys(resolved).length > 0) {
+          setErrors(resolved);
+        } else {
+          setErrors({ displayName: error.message || "Failed to update profile." });
+        }
+      });
   };
 
   const isDirty = displayName !== profile.displayName;

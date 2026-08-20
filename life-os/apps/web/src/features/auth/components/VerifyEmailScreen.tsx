@@ -124,30 +124,33 @@ export function VerifyEmailScreen({
     }
     hasTriggeredVerificationRef.current = true;
 
-    verifyMutation.mutate(
-      { token: resolvedToken },
-      {
-        onSuccess: () => {
-          setScreenState("verified");
-          setSubmitError(null);
-        },
-        onError: (error) => {
-          if (error instanceof ApiError && error.problem?.code === "TOKEN_EXPIRED") {
-            setScreenState("expired");
-          } else if (error instanceof ApiError && error.problem?.code === "TOKEN_ALREADY_USED") {
-            setScreenState("already-used");
-          } else if (error instanceof ApiError && error.problem?.code === "TOKEN_INVALID") {
-            setScreenState("invalid");
-          } else if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
-            setScreenState("error");
-            setSubmitError(RATE_LIMITED_MESSAGE);
-          } else {
-            setScreenState("error");
-            setSubmitError(GENERIC_VERIFY_FAILURE_MESSAGE);
-          }
-        },
-      },
-    );
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form never fires here — reactive mutation state (isSuccess/
+    // isPending, which `SignupScreen` already relies on) keeps updating
+    // correctly, but these one-off callbacks do not. Every prior test of
+    // this screen ran against a mocked `fetch`, which never exposed it.
+    verifyMutation
+      .mutateAsync({ token: resolvedToken })
+      .then(() => {
+        setScreenState("verified");
+        setSubmitError(null);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.problem?.code === "TOKEN_EXPIRED") {
+          setScreenState("expired");
+        } else if (error instanceof ApiError && error.problem?.code === "TOKEN_ALREADY_USED") {
+          setScreenState("already-used");
+        } else if (error instanceof ApiError && error.problem?.code === "TOKEN_INVALID") {
+          setScreenState("invalid");
+        } else if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
+          setScreenState("error");
+          setSubmitError(RATE_LIMITED_MESSAGE);
+        } else {
+          setScreenState("error");
+          setSubmitError(GENERIC_VERIFY_FAILURE_MESSAGE);
+        }
+      });
   }, [resolvedToken, verifyMutation]);
 
   const appBasePath = readPublicEnvironment().appBasePath.replace(/\/$/, "");
@@ -160,22 +163,22 @@ export function VerifyEmailScreen({
     }
 
     setSubmitError(null);
-    resendMutation.mutate(
-      { email: email.trim() },
-      {
-        onSuccess: () => {
-          setScreenState("sent");
-          setCooldown(DEFAULT_COOLDOWN_SECONDS);
-        },
-        onError: (error) => {
-          if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
-            setSubmitError(RATE_LIMITED_MESSAGE);
-          } else {
-            setSubmitError(GENERIC_RESEND_FAILURE_MESSAGE);
-          }
-        },
-      },
-    );
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable. See this screen's auto-verify effect.
+    resendMutation
+      .mutateAsync({ email: email.trim() })
+      .then(() => {
+        setScreenState("sent");
+        setCooldown(DEFAULT_COOLDOWN_SECONDS);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
+          setSubmitError(RATE_LIMITED_MESSAGE);
+        } else {
+          setSubmitError(GENERIC_RESEND_FAILURE_MESSAGE);
+        }
+      });
   }
 
   function handleResendFormSubmit(event: FormEvent<HTMLFormElement>) {
@@ -209,22 +212,22 @@ export function VerifyEmailScreen({
     setFormErrors({});
     setSubmitError(null);
 
-    resendMutation.mutate(
-      { email: trimmed },
-      {
-        onSuccess: () => {
-          setScreenState("sent");
-          setCooldown(DEFAULT_COOLDOWN_SECONDS);
-        },
-        onError: (error) => {
-          if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
-            setSubmitError(RATE_LIMITED_MESSAGE);
-          } else {
-            setSubmitError(GENERIC_RESEND_FAILURE_MESSAGE);
-          }
-        },
-      },
-    );
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable. See this screen's auto-verify effect.
+    resendMutation
+      .mutateAsync({ email: trimmed })
+      .then(() => {
+        setScreenState("sent");
+        setCooldown(DEFAULT_COOLDOWN_SECONDS);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.problem?.code === "RATE_LIMITED") {
+          setSubmitError(RATE_LIMITED_MESSAGE);
+        } else {
+          setSubmitError(GENERIC_RESEND_FAILURE_MESSAGE);
+        }
+      });
   }
 
   // 1. Verifying State

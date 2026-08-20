@@ -58,25 +58,25 @@ export function AccountDeletionCancelScreen({
     }
     hasTriggeredRef.current = true;
 
-    cancelMutation.mutate(
-      { token: resolvedToken },
-      {
-        onSuccess: () => {
-          setScreenState("cancelled");
-        },
-        onError: (error) => {
-          if (error instanceof ApiError && error.problem?.code === "TOKEN_EXPIRED") {
-            setScreenState("expired");
-          } else if (error instanceof ApiError && error.problem?.code === "TOKEN_ALREADY_USED") {
-            setScreenState("already-used");
-          } else if (error instanceof ApiError && error.problem?.code === "TOKEN_INVALID") {
-            setScreenState("invalid");
-          } else {
-            setScreenState("error");
-          }
-        },
-      },
-    );
+    // `mutateAsync().then()/.catch()` rather than `.mutate(vars, { onSuccess,
+    // onError })`: verified live against a real backend, the call-time
+    // callback form is unreliable. See VerifyEmailScreen/LoginScreen.
+    cancelMutation
+      .mutateAsync({ token: resolvedToken })
+      .then(() => {
+        setScreenState("cancelled");
+      })
+      .catch((error: unknown) => {
+        if (error instanceof ApiError && error.problem?.code === "TOKEN_EXPIRED") {
+          setScreenState("expired");
+        } else if (error instanceof ApiError && error.problem?.code === "TOKEN_ALREADY_USED") {
+          setScreenState("already-used");
+        } else if (error instanceof ApiError && error.problem?.code === "TOKEN_INVALID") {
+          setScreenState("invalid");
+        } else {
+          setScreenState("error");
+        }
+      });
   }, [resolvedToken, cancelMutation]);
 
   const appBasePath = readPublicEnvironment().appBasePath.replace(/\/$/, "");
