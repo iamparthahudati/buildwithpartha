@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import {
   useProjects,
+  useProjectDetail,
   useCreateProject,
   useUpdateProject,
   useArchiveProject,
@@ -21,10 +22,12 @@ vi.mock("../api/projectsApi", () => ({
   restoreProject: vi.fn(),
   deleteProject: vi.fn(),
   getProject: vi.fn(),
+  getProjectDetail: vi.fn(),
   mapProjectResponse: vi.fn(),
 }));
 
 const mockQueryProjects = vi.mocked(projectsApi.queryProjects);
+const mockGetProjectDetail = vi.mocked(projectsApi.getProjectDetail);
 const mockCreateProject = vi.mocked(projectsApi.createProject);
 const mockUpdateProject = vi.mocked(projectsApi.updateProject);
 const mockArchiveProject = vi.mocked(projectsApi.archiveProject);
@@ -96,6 +99,24 @@ describe("useProjects and mutations", () => {
       expect(result.current.data?.items).toHaveLength(1);
       expect(result.current.data?.items[0]?.name).toBe("Hook Test Project");
       expect(result.current.data?.summary?.total).toBe(1);
+    });
+  });
+
+  describe("useProjectDetail", () => {
+    it("fetches project detail", async () => {
+      mockGetProjectDetail.mockResolvedValueOnce({
+        project: MOCK_PROJECT,
+        milestones: [],
+      });
+
+      const { Wrapper } = createWrapper();
+      const { result } = renderHook(() => useProjectDetail("proj-101"), {
+        wrapper: Wrapper,
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(result.current.data?.project.name).toBe("Hook Test Project");
     });
   });
 

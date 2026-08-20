@@ -1,9 +1,11 @@
 import { useQuery, type QueryClient, type UseQueryResult } from "@tanstack/react-query";
 import {
   queryProjects,
+  getProjectDetail,
   type ProjectQueryParams,
   type ProjectQueryResponseDto,
   type ProjectResponseDto,
+  type ProjectDetail,
   type PageResponse,
 } from "../api/projectsApi";
 import type { Project } from "../model/project";
@@ -47,5 +49,15 @@ export function useProjects(
     staleTime: 30_000,
     refetchOnWindowFocus: true,
     enabled,
+  });
+}
+
+/** Hook to fetch aggregate details for a single project (project metadata + milestones). */
+export function useProjectDetail(id: string, enabled = true): UseQueryResult<ProjectDetail, Error> {
+  return useQuery({
+    queryKey: projectsQueryKeys.detail(id),
+    queryFn: async ({ signal }) => getProjectDetail(id, signal),
+    staleTime: 30_000,
+    enabled: Boolean(id) && enabled,
   });
 }

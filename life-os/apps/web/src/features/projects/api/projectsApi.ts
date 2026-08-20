@@ -1,5 +1,6 @@
 import { apiRequest } from "@lib/apiClient";
 import type { Project, ProjectHealth, ProjectPriority, ProjectStatus } from "../model/project";
+import { mapMilestoneResponse } from "./milestonesApi";
 
 export interface PageResponse<T> {
   readonly items: readonly T[];
@@ -46,6 +47,17 @@ export interface ProjectSummaryCountsDto {
 export interface ProjectQueryResponseDto {
   readonly page: PageResponse<ProjectResponseDto>;
   readonly summary: ProjectSummaryCountsDto;
+}
+
+/** Aggregated detail response DTO returned from GET /projects/{id}/detail. */
+export interface ProjectDetailResponseDto {
+  readonly project: ProjectResponseDto;
+  readonly milestones: readonly import("./milestonesApi").MilestoneResponseDto[];
+}
+
+export interface ProjectDetail {
+  readonly project: Project;
+  readonly milestones: readonly import("../model/milestone").Milestone[];
 }
 
 /** Request DTO for POST /projects. */
@@ -208,6 +220,18 @@ export async function getProject(id: string, signal?: AbortSignal): Promise<Proj
     ...(signal ? { signal } : {}),
   });
   return mapProjectResponse(dto);
+}
+
+/** Fetches aggregated project details and milestones by project ID. */
+export async function getProjectDetail(id: string, signal?: AbortSignal): Promise<ProjectDetail> {
+  const dto = await apiRequest<ProjectDetailResponseDto>(`/projects/${id}/detail`, {
+    method: "GET",
+    ...(signal ? { signal } : {}),
+  });
+  return {
+    project: mapProjectResponse(dto.project),
+    milestones: dto.milestones.map(mapMilestoneResponse),
+  };
 }
 
 /** Creates a new project. */

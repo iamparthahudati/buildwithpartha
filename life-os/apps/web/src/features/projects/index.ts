@@ -33,6 +33,7 @@ export type { Milestone, MilestoneStatus } from "./model/milestone";
 export {
   queryProjects,
   getProject,
+  getProjectDetail,
   createProject,
   updateProject,
   archiveProject,
@@ -42,6 +43,8 @@ export {
   type ProjectResponseDto,
   type ProjectSummaryCountsDto,
   type ProjectQueryResponseDto,
+  type ProjectDetailResponseDto,
+  type ProjectDetail,
   type CreateProjectRequestDto,
   type UpdateProjectRequestDto,
   type ArchiveProjectRequestDto,
@@ -67,6 +70,7 @@ export {
   projectsQueryKeys,
   invalidateProjectsQueries,
   useProjects,
+  useProjectDetail,
   type UseProjectsResult,
 } from "./hooks/useProjects";
 

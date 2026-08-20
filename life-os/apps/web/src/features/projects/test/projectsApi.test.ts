@@ -4,6 +4,7 @@ import {
   mapProjectResponse,
   queryProjects,
   getProject,
+  getProjectDetail,
   createProject,
   updateProject,
   archiveProject,
@@ -117,6 +118,33 @@ describe("projectsApi", () => {
 
       expect(mockApiRequest).toHaveBeenCalledWith("/projects/proj-123", { method: "GET" });
       expect(project.id).toBe("proj-123");
+    });
+  });
+
+  describe("getProjectDetail", () => {
+    it("fetches project aggregate detail", async () => {
+      mockApiRequest.mockResolvedValueOnce({
+        project: MOCK_DTO,
+        milestones: [
+          {
+            id: "m-1",
+            projectId: "proj-123",
+            title: "M1",
+            status: "PLANNED",
+            ordering: 0,
+            createdAt: "2026-08-01T10:00:00Z",
+            updatedAt: "2026-08-01T10:00:00Z",
+            version: 1,
+          },
+        ],
+      });
+
+      const detail = await getProjectDetail("proj-123");
+
+      expect(mockApiRequest).toHaveBeenCalledWith("/projects/proj-123/detail", { method: "GET" });
+      expect(detail.project.id).toBe("proj-123");
+      expect(detail.milestones).toHaveLength(1);
+      expect(detail.milestones[0]?.title).toBe("M1");
     });
   });
 
