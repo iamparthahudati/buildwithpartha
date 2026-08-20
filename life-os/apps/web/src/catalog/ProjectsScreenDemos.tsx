@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Select, Text } from "@components/ui";
+import { Select, Text } from "@components/ui";
 import { ProjectsScreen } from "@features/projects";
 
 export function ProjectsScreenDemo() {

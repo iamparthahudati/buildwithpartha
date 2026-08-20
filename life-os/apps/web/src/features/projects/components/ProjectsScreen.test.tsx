@@ -99,7 +99,8 @@ describe("ProjectsScreen", () => {
     expect(screen.getByText("Failed to load projects")).toBeInTheDocument();
 
     const retryBtns = screen.getAllByRole("button", { name: "Try again" });
-    await user.click(retryBtns[0]);
+    expect(retryBtns[0]).toBeDefined();
+    await user.click(retryBtns[0]!);
 
     expect(onRetry).toHaveBeenCalled();
   });
@@ -109,7 +110,8 @@ describe("ProjectsScreen", () => {
     render(<ProjectsScreen />);
 
     const menuBtns = screen.getAllByRole("button", { name: "Project actions" });
-    await user.click(menuBtns[0]);
+    expect(menuBtns[0]).toBeDefined();
+    await user.click(menuBtns[0]!);
 
     const archiveItem = screen.getByRole("menuitem", { name: "Archive" });
     await user.click(archiveItem);

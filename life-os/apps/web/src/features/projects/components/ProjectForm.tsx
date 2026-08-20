@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { TextInput, Textarea, Select, Button, DateInput } from "@components/ui";
 import {
   FormFieldGroup,
@@ -125,6 +125,7 @@ export function ProjectForm({
   // Sync state when initialValues change or dialog opens
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(initialValues?.name ?? "");
       setDescription(initialValues?.description ?? "");
       setStatus(initialValues?.status ?? "ACTIVE");
@@ -141,42 +142,65 @@ export function ProjectForm({
     }
   }, [open, initialValues, mode]);
 
-  const isDirty =
-    name !== (initialValues?.name ?? "") ||
-    description !== (initialValues?.description ?? "") ||
-    status !== (initialValues?.status ?? "ACTIVE") ||
-    priority !== (initialValues?.priority ?? "P3") ||
-    health !== (initialValues?.health ?? "NOT_SET") ||
-    color !== (initialValues?.color ?? "blue") ||
-    icon !== (initialValues?.icon ?? "folder") ||
-    startDate !== (initialValues?.startDate ?? "") ||
-    deadlineDate !== (initialValues?.deadlineDate ?? "") ||
-    estimatedMinutes !== (initialValues?.estimatedMinutes ?? null) ||
-    JSON.stringify(selectedLabels) !== JSON.stringify(initialValues?.labels ?? []);
+  const isDirty = useMemo(() => {
+    if (!open) return false;
+    const origName = initialValues?.name ?? "";
+    const origDesc = initialValues?.description ?? "";
+    const origStatus = initialValues?.status ?? "ACTIVE";
+    const origPriority = initialValues?.priority ?? "P3";
+    const origHealth = initialValues?.health ?? "NOT_SET";
+    const origColor = initialValues?.color ?? "blue";
+    const origIcon = initialValues?.icon ?? "folder";
+    const origStart = initialValues?.startDate ?? "";
+    const origDeadline = initialValues?.deadlineDate ?? "";
+    const origEst = initialValues?.estimatedMinutes ?? null;
+    const origLabels = initialValues?.labels ?? [];
 
-  function validate(): Record<string, string> {
+    return (
+      name !== origName ||
+      description !== origDesc ||
+      status !== origStatus ||
+      priority !== origPriority ||
+      health !== origHealth ||
+      color !== origColor ||
+      icon !== origIcon ||
+      startDate !== origStart ||
+      deadlineDate !== origDeadline ||
+      estimatedMinutes !== origEst ||
+      JSON.stringify(selectedLabels) !== JSON.stringify(origLabels)
+    );
+  }, [
+    open,
+    initialValues,
+    name,
+    description,
+    status,
+    priority,
+    health,
+    color,
+    icon,
+    startDate,
+    deadlineDate,
+    estimatedMinutes,
+    selectedLabels,
+  ]);
+
+  const handleSubmit = () => {
     const errors: Record<string, string> = {};
     if (!name.trim()) {
-      errors.name = "Enter a project name.";
+      errors.name = "Project name is required.";
     }
-    if (startDate && deadlineDate && deadlineDate < startDate) {
-      errors.deadlineDate = "Deadline cannot be before start date.";
+    if (startDate && deadlineDate && startDate > deadlineDate) {
+      errors.deadlineDate = "Deadline date cannot be before start date.";
     }
-    return errors;
-  }
-
-  function handleSubmit() {
-    const errors = validate();
-    setFieldErrors(errors);
 
     if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       errorSummaryRef.current?.focus();
       return;
     }
 
-    const payload: ProjectFormData = {
-      ...(initialValues?.id ? { id: initialValues.id } : {}),
-      ...(initialValues?.version !== undefined ? { version: initialValues.version } : {}),
+    onSubmit({
       name: name.trim(),
       description: description.trim() || null,
       status,
@@ -188,10 +212,8 @@ export function ProjectForm({
       deadlineDate: deadlineDate || null,
       estimatedMinutes,
       labels: selectedLabels,
-    };
-
-    onSubmit(payload);
-  }
+    });
+  };
 
   const comboboxOptions: ComboboxOption[] = availableLabels.map((l) => ({
     value: l,
@@ -210,14 +232,14 @@ export function ProjectForm({
       submitLabel={submitLabel}
       isDirty={isDirty}
       pending={isPending}
-      error={error}
+      {...(error ? { error } : {})}
       className="lifeos-project-form-dialog"
     >
       <FormFieldGroup>
         <FormErrorSummary ref={errorSummaryRef} title="Fix the following errors before saving" />
 
         {conflictError ? (
-          <Alert tone="danger" title="Version Conflict">
+          <Alert tone="danger" heading="Version Conflict">
             <p>{conflictError}</p>
             {onResolveConflict ? (
               <Button type="button" variant="secondary" onClick={onResolveConflict}>
@@ -228,14 +250,17 @@ export function ProjectForm({
         ) : null}
 
         <div className="lifeos-project-form">
-          <FormField name="name" label="Project name" error={fieldErrors.name}>
+          <FormField
+            name="name"
+            label="Project name"
+            {...(fieldErrors.name ? { error: fieldErrors.name } : {})}
+          >
             {(fieldProps) => (
               <TextInput
                 {...fieldProps}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Website Redesign"
-                autoFocus
               />
             )}
           </FormField>
@@ -244,7 +269,7 @@ export function ProjectForm({
             name="description"
             label="Description"
             required={false}
-            error={fieldErrors.description}
+            {...(fieldErrors.description ? { error: fieldErrors.description } : {})}
           >
             {(fieldProps) => (
               <Textarea
@@ -258,7 +283,11 @@ export function ProjectForm({
           </FormField>
 
           <div className="lifeos-project-form__grid">
-            <FormField name="status" label="Status" error={fieldErrors.status}>
+            <FormField
+              name="status"
+              label="Status"
+              {...(fieldErrors.status ? { error: fieldErrors.status } : {})}
+            >
               {(fieldProps) => (
                 <Select
                   {...fieldProps}
@@ -269,7 +298,11 @@ export function ProjectForm({
               )}
             </FormField>
 
-            <FormField name="priority" label="Priority" error={fieldErrors.priority}>
+            <FormField
+              name="priority"
+              label="Priority"
+              {...(fieldErrors.priority ? { error: fieldErrors.priority } : {})}
+            >
               {(fieldProps) => (
                 <Select
                   {...fieldProps}
@@ -292,7 +325,11 @@ export function ProjectForm({
 
           {showAdvanced ? (
             <div className="lifeos-project-form__advanced">
-              <FormField name="health" label="Health" error={fieldErrors.health}>
+              <FormField
+                name="health"
+                label="Health"
+                {...(fieldErrors.health ? { error: fieldErrors.health } : {})}
+              >
                 {(fieldProps) => (
                   <Select
                     {...fieldProps}
@@ -317,7 +354,7 @@ export function ProjectForm({
                   name="startDate"
                   label="Start date"
                   required={false}
-                  error={fieldErrors.startDate}
+                  {...(fieldErrors.startDate ? { error: fieldErrors.startDate } : {})}
                 >
                   {(fieldProps) => (
                     <DateInput
@@ -332,7 +369,7 @@ export function ProjectForm({
                   name="deadlineDate"
                   label="Deadline date"
                   required={false}
-                  error={fieldErrors.deadlineDate}
+                  {...(fieldErrors.deadlineDate ? { error: fieldErrors.deadlineDate } : {})}
                 >
                   {(fieldProps) => (
                     <DateInput
@@ -352,7 +389,12 @@ export function ProjectForm({
                 locale="en-US"
               />
 
-              <FormField name="labels" label="Labels" required={false} error={fieldErrors.labels}>
+              <FormField
+                name="labels"
+                label="Labels"
+                required={false}
+                {...(fieldErrors.labels ? { error: fieldErrors.labels } : {})}
+              >
                 {() => (
                   <Combobox
                     multiple

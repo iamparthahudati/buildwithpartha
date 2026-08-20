@@ -6,7 +6,7 @@ import {
   AlertTriangle,
   BarChart2,
 } from "lucide-react";
-import { MetricCard } from "@components/navigation";
+import { MetricCard, type MetricCardStatus } from "@components/navigation";
 import { Button } from "@components/ui";
 import "./project-summary-metrics.css";
 
@@ -40,17 +40,17 @@ export function ProjectSummaryMetrics({
   onSelectFilter,
   className,
 }: ProjectSummaryMetricsProps) {
-  function getStatus(val: number | string | undefined) {
+  function getStatus(val: number | string | undefined): MetricCardStatus {
     if (loading) {
-      return { type: "loading" as const };
+      return { type: "loading" };
     }
     if (error) {
-      return { type: "error" as const, message: error, onRetry };
+      return { type: "error", message: error, ...(onRetry ? { onRetry } : {}) };
     }
     if (val === undefined || counts === null) {
-      return { type: "empty" as const, message: "—" };
+      return { type: "empty", message: "—" };
     }
-    return { type: "ready" as const, value: String(val) };
+    return { type: "ready", value: String(val) };
   }
 
   const items = [

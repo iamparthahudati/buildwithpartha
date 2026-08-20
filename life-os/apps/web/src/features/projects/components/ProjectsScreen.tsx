@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import {
   PageHeader,
   Tabs,
@@ -15,7 +15,7 @@ import { ProjectRow } from "./ProjectRow";
 import { ProjectCard } from "./ProjectCard";
 import { ProjectForm, type ProjectFormData } from "./ProjectForm";
 import { ProjectSummaryMetrics, type ProjectFilterCategory } from "./ProjectSummaryMetrics";
-import type { Project, ProjectStatus, ProjectPriority, ProjectHealth } from "../model/project";
+import type { Project } from "../model/project";
 import "./projects-screen.css";
 
 const MOCK_DEFAULT_PROJECTS: readonly Project[] = [
@@ -112,18 +112,17 @@ export interface ProjectsScreenProps {
   readonly onArchiveProject?: (id: string) => Promise<void> | void;
   readonly onRestoreProject?: (id: string) => Promise<void> | void;
   readonly onDeleteProject?: (id: string) => Promise<void> | void;
-  readonly onSelectProject?: (project: Project) => void;
   readonly now?: Date;
   readonly timeZone?: string;
   readonly locale?: string;
 }
 
 const TABS: readonly TabItem[] = [
-  { id: "ALL", label: "All" },
-  { id: "ACTIVE", label: "Active" },
-  { id: "ON_HOLD", label: "On Hold" },
-  { id: "COMPLETED", label: "Completed" },
-  { id: "ARCHIVED", label: "Archived" },
+  { id: "ALL", label: "All", panel: null },
+  { id: "ACTIVE", label: "Active", panel: null },
+  { id: "ON_HOLD", label: "On Hold", panel: null },
+  { id: "COMPLETED", label: "Completed", panel: null },
+  { id: "ARCHIVED", label: "Archived", panel: null },
 ];
 
 const SORT_OPTIONS: readonly SortOption[] = [
@@ -143,7 +142,6 @@ export function ProjectsScreen({
   onArchiveProject,
   onRestoreProject,
   onDeleteProject,
-  onSelectProject,
   now = new Date("2026-08-20T17:00:00Z"),
   timeZone = "UTC",
   locale = "en-US",
@@ -273,14 +271,14 @@ export function ProjectsScreen({
       const newProj: Project = {
         id: `proj-${Date.now()}`,
         name: data.name,
-        description: data.description,
+        description: data.description ?? null,
         status: data.status,
         priority: data.priority,
         health: data.health,
-        color: data.color,
-        icon: data.icon,
-        startDate: data.startDate,
-        deadlineDate: data.deadlineDate,
+        color: data.color ?? null,
+        icon: data.icon ?? null,
+        startDate: data.startDate ?? null,
+        deadlineDate: data.deadlineDate ?? null,
         completedTasksCount: 0,
         totalTasksCount: 0,
         updatedAt: new Date().toISOString(),
@@ -292,14 +290,14 @@ export function ProjectsScreen({
       const updatedProj: Project = {
         ...editingProject,
         name: data.name,
-        description: data.description,
+        description: data.description ?? null,
         status: data.status,
         priority: data.priority,
         health: data.health,
-        color: data.color,
-        icon: data.icon,
-        startDate: data.startDate,
-        deadlineDate: data.deadlineDate,
+        color: data.color ?? null,
+        icon: data.icon ?? null,
+        startDate: data.startDate ?? null,
+        deadlineDate: data.deadlineDate ?? null,
         updatedAt: new Date().toISOString(),
         version: (editingProject.version ?? 1) + 1,
       };
@@ -374,14 +372,15 @@ export function ProjectsScreen({
       <ProjectSummaryMetrics
         counts={counts}
         loading={loading}
-        error={error}
-        onRetry={onRetry}
+        {...(error ? { error } : {})}
+        {...(onRetry ? { onRetry } : {})}
         activeFilter={statusTab as ProjectFilterCategory}
         onSelectFilter={handleSelectMetricFilter}
       />
 
       <div className="lifeos-projects-screen__controls">
         <Tabs
+          label="Project status views"
           items={TABS}
           selectedId={statusTab}
           onSelectedIdChange={(id) => {
@@ -448,10 +447,17 @@ export function ProjectsScreen({
 
       {loading ? (
         <div className="lifeos-projects-screen__loading" data-testid="projects-loading">
-          <Skeleton shape="card" count={3} height="120px" />
+          <Skeleton shape="block" height="120px" />
+          <Skeleton shape="block" height="120px" />
+          <Skeleton shape="block" height="120px" />
         </div>
       ) : error ? (
-        <ErrorState title="Failed to load projects" description={error} onRetry={onRetry} />
+        <ErrorState
+          scope="page"
+          title="Failed to load projects"
+          description={error}
+          {...(onRetry ? { onRetry } : {})}
+        />
       ) : paginatedProjects.length === 0 ? (
         <EmptyState
           variant={
@@ -534,9 +540,11 @@ export function ProjectsScreen({
           {totalPages > 1 ? (
             <div className="lifeos-projects-screen__pagination">
               <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
+                page={currentPage}
+                pageSize={pageSize}
+                total={sortedProjects.length}
                 onPageChange={setCurrentPage}
+                label="Projects pagination"
               />
             </div>
           ) : null}
@@ -552,14 +560,14 @@ export function ProjectsScreen({
             ? {
                 id: editingProject.id,
                 name: editingProject.name,
-                description: editingProject.description,
+                description: editingProject.description ?? "",
                 status: editingProject.status,
                 priority: editingProject.priority,
                 health: editingProject.health,
                 color: editingProject.color as any,
                 icon: editingProject.icon as any,
-                startDate: editingProject.startDate,
-                deadlineDate: editingProject.deadlineDate,
+                startDate: editingProject.startDate ?? null,
+                deadlineDate: editingProject.deadlineDate ?? null,
                 version: editingProject.version,
               }
             : null
@@ -591,22 +599,23 @@ export function ProjectsScreen({
         open={Boolean(selectedDetailProject)}
         onClose={() => setSelectedDetailProject(null)}
         title={selectedDetailProject?.name ?? "Project details"}
-      >
-        {selectedDetailProject ? (
-          <div className="lifeos-projects-detail-preview">
-            <Text>{selectedDetailProject.description || "No description provided."}</Text>
-            <div className="lifeos-projects-detail-preview__meta">
-              <Text size="sm">Status: {selectedDetailProject.status}</Text>
-              <Text size="sm">Priority: {selectedDetailProject.priority}</Text>
-              <Text size="sm">Health: {selectedDetailProject.health}</Text>
-              <Text size="sm">
-                Progress: {selectedDetailProject.completedTasksCount} /{" "}
-                {selectedDetailProject.totalTasksCount} tasks
-              </Text>
+        content={
+          selectedDetailProject ? (
+            <div className="lifeos-projects-detail-preview">
+              <Text>{selectedDetailProject.description || "No description provided."}</Text>
+              <div className="lifeos-projects-detail-preview__meta">
+                <Text size="sm">Status: {selectedDetailProject.status}</Text>
+                <Text size="sm">Priority: {selectedDetailProject.priority}</Text>
+                <Text size="sm">Health: {selectedDetailProject.health}</Text>
+                <Text size="sm">
+                  Progress: {selectedDetailProject.completedTasksCount} /{" "}
+                  {selectedDetailProject.totalTasksCount} tasks
+                </Text>
+              </div>
             </div>
-          </div>
-        ) : null}
-      </DetailPanel>
+          ) : null
+        }
+      />
     </div>
   );
 }

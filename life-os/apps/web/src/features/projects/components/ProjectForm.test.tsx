@@ -73,7 +73,7 @@ describe("ProjectForm", () => {
     await user.click(submitBtn);
 
     expect(onSubmit).not.toHaveBeenCalled();
-    expect(screen.getAllByText("Enter a project name.").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Project name is required.").length).toBeGreaterThan(0);
   });
 
   it("validates deadline date is not before start date", async () => {
@@ -90,7 +90,9 @@ describe("ProjectForm", () => {
     await user.click(screen.getByRole("button", { name: "Create project" }));
 
     expect(onSubmit).not.toHaveBeenCalled();
-    expect(screen.getAllByText("Deadline cannot be before start date.").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("Deadline date cannot be before start date.").length,
+    ).toBeGreaterThan(0);
   });
 
   it("submits valid form data", async () => {

@@ -52,7 +52,8 @@ describe("ProjectSummaryMetrics", () => {
     expect(errorMessages.length).toBeGreaterThan(0);
 
     const retryButtons = screen.getAllByRole("button", { name: "Try again" });
-    await user.click(retryButtons[0]);
+    expect(retryButtons[0]).toBeDefined();
+    await user.click(retryButtons[0]!);
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
 
@@ -69,7 +70,8 @@ describe("ProjectSummaryMetrics", () => {
     );
 
     const filterBtns = screen.getAllByRole("button", { name: /Filter/i });
-    await user.click(filterBtns[1]); // Active projects filter button
+    expect(filterBtns[1]).toBeDefined();
+    await user.click(filterBtns[1]!); // Active projects filter button
 
     expect(onSelectFilter).toHaveBeenCalledWith("ACTIVE");
   });
