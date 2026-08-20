@@ -1,0 +1,59 @@
+/* TodayScreen (LOS-0614). Screen geometry only; child widgets own their visuals. */
+
+.lifeos-today-screen,
+.lifeos-today-screen__grid,
+.lifeos-today-screen__notices {
+  display: grid;
+  min-width: 0;
+  gap: var(--lifeos-space-5);
+}
+
+.lifeos-today-screen__notices:empty {
+  display: none;
+}
+
+.lifeos-today-screen > *,
+.lifeos-today-screen__grid > * {
+  min-width: 0;
+}
+
+@media (width >= 64rem) {
+  .lifeos-today-screen__grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .lifeos-today-screen__plan,
+  .lifeos-today-screen__schedule {
+    grid-column: span 8;
+  }
+
+  .lifeos-today-screen__next-up,
+  .lifeos-today-screen__review {
+    grid-column: span 4;
+  }
+
+  .lifeos-today-screen__sprint-week {
+    grid-column: span 7;
+  }
+
+  .lifeos-today-screen__projects {
+    grid-column: span 5;
+  }
+
+  .lifeos-today-screen__brain-capture {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (width >= 48rem) and (width < 64rem) {
+  .lifeos-today-screen__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lifeos-today-screen__plan,
+  .lifeos-today-screen__schedule,
+  .lifeos-today-screen__sprint-week {
+    grid-column: 1 / -1;
+  }
+}

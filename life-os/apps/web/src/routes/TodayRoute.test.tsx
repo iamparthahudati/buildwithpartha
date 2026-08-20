@@ -8,7 +8,7 @@ import { renderWithUser } from "@test/render";
 import { TodayRoute } from "./TodayRoute";
 
 /**
- * TodayRoute (LOS-0608).
+ * TodayRoute (LOS-0614).
  *
  * Route tests mock all dependencies at module level following the same
  * `SettingsRoute.test.tsx` pattern — no local helper components are declared
@@ -17,7 +17,7 @@ import { TodayRoute } from "./TodayRoute";
  */
 
 vi.mock("@features/today", () => ({
-  TodayHeaderSection: (props: {
+  TodayScreen: (props: {
     displayName: string;
     timeZone: string;
     locale: string;
@@ -29,8 +29,18 @@ vi.mock("@features/today", () => ({
     focusTimeStatus: { message?: string };
     activeProjectsStatus: { message?: string };
     weekProgressStatus: { message?: string };
+    plan: { mitState: { type: string }; tasksState: { type: string }; onAddTask: () => void };
+    schedule: { state: { type: string }; onAddTimeBlock: () => void };
+    activeProjects: { status: { type: string } };
+    sprintWeek: { sprintState: { type: string }; weekState: { type: string } };
+    review: {
+      status: {
+        data: { morning: { href: string }; evening: { href: string } };
+      };
+    };
+    brainCapture: { captureStatus: { type: string } };
   }) => (
-    <div data-testid="today-header-section">
+    <div data-testid="today-screen">
       <p>displayName: {props.displayName}</p>
       <p>timeZone: {props.timeZone}</p>
       <p>locale: {props.locale}</p>
@@ -44,6 +54,21 @@ vi.mock("@features/today", () => ({
       <button type="button" onClick={props.onQuickAddClick}>
         Quick Add
       </button>
+      <p>MIT: {props.plan.mitState.type}</p>
+      <p>Tasks: {props.plan.tasksState.type}</p>
+      <button type="button" onClick={props.plan.onAddTask}>
+        Add task
+      </button>
+      <p>Schedule: {props.schedule.state.type}</p>
+      <button type="button" onClick={props.schedule.onAddTimeBlock}>
+        Add time block
+      </button>
+      <p>Projects: {props.activeProjects.status.type}</p>
+      <p>Sprint: {props.sprintWeek.sprintState.type}</p>
+      <p>Week: {props.sprintWeek.weekState.type}</p>
+      <p>Morning review: {props.review.status.data.morning.href}</p>
+      <p>Evening review: {props.review.status.data.evening.href}</p>
+      <p>Capture: {props.brainCapture.captureStatus.type}</p>
     </div>
   ),
 }));
@@ -77,10 +102,10 @@ function renderRoute(onQuickAddClick = vi.fn()) {
 }
 
 describe("TodayRoute", () => {
-  it("renders TodayHeaderSection with the authenticated user's identity", () => {
+  it("renders TodayScreen with the authenticated user's identity", () => {
     renderRoute();
 
-    expect(screen.getByTestId("today-header-section")).toBeInTheDocument();
+    expect(screen.getByTestId("today-screen")).toBeInTheDocument();
     expect(screen.getByText("displayName: Partha")).toBeInTheDocument();
     expect(screen.getByText("timeZone: Asia/Kolkata")).toBeInTheDocument();
     expect(screen.getByText("locale: en-IN")).toBeInTheDocument();
@@ -98,6 +123,16 @@ describe("TodayRoute", () => {
     expect(screen.getByText("No focus time recorded today.")).toBeInTheDocument();
     expect(screen.getByText("No active projects yet.")).toBeInTheDocument();
     expect(screen.getByText("No Weekly Plan yet.")).toBeInTheDocument();
+    expect(screen.getByText("MIT: empty")).toBeInTheDocument();
+    expect(screen.getByText("Tasks: empty")).toBeInTheDocument();
+    expect(screen.getByText("Schedule: empty")).toBeInTheDocument();
+    expect(screen.getByText("Projects: empty")).toBeInTheDocument();
+    expect(screen.getByText("Sprint: empty")).toBeInTheDocument();
+    expect(screen.getByText("Week: empty")).toBeInTheDocument();
+    expect(screen.getByText("Capture: idle")).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/review: \/life-os\/app\/reviews\/daily\/\d{4}-\d{2}-\d{2}/i),
+    ).toHaveLength(2);
   });
 
   it("opens the shell-owned Quick Add dialog from the header trigger", async () => {
@@ -105,7 +140,9 @@ describe("TodayRoute", () => {
     const { user } = renderRoute(onQuickAddClick);
 
     await user.click(screen.getByRole("button", { name: "Quick Add" }));
-    expect(onQuickAddClick).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: "Add task" }));
+    await user.click(screen.getByRole("button", { name: "Add time block" }));
+    expect(onQuickAddClick).toHaveBeenCalledTimes(3);
   });
 
   it("renders the route's own container element", () => {

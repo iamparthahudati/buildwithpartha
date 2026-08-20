@@ -54,6 +54,13 @@ import {
   TodayPlanPartialErrorDemo,
   TodayPlanReadyDemo,
 } from "./NavigationDemos";
+import {
+  TodayScreenFirstUseDemo,
+  TodayScreenNormalDemo,
+  TodayScreenOfflineDemo,
+  TodayScreenOverloadedDemo,
+  TodayScreenPartialFailureDemo,
+} from "./TodayScreenDemos";
 
 import type { CatalogEntry } from "./registry";
 
@@ -646,6 +653,50 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "The selected MIT and its actions remain available while only the failed Task-list region offers retry and source navigation.",
         render: () => <TodayPlanPartialErrorDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-screen",
+    name: "TodayScreen",
+    group: "Screens",
+    summary:
+      "The complete pre-integration Today composition. The catalog viewport control proves the same semantic priority order at the 320px minimum, tablet, and desktop widths; widget failures stay isolated and offline/overload language never overclaims persistence or automatic replanning.",
+    states: [
+      {
+        id: "today-screen-first-use",
+        name: "First use",
+        description:
+          "No fictional Tasks, Time Blocks, Projects, charts, or percentages. Add a Task, reserve a Time Block, and capture a thought remain ordered invitations.",
+        render: () => <TodayScreenFirstUseDemo />,
+      },
+      {
+        id: "today-screen-normal",
+        name: "Normal day",
+        description:
+          "A selected focus, limited Tasks and Time Blocks, Sprint/Weekly Plan context, active Projects, Review status, and Brain Dump capture.",
+        render: () => <TodayScreenNormalDemo />,
+      },
+      {
+        id: "today-screen-overloaded",
+        name: "Overloaded day",
+        description:
+          "Names the schedule conflict and capacity overflow, offers Review plan, and explicitly confirms that nothing was automatically rescheduled or reprioritized.",
+        render: () => <TodayScreenOverloadedDemo />,
+      },
+      {
+        id: "today-screen-partial-failure",
+        name: "Partial failure",
+        description:
+          "Failed Tasks, scheduled-time metric, and active Projects regions retry in place while focus, schedule, Review, Sprint/Week, and capture remain available.",
+        render: () => <TodayScreenPartialFailureDemo />,
+      },
+      {
+        id: "today-screen-offline",
+        name: "Offline",
+        description:
+          "Shows the last update time, disables server-dependent mutations, and labels Brain Dump persistence as a device draft with sync unconfirmed.",
+        render: () => <TodayScreenOfflineDemo />,
       },
     ],
   },

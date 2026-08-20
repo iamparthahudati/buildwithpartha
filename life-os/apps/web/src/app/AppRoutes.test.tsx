@@ -46,7 +46,7 @@ vi.mock("@features/onboarding", async (importOriginal) => {
 });
 
 vi.mock("@features/today", () => ({
-  TodayHeaderSection: () => <h1>Today</h1>,
+  TodayScreen: () => <h1>Today</h1>,
 }));
 
 const MOCK_USER: AuthUser = {
