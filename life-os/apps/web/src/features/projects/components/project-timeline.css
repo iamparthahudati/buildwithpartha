@@ -1,0 +1,106 @@
+/* ProjectTimeline (LOS-0713). */
+
+.lifeos-project-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-5);
+  padding: var(--lifeos-space-6);
+}
+
+.lifeos-project-timeline__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+  flex-wrap: wrap;
+}
+
+.lifeos-project-timeline__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-project-timeline__header-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-project-timeline__summary-strip {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  flex-wrap: wrap;
+}
+
+.lifeos-project-timeline__list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-project-timeline__item-card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+  padding: var(--lifeos-space-4);
+  border: 1px solid var(--lifeos-color-border-subtle);
+  border-radius: var(--lifeos-radius-md);
+  background-color: var(--lifeos-color-bg-surface);
+}
+
+.lifeos-project-timeline__item-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.lifeos-project-timeline__item-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  flex-wrap: wrap;
+}
+
+.lifeos-project-timeline__item-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .lifeos-project-timeline {
+    padding: var(--lifeos-space-4);
+    gap: var(--lifeos-space-4);
+  }
+
+  .lifeos-project-timeline__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lifeos-project-timeline__header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .lifeos-project-timeline__item-card {
+    flex-direction: column;
+  }
+
+  .lifeos-project-timeline__item-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

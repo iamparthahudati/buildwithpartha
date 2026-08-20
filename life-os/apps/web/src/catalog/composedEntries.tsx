@@ -19,6 +19,7 @@ import {
   ProjectCardDemo,
   ProjectDetailsHeaderDemo,
   ProjectOverviewDemo,
+  ProjectTimelineDemo,
   ProjectFormDemo,
   ProjectSummaryMetricsDemo,
 } from "./ComposedDemos";
@@ -289,6 +290,21 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Interactive metric strip with active filter selection.",
         render: () => <ProjectSummaryMetricsDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-timeline",
+    name: "ProjectTimeline",
+    group: "Composed",
+    summary:
+      "Accessible project milestones and timeline view composing Timeline primitive, summary statistics, milestone add/edit dialog, status transitions, and deletion confirmation.",
+    states: [
+      {
+        id: "project-timeline-default",
+        name: "Default",
+        description: "Project timeline in interactive, empty, and loading states.",
+        render: () => <ProjectTimelineDemo />,
       },
     ],
   },

@@ -8,9 +8,11 @@ import {
   ProjectOverview,
   ProjectForm,
   ProjectSummaryMetrics,
+  ProjectTimeline,
   type Project,
   type ProjectFilterCategory,
   type ProjectOverviewTask,
+  type Milestone,
 } from "@features/projects";
 import {
   buildCommonDateRangePresets,
@@ -687,6 +689,121 @@ export function ProjectOverviewDemo() {
           </Text>
         </div>
         <ProjectOverview loading />
+      </div>
+    </div>
+  );
+}
+
+export function ProjectTimelineDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  const [milestones, setMilestones] = useState<readonly Milestone[]>([
+    {
+      id: "m1",
+      projectId: "p1",
+      title: "Architecture & Design Baseline",
+      date: "2026-08-10",
+      status: "COMPLETED",
+      ordering: 1,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-10T15:00:00Z",
+      version: 1,
+    },
+    {
+      id: "m2",
+      projectId: "p1",
+      title: "Phase 1 Beta Milestone",
+      date: "2026-08-18",
+      status: "PLANNED",
+      ordering: 2,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-01T10:00:00Z",
+      version: 1,
+    },
+    {
+      id: "m3",
+      projectId: "p1",
+      title: "Final QA Gate",
+      date: "2026-09-01",
+      status: "PLANNED",
+      ordering: 3,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-01T10:00:00Z",
+      version: 1,
+    },
+  ]);
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Interactive Project Timeline
+          </Text>
+        </div>
+        <ProjectTimeline
+          projectId="p1"
+          milestones={milestones}
+          now={now}
+          locale="en-US"
+          timeZone="UTC"
+          onAddMilestone={(data) => {
+            const newM: Milestone = {
+              id: `m-${Date.now()}`,
+              projectId: "p1",
+              title: data.title,
+              date: data.date ?? null,
+              status: data.status,
+              ordering: data.ordering ?? milestones.length + 1,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              version: 1,
+            };
+            setMilestones((prev) => [...prev, newM]);
+          }}
+          onUpdateMilestone={(id, data) => {
+            setMilestones((prev) =>
+              prev.map((m) =>
+                m.id === id
+                  ? {
+                      ...m,
+                      title: data.title,
+                      date: data.date ?? null,
+                      status: data.status,
+                      ordering: data.ordering ?? m.ordering,
+                    }
+                  : m,
+              ),
+            );
+          }}
+          onStatusChange={(id, status) => {
+            setMilestones((prev) => prev.map((m) => (m.id === id ? { ...m, status } : m)));
+          }}
+          onDeleteMilestone={(id) => {
+            setMilestones((prev) => prev.filter((m) => m.id !== id));
+          }}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Empty Timeline
+          </Text>
+        </div>
+        <ProjectTimeline milestones={[]} onAddMilestone={() => alert("Add milestone")} />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Timeline
+          </Text>
+        </div>
+        <ProjectTimeline loading />
       </div>
     </div>
   );

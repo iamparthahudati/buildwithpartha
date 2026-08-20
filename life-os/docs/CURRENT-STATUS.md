@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-0712 project overview components handoff)
+Last updated: 2026-08-21 (LOS-0713 ProjectTimeline and milestones handoff)
 
 ## Phase
 
@@ -20,6 +20,7 @@ Phase 2 — Identity and application shell.
 - LOS-0710 — Integrate Projects screen with query/mutation hooks, REST client, URL state, and routing. See `docs/handoffs/LOS-0710.md`.
 - LOS-0711 — Responsive ProjectDetailsHeader component with deep link breadcrumbs, identity, status, health, priority, owner, dates, estimate, task progress, primary/secondary actions, loading skeleton, and archived state. See `docs/handoffs/LOS-0711.md`.
 - LOS-0712 — Project overview components (progress/task/time/health summary cards, status/priority breakdown charts with data table fallback, top tasks list, about/labels metadata, and activity feed). See `docs/handoffs/LOS-0712.md`.
+- LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
 

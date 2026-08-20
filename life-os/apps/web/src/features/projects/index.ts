@@ -17,7 +17,14 @@ export {
   type ProjectFilterCategory,
 } from "./components/ProjectSummaryMetrics";
 export { ProjectsScreen, type ProjectsScreenProps } from "./components/ProjectsScreen";
+export { ProjectTimeline, type ProjectTimelineProps } from "./components/ProjectTimeline";
+export {
+  MilestoneFormDialog,
+  type MilestoneFormDialogProps,
+  type MilestoneFormData,
+} from "./components/MilestoneFormDialog";
 export type { Project, ProjectStatus, ProjectPriority, ProjectHealth } from "./model/project";
+export type { Milestone, MilestoneStatus } from "./model/milestone";
 
 export {
   queryProjects,
@@ -39,6 +46,19 @@ export {
 } from "./api/projectsApi";
 
 export {
+  getMilestones,
+  createMilestone,
+  updateMilestone,
+  updateMilestoneStatus,
+  deleteMilestone,
+  mapMilestoneResponse,
+  type MilestoneResponseDto,
+  type CreateMilestoneRequestDto,
+  type UpdateMilestoneRequestDto,
+  type UpdateMilestoneStatusRequestDto,
+} from "./api/milestonesApi";
+
+export {
   PROJECTS_QUERY_KEY,
   projectsQueryKeys,
   invalidateProjectsQueries,
@@ -53,3 +73,12 @@ export {
   useRestoreProject,
   useDeleteProject,
 } from "./hooks/useProjectMutations";
+
+export { milestonesQueryKeys, useMilestones } from "./hooks/useMilestones";
+
+export {
+  useCreateMilestone,
+  useUpdateMilestone,
+  useUpdateMilestoneStatus,
+  useDeleteMilestone,
+} from "./hooks/useMilestoneMutations";
