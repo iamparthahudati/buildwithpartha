@@ -26,4 +26,22 @@ public record Milestone(
     Objects.requireNonNull(createdAt, "createdAt must not be null");
     Objects.requireNonNull(updatedAt, "updatedAt must not be null");
   }
+
+  public Milestone withUpdates(
+      String newTitle,
+      Optional<LocalDate> newDate,
+      MilestoneStatus newStatus,
+      int newOrdering,
+      Instant newUpdatedAt) {
+    return new Milestone(
+        id,
+        projectId,
+        newTitle != null ? newTitle : title,
+        newDate != null ? newDate : date,
+        newStatus != null ? newStatus : status,
+        newOrdering,
+        createdAt,
+        newUpdatedAt,
+        version);
+  }
 }

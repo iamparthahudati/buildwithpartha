@@ -1,148 +1,158 @@
 package tech.buildwithpartha.lifeos.project.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.test.context.ActiveProfiles;
 import tech.buildwithpartha.lifeos.project.domain.Milestone;
 import tech.buildwithpartha.lifeos.project.domain.MilestoneStatus;
 
+@ActiveProfiles("test")
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class JpaMilestoneRepositoryTests {
 
-  private MilestoneJpaRepository jpaRepository;
-  private JpaMilestoneRepository repository;
-
-  @BeforeEach
-  void setUp() {
-    jpaRepository = mock(MilestoneJpaRepository.class);
-    repository = new JpaMilestoneRepository(jpaRepository);
-  }
+  @Autowired private MilestoneJpaRepository jpaRepository;
 
   @Test
-  void findByIdMapsExistingMilestone() {
+  void savedMilestoneRoundTripsThroughTheJpaEntity() {
+    JpaMilestoneRepository repository = new JpaMilestoneRepository(jpaRepository);
     UUID id = UUID.randomUUID();
-    MilestoneEntity entity =
-        new MilestoneEntity(
+    UUID projectId = UUID.randomUUID();
+    Instant now = Instant.parse("2026-08-20T10:00:00Z");
+    LocalDate date = LocalDate.of(2026, 8, 25);
+
+    Milestone milestone =
+        new Milestone(
             id,
-            UUID.randomUUID(),
+            projectId,
             "Milestone A",
-            LocalDate.now(),
+            Optional.of(date),
             MilestoneStatus.PLANNED,
             1,
-            Instant.now(),
-            Instant.now(),
-            1L);
+            now,
+            now,
+            0L);
 
-    when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+    Milestone saved = repository.save(milestone);
+    jpaRepository.flush();
 
-    Optional<Milestone> result = repository.findById(id);
+    assertThat(saved.id()).isEqualTo(id);
+    assertThat(saved.projectId()).isEqualTo(projectId);
+    assertThat(saved.title()).isEqualTo("Milestone A");
+    assertThat(saved.date()).contains(date);
+    assertThat(saved.status()).isEqualTo(MilestoneStatus.PLANNED);
+    assertThat(saved.ordering()).isEqualTo(1);
+    assertThat(saved.createdAt()).isEqualTo(now);
+    assertThat(saved.updatedAt()).isEqualTo(now);
+    assertThat(saved.version()).isZero();
 
-    assertThat(result).isPresent();
-    Milestone domain = result.get();
-    assertThat(domain.id()).isEqualTo(id);
-    assertThat(domain.title()).isEqualTo("Milestone A");
-    assertThat(domain.date()).contains(entity.getDate());
-    assertThat(domain.status()).isEqualTo(MilestoneStatus.PLANNED);
-    assertThat(domain.ordering()).isEqualTo(1);
-    assertThat(domain.version()).isEqualTo(1L);
+    Milestone reloaded = repository.findById(id).orElseThrow();
+    assertThat(reloaded.title()).isEqualTo("Milestone A");
   }
 
   @Test
   void findByIdMapsMilestoneWithNullDate() {
+    JpaMilestoneRepository repository = new JpaMilestoneRepository(jpaRepository);
     UUID id = UUID.randomUUID();
-    MilestoneEntity entity =
-        new MilestoneEntity(
+    UUID projectId = UUID.randomUUID();
+    Instant now = Instant.parse("2026-08-20T10:00:00Z");
+
+    Milestone milestone =
+        new Milestone(
             id,
-            UUID.randomUUID(),
+            projectId,
             "Milestone A",
-            null,
+            Optional.empty(),
             MilestoneStatus.COMPLETED,
             2,
-            Instant.now(),
-            Instant.now(),
+            now,
+            now,
             0L);
 
-    when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+    repository.save(milestone);
+    jpaRepository.flush();
 
-    Optional<Milestone> result = repository.findById(id);
-
-    assertThat(result).isPresent();
-    Milestone domain = result.get();
-    assertThat(domain.date()).isEmpty();
-    assertThat(domain.status()).isEqualTo(MilestoneStatus.COMPLETED);
+    Milestone reloaded = repository.findById(id).orElseThrow();
+    assertThat(reloaded.date()).isEmpty();
+    assertThat(reloaded.status()).isEqualTo(MilestoneStatus.COMPLETED);
   }
 
   @Test
-  void findByProjectIdReturnsList() {
-    UUID projectId = UUID.randomUUID();
-    MilestoneEntity entity =
-        new MilestoneEntity(
-            UUID.randomUUID(),
-            projectId,
-            "Milestone",
-            null,
-            MilestoneStatus.PLANNED,
-            0,
-            Instant.now(),
-            Instant.now(),
-            0L);
+  void findByProjectIdReturnsMatchingMilestonesOnly() {
+    JpaMilestoneRepository repository = new JpaMilestoneRepository(jpaRepository);
+    UUID projectIdA = UUID.randomUUID();
+    UUID projectIdB = UUID.randomUUID();
+    Instant now = Instant.parse("2026-08-20T10:00:00Z");
 
-    when(jpaRepository.findByProjectId(projectId)).thenReturn(List.of(entity));
-
-    List<Milestone> results = repository.findByProjectId(projectId);
-
-    assertThat(results).hasSize(1);
-    assertThat(results.get(0).projectId()).isEqualTo(projectId);
-  }
-
-  @Test
-  void saveMapsAndPersistsMilestone() {
-    Milestone domain =
+    repository.save(
         new Milestone(
             UUID.randomUUID(),
-            UUID.randomUUID(),
-            "Milestone",
-            Optional.of(LocalDate.now()),
+            projectIdA,
+            "MS 1",
+            Optional.empty(),
             MilestoneStatus.PLANNED,
-            3,
-            Instant.now(),
-            Instant.now(),
-            0L);
+            1,
+            now,
+            now,
+            0L));
+    repository.save(
+        new Milestone(
+            UUID.randomUUID(),
+            projectIdA,
+            "MS 2",
+            Optional.empty(),
+            MilestoneStatus.PLANNED,
+            2,
+            now,
+            now,
+            0L));
+    repository.save(
+        new Milestone(
+            UUID.randomUUID(),
+            projectIdB,
+            "MS 3",
+            Optional.empty(),
+            MilestoneStatus.PLANNED,
+            1,
+            now,
+            now,
+            0L));
+    jpaRepository.flush();
 
-    MilestoneEntity entity = JpaMilestoneRepository.toEntity(domain);
-    when(jpaRepository.save(any(MilestoneEntity.class))).thenReturn(entity);
+    List<Milestone> milestonesA = repository.findByProjectId(projectIdA);
+    assertThat(milestonesA).hasSize(2);
 
-    Milestone saved = repository.save(domain);
-
-    assertThat(saved.title()).isEqualTo("Milestone");
-    verify(jpaRepository).save(any(MilestoneEntity.class));
+    List<Milestone> milestonesB = repository.findByProjectId(projectIdB);
+    assertThat(milestonesB).hasSize(1);
   }
 
   @Test
   void deleteRemovesMilestone() {
-    Milestone domain =
-        new Milestone(
-            UUID.randomUUID(),
-            UUID.randomUUID(),
-            "Milestone",
-            Optional.empty(),
-            MilestoneStatus.PLANNED,
-            0,
-            Instant.now(),
-            Instant.now(),
-            0L);
+    JpaMilestoneRepository repository = new JpaMilestoneRepository(jpaRepository);
+    UUID id = UUID.randomUUID();
+    UUID projectId = UUID.randomUUID();
+    Instant now = Instant.parse("2026-08-20T10:00:00Z");
 
-    repository.delete(domain);
+    Milestone milestone =
+        repository.save(
+            new Milestone(
+                id, projectId, "MS", Optional.empty(), MilestoneStatus.PLANNED, 0, now, now, 0L));
+    jpaRepository.flush();
 
-    verify(jpaRepository).delete(any(MilestoneEntity.class));
+    assertThat(repository.findById(id)).isPresent();
+
+    repository.delete(milestone);
+    jpaRepository.flush();
+
+    assertThat(repository.findById(id)).isEmpty();
   }
 }
