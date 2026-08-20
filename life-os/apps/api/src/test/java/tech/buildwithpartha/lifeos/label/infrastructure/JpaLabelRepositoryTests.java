@@ -1,110 +1,85 @@
 package tech.buildwithpartha.lifeos.label.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.test.context.ActiveProfiles;
 import tech.buildwithpartha.lifeos.label.domain.Label;
 
+@ActiveProfiles("test")
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class JpaLabelRepositoryTests {
 
-  private LabelJpaRepository jpaRepository;
-  private JpaLabelRepository repository;
-
-  @BeforeEach
-  void setUp() {
-    jpaRepository = mock(LabelJpaRepository.class);
-    repository = new JpaLabelRepository(jpaRepository);
-  }
+  @Autowired private LabelJpaRepository jpaRepository;
 
   @Test
-  void findByIdMapsExistingLabel() {
+  void savedLabelRoundTripsThroughTheJpaEntity() {
+    JpaLabelRepository repository = new JpaLabelRepository(jpaRepository);
     UUID id = UUID.randomUUID();
-    LabelEntity entity =
-        new LabelEntity(
-            id, UUID.randomUUID(), "Work", "work", "red", Instant.now(), Instant.now(), 1L);
-
-    when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
-
-    Optional<Label> result = repository.findById(id);
-
-    assertThat(result).isPresent();
-    Label domain = result.get();
-    assertThat(domain.id()).isEqualTo(id);
-    assertThat(domain.name()).isEqualTo("Work");
-    assertThat(domain.nameNormalized()).isEqualTo("work");
-    assertThat(domain.color()).isEqualTo("red");
-    assertThat(domain.version()).isEqualTo(1L);
-  }
-
-  @Test
-  void findByUserIdReturnsList() {
     UUID userId = UUID.randomUUID();
-    LabelEntity entity =
-        new LabelEntity(
-            UUID.randomUUID(),
-            userId,
-            "Personal",
-            "personal",
-            null,
-            Instant.now(),
-            Instant.now(),
-            0L);
+    Instant now = Instant.parse("2026-08-20T10:00:00Z");
 
-    when(jpaRepository.findByUserId(userId)).thenReturn(List.of(entity));
+    Label label = new Label(id, userId, "Work", "work", "red", now, now, 0L);
 
-    List<Label> results = repository.findByUserId(userId);
+    Label saved = repository.save(label);
+    jpaRepository.flush();
 
-    assertThat(results).hasSize(1);
-    assertThat(results.get(0).userId()).isEqualTo(userId);
-    assertThat(results.get(0).color()).isNull();
+    assertThat(saved.id()).isEqualTo(id);
+    assertThat(saved.userId()).isEqualTo(userId);
+    assertThat(saved.name()).isEqualTo("Work");
+    assertThat(saved.nameNormalized()).isEqualTo("work");
+    assertThat(saved.color()).isEqualTo("red");
+    assertThat(saved.createdAt()).isEqualTo(now);
+    assertThat(saved.updatedAt()).isEqualTo(now);
+    assertThat(saved.version()).isZero();
+
+    Label reloaded = repository.findById(id).orElseThrow();
+    assertThat(reloaded.name()).isEqualTo("Work");
   }
 
   @Test
-  void saveMapsAndPersistsLabel() {
-    Label domain =
-        new Label(
-            UUID.randomUUID(),
-            UUID.randomUUID(),
-            "Work",
-            "work",
-            "red",
-            Instant.now(),
-            Instant.now(),
-            0L);
+  void findByUserIdReturnsMatchingLabelsOnly() {
+    JpaLabelRepository repository = new JpaLabelRepository(jpaRepository);
+    UUID userA = UUID.randomUUID();
+    UUID userB = UUID.randomUUID();
+    Instant now = Instant.parse("2026-08-20T10:00:00Z");
 
-    LabelEntity entity = JpaLabelRepository.toEntity(domain);
-    when(jpaRepository.save(any(LabelEntity.class))).thenReturn(entity);
+    repository.save(new Label(UUID.randomUUID(), userA, "Work", "work", "red", now, now, 0L));
+    repository.save(
+        new Label(UUID.randomUUID(), userA, "Personal", "personal", "blue", now, now, 0L));
+    repository.save(new Label(UUID.randomUUID(), userB, "Study", "study", null, now, now, 0L));
+    jpaRepository.flush();
 
-    Label saved = repository.save(domain);
+    List<Label> labelsA = repository.findByUserId(userA);
+    assertThat(labelsA).hasSize(2);
 
-    assertThat(saved.name()).isEqualTo("Work");
-    verify(jpaRepository).save(any(LabelEntity.class));
+    List<Label> labelsB = repository.findByUserId(userB);
+    assertThat(labelsB).hasSize(1);
+    assertThat(labelsB.get(0).color()).isNull();
   }
 
   @Test
   void deleteRemovesLabel() {
-    Label domain =
-        new Label(
-            UUID.randomUUID(),
-            UUID.randomUUID(),
-            "Work",
-            "work",
-            "red",
-            Instant.now(),
-            Instant.now(),
-            0L);
+    JpaLabelRepository repository = new JpaLabelRepository(jpaRepository);
+    UUID id = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
+    Instant now = Instant.parse("2026-08-20T10:00:00Z");
 
-    repository.delete(domain);
+    Label label = repository.save(new Label(id, userId, "Work", "work", "red", now, now, 0L));
+    jpaRepository.flush();
 
-    verify(jpaRepository).delete(any(LabelEntity.class));
+    assertThat(repository.findById(id)).isPresent();
+
+    repository.delete(label);
+    jpaRepository.flush();
+
+    assertThat(repository.findById(id)).isEmpty();
   }
 }
