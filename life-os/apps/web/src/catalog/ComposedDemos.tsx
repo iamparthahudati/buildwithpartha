@@ -896,3 +896,12 @@ export function ProjectDetailsScreenDemo() {
     </div>
   );
 }
+
+export {
+  SprintCardDemo,
+  SprintProgressCapacityDemo,
+  SprintTaskCommitmentListDemo,
+  SprintScopeChangeHistoryDemo,
+  SprintFormDialogDemo,
+  SprintRetrospectiveDialogDemo,
+} from "./SprintDemos";

@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (Phase 7 — Projects and project details completed; gate PASSED)
+Last updated: 2026-08-21 (LOS-1002 Sprint components handoff)
 
 ## Phase
 
@@ -12,6 +12,7 @@ None.
 
 ## Completed
 
+- LOS-1002 — Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, zero-denominator / over-capacity states, catalog coverage, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`.
 - LOS-0801 — Modeled core Task and Subtask domain aggregates, persistence entities, repositories, validation invariants, Flyway V9 schema (`V9__tasks_and_subtasks_schema.sql`), and contract reconciliation with calculation-facing `ProjectTask`. Verified via 100% clean `./gradlew check`. See `docs/handoffs/LOS-0801.md`.
 
 - LOS-0717 — Executed Projects phase gate verification and sign-off. All backend Java tests and checks (`./gradlew check`) and all frontend tests, quality checks, accessibility audits, design tokens, and build verification (`npm test`) pass 100%. Generated `docs/PROJECTS-PHASE-GATE.md`. See `docs/handoffs/LOS-0717.md`.

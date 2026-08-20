@@ -143,5 +143,6 @@ Last updated: 2026-08-20
 | LOS-0801 | Done          | `develop`                                       | Modeled core Task and Subtask domain aggregates, persistence entities, repositories, Flyway V9 schema, and contract reconciliation. See `docs/handoffs/LOS-0801.md`. |
 | LOS-1403 | Done          | `develop`                                       | Persistent background job framework (V5 migration, BackgroundJob domain aggregate, transactional enqueue port in common.job, scheduled poller/runner with retry backoff, and daily R1 retention cleanup). |
 | LOS-1405 | Done          | `develop`                                       | Private generated-file lifecycle (V6 migration, ExportFile domain aggregate, ExportFilePort in common.export, local private storage, secure download tokens, and daily cleanup). |
+| LOS-1002 | Done          | `feature/LOS-1002-build-sprint-components`      | Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, catalog specimens, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

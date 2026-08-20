@@ -22,6 +22,12 @@ import {
   ProjectTimelineDemo,
   ProjectFormDemo,
   ProjectSummaryMetricsDemo,
+  SprintCardDemo,
+  SprintProgressCapacityDemo,
+  SprintTaskCommitmentListDemo,
+  SprintScopeChangeHistoryDemo,
+  SprintFormDialogDemo,
+  SprintRetrospectiveDialogDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -321,6 +327,53 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Projects screen with interactive states (populated, first-use empty, loading, error).",
         render: () => <ProjectsScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "sprint-components",
+    name: "Sprint components (SprintCard, Progress & Capacity, Task Commitment List, Scope Change History, Form, Retrospective)",
+    group: "Composed",
+    summary:
+      "Comprehensive sprint components (LOS-1002): SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, and SprintRetrospectiveDialog.",
+    states: [
+      {
+        id: "sprint-card-default",
+        name: "SprintCard",
+        description: "Sprint summary card with goal, date range, capacity, and action buttons.",
+        render: () => <SprintCardDemo />,
+      },
+      {
+        id: "sprint-progress-capacity-default",
+        name: "SprintProgressCapacity",
+        description: "Progress meter showing completed points and planned capacity utilization.",
+        render: () => <SprintProgressCapacityDemo />,
+      },
+      {
+        id: "sprint-task-commitment-list-default",
+        name: "SprintTaskCommitmentList",
+        description:
+          "List of committed tasks with status toggle, points, and scope addition badges.",
+        render: () => <SprintTaskCommitmentListDemo />,
+      },
+      {
+        id: "sprint-scope-change-history-default",
+        name: "SprintScopeChangeHistory",
+        description: "Timeline log of scope changes after sprint start.",
+        render: () => <SprintScopeChangeHistoryDemo />,
+      },
+      {
+        id: "sprint-form-dialog-default",
+        name: "SprintFormDialog",
+        description: "Create/edit sprint form dialog with validation and date bounds checking.",
+        render: () => <SprintFormDialogDemo />,
+      },
+      {
+        id: "sprint-retrospective-dialog-default",
+        name: "SprintRetrospectiveDialog",
+        description:
+          "Completion and retrospective dialog for capturing sprint notes and carry-over tasks.",
+        render: () => <SprintRetrospectiveDialogDemo />,
       },
     ],
   },

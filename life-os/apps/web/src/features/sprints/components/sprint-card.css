@@ -1,0 +1,62 @@
+.sprint-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.sprint-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sprint-card__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.sprint-card__title {
+  margin: 0;
+}
+
+.sprint-card__dates {
+  margin: 0;
+}
+
+.sprint-card__goal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-subtle, var(--color-background-subtle, #f8fafc));
+  border-inline-start: 3px solid var(--color-primary);
+}
+
+.sprint-card__goal-label {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sprint-card__goal-text {
+  margin: 0;
+}
+
+.sprint-card__progress {
+  width: 100%;
+}
+
+.sprint-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+}
