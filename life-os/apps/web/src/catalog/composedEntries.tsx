@@ -15,6 +15,8 @@ import {
   DurationFieldDemo,
   SearchFieldDebouncedDemo,
   SearchFieldSubmitDemo,
+  ProjectRowDemo,
+  ProjectCardDemo,
 } from "./ComposedDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -192,6 +194,36 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Every swatch is independently proven to clear AA as a solid fill under the white preview icon.",
         render: () => <ColorIconPickerDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-row",
+    name: "ProjectRow",
+    group: "Composed",
+    summary:
+      "A responsive row item representing a Project, highlighting name, description, priority, health, status, progress, deadline, relative updated time, and actions menu.",
+    states: [
+      {
+        id: "project-row-default",
+        name: "Default",
+        description: "Renders rows in active, overdue, archived, and loading states.",
+        render: () => <ProjectRowDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-card",
+    name: "ProjectCard",
+    group: "Composed",
+    summary:
+      "A responsive card item representing a Project, displaying name, description, priority, health, status, progress, deadline, relative updated time, and actions menu in a grid layout.",
+    states: [
+      {
+        id: "project-card-default",
+        name: "Default",
+        description: "Renders cards in active, overdue, archived, and loading states.",
+        render: () => <ProjectCardDemo />,
       },
     ],
   },

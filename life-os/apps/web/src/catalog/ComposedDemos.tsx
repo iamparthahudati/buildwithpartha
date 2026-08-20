@@ -1,6 +1,7 @@
 import { useRef, useState, type FormEvent } from "react";
 
 import { Button, Select, Text, TextInput } from "@components/ui";
+import { ProjectRow, ProjectCard, type Project } from "@features/projects";
 import {
   buildCommonDateRangePresets,
   ColorIconPicker,
@@ -338,6 +339,161 @@ export function ColorIconPickerDemo() {
       <Text tone="secondary" size="sm">
         Stored value: <code>{JSON.stringify(value)}</code>
       </Text>
+    </div>
+  );
+}
+
+const MOCK_PROJECT_READY: Project = {
+  id: "proj-1",
+  name: "LifeOS App Launch",
+  description: "Bootstrap the UI, build design system, and implement core screens.",
+  status: "ACTIVE",
+  priority: "P1",
+  health: "ON_TRACK",
+  color: "blue",
+  icon: "rocket",
+  startDate: "2026-08-01",
+  deadlineDate: "2026-08-30",
+  completedTasksCount: 8,
+  totalTasksCount: 12,
+  updatedAt: "2026-08-20T10:00:00Z",
+  version: 1,
+};
+
+const MOCK_PROJECT_ARCHIVED: Project = {
+  ...MOCK_PROJECT_READY,
+  id: "proj-2",
+  name: "Legacy Workspaces Migration",
+  description: "Migrate old notes and boards to the new personal OS.",
+  status: "COMPLETED",
+  archivedAt: "2026-08-15T09:00:00Z",
+  updatedAt: "2026-08-15T09:00:00Z",
+};
+
+const MOCK_PROJECT_OVERDUE: Project = {
+  ...MOCK_PROJECT_READY,
+  id: "proj-3",
+  name: "Weekly Rituals & Planning",
+  description: "Establish the weekly review loop and planning screens.",
+  status: "ACTIVE",
+  priority: "P2",
+  health: "OFF_TRACK",
+  color: "red",
+  icon: "calendar",
+  deadlineDate: "2026-08-15",
+  completedTasksCount: 2,
+  totalTasksCount: 5,
+  updatedAt: "2026-08-19T14:30:00Z",
+};
+
+const MOCK_PROJECT_NO_TASKS: Project = {
+  ...MOCK_PROJECT_READY,
+  id: "proj-4",
+  name: "Future Someday Project",
+  description: "Someday/maybe idea that hasn't been started yet.",
+  status: "PLANNED",
+  priority: "P4",
+  health: "NOT_SET",
+  color: "olive",
+  icon: "lightbulb",
+  deadlineDate: null,
+  completedTasksCount: 0,
+  totalTasksCount: 0,
+};
+
+export function ProjectRowDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  return (
+    <div className="specimen-stack" style={{ width: "100%" }}>
+      <Text tone="secondary" size="xs">
+        Default/Active
+      </Text>
+      <ProjectRow
+        project={MOCK_PROJECT_READY}
+        now={now}
+        onEdit={() => alert("Edit project")}
+        onArchive={() => alert("Archive project")}
+      />
+
+      <Text tone="secondary" size="xs">
+        Overdue
+      </Text>
+      <ProjectRow project={MOCK_PROJECT_OVERDUE} now={now} />
+
+      <Text tone="secondary" size="xs">
+        Archived
+      </Text>
+      <ProjectRow
+        project={MOCK_PROJECT_ARCHIVED}
+        now={now}
+        onRestore={() => alert("Restore project")}
+        onDelete={() => alert("Delete project")}
+      />
+
+      <Text tone="secondary" size="xs">
+        No tasks
+      </Text>
+      <ProjectRow project={MOCK_PROJECT_NO_TASKS} now={now} />
+
+      <Text tone="secondary" size="xs">
+        Loading
+      </Text>
+      <ProjectRow loading />
+    </div>
+  );
+}
+
+export function ProjectCardDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  return (
+    <div
+      className="specimen-grid"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(20rem, 1fr))",
+        gap: "var(--lifeos-space-4)",
+        width: "100%",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="xs">
+          Active
+        </Text>
+        <ProjectCard
+          project={MOCK_PROJECT_READY}
+          now={now}
+          onEdit={() => alert("Edit project")}
+          onArchive={() => alert("Archive project")}
+        />
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="xs">
+          Overdue
+        </Text>
+        <ProjectCard project={MOCK_PROJECT_OVERDUE} now={now} />
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="xs">
+          Archived
+        </Text>
+        <ProjectCard
+          project={MOCK_PROJECT_ARCHIVED}
+          now={now}
+          onRestore={() => alert("Restore project")}
+          onDelete={() => alert("Delete project")}
+        />
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="xs">
+          Loading
+        </Text>
+        <ProjectCard loading />
+      </div>
     </div>
   );
 }
