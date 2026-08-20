@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthSessionProvider } from "@state/AuthSessionProvider";
 import { FocusMiniPlayer } from "@features/focus";
-import { TodayHeader, TodayMetricStrip, TodayHeaderSection } from "@features/today";
+import {
+  TodayActiveProjects,
+  TodayHeader,
+  TodayHeaderSection,
+  TodayMetricStrip,
+  TodayNextUp,
+} from "@features/today";
 import {
   AlertTriangle,
   Archive,
@@ -1404,6 +1410,97 @@ export function TodayHeaderSectionDemo() {
       focusTimeStatus={{ type: "empty", message: "No focus time recorded today." }}
       activeProjectsStatus={{ type: "empty", message: "No active projects yet." }}
       weekProgressStatus={{ type: "empty", message: "No Weekly Plan yet." }}
+    />
+  );
+}
+
+const TODAY_ACTIVE_PROJECTS = [
+  {
+    id: "release-readiness",
+    name: "Release readiness",
+    href: "#projects/release-readiness",
+    completedTasksCount: 5,
+    totalTasksCount: 8,
+  },
+  {
+    id: "workspace-refresh",
+    name: "Workspace refresh",
+    href: "#projects/workspace-refresh",
+    completedTasksCount: 2,
+    totalTasksCount: 6,
+  },
+  {
+    id: "reading-backlog",
+    name: "Reading backlog",
+    href: "#projects/reading-backlog",
+    completedTasksCount: 0,
+    totalTasksCount: 0,
+  },
+] as const;
+
+export function TodayActiveProjectsReadyDemo() {
+  return (
+    <TodayActiveProjects
+      status={{ type: "ready", projects: TODAY_ACTIVE_PROJECTS }}
+      sourceLabel="Active projects and their task progress"
+      projectsHref="#projects"
+    />
+  );
+}
+
+export function TodayActiveProjectsEmptyDemo() {
+  return (
+    <TodayActiveProjects
+      status={{ type: "empty" }}
+      sourceLabel="Active projects and their task progress"
+      projectsHref="#projects"
+      onAddProject={() => {}}
+    />
+  );
+}
+
+export function TodayNextUpReadyDemo() {
+  return (
+    <TodayNextUp
+      status={{
+        type: "ready",
+        availability: "no-focus-selected",
+        task: {
+          id: "review-release-checklist",
+          title: "Review release checklist",
+          href: "#tasks/review-release-checklist",
+          projectName: "Release readiness",
+          priority: "P1",
+          timingLabel: "Due today",
+        },
+        rankingExplanation: "This Task is due today and has P1 priority.",
+      }}
+      sourceLabel="Open tasks"
+      rankingRule="Overdue first, then due date, priority, and planned order."
+      tasksHref="#tasks"
+      onStartFocus={() => {}}
+    />
+  );
+}
+
+export function TodayNextUpCompletedFocusDemo() {
+  return (
+    <TodayNextUp
+      status={{
+        type: "ready",
+        availability: "focus-completed",
+        task: {
+          id: "prepare-release-notes",
+          title: "Prepare release notes",
+          href: "#tasks/prepare-release-notes",
+          projectName: "Release readiness",
+          priority: "P2",
+        },
+        rankingExplanation: "This is the earliest due open Task after the completed focus.",
+      }}
+      sourceLabel="Open tasks"
+      rankingRule="Overdue first, then due date, priority, and planned order."
+      tasksHref="#tasks"
     />
   );
 }

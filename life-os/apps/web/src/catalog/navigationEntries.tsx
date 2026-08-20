@@ -50,6 +50,10 @@ import {
   TodayMetricStripReadyDemo,
   TodayMetricStripMixedDemo,
   TodayHeaderSectionDemo,
+  TodayActiveProjectsReadyDemo,
+  TodayActiveProjectsEmptyDemo,
+  TodayNextUpReadyDemo,
+  TodayNextUpCompletedFocusDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -613,6 +617,51 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Morning greeting, local date, approved Today helper, Quick Add trigger, and six honest zero-data cards below.",
         render: () => <TodayHeaderSectionDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-active-projects",
+    name: "TodayActiveProjects",
+    group: "Composed",
+    summary:
+      "A compact, source-labelled view of the few active Projects that need attention. Each row opens the canonical Project and uses its supplied task counts for progress; a zero denominator stays 'No tasks yet' rather than becoming a misleading 0%.",
+    states: [
+      {
+        id: "today-active-projects-ready",
+        name: "Three active Projects",
+        description:
+          "The Today-sized list shows canonical progress, includes a Project with no task denominator, and keeps the full inventory behind View all.",
+        render: () => <TodayActiveProjectsReadyDemo />,
+      },
+      {
+        id: "today-active-projects-empty",
+        name: "First use",
+        description: "An honest empty state offers Add project without fabricating sample work.",
+        render: () => <TodayActiveProjectsEmptyDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-next-up",
+    name: "TodayNextUp",
+    group: "Composed",
+    summary:
+      "The first eligible open Task after no focus is selected or today's focus is complete. The canonical source, deterministic ranking rule, and recorded facts that ranked the Task first remain visible; the component makes no AI recommendation claim.",
+    states: [
+      {
+        id: "today-next-up-no-focus",
+        name: "No focus selected",
+        description:
+          "Shows why the widget is available, the ranked Task, source, ranking rule, and a Start focus action.",
+        render: () => <TodayNextUpReadyDemo />,
+      },
+      {
+        id: "today-next-up-completed-focus",
+        name: "Focus complete",
+        description:
+          "The availability note explains that Next up follows a completed focus; the ranking remains deterministic and sourced.",
+        render: () => <TodayNextUpCompletedFocusDemo />,
       },
     ],
   },

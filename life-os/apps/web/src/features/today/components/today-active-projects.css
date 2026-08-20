@@ -1,0 +1,24 @@
+/* TodayActiveProjects (LOS-0612). */
+
+.lifeos-today-active-projects {
+  min-width: 0;
+}
+
+.lifeos-today-active-projects__body {
+  min-width: 0;
+}
+
+.lifeos-today-active-projects__list,
+.lifeos-today-active-projects__skeletons {
+  display: grid;
+  gap: var(--lifeos-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lifeos-today-active-projects__source {
+  margin: var(--lifeos-space-4) 0 0;
+  padding-block-start: var(--lifeos-space-3);
+  border-block-start: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
