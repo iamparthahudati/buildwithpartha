@@ -17,6 +17,7 @@ import {
   SearchFieldSubmitDemo,
   ProjectRowDemo,
   ProjectCardDemo,
+  ProjectDetailsHeaderDemo,
   ProjectFormDemo,
   ProjectSummaryMetricsDemo,
 } from "./ComposedDemos";
@@ -227,6 +228,21 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Renders cards in active, overdue, archived, and loading states.",
         render: () => <ProjectCardDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-details-header",
+    name: "ProjectDetailsHeader",
+    group: "Composed",
+    summary:
+      "A comprehensive project details header component displaying deep link breadcrumbs, identity, status, owner, priority, health, dates, estimate, task progress, primary/secondary actions, responsive wrapping, and archived state.",
+    states: [
+      {
+        id: "project-details-header-default",
+        name: "Default",
+        description: "Renders project details header in active, archived, and loading states.",
+        render: () => <ProjectDetailsHeaderDemo />,
       },
     ],
   },
