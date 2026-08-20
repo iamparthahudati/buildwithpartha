@@ -89,6 +89,11 @@ export interface AppShellProps {
   readonly now?: Date;
 }
 
+/** Actions owned by the application shell that routed screens may invoke. */
+export interface AppShellOutletContext {
+  readonly onQuickAddClick: () => void;
+}
+
 export function AppShell({
   displayName,
   email,
@@ -200,7 +205,13 @@ export function AppShell({
 
         <main ref={mainRef} id={MAIN_CONTENT_ID} tabIndex={-1} className="lifeos-app-shell__main">
           <ErrorBoundary key={location.pathname}>
-            <Outlet />
+            <Outlet
+              context={
+                {
+                  onQuickAddClick: onQuickAddTriggerClick,
+                } satisfies AppShellOutletContext
+              }
+            />
           </ErrorBoundary>
         </main>
       </div>

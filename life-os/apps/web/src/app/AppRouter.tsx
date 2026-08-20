@@ -15,6 +15,7 @@ import {
   ResetPasswordRoute,
   SettingsRoute,
   SignupRoute,
+  TodayRoute,
   UnavailableRoute,
   VerifyEmailRoute,
 } from "@routes/index";
@@ -108,7 +109,7 @@ export function AppRoutes() {
           }
         >
           <Route index element={<Navigate to="today" replace />} />
-          <Route path="today" element={<ComingSoonRoute />} />
+          <Route path="today" element={<TodayRoute />} />
           <Route path="tasks" element={<ComingSoonRoute />} />
           <Route path="tasks/:taskId" element={<ComingSoonRoute />} />
           <Route path="time-blocks" element={<ComingSoonRoute />} />

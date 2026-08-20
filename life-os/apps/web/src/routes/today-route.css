@@ -1,0 +1,14 @@
+/* TodayRoute (LOS-0608). */
+
+.lifeos-today-route {
+  padding-inline: var(--lifeos-space-6);
+  padding-block-end: var(--lifeos-space-8);
+  max-width: 90rem;
+  margin-inline: auto;
+}
+
+@media (max-width: 48rem) {
+  .lifeos-today-route {
+    padding-inline: var(--lifeos-space-4);
+  }
+}

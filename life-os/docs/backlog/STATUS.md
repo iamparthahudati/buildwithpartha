@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-17
+Last updated: 2026-08-20
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -120,6 +120,7 @@ Last updated: 2026-08-17
 | LOS-0605 | Done          | `feature/LOS-0605-focus-mini-player`            | Built the global focus mini-player (inline progress ring, hover/click popover, mobile drawer inline rendering, monotonic countdown timer, and screen-reader status announcements). |
 | LOS-0606 | Done          | `develop`                                       | Define Today aggregation contract (created `WidgetStatus` enum, `TodayResponse` record, 13 modular widget records, stub `TodayController` returning zero-safe empty states, filter path resolution fix, OpenAPI assertions). |
 | LOS-0607 | Done          | `develop`                                       | Implement Today foundation endpoint (authenticated user timezone resolution via `UserTimeZoneProvider` SPI, provider composition shell with 13 zero-safe default providers, provider try-catch failure isolation in `TodayService`, `TodayQueryResult` mapping, and `Cache-Control: private, no-store, max-age=0, must-revalidate` response headers). |
+| LOS-0608 | Done          | `feature/LOS-0608-today-header-metric-strip`    | Built the timezone-aware Today greeting/date/helper, responsive six-card metric strip with independent ready/loading/empty/error states, shared shell-owned Quick Add trigger, catalog specimens, route composition and accessibility coverage. |
 | LOS-1403 | Done          | `develop`                                       | Persistent background job framework (V5 migration, BackgroundJob domain aggregate, transactional enqueue port in common.job, scheduled poller/runner with retry backoff, and daily R1 retention cleanup). |
 | LOS-1405 | Done          | `develop`                                       | Private generated-file lifecycle (V6 migration, ExportFile domain aggregate, ExportFilePort in common.export, local private storage, secure download tokens, and daily cleanup). |
 

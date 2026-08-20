@@ -6,6 +6,7 @@ export { ResetPasswordRoute } from "./ResetPasswordRoute";
 export { CancelDeletionRoute } from "./CancelDeletionRoute";
 export { OnboardingRoute } from "./OnboardingRoute";
 export { SettingsRoute } from "./SettingsRoute";
+export { TodayRoute } from "./TodayRoute";
 export { ComingSoonRoute } from "./ComingSoonRoute";
 export { NotFoundRoute, type NotFoundRouteProps } from "./NotFoundRoute";
 export { UnavailableRoute } from "./UnavailableRoute";

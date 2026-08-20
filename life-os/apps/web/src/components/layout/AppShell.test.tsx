@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { screen, waitFor, within } from "@testing-library/react";
-import { Link, MemoryRouter, Route, Routes } from "react-router-dom";
+import { Link, MemoryRouter, Route, Routes, useOutletContext } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { expectNoAccessibilityViolations } from "@test/accessibility";
@@ -9,7 +9,7 @@ import { renderWithUser } from "@test/render";
 import { ToastProvider } from "@state/ToastProvider";
 import { AuthSessionProvider } from "@state/AuthSessionProvider";
 
-import { AppShell, type AppShellProps } from "./AppShell";
+import { AppShell, type AppShellOutletContext, type AppShellProps } from "./AppShell";
 
 const FIXED_NOW = new Date("2026-08-20T12:00:00Z");
 const PREFS_BODY = {
@@ -53,6 +53,19 @@ function Bomb(): never {
   throw new Error("boom");
 }
 
+function TodayContent() {
+  const { onQuickAddClick } = useOutletContext<AppShellOutletContext>();
+  return (
+    <>
+      <p>Today content</p>
+      <button type="button" onClick={onQuickAddClick}>
+        Open Quick Add from Today
+      </button>
+      <Link to="/life-os/app/tasks">Go to tasks</Link>
+    </>
+  );
+}
+
 function defaultProps(overrides: Partial<AppShellProps> = {}): AppShellProps {
   return {
     displayName: "Priya Sharma",
@@ -88,15 +101,7 @@ function renderShell(
             <Routes>
               <Route path="/life-os/app" element={<AppShell {...defaultProps(props)} />}>
                 <Route index element={<p>Today content</p>} />
-                <Route
-                  path="today"
-                  element={
-                    <>
-                      <p>Today content</p>
-                      <Link to="/life-os/app/tasks">Go to tasks</Link>
-                    </>
-                  }
-                />
+                <Route path="today" element={<TodayContent />} />
                 <Route path="tasks" element={<p>Tasks content</p>} />
                 <Route path="settings" element={<p>Settings content</p>} />
                 <Route path="boom" element={<Bomb />} />
@@ -214,6 +219,14 @@ describe("AppShell", () => {
   it("reserves an overlay root for portal-based overlays", () => {
     renderShell();
     expect(document.getElementById("lifeos-overlay-root")).toBeInTheDocument();
+  });
+
+  it("shares its Quick Add action with routed screens through outlet context", async () => {
+    const onQuickAddTriggerClick = vi.fn();
+    const { user } = renderShell({ onQuickAddTriggerClick });
+
+    await user.click(screen.getByRole("button", { name: "Open Quick Add from Today" }));
+    expect(onQuickAddTriggerClick).toHaveBeenCalledTimes(1);
   });
 
   it("opens the mobile navigation drawer from its own menu trigger and closes it", async () => {

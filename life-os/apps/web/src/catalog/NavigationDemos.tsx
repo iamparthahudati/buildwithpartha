@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthSessionProvider } from "@state/AuthSessionProvider";
 import { FocusMiniPlayer } from "@features/focus";
+import { TodayHeader, TodayMetricStrip, TodayHeaderSection } from "@features/today";
 import {
   AlertTriangle,
   Archive,
@@ -1316,5 +1317,93 @@ export function FocusMiniPlayerDemo() {
         <FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />
       </AuthSessionProvider>
     </QueryClientProvider>
+  );
+}
+
+const TODAY_DEMO_NOW = new Date("2026-08-20T03:30:00Z"); // 09:00 IST — morning
+
+export function TodayHeaderMorningDemo() {
+  return (
+    <TodayHeader
+      displayName="Partha"
+      timeZone="Asia/Kolkata"
+      locale="en-IN"
+      now={TODAY_DEMO_NOW}
+      onQuickAddClick={() => {}}
+    />
+  );
+}
+
+export function TodayHeaderEveningDemo() {
+  // 18:30 IST
+  const evening = new Date("2026-08-20T13:00:00Z");
+  return (
+    <TodayHeader
+      displayName="Partha"
+      timeZone="Asia/Kolkata"
+      locale="en-IN"
+      now={evening}
+      subtitle="You have 2 tasks still open."
+      onQuickAddClick={() => {}}
+    />
+  );
+}
+
+export function TodayMetricStripLoadingDemo() {
+  const loading = { type: "loading" as const };
+  return (
+    <TodayMetricStrip
+      mitStatus={loading}
+      tasksStatus={loading}
+      scheduledTimeStatus={loading}
+      focusTimeStatus={loading}
+      activeProjectsStatus={loading}
+      weekProgressStatus={loading}
+    />
+  );
+}
+
+export function TodayMetricStripReadyDemo() {
+  return (
+    <TodayMetricStrip
+      mitStatus={{ type: "ready", value: "Write spec" }}
+      tasksStatus={{ type: "ready", value: "4 / 6" }}
+      scheduledTimeStatus={{ type: "ready", value: "2h 30m" }}
+      focusTimeStatus={{ type: "ready", value: "45m / 2h" }}
+      activeProjectsStatus={{ type: "ready", value: "3" }}
+      weekProgressStatus={{ type: "ready", value: "60%" }}
+    />
+  );
+}
+
+export function TodayMetricStripMixedDemo() {
+  return (
+    <TodayMetricStrip
+      mitStatus={{ type: "empty", message: "Choose today's focus" }}
+      tasksStatus={{ type: "ready", value: "2 / 4" }}
+      scheduledTimeStatus={{ type: "error", message: "Unavailable." }}
+      focusTimeStatus={{ type: "loading" }}
+      activeProjectsStatus={{ type: "ready", value: "1" }}
+      weekProgressStatus={{ type: "empty", message: "No weekly plan" }}
+    />
+  );
+}
+
+export function TodayHeaderSectionDemo() {
+  return (
+    <TodayHeaderSection
+      displayName="Partha"
+      timeZone="Asia/Kolkata"
+      locale="en-IN"
+      now={TODAY_DEMO_NOW}
+      subtitle="See what needs attention and choose what to do next."
+      onQuickAddClick={() => {}}
+      mitStatus={{ type: "empty", message: "No focus chosen yet." }}
+      tasksStatus={{ type: "empty", message: "No tasks planned for today." }}
+      scheduledTimeStatus={{ type: "empty", message: "No Time Blocks scheduled today." }}
+      focusTimeStatus={{ type: "empty", message: "No focus time recorded today." }}
+      activeProjectsStatus={{ type: "empty", message: "No active projects yet." }}
+      weekProgressStatus={{ type: "empty", message: "No Weekly Plan yet." }}
+    />
   );
 }

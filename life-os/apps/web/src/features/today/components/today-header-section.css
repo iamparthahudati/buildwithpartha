@@ -1,0 +1,6 @@
+/* TodayHeaderSection (LOS-0608). */
+
+.lifeos-today-header-section {
+  display: flex;
+  flex-direction: column;
+}

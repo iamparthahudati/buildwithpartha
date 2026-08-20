@@ -1,1 +1,1 @@
-export { AppShell, type AppShellProps } from "./AppShell";
+export { AppShell, type AppShellOutletContext, type AppShellProps } from "./AppShell";

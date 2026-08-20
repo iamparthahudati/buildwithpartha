@@ -44,6 +44,12 @@ import {
   TopBarWithFocusSlotDemo,
   TopBarOverflowOpenDemo,
   FocusMiniPlayerDemo,
+  TodayHeaderMorningDemo,
+  TodayHeaderEveningDemo,
+  TodayMetricStripLoadingDemo,
+  TodayMetricStripReadyDemo,
+  TodayMetricStripMixedDemo,
+  TodayHeaderSectionDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -541,6 +547,72 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Interactive mini-player. Click the clock button to start a session, or controls to pause/resume/cancel.",
         render: () => <FocusMiniPlayerDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-header",
+    name: "TodayHeader",
+    group: "Composed",
+    summary:
+      "The greeting band at the top of the Today screen. Derives 'Good morning / afternoon / evening, {name}' from the wall-clock hour in the user's confirmed IANA timezone — same localDateTime rule as TopBar's date label. Renders the local date formatted per the user's locale and a compact Quick Add trigger.",
+    states: [
+      {
+        id: "today-header-morning",
+        name: "Morning greeting",
+        description: "09:00 IST — greeting period is morning; date formatted in en-IN locale.",
+        render: () => <TodayHeaderMorningDemo />,
+      },
+      {
+        id: "today-header-evening",
+        name: "Evening greeting with subtitle",
+        description: "18:30 IST — greeting period is evening; optional subtitle slot filled.",
+        render: () => <TodayHeaderEveningDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-metric-strip",
+    name: "TodayMetricStrip",
+    group: "Composed",
+    summary:
+      "Six at-a-glance metric cards (Today's focus, Tasks today, Scheduled time, Focus time, Active projects, Week progress) composing the shared MetricCard. Each card is independently controlled — a single widget error cannot replace the others. Responsive: six-column desktop grid, two-column wrap on tablet, horizontal scroll-snap row on mobile.",
+    states: [
+      {
+        id: "today-metric-strip-loading",
+        name: "All loading",
+        description:
+          "Initial state before any data arrives — six skeleton placeholders, labels still visible.",
+        render: () => <TodayMetricStripLoadingDemo />,
+      },
+      {
+        id: "today-metric-strip-ready",
+        name: "All ready",
+        description: "Every card showing a real value once data loads.",
+        render: () => <TodayMetricStripReadyDemo />,
+      },
+      {
+        id: "today-metric-strip-mixed",
+        name: "Mixed states",
+        description:
+          "Empty MIT, ready tasks, error scheduled time (no retry), loading focus time, ready projects, empty week — each card independent.",
+        render: () => <TodayMetricStripMixedDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-header-section",
+    name: "TodayHeaderSection",
+    group: "Composed",
+    summary:
+      "Combines TodayHeader and TodayMetricStrip in the wireframe-specified vertical order. Each child remains independently importable and testable; this container owns only the stacking.",
+    states: [
+      {
+        id: "today-header-section-default",
+        name: "Header with empty metric strip",
+        description:
+          "Morning greeting, local date, approved Today helper, Quick Add trigger, and six honest zero-data cards below.",
+        render: () => <TodayHeaderSectionDemo />,
       },
     ],
   },
