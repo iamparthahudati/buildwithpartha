@@ -73,10 +73,11 @@ class SecurityControllerTests {
         userRepository
             .save(
                 User.signup(
-                    UUID.randomUUID(),
-                    EmailAddress.of("security-" + UUID.randomUUID() + "@example.test"),
-                    "Security User",
-                    Instant.now()))
+                        UUID.randomUUID(),
+                        EmailAddress.of("security-" + UUID.randomUUID() + "@example.test"),
+                        "Security User",
+                        Instant.now())
+                    .verify(Instant.now()))
             .id();
 
     credentialRepository.save(

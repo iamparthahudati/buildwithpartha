@@ -29,11 +29,11 @@ public class JobHandlerRegistry {
                 Collectors.toUnmodifiableMap(
                     handler -> {
                       JobHandlerFor annotation =
-                          AnnotationUtils.findAnnotation(
-                              handler.getClass(), JobHandlerFor.class);
+                          AnnotationUtils.findAnnotation(handler.getClass(), JobHandlerFor.class);
                       if (annotation == null) {
                         throw new IllegalStateException(
-                            "JobHandler " + handler.getClass().getName()
+                            "JobHandler "
+                                + handler.getClass().getName()
                                 + " is missing @JobHandlerFor");
                       }
                       return annotation.value();

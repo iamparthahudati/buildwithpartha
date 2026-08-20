@@ -17,8 +17,7 @@ interface SessionJpaRepository extends JpaRepository<SessionEntity, UUID> {
       "select s from SessionEntity s "
           + "where s.userId = :userId and s.revokedAt is null and s.expiresAt > :now "
           + "order by s.lastSeenAt desc")
-  List<SessionEntity> findActiveByUserId(
-      @Param("userId") UUID userId, @Param("now") Instant now);
+  List<SessionEntity> findActiveByUserId(@Param("userId") UUID userId, @Param("now") Instant now);
 
   /**
    * The same single-use conditional-update guard {@code EmailVerificationTokenJpaRepository

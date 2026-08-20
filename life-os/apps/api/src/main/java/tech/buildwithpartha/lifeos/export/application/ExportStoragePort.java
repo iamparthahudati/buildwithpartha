@@ -33,8 +33,6 @@ public interface ExportStoragePort {
    */
   boolean delete(UUID exportFileId);
 
-  /**
-   * Checks if the physical file exists in private storage.
-   */
+  /** Checks if the physical file exists in private storage. */
   boolean exists(UUID exportFileId);
 }

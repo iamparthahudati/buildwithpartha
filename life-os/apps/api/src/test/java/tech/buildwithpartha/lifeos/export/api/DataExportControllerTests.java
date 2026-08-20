@@ -104,9 +104,7 @@ class DataExportControllerTests {
   void requestExport_whenAuthenticated_returnsAccepted() throws Exception {
     mockMvc
         .perform(
-            post("/auth/export")
-                .cookie(sessionCookie)
-                .header(CSRF_HEADER_NAME, csrfToken.value()))
+            post("/auth/export").cookie(sessionCookie).header(CSRF_HEADER_NAME, csrfToken.value()))
         .andExpect(status().isAccepted())
         .andExpect(jsonPath("$.status").value("GENERATING"))
         .andExpect(jsonPath("$.fileName").isNotEmpty())
@@ -138,10 +136,7 @@ class DataExportControllerTests {
 
     byte[] downloaded =
         mockMvc
-            .perform(
-                get("/auth/export/download")
-                    .cookie(sessionCookie)
-                    .param("token", token))
+            .perform(get("/auth/export/download").cookie(sessionCookie).param("token", token))
             .andExpect(status().isOk())
             .andExpect(
                 header().string("Content-Disposition", "attachment; filename=\"archive.zip\""))

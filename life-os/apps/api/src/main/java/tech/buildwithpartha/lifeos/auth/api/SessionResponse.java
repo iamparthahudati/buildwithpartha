@@ -5,11 +5,7 @@ import java.util.UUID;
 import tech.buildwithpartha.lifeos.auth.application.SessionDto;
 
 public record SessionResponse(
-    UUID id,
-    String deviceHint,
-    Instant createdAt,
-    Instant lastSeenAt,
-    boolean isCurrent) {
+    UUID id, String deviceHint, Instant createdAt, Instant lastSeenAt, boolean isCurrent) {
 
   public static SessionResponse from(SessionDto dto) {
     return new SessionResponse(

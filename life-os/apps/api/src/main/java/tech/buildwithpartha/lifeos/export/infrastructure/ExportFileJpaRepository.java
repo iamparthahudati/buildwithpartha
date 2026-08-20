@@ -18,9 +18,7 @@ interface ExportFileJpaRepository extends JpaRepository<ExportFileEntity, UUID> 
 
   Optional<ExportFileEntity> findByDownloadTokenHash(String downloadTokenHash);
 
-  @Query(
-      "SELECT e FROM ExportFileEntity e WHERE e.userId = :userId "
-          + "ORDER BY e.createdAt DESC")
+  @Query("SELECT e FROM ExportFileEntity e WHERE e.userId = :userId " + "ORDER BY e.createdAt DESC")
   List<ExportFileEntity> findByUserId(@Param("userId") UUID userId);
 
   @Query(
@@ -31,10 +29,7 @@ interface ExportFileJpaRepository extends JpaRepository<ExportFileEntity, UUID> 
           + ")")
   long countActiveByUserId(@Param("userId") UUID userId);
 
-  @Query(
-      "SELECT e FROM ExportFileEntity e WHERE e.status = "
-          + READY
-          + " AND e.expiresAt <= :now")
+  @Query("SELECT e FROM ExportFileEntity e WHERE e.status = " + READY + " AND e.expiresAt <= :now")
   List<ExportFileEntity> findOverdueReady(@Param("now") Instant now);
 
   @Modifying(clearAutomatically = true, flushAutomatically = true)

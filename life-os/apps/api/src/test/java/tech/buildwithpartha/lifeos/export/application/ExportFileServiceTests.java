@@ -52,10 +52,7 @@ class ExportFileServiceTests {
     assertThatThrownBy(
             () ->
                 service.initExport(
-                    USER_ID,
-                    Optional.empty(),
-                    ExportFileKind.FULL_DATA_EXPORT,
-                    "overflow.zip"))
+                    USER_ID, Optional.empty(), ExportFileKind.FULL_DATA_EXPORT, "overflow.zip"))
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("quota exceeded");
   }
@@ -72,10 +69,7 @@ class ExportFileServiceTests {
     byte[] content = "test archive data".getBytes(StandardCharsets.UTF_8);
     String token =
         service.storeAndMarkReady(
-            exportId,
-            new ByteArrayInputStream(content),
-            content.length,
-            Duration.ofMinutes(30));
+            exportId, new ByteArrayInputStream(content), content.length, Duration.ofMinutes(30));
 
     assertThat(token).isNotBlank();
     assertThat(storagePort.exists(exportId)).isTrue();

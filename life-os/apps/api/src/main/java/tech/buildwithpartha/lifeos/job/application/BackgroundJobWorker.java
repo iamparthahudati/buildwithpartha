@@ -46,9 +46,7 @@ public class BackgroundJobWorker {
     this.clock = clock;
   }
 
-  /**
-   * Polls due pending jobs every 30 seconds.
-   */
+  /** Polls due pending jobs every 30 seconds. */
   @Scheduled(fixedDelay = 30_000)
   public void runWorker() {
     pollAndDispatch();

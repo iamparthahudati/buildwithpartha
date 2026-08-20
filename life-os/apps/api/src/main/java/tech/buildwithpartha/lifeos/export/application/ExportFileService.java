@@ -18,9 +18,7 @@ import tech.buildwithpartha.lifeos.export.domain.ExportFile;
 import tech.buildwithpartha.lifeos.export.domain.ExportFileRepository;
 import tech.buildwithpartha.lifeos.export.domain.ExportFileStatus;
 
-/**
- * Service managing export file metadata, quota checks, and token lifecycle (LOS-1405).
- */
+/** Service managing export file metadata, quota checks, and token lifecycle (LOS-1405). */
 @Service
 public class ExportFileService {
 
@@ -42,21 +40,16 @@ public class ExportFileService {
     this.clock = clock;
   }
 
-  /**
-   * Returns true if user has fewer than MAX_ACTIVE_EXPORTS_PER_USER active export files.
-   */
+  /** Returns true if user has fewer than MAX_ACTIVE_EXPORTS_PER_USER active export files. */
   @Transactional(readOnly = true)
   public boolean canCreateExport(UUID userId) {
     long activeCount = repository.countActiveByUserId(userId);
     return activeCount < ExportFilePort.MAX_ACTIVE_EXPORTS_PER_USER;
   }
 
-  /**
-   * Initializes a new export file record in GENERATING status.
-   */
+  /** Initializes a new export file record in GENERATING status. */
   @Transactional
-  public UUID initExport(
-      UUID userId, Optional<UUID> jobId, ExportFileKind kind, String fileName) {
+  public UUID initExport(UUID userId, Optional<UUID> jobId, ExportFileKind kind, String fileName) {
     if (!canCreateExport(userId)) {
       throw new IllegalStateException("Export quota exceeded for user: " + userId);
     }
@@ -70,9 +63,7 @@ public class ExportFileService {
     return id;
   }
 
-  /**
-   * Stores generated archive bytes and marks the record READY with an initial download token.
-   */
+  /** Stores generated archive bytes and marks the record READY with an initial download token. */
   @Transactional
   public String storeAndMarkReady(
       UUID exportFileId, InputStream contentStream, long fileSizeBytes, Duration tokenTtl) {
@@ -99,9 +90,7 @@ public class ExportFileService {
     return rawToken;
   }
 
-  /**
-   * Issues a fresh download token for an existing READY export file.
-   */
+  /** Issues a fresh download token for an existing READY export file. */
   @Transactional
   public String issueDownloadToken(UUID exportFileId, UUID userId, Duration tokenTtl) {
     ExportFile exportFile =
@@ -131,9 +120,7 @@ public class ExportFileService {
     return rawToken;
   }
 
-  /**
-   * Marks an export file as deleted and removes its physical file from storage.
-   */
+  /** Marks an export file as deleted and removes its physical file from storage. */
   @Transactional
   public void deleteExport(UUID exportFileId, UUID userId) {
     ExportFile exportFile =
@@ -152,9 +139,7 @@ public class ExportFileService {
     log.info("export deleted id={} userId={}", exportFileId, userId);
   }
 
-  /**
-   * Finds overdue READY exports, marks them EXPIRED, and deletes their storage.
-   */
+  /** Finds overdue READY exports, marks them EXPIRED, and deletes their storage. */
   @Transactional
   public int expireOverdueExports() {
     Instant now = clock.instant();
@@ -167,9 +152,7 @@ public class ExportFileService {
     return overdue.size();
   }
 
-  /**
-   * Purges terminal records older than 7 days from the database.
-   */
+  /** Purges terminal records older than 7 days from the database. */
   @Transactional
   public int purgeOldTerminalRecords(Duration retention) {
     Instant cutoff = clock.instant().minus(retention);
@@ -178,9 +161,7 @@ public class ExportFileService {
     return purged;
   }
 
-  /**
-   * Retrieves summary details of all exports requested by the user.
-   */
+  /** Retrieves summary details of all exports requested by the user. */
   @Transactional(readOnly = true)
   public List<tech.buildwithpartha.lifeos.common.export.ExportSummary> getExportsForUser(
       UUID userId) {

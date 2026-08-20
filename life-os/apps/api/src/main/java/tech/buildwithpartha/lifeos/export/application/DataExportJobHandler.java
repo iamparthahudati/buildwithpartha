@@ -23,9 +23,7 @@ import tech.buildwithpartha.lifeos.common.mail.MailRecipient;
 import tech.buildwithpartha.lifeos.common.mail.MailTemplateVariables;
 import tech.buildwithpartha.lifeos.common.mail.TransactionalMailPort;
 
-/**
- * Background job handler for compiling and storing full user data exports (LOS-1405, LOS-0517).
- */
+/** Background job handler for compiling and storing full user data exports (LOS-1405, LOS-0517). */
 @Component
 @JobHandlerFor(BackgroundJobKind.DATA_EXPORT)
 public class DataExportJobHandler implements JobHandler {
@@ -83,7 +81,8 @@ public class DataExportJobHandler implements JobHandler {
                   payload.displayName() != null ? payload.displayName() : "LifeOS User",
                   "eventDescription",
                   "Your requested data export archive is now ready for download.",
-                  "occurredAt", DateTimeFormatter.ISO_INSTANT.format(now))));
+                  "occurredAt",
+                  DateTimeFormatter.ISO_INSTANT.format(now))));
     }
 
     AUDIT_LOGGER.info(
@@ -93,8 +92,7 @@ public class DataExportJobHandler implements JobHandler {
         archiveBytes.length);
   }
 
-  private record ParsedPayload(
-      UUID exportFileId, String recipientEmail, String displayName) {}
+  private record ParsedPayload(UUID exportFileId, String recipientEmail, String displayName) {}
 
   private ParsedPayload parsePayload(String jsonPayload) {
     try {

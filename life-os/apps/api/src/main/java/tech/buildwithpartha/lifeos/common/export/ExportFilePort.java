@@ -5,19 +5,13 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * Cross-domain port for managing the private lifecycle of generated export files (LOS-1405).
- */
+/** Cross-domain port for managing the private lifecycle of generated export files (LOS-1405). */
 public interface ExportFilePort {
 
-  /**
-   * Maximum active (GENERATING or READY) export archives allowed per user at any time.
-   */
+  /** Maximum active (GENERATING or READY) export archives allowed per user at any time. */
   int MAX_ACTIVE_EXPORTS_PER_USER = 3;
 
-  /**
-   * Default retention period before an export file is expired and deleted.
-   */
+  /** Default retention period before an export file is expired and deleted. */
   Duration EXPORT_RETENTION_PERIOD = Duration.ofDays(7);
 
   /**

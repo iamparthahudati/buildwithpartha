@@ -16,9 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tech.buildwithpartha.lifeos.auth.domain.AccountStatus;
 import tech.buildwithpartha.lifeos.auth.domain.SecureTokenGenerator;
 import tech.buildwithpartha.lifeos.auth.domain.Session;
 import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
+import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
 import tech.buildwithpartha.lifeos.common.error.ApiProblem;
 import tech.buildwithpartha.lifeos.common.error.ErrorCode;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
@@ -26,6 +28,10 @@ import tools.jackson.databind.ObjectMapper;
 
 /**
  * Reads the {@code lifeos_session} cookie and authenticates active sessions (LOS-0505, LOS-0508).
+ *
+ * <p>A session is accepted only while its owning Account is still {@link AccountStatus#ACTIVE}.
+ * Rechecking the Account status prevents an otherwise-active stale or malformed session from
+ * bypassing verification, suspension, deletion-grace, or deletion boundaries (LOS-0616).
  *
  * <p>For mutating requests on authenticated routes, verifies the {@code X-CSRF-TOKEN} header
  * matches the session's CSRF secret before proceeding (LOS-0513, 05-API-CONVENTIONS.md).
@@ -48,6 +54,7 @@ class SessionAuthenticationFilter extends OncePerRequestFilter {
           "/auth/logout-all");
 
   private final SessionRepository sessionRepository;
+  private final UserRepository userRepository;
   private final SecureTokenGenerator tokenGenerator;
   private final Clock clock;
   private final ApiProblemFactory problemFactory;
@@ -55,11 +62,13 @@ class SessionAuthenticationFilter extends OncePerRequestFilter {
 
   SessionAuthenticationFilter(
       SessionRepository sessionRepository,
+      UserRepository userRepository,
       SecureTokenGenerator tokenGenerator,
       Clock clock,
       ApiProblemFactory problemFactory,
       ObjectMapper objectMapper) {
     this.sessionRepository = sessionRepository;
+    this.userRepository = userRepository;
     this.tokenGenerator = tokenGenerator;
     this.clock = clock;
     this.problemFactory = problemFactory;
@@ -74,7 +83,8 @@ class SessionAuthenticationFilter extends OncePerRequestFilter {
         sessionCookieValue(request)
             .map(tokenGenerator::hash)
             .flatMap(sessionRepository::findByTokenHash)
-            .filter(session -> session.isActive(clock.instant()));
+            .filter(session -> session.isActive(clock.instant()))
+            .filter(this::belongsToActiveAccount);
 
     if (activeSession.isPresent()) {
       Session session = activeSession.get();
@@ -104,6 +114,13 @@ class SessionAuthenticationFilter extends OncePerRequestFilter {
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  private boolean belongsToActiveAccount(Session session) {
+    return userRepository
+        .findById(session.userId())
+        .filter(user -> user.accountStatus() == AccountStatus.ACTIVE)
+        .isPresent();
   }
 
   private boolean requiresCsrfValidation(HttpServletRequest request) {

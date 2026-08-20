@@ -5,10 +5,9 @@ import java.time.Duration;
 /**
  * Exponential-backoff retry policy for background jobs (LOS-1403).
  *
- * <p>The schedule is 1m, 2m, 4m, 8m, 16m, 30m (capped), 30m, 30m, 30m, 30m — dead-lettered on
- * the 10th attempt (roughly 2.5 hours from first failure). Jobs are slower and more complex than
- * mail delivery, so the base delay and budget are larger than {@code
- * notification.domain.RetryPolicy}.
+ * <p>The schedule is 1m, 2m, 4m, 8m, 16m, 30m (capped), 30m, 30m, 30m, 30m — dead-lettered on the
+ * 10th attempt (roughly 2.5 hours from first failure). Jobs are slower and more complex than mail
+ * delivery, so the base delay and budget are larger than {@code notification.domain.RetryPolicy}.
  */
 public final class JobRetryPolicy {
 

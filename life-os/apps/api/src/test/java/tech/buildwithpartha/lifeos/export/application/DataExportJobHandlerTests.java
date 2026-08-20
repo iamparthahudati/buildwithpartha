@@ -67,11 +67,7 @@ class DataExportJobHandlerTests {
             + "\",\"recipientEmail\":\"test@example.test\",\"displayName\":\"Test User\"}";
     JobHandler.JobContext context =
         new JobHandler.JobContext(
-            UUID.randomUUID(),
-            Optional.of(USER_ID),
-            BackgroundJobKind.DATA_EXPORT,
-            payload,
-            NOW);
+            UUID.randomUUID(), Optional.of(USER_ID), BackgroundJobKind.DATA_EXPORT, payload, NOW);
 
     handler.execute(context);
 

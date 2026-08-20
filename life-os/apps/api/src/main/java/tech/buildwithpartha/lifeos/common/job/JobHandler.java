@@ -4,14 +4,10 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * Domain-neutral contract for executing a background job of a specific kind (LOS-1403).
- */
+/** Domain-neutral contract for executing a background job of a specific kind (LOS-1403). */
 public interface JobHandler {
 
-  /**
-   * Simple read context passed to the handler during job execution.
-   */
+  /** Simple read context passed to the handler during job execution. */
   record JobContext(
       UUID jobId,
       Optional<UUID> userId,

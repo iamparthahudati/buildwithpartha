@@ -7,27 +7,21 @@ import java.security.SecureRandom;
 import java.util.HexFormat;
 import org.springframework.stereotype.Component;
 
-/**
- * Generates cryptographically secure random download tokens and their SHA-256 hashes.
- */
+/** Generates cryptographically secure random download tokens and their SHA-256 hashes. */
 @Component
 public class ExportTokenService {
 
   private static final int TOKEN_BYTE_LENGTH = 32;
   private final SecureRandom secureRandom = new SecureRandom();
 
-  /**
-   * Generates a new cryptographically random 32-byte hex-encoded download token.
-   */
+  /** Generates a new cryptographically random 32-byte hex-encoded download token. */
   public String generateToken() {
     byte[] bytes = new byte[TOKEN_BYTE_LENGTH];
     secureRandom.nextBytes(bytes);
     return HexFormat.of().formatHex(bytes);
   }
 
-  /**
-   * Computes the SHA-256 hash of a raw download token.
-   */
+  /** Computes the SHA-256 hash of a raw download token. */
   public String hashToken(String rawToken) {
     try {
       MessageDigest digest = MessageDigest.getInstance("SHA-256");

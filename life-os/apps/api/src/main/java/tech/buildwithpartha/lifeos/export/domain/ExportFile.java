@@ -49,9 +49,7 @@ public record ExportFile(
         });
   }
 
-  /**
-   * Factory for creating a newly initiated export in GENERATING status.
-   */
+  /** Factory for creating a newly initiated export in GENERATING status. */
   public static ExportFile createGenerating(
       UUID id,
       UUID userId,
@@ -76,9 +74,7 @@ public record ExportFile(
         now);
   }
 
-  /**
-   * Marks the export READY with its completed size and initial download token hash.
-   */
+  /** Marks the export READY with its completed size and initial download token hash. */
   public ExportFile markReady(
       long sizeBytes, String tokenHash, Instant tokenExpiresAt, Instant now) {
     Objects.requireNonNull(tokenHash, "tokenHash must not be null");
@@ -100,9 +96,7 @@ public record ExportFile(
         now);
   }
 
-  /**
-   * Replaces the download token with a newly issued token hash.
-   */
+  /** Replaces the download token with a newly issued token hash. */
   public ExportFile withNewDownloadToken(String tokenHash, Instant tokenExpiresAt, Instant now) {
     Objects.requireNonNull(tokenHash, "tokenHash must not be null");
     Objects.requireNonNull(tokenExpiresAt, "tokenExpiresAt must not be null");
@@ -123,9 +117,7 @@ public record ExportFile(
         now);
   }
 
-  /**
-   * Records that a download occurred at the given instant.
-   */
+  /** Records that a download occurred at the given instant. */
   public ExportFile recordDownload(Instant now) {
     Objects.requireNonNull(now, "now must not be null");
     return new ExportFile(
@@ -144,9 +136,7 @@ public record ExportFile(
         now);
   }
 
-  /**
-   * Marks the export EXPIRED and clears the download token.
-   */
+  /** Marks the export EXPIRED and clears the download token. */
   public ExportFile markExpired(Instant now) {
     Objects.requireNonNull(now, "now must not be null");
     return new ExportFile(
@@ -165,9 +155,7 @@ public record ExportFile(
         now);
   }
 
-  /**
-   * Marks the export DELETED and clears the download token.
-   */
+  /** Marks the export DELETED and clears the download token. */
   public ExportFile markDeleted(Instant now) {
     Objects.requireNonNull(now, "now must not be null");
     return new ExportFile(
@@ -186,9 +174,7 @@ public record ExportFile(
         now);
   }
 
-  /**
-   * Returns true if the download token hash matches and has not expired.
-   */
+  /** Returns true if the download token hash matches and has not expired. */
   public boolean isTokenValid(String presentedTokenHash, Instant now) {
     if (status != ExportFileStatus.READY) {
       return false;
@@ -205,9 +191,7 @@ public record ExportFile(
     return downloadTokenHash.get().equals(presentedTokenHash);
   }
 
-  /**
-   * Returns true if this export is active (either GENERATING or READY).
-   */
+  /** Returns true if this export is active (either GENERATING or READY). */
   public boolean isActive() {
     return status == ExportFileStatus.GENERATING || status == ExportFileStatus.READY;
   }

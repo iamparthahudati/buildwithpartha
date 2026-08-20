@@ -11,9 +11,7 @@ import java.util.UUID;
 import tech.buildwithpartha.lifeos.common.export.ExportFileKind;
 import tech.buildwithpartha.lifeos.export.domain.ExportFileStatus;
 
-/**
- * JPA entity mapping for {@code public.export_files} ({@code V6__export_files_schema.sql}).
- */
+/** JPA entity mapping for {@code public.export_files} ({@code V6__export_files_schema.sql}). */
 @Entity
 @Table(name = "export_files", schema = "public")
 class ExportFileEntity {

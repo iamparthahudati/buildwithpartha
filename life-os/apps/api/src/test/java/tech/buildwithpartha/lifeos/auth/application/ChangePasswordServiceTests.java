@@ -65,10 +65,7 @@ class ChangePasswordServiceTests {
     user =
         userRepository.save(
             User.signup(
-                UUID.randomUUID(),
-                EmailAddress.of("partha@example.test"),
-                "Partha H",
-                NOW));
+                UUID.randomUUID(), EmailAddress.of("partha@example.test"), "Partha H", NOW));
 
     credential =
         credentialRepository.save(
@@ -117,14 +114,12 @@ class ChangePasswordServiceTests {
 
     Credential updated = credentialRepository.findByUserId(user.id()).orElseThrow();
     assertThat(
-            passwordHasher.matches(
-                RawPassword.of("NewSecretPassword456!"), updated.passwordHash()))
+            passwordHasher.matches(RawPassword.of("NewSecretPassword456!"), updated.passwordHash()))
         .isTrue();
 
     assertThat(sessionRepository.findById(currentSession.id()).orElseThrow().isActive(NOW))
         .isTrue();
-    assertThat(sessionRepository.findById(otherSession.id()).orElseThrow().isActive(NOW))
-        .isFalse();
+    assertThat(sessionRepository.findById(otherSession.id()).orElseThrow().isActive(NOW)).isFalse();
 
     assertThat(mailPort.all())
         .hasSize(1)
@@ -154,8 +149,7 @@ class ChangePasswordServiceTests {
             RawPassword.of("NewSecretPassword456!"),
             Optional.empty()));
 
-    assertThat(sessionRepository.findById(otherSession.id()).orElseThrow().isActive(NOW))
-        .isFalse();
+    assertThat(sessionRepository.findById(otherSession.id()).orElseThrow().isActive(NOW)).isFalse();
   }
 
   @Test

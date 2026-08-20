@@ -92,8 +92,7 @@ public class SessionManagementService {
       count = sessionRepository.revokeAllForUser(userId, now);
     }
 
-    AUDIT_LOGGER.info(
-        "event=all_other_sessions_revoked userId={} count={}", userId, count);
+    AUDIT_LOGGER.info("event=all_other_sessions_revoked userId={} count={}", userId, count);
     return count;
   }
 }

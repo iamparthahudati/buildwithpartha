@@ -14,9 +14,7 @@ import tech.buildwithpartha.lifeos.export.domain.ExportFile;
 import tech.buildwithpartha.lifeos.export.domain.ExportFileRepository;
 import tech.buildwithpartha.lifeos.export.domain.ExportFileStatus;
 
-/**
- * Validates download tokens and retrieves private file streams for authorized users (LOS-1405).
- */
+/** Validates download tokens and retrieves private file streams for authorized users (LOS-1405). */
 @Service
 public class ExportDownloadService {
 
@@ -36,9 +34,7 @@ public class ExportDownloadService {
     this.clock = clock;
   }
 
-  /**
-   * Result record holding file metadata and the content input stream.
-   */
+  /** Result record holding file metadata and the content input stream. */
   public record DownloadPayload(
       UUID exportId, String fileName, long fileSizeBytes, InputStream contentStream) {}
 

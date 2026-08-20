@@ -4,9 +4,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * Cross-domain read model representing an export file record.
- */
+/** Cross-domain read model representing an export file record. */
 public record ExportSummary(
     UUID id,
     String fileName,

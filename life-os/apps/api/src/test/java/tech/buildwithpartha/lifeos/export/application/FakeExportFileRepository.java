@@ -9,9 +9,7 @@ import tech.buildwithpartha.lifeos.export.domain.ExportFile;
 import tech.buildwithpartha.lifeos.export.domain.ExportFileRepository;
 import tech.buildwithpartha.lifeos.export.domain.ExportFileStatus;
 
-/**
- * In-memory repository fake for export file tests.
- */
+/** In-memory repository fake for export file tests. */
 public final class FakeExportFileRepository implements ExportFileRepository {
 
   private final List<ExportFile> store = new ArrayList<>();

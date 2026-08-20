@@ -8,9 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 
-/**
- * In-memory fake storage provider for unit tests.
- */
+/** In-memory fake storage provider for unit tests. */
 final class FakeExportStoragePort implements ExportStoragePort {
 
   private final Map<UUID, byte[]> storage = new HashMap<>();

@@ -73,8 +73,7 @@ public class DataExportController {
 
   @Operation(
       summary = "Download export archive",
-      description =
-          "Streams the private export archive using a valid, short-lived download token.")
+      description = "Streams the private export archive using a valid, short-lived download token.")
   @ApiResponse(responseCode = "200", description = "File content stream.")
   @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
   @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")

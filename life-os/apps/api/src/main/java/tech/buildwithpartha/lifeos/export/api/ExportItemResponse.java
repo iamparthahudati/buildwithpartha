@@ -5,9 +5,7 @@ import java.time.Instant;
 import java.util.UUID;
 import tech.buildwithpartha.lifeos.common.export.ExportSummary;
 
-/**
- * Single export file summary response item.
- */
+/** Single export file summary response item. */
 @Schema(description = "Export archive metadata and availability status.")
 public record ExportItemResponse(
     @Schema(description = "Export record identifier.") UUID id,

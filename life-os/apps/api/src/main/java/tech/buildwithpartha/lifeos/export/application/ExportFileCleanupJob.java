@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 /**
  * Scheduled cleanup job expiring overdue export files and purging old terminal records (LOS-1405).
  *
- * <p>Enforces R1 retention class (purge expired records within 7 days,
- * {@code 31-PRIVACY-DATA-LIFECYCLE.md}).
+ * <p>Enforces R1 retention class (purge expired records within 7 days, {@code
+ * 31-PRIVACY-DATA-LIFECYCLE.md}).
  */
 @Component
 public class ExportFileCleanupJob {
@@ -29,8 +29,6 @@ public class ExportFileCleanupJob {
     int expiredCount = exportFileService.expireOverdueExports();
     int purgedCount = exportFileService.purgeOldTerminalRecords(RETENTION);
     log.info(
-        "export cleanup completed: expiredOverdue={} purgedTerminal={}",
-        expiredCount,
-        purgedCount);
+        "export cleanup completed: expiredOverdue={} purgedTerminal={}", expiredCount, purgedCount);
   }
 }

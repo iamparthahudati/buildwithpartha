@@ -8,9 +8,7 @@ import tech.buildwithpartha.lifeos.common.job.BackgroundJobKind;
 import tech.buildwithpartha.lifeos.common.job.JobHandler;
 import tech.buildwithpartha.lifeos.common.job.JobHandlerFor;
 
-/**
- * Background job handler for asynchronous account deletion cleanup (LOS-0518).
- */
+/** Background job handler for asynchronous account deletion cleanup (LOS-0518). */
 @Component
 @JobHandlerFor(BackgroundJobKind.ACCOUNT_DELETION)
 public class AccountDeletionJobHandler implements JobHandler {

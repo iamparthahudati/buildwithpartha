@@ -15,8 +15,7 @@ import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 
 class LocalExportFileStorageTests {
 
-  @TempDir
-  Path tempDir;
+  @TempDir Path tempDir;
 
   private LocalExportFileStorage storage;
 
@@ -57,7 +56,6 @@ class LocalExportFileStorageTests {
   @Test
   void read_missingFile_throwsResourceNotFoundException() {
     UUID exportId = UUID.randomUUID();
-    assertThatThrownBy(() -> storage.read(exportId))
-        .isInstanceOf(ResourceNotFoundException.class);
+    assertThatThrownBy(() -> storage.read(exportId)).isInstanceOf(ResourceNotFoundException.class);
   }
 }

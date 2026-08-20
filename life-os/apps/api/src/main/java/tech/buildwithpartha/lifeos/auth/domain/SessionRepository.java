@@ -17,8 +17,8 @@ public interface SessionRepository {
   Optional<Session> findById(UUID sessionId);
 
   /**
-   * Returns every currently active (non-revoked and non-expired) session for the user, ordered
-   * most recently seen first.
+   * Returns every currently active (non-revoked and non-expired) session for the user, ordered most
+   * recently seen first.
    */
   List<Session> findActiveSessionsByUserId(UUID userId, Instant now);
 
@@ -39,8 +39,8 @@ public interface SessionRepository {
   int revokeAllForUser(UUID userId, Instant revokedAt);
 
   /**
-   * Revokes every active session belonging to the user EXCEPT the specified current session.
-   * Used when changing passwords or clicking "Sign out of all other sessions".
+   * Revokes every active session belonging to the user EXCEPT the specified current session. Used
+   * when changing passwords or clicking "Sign out of all other sessions".
    */
   int revokeAllOtherSessionsForUser(UUID userId, UUID currentSessionId, Instant revokedAt);
 }

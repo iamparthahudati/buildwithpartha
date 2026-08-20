@@ -19,9 +19,7 @@ import tech.buildwithpartha.lifeos.common.export.ExportSummary;
 import tech.buildwithpartha.lifeos.common.job.BackgroundJobKind;
 import tech.buildwithpartha.lifeos.common.job.BackgroundJobPort;
 
-/**
- * Coordinates user data export requests, quota verification, and status retrieval (LOS-0517).
- */
+/** Coordinates user data export requests, quota verification, and status retrieval (LOS-0517). */
 @Service
 public class DataExportService {
 
@@ -36,9 +34,7 @@ public class DataExportService {
   private final Clock clock;
 
   public DataExportService(
-      ExportFilePort exportFilePort,
-      BackgroundJobPort backgroundJobPort,
-      Clock clock) {
+      ExportFilePort exportFilePort, BackgroundJobPort backgroundJobPort, Clock clock) {
     this.exportFilePort = exportFilePort;
     this.backgroundJobPort = backgroundJobPort;
     this.clock = clock;
@@ -73,8 +69,7 @@ public class DataExportService {
     payload.append("{\"exportFileId\":\"").append(exportFileId).append("\"");
     recipientEmail.ifPresent(
         email -> payload.append(",\"recipientEmail\":\"").append(email).append("\""));
-    displayName.ifPresent(
-        name -> payload.append(",\"displayName\":\"").append(name).append("\""));
+    displayName.ifPresent(name -> payload.append(",\"displayName\":\"").append(name).append("\""));
     payload.append("}");
 
     UUID jobId =
@@ -96,9 +91,7 @@ public class DataExportService {
         now);
   }
 
-  /**
-   * Retrieves all export history records for the user.
-   */
+  /** Retrieves all export history records for the user. */
   @Transactional(readOnly = true)
   public List<ExportSummary> getExports(UUID userId) {
     return exportFilePort.getExportsForUser(userId);

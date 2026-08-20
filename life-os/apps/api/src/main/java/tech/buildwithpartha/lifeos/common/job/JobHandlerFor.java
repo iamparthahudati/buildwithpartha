@@ -6,9 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Declares which {@link BackgroundJobKind} a {@link JobHandler} implementation handles.
- */
+/** Declares which {@link BackgroundJobKind} a {@link JobHandler} implementation handles. */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

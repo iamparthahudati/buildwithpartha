@@ -29,8 +29,7 @@ class ExportFilePortAdapter implements ExportFilePort {
   }
 
   @Override
-  public UUID initExport(
-      UUID userId, Optional<UUID> jobId, ExportFileKind kind, String fileName) {
+  public UUID initExport(UUID userId, Optional<UUID> jobId, ExportFileKind kind, String fileName) {
     return exportFileService.initExport(userId, jobId, kind, fileName);
   }
 

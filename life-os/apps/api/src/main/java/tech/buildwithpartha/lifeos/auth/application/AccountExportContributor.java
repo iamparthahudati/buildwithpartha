@@ -13,9 +13,7 @@ import tech.buildwithpartha.lifeos.auth.domain.User;
 import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
 import tech.buildwithpartha.lifeos.common.export.UserDataExportContributor;
 
-/**
- * Contributes account identity and localization metadata to data export archives (LOS-0517).
- */
+/** Contributes account identity and localization metadata to data export archives (LOS-0517). */
 @Component
 public class AccountExportContributor implements UserDataExportContributor {
 

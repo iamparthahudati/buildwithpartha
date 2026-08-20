@@ -7,9 +7,9 @@ import tech.buildwithpartha.lifeos.common.job.BackgroundJobPort;
 import tech.buildwithpartha.lifeos.job.application.BackgroundJobEnqueueService;
 
 /**
- * Adapts {@link BackgroundJobPort} (in {@code common.job}, visible to all domains) to the
- * internal {@link BackgroundJobEnqueueService} (in {@code job.application}, invisible to other
- * domains). Other domains inject {@link BackgroundJobPort} and never import {@code job.*} directly,
+ * Adapts {@link BackgroundJobPort} (in {@code common.job}, visible to all domains) to the internal
+ * {@link BackgroundJobEnqueueService} (in {@code job.application}, invisible to other domains).
+ * Other domains inject {@link BackgroundJobPort} and never import {@code job.*} directly,
  * preserving the boundary rules of LOS-0206.
  */
 @Component

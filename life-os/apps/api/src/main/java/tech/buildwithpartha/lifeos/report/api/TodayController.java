@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.UUID;
-import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +18,9 @@ import tech.buildwithpartha.lifeos.report.application.TodayService;
 @RequestMapping("/today")
 @SecurityRequirement(name = "sessionCookie")
 public class TodayController {
+
+  private static final String PRIVATE_NO_STORE_CACHE_CONTROL =
+      "private, no-store, max-age=0, must-revalidate";
 
   private final TodayService todayService;
 
@@ -37,6 +40,8 @@ public class TodayController {
   public ResponseEntity<TodayResponse> getToday(@AuthenticationPrincipal UUID userId) {
     TodayQueryResult queryResult = todayService.getToday(userId);
     TodayResponse response = TodayResponse.fromQueryResult(queryResult);
-    return ResponseEntity.ok().cacheControl(CacheControl.noStore().mustRevalidate()).body(response);
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CACHE_CONTROL, PRIVATE_NO_STORE_CACHE_CONTROL)
+        .body(response);
   }
 }

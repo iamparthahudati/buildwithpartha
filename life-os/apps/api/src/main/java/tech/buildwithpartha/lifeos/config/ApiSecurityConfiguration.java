@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import tech.buildwithpartha.lifeos.auth.domain.SecureTokenGenerator;
 import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
+import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
 import tech.buildwithpartha.lifeos.common.error.ApiProblem;
 import tech.buildwithpartha.lifeos.common.error.ErrorCode;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
@@ -29,6 +30,7 @@ public class ApiSecurityConfiguration {
   private final ApiProblemFactory problemFactory;
   private final ObjectMapper objectMapper;
   private final SessionRepository sessionRepository;
+  private final UserRepository userRepository;
   private final SecureTokenGenerator tokenGenerator;
   private final Clock clock;
 
@@ -36,11 +38,13 @@ public class ApiSecurityConfiguration {
       ApiProblemFactory problemFactory,
       ObjectMapper objectMapper,
       SessionRepository sessionRepository,
+      UserRepository userRepository,
       SecureTokenGenerator tokenGenerator,
       Clock clock) {
     this.problemFactory = problemFactory;
     this.objectMapper = objectMapper;
     this.sessionRepository = sessionRepository;
+    this.userRepository = userRepository;
     this.tokenGenerator = tokenGenerator;
     this.clock = clock;
   }
@@ -80,7 +84,12 @@ public class ApiSecurityConfiguration {
         .csrf(AbstractHttpConfigurer::disable)
         .addFilterBefore(
             new SessionAuthenticationFilter(
-                sessionRepository, tokenGenerator, clock, problemFactory, objectMapper),
+                sessionRepository,
+                userRepository,
+                tokenGenerator,
+                clock,
+                problemFactory,
+                objectMapper),
             AuthorizationFilter.class)
         .exceptionHandling(
             exceptions ->

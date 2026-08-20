@@ -15,9 +15,7 @@ import tech.buildwithpartha.lifeos.user.domain.PlanningDefaults;
 import tech.buildwithpartha.lifeos.user.domain.UserPreferences;
 import tech.buildwithpartha.lifeos.user.domain.UserPreferencesRepository;
 
-/**
- * Contributes user planning and focus preferences to data export archives (LOS-0517).
- */
+/** Contributes user planning and focus preferences to data export archives (LOS-0517). */
 @Component
 public class UserPreferencesExportContributor implements UserDataExportContributor {
 
@@ -48,24 +46,16 @@ public class UserPreferencesExportContributor implements UserDataExportContribut
     Map<String, Object> data = new LinkedHashMap<>();
     data.put("onboardingStatus", pref.onboardingStatus().name());
     data.put("onboardingVersion", pref.onboardingVersion());
+    data.put("lastCompletedStep", pref.lastCompletedStep().map(OnboardingStep::name).orElse(null));
     data.put(
-        "lastCompletedStep",
-        pref.lastCompletedStep().map(OnboardingStep::name).orElse(null));
-    data.put(
-        "onboardingCompletedAt",
-        pref.onboardingCompletedAt().map(Instant::toString).orElse(null));
+        "onboardingCompletedAt", pref.onboardingCompletedAt().map(Instant::toString).orElse(null));
 
     PlanningDefaults defaults = pref.planningDefaults();
     data.put("workingDays", defaults.workingDays());
-    data.put(
-        "workStartTime",
-        defaults.workStartTime().map(Object::toString).orElse(null));
-    data.put(
-        "workEndTime", defaults.workEndTime().map(Object::toString).orElse(null));
+    data.put("workStartTime", defaults.workStartTime().map(Object::toString).orElse(null));
+    data.put("workEndTime", defaults.workEndTime().map(Object::toString).orElse(null));
     data.put("overnightSchedule", defaults.overnightSchedule());
-    data.put(
-        "dailyFocusTargetMinutes",
-        defaults.dailyFocusTargetMinutes().orElse(null));
+    data.put("dailyFocusTargetMinutes", defaults.dailyFocusTargetMinutes().orElse(null));
     data.put("focusDurationMinutes", defaults.focusDurationMinutes());
     data.put("breakDurationMinutes", defaults.breakDurationMinutes());
 

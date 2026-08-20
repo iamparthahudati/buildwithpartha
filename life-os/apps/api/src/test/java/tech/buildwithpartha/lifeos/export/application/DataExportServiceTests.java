@@ -40,8 +40,7 @@ class DataExportServiceTests {
   @Test
   void requestExport_createsExportRecordAndEnqueuesJob() {
     ExportSummary summary =
-        service.requestExport(
-            USER_ID, Optional.of("test@example.test"), Optional.of("Test User"));
+        service.requestExport(USER_ID, Optional.of("test@example.test"), Optional.of("Test User"));
 
     assertThat(summary.status()).isEqualTo("GENERATING");
     assertThat(summary.fileName()).contains("lifeos-export-");
@@ -55,8 +54,7 @@ class DataExportServiceTests {
   void requestExport_quotaExceeded_throwsFieldValidationException() {
     exportFilePort.quotaAllowed = false;
 
-    assertThatThrownBy(
-            () -> service.requestExport(USER_ID, Optional.empty(), Optional.empty()))
+    assertThatThrownBy(() -> service.requestExport(USER_ID, Optional.empty(), Optional.empty()))
         .isInstanceOf(FieldValidationException.class)
         .hasMessageContaining("quota exceeded");
   }

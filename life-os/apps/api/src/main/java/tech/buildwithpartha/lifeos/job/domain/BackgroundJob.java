@@ -116,8 +116,8 @@ public record BackgroundJob(
   }
 
   /**
-   * Transitions RUNNING → PENDING (retry) or RUNNING → DEAD_LETTERED (budget exhausted).
-   * Payload is erased when dead-lettered.
+   * Transitions RUNNING → PENDING (retry) or RUNNING → DEAD_LETTERED (budget exhausted). Payload is
+   * erased when dead-lettered.
    */
   public BackgroundJob recordFailure(
       Instant now, String sanitizedErrorClass, JobRetryPolicy retryPolicy) {

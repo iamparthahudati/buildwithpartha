@@ -11,19 +11,15 @@ import org.springframework.data.repository.query.Param;
 
 interface BackgroundJobJpaRepository extends JpaRepository<BackgroundJobEntity, UUID> {
 
-  String PENDING =
-      "tech.buildwithpartha.lifeos.job.domain.BackgroundJobStatus.PENDING";
-  String SUCCEEDED =
-      "tech.buildwithpartha.lifeos.job.domain.BackgroundJobStatus.SUCCEEDED";
-  String DEAD_LETTERED =
-      "tech.buildwithpartha.lifeos.job.domain.BackgroundJobStatus.DEAD_LETTERED";
+  String PENDING = "tech.buildwithpartha.lifeos.job.domain.BackgroundJobStatus.PENDING";
+  String SUCCEEDED = "tech.buildwithpartha.lifeos.job.domain.BackgroundJobStatus.SUCCEEDED";
+  String DEAD_LETTERED = "tech.buildwithpartha.lifeos.job.domain.BackgroundJobStatus.DEAD_LETTERED";
 
   @Query(
       "SELECT e FROM BackgroundJobEntity e WHERE e.status = "
           + PENDING
           + " AND e.nextAttemptAt <= :now ORDER BY e.nextAttemptAt ASC")
-  List<BackgroundJobEntity> findDuePending(
-      @Param("now") Instant now, PageRequest pageRequest);
+  List<BackgroundJobEntity> findDuePending(@Param("now") Instant now, PageRequest pageRequest);
 
   default List<BackgroundJobEntity> findDuePending(Instant now, int limit) {
     return findDuePending(now, PageRequest.of(0, limit));

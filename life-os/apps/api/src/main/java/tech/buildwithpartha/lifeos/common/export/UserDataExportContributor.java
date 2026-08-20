@@ -7,14 +7,14 @@ import java.util.UUID;
  * export archive (LOS-0517).
  *
  * <p>Each domain is responsible for serializing only its own aggregate data and excluding any
- * sensitive authentication secrets, token hashes, or cross-account data per
- * {@code 31-PRIVACY-DATA-LIFECYCLE.md}.
+ * sensitive authentication secrets, token hashes, or cross-account data per {@code
+ * 31-PRIVACY-DATA-LIFECYCLE.md}.
  */
 public interface UserDataExportContributor {
 
   /**
-   * Relative filename within the root of the ZIP archive (e.g. {@code "account.json"},
-   * {@code "preferences.json"}).
+   * Relative filename within the root of the ZIP archive (e.g. {@code "account.json"}, {@code
+   * "preferences.json"}).
    */
   String exportFileName();
 

@@ -29,10 +29,7 @@ final class FakeBackgroundJobRepository implements BackgroundJobRepository {
   @Override
   public List<BackgroundJob> findDuePending(Instant now, int limit) {
     return store.stream()
-        .filter(
-            j ->
-                j.status() == BackgroundJobStatus.PENDING
-                    && !j.nextAttemptAt().isAfter(now))
+        .filter(j -> j.status() == BackgroundJobStatus.PENDING && !j.nextAttemptAt().isAfter(now))
         .sorted((a, b) -> a.nextAttemptAt().compareTo(b.nextAttemptAt()))
         .limit(limit)
         .toList();
@@ -41,9 +38,7 @@ final class FakeBackgroundJobRepository implements BackgroundJobRepository {
   @Override
   public int deleteTerminalOlderThan(Instant cutoff) {
     long before = store.size();
-    store.removeIf(
-        j ->
-            j.isTerminal() && j.updatedAt().isBefore(cutoff));
+    store.removeIf(j -> j.isTerminal() && j.updatedAt().isBefore(cutoff));
     return (int) (before - store.size());
   }
 
