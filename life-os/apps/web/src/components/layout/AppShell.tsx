@@ -12,6 +12,7 @@ import {
 } from "@components/navigation";
 import { useAnnouncer } from "@hooks/useAnnouncer";
 import { useMediaQuery } from "@hooks/useMediaQuery";
+import { FocusMiniPlayer } from "@features/focus";
 
 import "./app-shell.css";
 
@@ -187,6 +188,9 @@ export function AppShell({
             timeZone={timeZone}
             locale={locale}
             {...(now ? { now } : {})}
+            focusSlot={
+              <FocusMiniPlayer timeZone={timeZone} locale={locale} {...(now ? { now } : {})} />
+            }
             onSearchTriggerClick={() => navigate("/life-os/app/search")}
             onQuickAddTriggerClick={onQuickAddTriggerClick}
             onNotificationsTriggerClick={() => navigate("/life-os/app/notifications")}

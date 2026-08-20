@@ -43,6 +43,7 @@ import {
   TopBarWithNotificationsDemo,
   TopBarWithFocusSlotDemo,
   TopBarOverflowOpenDemo,
+  FocusMiniPlayerDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -524,6 +525,22 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Below 768px, Notifications/Focus/Account collapse behind a 'More' trigger into a Drawer; resize the stage to see the swap, or use this state's button to open it directly.",
         render: () => <TopBarOverflowOpenDemo />,
+      },
+    ],
+  },
+  {
+    id: "focus-mini-player",
+    name: "FocusMiniPlayer",
+    group: "Composed",
+    summary:
+      "The global focus mode mini-player: handles default starting states, ticking monotonic timers, desktop popover controls, inline mobile rendering inside drawers, and accessible status transition announcements.",
+    states: [
+      {
+        id: "focus-mini-player-default",
+        name: "Interactive focus player",
+        description:
+          "Interactive mini-player. Click the clock button to start a session, or controls to pause/resume/cancel.",
+        render: () => <FocusMiniPlayerDemo />,
       },
     ],
   },

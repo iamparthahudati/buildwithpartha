@@ -75,7 +75,9 @@ describe("QuickAddDialog", () => {
     await user.click(submitBtn);
 
     // Should see error message and summary (wait for async registration)
-    const summary = await screen.findByRole("alert", { name: "Fix the following before continuing" });
+    const summary = await screen.findByRole("alert", {
+      name: "Fix the following before continuing",
+    });
     expect(summary).toBeInTheDocument();
     expect(within(summary).getByRole("button", { name: "Title is required." })).toBeInTheDocument();
 
@@ -106,7 +108,7 @@ describe("QuickAddDialog", () => {
       () => {
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
       },
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
 
     // Toast check
@@ -124,9 +126,7 @@ describe("QuickAddDialog", () => {
     await user.click(submitBtn);
 
     // Wait for server error display
-    await screen.findByText(
-      "Server error: Failed to save record due to a database constraint."
-    );
+    await screen.findByText("Server error: Failed to save record due to a database constraint.");
 
     // Dialog stays open and title value is preserved
     expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -176,12 +176,12 @@ describe("QuickAddDialog", () => {
       () => {
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
       },
-      { timeout: 2000 }
+      { timeout: 2000 },
     );
 
     // Verify offline queued toast message
     expect(screen.getByRole("status")).toHaveTextContent(
-      'Task "Read daily article" queued — will sync when online'
+      'Task "Read daily article" queued — will sync when online',
     );
   });
 
@@ -212,10 +212,7 @@ describe("QuickAddDialog", () => {
 
     // Switch to Goal and verify a11y
     await user.click(screen.getByRole("combobox", { name: "More creation types" }));
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "More creation types" }),
-      "goal"
-    );
+    await user.selectOptions(screen.getByRole("combobox", { name: "More creation types" }), "goal");
     await expectNoAccessibilityViolations(container);
   });
 });

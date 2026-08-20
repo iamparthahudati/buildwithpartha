@@ -1,8 +1,10 @@
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { Text } from "@components/ui";
 import { AppShell } from "@components/layout";
 import { ToastProvider } from "@state/ToastProvider";
+import { AuthSessionProvider } from "@state/AuthSessionProvider";
 
 /**
  * Interactive demos for the layout catalog entries. Live apart from the
@@ -28,31 +30,43 @@ function AppShellRouteContent() {
   );
 }
 
+const demoQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
 export function AppShellDemo() {
   return (
     <div style={APPSHELL_STAGE_STYLE}>
-      <ToastProvider>
-        <MemoryRouter initialEntries={["/life-os/app/today"]}>
-          <Routes>
-            <Route
-              path="/life-os/app"
-              element={
-                <AppShell
-                  displayName="Priya Sharma"
-                  email="priya@example.com"
-                  timeZone="Asia/Kolkata"
-                  locale="en-US"
-                  onQuickAddTriggerClick={() => {}}
-                  onSignOut={() => {}}
-                />
-              }
-            >
-              <Route path="today" element={<AppShellRouteContent />} />
-              <Route path="tasks" element={<AppShellRouteContent />} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </ToastProvider>
+      <QueryClientProvider client={demoQueryClient}>
+        <AuthSessionProvider>
+          <ToastProvider>
+            <MemoryRouter initialEntries={["/life-os/app/today"]}>
+              <Routes>
+                <Route
+                  path="/life-os/app"
+                  element={
+                    <AppShell
+                      displayName="Priya Sharma"
+                      email="priya@example.com"
+                      timeZone="Asia/Kolkata"
+                      locale="en-US"
+                      onQuickAddTriggerClick={() => {}}
+                      onSignOut={() => {}}
+                    />
+                  }
+                >
+                  <Route path="today" element={<AppShellRouteContent />} />
+                  <Route path="tasks" element={<AppShellRouteContent />} />
+                </Route>
+              </Routes>
+            </MemoryRouter>
+          </ToastProvider>
+        </AuthSessionProvider>
+      </QueryClientProvider>
     </div>
   );
 }

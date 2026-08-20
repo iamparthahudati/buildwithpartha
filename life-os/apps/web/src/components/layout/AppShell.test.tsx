@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { screen, waitFor, within } from "@testing-library/react";
 import { Link, MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -7,10 +7,27 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { expectNoAccessibilityViolations } from "@test/accessibility";
 import { renderWithUser } from "@test/render";
 import { ToastProvider } from "@state/ToastProvider";
+import { AuthSessionProvider } from "@state/AuthSessionProvider";
 
 import { AppShell, type AppShellProps } from "./AppShell";
 
 const FIXED_NOW = new Date("2026-08-20T12:00:00Z");
+const PREFS_BODY = {
+  userId: "user-123",
+  onboardingVersion: 1,
+  onboardingStatus: "COMPLETED",
+  lastCompletedStep: null,
+  onboardingCompletedAt: null,
+  planningDefaults: {
+    workingDays: [1, 2, 3, 4, 5],
+    workStartTime: "09:00",
+    workEndTime: "17:00",
+    overnightSchedule: false,
+    dailyFocusTargetMinutes: 120,
+    focusDurationMinutes: 25,
+    breakDurationMinutes: 5,
+  },
+};
 
 interface FakeMediaQueryList {
   matches: boolean;
@@ -54,29 +71,42 @@ function renderShell(
   initialEntries: string[] = ["/life-os/app/today"],
   extraChildren?: ReactNode,
 ) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: 0,
+      },
+    },
+  });
+
   return renderWithUser(
-    <ToastProvider>
-      <MemoryRouter initialEntries={initialEntries}>
-        <Routes>
-          <Route path="/life-os/app" element={<AppShell {...defaultProps(props)} />}>
-            <Route index element={<p>Today content</p>} />
-            <Route
-              path="today"
-              element={
-                <>
-                  <p>Today content</p>
-                  <Link to="/life-os/app/tasks">Go to tasks</Link>
-                </>
-              }
-            />
-            <Route path="tasks" element={<p>Tasks content</p>} />
-            <Route path="settings" element={<p>Settings content</p>} />
-            <Route path="boom" element={<Bomb />} />
-          </Route>
-        </Routes>
-        {extraChildren}
-      </MemoryRouter>
-    </ToastProvider>,
+    <QueryClientProvider client={queryClient}>
+      <AuthSessionProvider>
+        <ToastProvider>
+          <MemoryRouter initialEntries={initialEntries}>
+            <Routes>
+              <Route path="/life-os/app" element={<AppShell {...defaultProps(props)} />}>
+                <Route index element={<p>Today content</p>} />
+                <Route
+                  path="today"
+                  element={
+                    <>
+                      <p>Today content</p>
+                      <Link to="/life-os/app/tasks">Go to tasks</Link>
+                    </>
+                  }
+                />
+                <Route path="tasks" element={<p>Tasks content</p>} />
+                <Route path="settings" element={<p>Settings content</p>} />
+                <Route path="boom" element={<Bomb />} />
+              </Route>
+            </Routes>
+            {extraChildren}
+          </MemoryRouter>
+        </ToastProvider>
+      </AuthSessionProvider>
+    </QueryClientProvider>,
   );
 }
 
@@ -86,6 +116,22 @@ describe("AppShell", () => {
   beforeEach(() => {
     installMatchMedia(false);
     consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.stubGlobal("fetch", vi.fn());
+    vi.mocked(fetch).mockImplementation((url) => {
+      const path = typeof url === "string" ? url : (url as Request).url;
+      if (path.endsWith("/user/preferences")) {
+        return Promise.resolve(
+          new Response(JSON.stringify(PREFS_BODY), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+      if (path.endsWith("/focus-sessions/active")) {
+        return Promise.resolve(new Response(null, { status: 204 }));
+      }
+      return Promise.resolve(new Response(null, { status: 404 }));
+    });
   });
 
   afterEach(() => {
@@ -135,20 +181,26 @@ describe("AppShell", () => {
   });
 
   it("moves focus to main and announces the new title once when navigating", async () => {
-    const { user } = renderShell();
+    const { user, container } = renderShell();
 
     await user.click(screen.getByRole("link", { name: "Go to tasks" }));
 
     await waitFor(() => {
       expect(screen.getByRole("main")).toHaveFocus();
     });
-    expect(screen.getByRole("status")).toHaveTextContent("Tasks");
+    const announcer = container.querySelector(
+      ".lifeos-app-shell > .lifeos-visually-hidden[role='status']",
+    );
+    expect(announcer).toHaveTextContent("Tasks");
   });
 
   it("does not move focus or announce on the initial render", () => {
-    renderShell();
+    const { container } = renderShell();
     expect(screen.getByRole("main")).not.toHaveFocus();
-    expect(screen.getByRole("status")).toHaveTextContent("");
+    const announcer = container.querySelector(
+      ".lifeos-app-shell > .lifeos-visually-hidden[role='status']",
+    );
+    expect(announcer).toHaveTextContent("");
   });
 
   it("catches a routed render error without losing the surrounding shell chrome", () => {

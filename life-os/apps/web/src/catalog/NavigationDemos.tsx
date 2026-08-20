@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthSessionProvider } from "@state/AuthSessionProvider";
+import { FocusMiniPlayer } from "@features/focus";
 import {
   AlertTriangle,
   Archive,
@@ -1295,5 +1298,23 @@ export function TopBarOverflowOpenDemo() {
         />
       </div>
     </div>
+  );
+}
+
+const demoQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+export function FocusMiniPlayerDemo() {
+  return (
+    <QueryClientProvider client={demoQueryClient}>
+      <AuthSessionProvider>
+        <FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />
+      </AuthSessionProvider>
+    </QueryClientProvider>
   );
 }

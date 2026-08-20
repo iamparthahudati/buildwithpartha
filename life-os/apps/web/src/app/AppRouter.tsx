@@ -5,7 +5,6 @@ import { AppShell } from "@components/layout";
 import { QuickAddDialog, useQuickAddShortcut } from "@components/feedback";
 import { RequireAuth, useLogout } from "@features/auth";
 import { useAuthSession } from "@state/authSession";
-import { useToast } from "@state/toastQueue";
 import {
   CancelDeletionRoute,
   ComingSoonRoute,
