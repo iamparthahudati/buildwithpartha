@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-20 (LOS-0701–LOS-0706 projects implementation handoff)
+Last updated: 2026-08-21 (LOS-0711 project details header handoff)
 
 ## Phase
 
@@ -17,6 +17,8 @@ Phase 2 — Identity and application shell.
 - LOS-0707 — Responsive, progressive disclosure ProjectForm dialog with validation, dirty tracking, theme picker, and conflict handling. See `docs/handoffs/LOS-0707.md`.
 - LOS-0708 — Project summary metric strip displaying total/active/completed/on-hold/at-risk/progress metrics with interactive filter triggers. See `docs/handoffs/LOS-0708.md`.
 - LOS-0709 — Composed Projects screen with header/add, metric strip, tabs/search/filter/sort/view controls, cards/table views, form dialog, confirm dialogs, detail panel, and pagination across mock states. See `docs/handoffs/LOS-0709.md`.
+- LOS-0710 — Integrate Projects screen with query/mutation hooks, REST client, URL state, and routing. See `docs/handoffs/LOS-0710.md`.
+- LOS-0711 — Responsive ProjectDetailsHeader component with deep link breadcrumbs, identity, status, health, priority, owner, dates, estimate, task progress, primary/secondary actions, loading skeleton, and archived state. See `docs/handoffs/LOS-0711.md`.
 
 ## Completed
 

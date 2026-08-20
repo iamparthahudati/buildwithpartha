@@ -4,6 +4,7 @@ import { Button, Select, Text, TextInput } from "@components/ui";
 import {
   ProjectRow,
   ProjectCard,
+  ProjectDetailsHeader,
   ProjectForm,
   ProjectSummaryMetrics,
   type Project,
@@ -547,6 +548,59 @@ export function ProjectSummaryMetricsDemo() {
         activeFilter={filter}
         onSelectFilter={setFilter}
       />
+    </div>
+  );
+}
+
+export function ProjectDetailsHeaderDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Active Project Header
+          </Text>
+        </div>
+        <ProjectDetailsHeader
+          project={MOCK_PROJECT_READY}
+          ownerName="Sarah Connor"
+          estimatedHours={40}
+          now={now}
+          onAddTask={() => alert("Add task")}
+          onEdit={() => alert("Edit project")}
+          onArchive={() => alert("Archive project")}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Archived Project Header
+          </Text>
+        </div>
+        <ProjectDetailsHeader
+          project={MOCK_PROJECT_ARCHIVED}
+          ownerName="Sarah Connor"
+          estimatedHours={24}
+          now={now}
+          onRestore={() => alert("Restore project")}
+          onDelete={() => alert("Delete project")}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Header
+          </Text>
+        </div>
+        <ProjectDetailsHeader loading />
+      </div>
     </div>
   );
 }

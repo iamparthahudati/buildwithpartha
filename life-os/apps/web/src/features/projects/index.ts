@@ -1,5 +1,9 @@
 export { ProjectRow, type ProjectRowProps } from "./components/ProjectRow";
 export { ProjectCard, type ProjectCardProps } from "./components/ProjectCard";
+export {
+  ProjectDetailsHeader,
+  type ProjectDetailsHeaderProps,
+} from "./components/ProjectDetailsHeader";
 export { ProjectForm, type ProjectFormProps, type ProjectFormData } from "./components/ProjectForm";
 export {
   ProjectSummaryMetrics,
