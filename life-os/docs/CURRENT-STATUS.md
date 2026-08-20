@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-0714 ProjectDetailsScreen tabs composition handoff)
+Last updated: 2026-08-21 (LOS-0715 Project Detail aggregation API handoff)
 
 ## Phase
 
@@ -22,6 +22,7 @@ Phase 2 — Identity and application shell.
 - LOS-0712 — Project overview components (progress/task/time/health summary cards, status/priority breakdown charts with data table fallback, top tasks list, about/labels metadata, and activity feed). See `docs/handoffs/LOS-0712.md`.
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 - LOS-0714 — Compose Project Details tabs with mocks (Overview, Tasks, Timeline, Files, Notes, and Activity tabs, deep link tab switching, loading, 404, 403, and archived banner states). See `docs/handoffs/LOS-0714.md`.
+- LOS-0715 — Implement project detail aggregation API (`GET /projects/{id}/detail` returning `ProjectDetailResponse` with metadata and milestones). See `docs/handoffs/LOS-0715.md`.
 
 ## Completed
 

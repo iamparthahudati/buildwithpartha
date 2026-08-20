@@ -293,6 +293,18 @@ class ProjectControllerTests {
   }
 
   @Test
+  void getProjectDetailReturnsAggregatedDetailsWhenOwned() throws Exception {
+    Project project = saveProjectFor(userId, "Detailed Project");
+
+    mockMvc
+        .perform(get("/projects/" + project.id() + "/detail").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.project.id").value(project.id().toString()))
+        .andExpect(jsonPath("$.project.name").value("Detailed Project"))
+        .andExpect(jsonPath("$.milestones").isArray());
+  }
+
+  @Test
   void updateProjectSuccessful() throws Exception {
     Project project = saveProjectFor(userId, "Project V0");
     String body =

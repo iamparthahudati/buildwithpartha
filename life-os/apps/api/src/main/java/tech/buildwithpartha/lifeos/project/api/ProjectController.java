@@ -43,9 +43,13 @@ import tech.buildwithpartha.lifeos.project.domain.ProjectSummaryCounts;
 public class ProjectController {
 
   private final ProjectService projectService;
+  private final tech.buildwithpartha.lifeos.project.application.MilestoneService milestoneService;
 
-  public ProjectController(ProjectService projectService) {
+  public ProjectController(
+      ProjectService projectService,
+      tech.buildwithpartha.lifeos.project.application.MilestoneService milestoneService) {
     this.projectService = projectService;
+    this.milestoneService = milestoneService;
   }
 
   private static final Set<String> ALLOWED_SORT_FIELDS =
@@ -217,6 +221,25 @@ public class ProjectController {
       @AuthenticationPrincipal UUID userId, @PathVariable("id") UUID id) {
     Project project = projectService.getProject(userId, id);
     return ProjectResponse.fromDomain(project);
+  }
+
+  @Operation(
+      summary = "Get project aggregate detail",
+      description = "Retrieves aggregated project metadata, milestones, and overview details.")
+  @ApiResponse(responseCode = "200", description = "Aggregated project detail.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping("/{id}/detail")
+  public ProjectDetailResponse getProjectDetail(
+      @AuthenticationPrincipal UUID userId, @PathVariable("id") UUID id) {
+    Project project = projectService.getProject(userId, id);
+    List<MilestoneResponse> milestones =
+        milestoneService.getMilestones(userId, id).stream()
+            .map(MilestoneResponse::fromDomain)
+            .toList();
+
+    return new ProjectDetailResponse(ProjectResponse.fromDomain(project), milestones);
   }
 
   @Operation(
