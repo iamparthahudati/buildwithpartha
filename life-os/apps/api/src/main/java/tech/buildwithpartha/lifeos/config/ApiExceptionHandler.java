@@ -7,12 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import tech.buildwithpartha.lifeos.common.error.ApiProblem;
 import tech.buildwithpartha.lifeos.common.error.CodedException;
+import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
 import tech.buildwithpartha.lifeos.common.error.CsrfTokenInvalidException;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
@@ -105,6 +107,30 @@ public final class ApiExceptionHandler {
             exception.code(),
             "Link already used",
             "The link has already been used."));
+  }
+
+  @ExceptionHandler(ConcurrencyConflictException.class)
+  ResponseEntity<ApiProblem> handleConcurrencyConflict(
+      ConcurrencyConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Conflict",
+            "The resource was updated by another request."));
+  }
+
+  @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+  ResponseEntity<ApiProblem> handleOptimisticLocking(
+      ObjectOptimisticLockingFailureException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            StandardErrorCodes.CONCURRENCY_CONFLICT,
+            "Conflict",
+            "The resource was updated by another request."));
   }
 
   @ExceptionHandler(CsrfTokenInvalidException.class)

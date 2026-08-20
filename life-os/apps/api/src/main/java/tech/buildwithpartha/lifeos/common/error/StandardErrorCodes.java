@@ -15,6 +15,7 @@ public final class StandardErrorCodes {
   public static final ErrorCode TOKEN_EXPIRED = ErrorCode.of("TOKEN_EXPIRED");
   public static final ErrorCode TOKEN_INVALID = ErrorCode.of("TOKEN_INVALID");
   public static final ErrorCode VALIDATION_FAILED = ErrorCode.of("VALIDATION_FAILED");
+  public static final ErrorCode CONCURRENCY_CONFLICT = ErrorCode.of("CONCURRENCY_CONFLICT");
 
   private StandardErrorCodes() {}
 }
