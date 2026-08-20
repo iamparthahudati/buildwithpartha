@@ -17,6 +17,7 @@ final class PackageBoundaryRules {
           "auth",
           "user",
           "project",
+          "label",
           "task",
           "calendar",
           "timeblock",

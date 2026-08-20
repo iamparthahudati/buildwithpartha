@@ -156,3 +156,52 @@ CREATE TABLE IF NOT EXISTS account_deletion_requests (
     purged_at                TIMESTAMP WITH TIME ZONE,
     created_at               TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+-- Added by LOS-0701: Labels, projects, project_labels, and milestones.
+CREATE TABLE IF NOT EXISTS labels (
+    id              UUID                     NOT NULL PRIMARY KEY,
+    user_id         UUID                     NOT NULL,
+    name            TEXT                     NOT NULL,
+    name_normalized TEXT                     NOT NULL,
+    color           TEXT,
+    created_at      TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at      TIMESTAMP WITH TIME ZONE NOT NULL,
+    version         BIGINT                   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    user_id          UUID                     NOT NULL,
+    name             TEXT                     NOT NULL,
+    description      TEXT,
+    status           VARCHAR(32)              NOT NULL,
+    priority         VARCHAR(32)              NOT NULL,
+    health           VARCHAR(32)              NOT NULL,
+    color            TEXT,
+    icon             TEXT,
+    start_date       DATE,
+    deadline_date    DATE,
+    estimate_minutes INT,
+    archived_at      TIMESTAMP WITH TIME ZONE,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    version          BIGINT                   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS project_labels (
+    project_id UUID NOT NULL,
+    label_id   UUID NOT NULL,
+    PRIMARY KEY (project_id, label_id)
+);
+
+CREATE TABLE IF NOT EXISTS milestones (
+    id            UUID                     NOT NULL PRIMARY KEY,
+    project_id    UUID                     NOT NULL,
+    title         TEXT                     NOT NULL,
+    date          DATE,
+    status        VARCHAR(32)              NOT NULL,
+    ordering      INT                      NOT NULL,
+    created_at    TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at    TIMESTAMP WITH TIME ZONE NOT NULL,
+    version       BIGINT                   NOT NULL
+);
