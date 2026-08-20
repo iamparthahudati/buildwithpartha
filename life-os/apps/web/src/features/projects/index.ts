@@ -9,3 +9,38 @@ export {
 } from "./components/ProjectSummaryMetrics";
 export { ProjectsScreen, type ProjectsScreenProps } from "./components/ProjectsScreen";
 export type { Project, ProjectStatus, ProjectPriority, ProjectHealth } from "./model/project";
+
+export {
+  queryProjects,
+  getProject,
+  createProject,
+  updateProject,
+  archiveProject,
+  restoreProject,
+  deleteProject,
+  mapProjectResponse,
+  type ProjectResponseDto,
+  type ProjectSummaryCountsDto,
+  type ProjectQueryResponseDto,
+  type CreateProjectRequestDto,
+  type UpdateProjectRequestDto,
+  type ArchiveProjectRequestDto,
+  type RestoreProjectRequestDto,
+  type ProjectQueryParams,
+} from "./api/projectsApi";
+
+export {
+  PROJECTS_QUERY_KEY,
+  projectsQueryKeys,
+  invalidateProjectsQueries,
+  useProjects,
+  type UseProjectsResult,
+} from "./hooks/useProjects";
+
+export {
+  useCreateProject,
+  useUpdateProject,
+  useArchiveProject,
+  useRestoreProject,
+  useDeleteProject,
+} from "./hooks/useProjectMutations";

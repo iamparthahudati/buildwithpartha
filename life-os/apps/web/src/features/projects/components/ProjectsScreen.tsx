@@ -104,8 +104,36 @@ const MOCK_DEFAULT_PROJECTS: readonly Project[] = [
 
 export interface ProjectsScreenProps {
   readonly initialProjects?: readonly Project[];
+  readonly projects?: readonly Project[];
+  readonly summaryCounts?: {
+    readonly total: number;
+    readonly active: number;
+    readonly completed: number;
+    readonly onHold: number;
+    readonly atRisk: number;
+    readonly averageProgress: number;
+  };
   readonly loading?: boolean;
   readonly error?: string | null;
+  readonly statusTab?: string;
+  readonly searchQuery?: string;
+  readonly priorityFilter?: string;
+  readonly healthFilter?: string;
+  readonly sortState?: { optionId: string; direction: "asc" | "desc" };
+  readonly viewMode?: "list" | "grid" | "table";
+  readonly currentPage?: number;
+  readonly totalPages?: number;
+  readonly totalItems?: number;
+  readonly pageSize?: number;
+  readonly selectedProject?: Project | null;
+  readonly onStatusTabChange?: (tab: string) => void;
+  readonly onSearchQueryChange?: (query: string) => void;
+  readonly onPriorityFilterChange?: (priority: string) => void;
+  readonly onHealthFilterChange?: (health: string) => void;
+  readonly onSortChange?: (sort: { optionId: string; direction: "asc" | "desc" }) => void;
+  readonly onViewModeChange?: (mode: "list" | "grid" | "table") => void;
+  readonly onPageChange?: (page: number) => void;
+  readonly onSelectProject?: (project: Project | null) => void;
   readonly onRetry?: () => void;
   readonly onCreateProject?: (data: ProjectFormData) => Promise<void> | void;
   readonly onUpdateProject?: (id: string, data: ProjectFormData) => Promise<void> | void;
@@ -134,8 +162,29 @@ const SORT_OPTIONS: readonly SortOption[] = [
 
 export function ProjectsScreen({
   initialProjects = MOCK_DEFAULT_PROJECTS,
+  projects: controlledProjects,
+  summaryCounts: controlledCounts,
   loading = false,
   error = null,
+  statusTab: controlledStatusTab,
+  searchQuery: controlledSearchQuery,
+  priorityFilter: controlledPriorityFilter,
+  healthFilter: controlledHealthFilter,
+  sortState: controlledSortState,
+  viewMode: controlledViewMode,
+  currentPage: controlledCurrentPage,
+  totalPages: controlledTotalPages,
+  totalItems: controlledTotalItems,
+  pageSize = 6,
+  selectedProject: controlledSelectedProject,
+  onStatusTabChange,
+  onSearchQueryChange,
+  onPriorityFilterChange,
+  onHealthFilterChange,
+  onSortChange,
+  onViewModeChange,
+  onPageChange,
+  onSelectProject,
   onRetry,
   onCreateProject,
   onUpdateProject,
@@ -146,17 +195,34 @@ export function ProjectsScreen({
   timeZone = "UTC",
   locale = "en-US",
 }: ProjectsScreenProps) {
-  const [projects, setProjects] = useState<readonly Project[]>(initialProjects);
-  const [statusTab, setStatusTab] = useState<string>("ALL");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [priorityFilter, setPriorityFilter] = useState<string>("ALL");
-  const [healthFilter, setHealthFilter] = useState<string>("ALL");
-  const [sortState, setSortState] = useState<{ optionId: string; direction: "asc" | "desc" }>({
+  const [internalProjects, setInternalProjects] = useState<readonly Project[]>(initialProjects);
+  const [internalStatusTab, setInternalStatusTab] = useState<string>("ALL");
+  const [internalSearchQuery, setInternalSearchQuery] = useState("");
+  const [internalPriorityFilter, setInternalPriorityFilter] = useState<string>("ALL");
+  const [internalHealthFilter, setInternalHealthFilter] = useState<string>("ALL");
+  const [internalSortState, setInternalSortState] = useState<{
+    optionId: string;
+    direction: "asc" | "desc";
+  }>({
     optionId: "name",
     direction: "asc",
   });
-  const [viewMode, setViewMode] = useState<"list" | "grid" | "table">("grid");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [internalViewMode, setInternalViewMode] = useState<"list" | "grid" | "table">("grid");
+  const [internalCurrentPage, setInternalCurrentPage] = useState(1);
+  const [internalSelectedProject, setInternalSelectedProject] = useState<Project | null>(null);
+
+  const isControlled = controlledProjects !== undefined;
+
+  const projects = controlledProjects ?? internalProjects;
+  const statusTab = controlledStatusTab ?? internalStatusTab;
+  const searchQuery = controlledSearchQuery ?? internalSearchQuery;
+  const priorityFilter = controlledPriorityFilter ?? internalPriorityFilter;
+  const healthFilter = controlledHealthFilter ?? internalHealthFilter;
+  const sortState = controlledSortState ?? internalSortState;
+  const viewMode = controlledViewMode ?? internalViewMode;
+  const currentPage = controlledCurrentPage ?? internalCurrentPage;
+  const selectedDetailProject =
+    controlledSelectedProject !== undefined ? controlledSelectedProject : internalSelectedProject;
 
   // Form Dialog state
   const [formOpen, setFormOpen] = useState(false);
@@ -170,11 +236,8 @@ export function ProjectsScreen({
     project: Project | null;
   }>({ open: false, type: "archive", project: null });
 
-  // Selected Detail Panel state
-  const [selectedDetailProject, setSelectedDetailProject] = useState<Project | null>(null);
-
-  // Compute summary metrics across non-archived projects
-  const counts = useMemo(() => {
+  // Compute summary metrics across non-archived projects if not controlled
+  const computedCounts = useMemo(() => {
     const activeList = projects.filter((p) => !p.archivedAt);
     const total = activeList.length;
     const active = activeList.filter((p) => p.status === "ACTIVE").length;
@@ -195,8 +258,11 @@ export function ProjectsScreen({
     return { total, active, completed, onHold, atRisk, averageProgress };
   }, [projects]);
 
-  // Filter & sort projects list
+  const counts = controlledCounts ?? computedCounts;
+
+  // Filter & sort projects list when in uncontrolled mode
   const filteredProjects = useMemo(() => {
+    if (isControlled) return projects;
     return projects.filter((p) => {
       // Tab filter
       if (statusTab === "ARCHIVED") {
@@ -222,9 +288,10 @@ export function ProjectsScreen({
 
       return true;
     });
-  }, [projects, statusTab, priorityFilter, healthFilter, searchQuery]);
+  }, [isControlled, projects, statusTab, priorityFilter, healthFilter, searchQuery]);
 
   const sortedProjects = useMemo(() => {
+    if (isControlled) return filteredProjects;
     const list = [...filteredProjects];
     const { optionId, direction } = sortState;
     const mult = direction === "asc" ? 1 : -1;
@@ -243,15 +310,21 @@ export function ProjectsScreen({
       default:
         return list;
     }
-  }, [filteredProjects, sortState]);
+  }, [isControlled, filteredProjects, sortState]);
 
-  // Pagination (6 items per page)
-  const pageSize = 6;
-  const totalPages = Math.ceil(sortedProjects.length / pageSize) || 1;
+  // Pagination
+  const computedTotalPages = isControlled
+    ? (controlledTotalPages ?? Math.ceil((controlledTotalItems ?? projects.length) / pageSize)) || 1
+    : Math.ceil(sortedProjects.length / pageSize) || 1;
+
+  const totalPages = computedTotalPages;
+  const totalItemsCount = controlledTotalItems ?? sortedProjects.length;
+
   const paginatedProjects = useMemo(() => {
+    if (isControlled) return projects;
     const start = (currentPage - 1) * pageSize;
     return sortedProjects.slice(start, start + pageSize);
-  }, [sortedProjects, currentPage, pageSize]);
+  }, [isControlled, projects, sortedProjects, currentPage, pageSize]);
 
   // Handlers
   function handleOpenCreate() {
@@ -284,7 +357,7 @@ export function ProjectsScreen({
         updatedAt: new Date().toISOString(),
         version: 1,
       };
-      setProjects((prev) => [newProj, ...prev]);
+      setInternalProjects((prev) => [newProj, ...prev]);
       await onCreateProject?.(data);
     } else if (editingProject) {
       const updatedProj: Project = {
@@ -301,7 +374,9 @@ export function ProjectsScreen({
         updatedAt: new Date().toISOString(),
         version: (editingProject.version ?? 1) + 1,
       };
-      setProjects((prev) => prev.map((p) => (p.id === editingProject.id ? updatedProj : p)));
+      setInternalProjects((prev) =>
+        prev.map((p) => (p.id === editingProject.id ? updatedProj : p)),
+      );
       await onUpdateProject?.(editingProject.id, data);
     }
     setFormOpen(false);
@@ -324,10 +399,10 @@ export function ProjectsScreen({
         ...project,
         archivedAt: new Date().toISOString(),
       };
-      setProjects((prev) => prev.map((p) => (p.id === project.id ? archived : p)));
+      setInternalProjects((prev) => prev.map((p) => (p.id === project.id ? archived : p)));
       await onArchiveProject?.(project.id);
     } else if (type === "delete") {
-      setProjects((prev) => prev.filter((p) => p.id !== project.id));
+      setInternalProjects((prev) => prev.filter((p) => p.id !== project.id));
       await onDeleteProject?.(project.id);
     }
     setConfirmDialogState({ open: false, type: "archive", project: null });
@@ -338,18 +413,28 @@ export function ProjectsScreen({
       ...project,
       archivedAt: null,
     };
-    setProjects((prev) => prev.map((p) => (p.id === project.id ? restored : p)));
+    setInternalProjects((prev) => prev.map((p) => (p.id === project.id ? restored : p)));
     await onRestoreProject?.(project.id);
   }
 
   function handleSelectMetricFilter(filter: ProjectFilterCategory) {
-    if (filter === "ALL") setStatusTab("ALL");
-    else if (filter === "ACTIVE") setStatusTab("ACTIVE");
-    else if (filter === "COMPLETED") setStatusTab("COMPLETED");
-    else if (filter === "ON_HOLD") setStatusTab("ON_HOLD");
-    else if (filter === "AT_RISK") {
-      setStatusTab("ALL");
-      setHealthFilter("AT_RISK");
+    if (filter === "ALL") {
+      setInternalStatusTab("ALL");
+      onStatusTabChange?.("ALL");
+    } else if (filter === "ACTIVE") {
+      setInternalStatusTab("ACTIVE");
+      onStatusTabChange?.("ACTIVE");
+    } else if (filter === "COMPLETED") {
+      setInternalStatusTab("COMPLETED");
+      onStatusTabChange?.("COMPLETED");
+    } else if (filter === "ON_HOLD") {
+      setInternalStatusTab("ON_HOLD");
+      onStatusTabChange?.("ON_HOLD");
+    } else if (filter === "AT_RISK") {
+      setInternalStatusTab("ALL");
+      setInternalHealthFilter("AT_RISK");
+      onStatusTabChange?.("ALL");
+      onHealthFilterChange?.("AT_RISK");
     }
   }
 
@@ -384,8 +469,9 @@ export function ProjectsScreen({
           items={TABS}
           selectedId={statusTab}
           onSelectedIdChange={(id) => {
-            setStatusTab(id);
-            setCurrentPage(1);
+            setInternalStatusTab(id);
+            setInternalCurrentPage(1);
+            onStatusTabChange?.(id);
           }}
         />
 
@@ -397,8 +483,10 @@ export function ProjectsScreen({
               placeholder="Search projects..."
               value={searchQuery}
               onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
+                const val = e.target.value;
+                setInternalSearchQuery(val);
+                setInternalCurrentPage(1);
+                onSearchQueryChange?.(val);
               }}
               prefix={<Search size={16} />}
             />
@@ -410,8 +498,10 @@ export function ProjectsScreen({
               labelHidden
               value={priorityFilter}
               onChange={(e) => {
-                setPriorityFilter(e.target.value);
-                setCurrentPage(1);
+                const val = e.target.value;
+                setInternalPriorityFilter(val);
+                setInternalCurrentPage(1);
+                onPriorityFilterChange?.(val);
               }}
               options={[
                 { value: "ALL", label: "All priorities" },
@@ -427,8 +517,10 @@ export function ProjectsScreen({
               labelHidden
               value={healthFilter}
               onChange={(e) => {
-                setHealthFilter(e.target.value);
-                setCurrentPage(1);
+                const val = e.target.value;
+                setInternalHealthFilter(val);
+                setInternalCurrentPage(1);
+                onHealthFilterChange?.(val);
               }}
               options={[
                 { value: "ALL", label: "All health" },
@@ -438,9 +530,22 @@ export function ProjectsScreen({
               ]}
             />
 
-            <SortControl options={SORT_OPTIONS} value={sortState} onChange={setSortState} />
+            <SortControl
+              options={SORT_OPTIONS}
+              value={sortState}
+              onChange={(sort) => {
+                setInternalSortState(sort);
+                onSortChange?.(sort);
+              }}
+            />
 
-            <ViewToggle value={viewMode} onChange={setViewMode} />
+            <ViewToggle
+              value={viewMode}
+              onChange={(mode) => {
+                setInternalViewMode(mode);
+                onViewModeChange?.(mode);
+              }}
+            />
           </div>
         </div>
       </div>
@@ -488,10 +593,16 @@ export function ProjectsScreen({
               <Button
                 variant="secondary"
                 onClick={() => {
-                  setSearchQuery("");
-                  setPriorityFilter("ALL");
-                  setHealthFilter("ALL");
-                  setStatusTab("ALL");
+                  setInternalSearchQuery("");
+                  setInternalPriorityFilter("ALL");
+                  setInternalHealthFilter("ALL");
+                  setInternalStatusTab("ALL");
+                  setInternalCurrentPage(1);
+                  onSearchQueryChange?.("");
+                  onPriorityFilterChange?.("ALL");
+                  onHealthFilterChange?.("ALL");
+                  onStatusTabChange?.("ALL");
+                  onPageChange?.(1);
                 }}
               >
                 Clear filters
@@ -542,8 +653,11 @@ export function ProjectsScreen({
               <Pagination
                 page={currentPage}
                 pageSize={pageSize}
-                total={sortedProjects.length}
-                onPageChange={setCurrentPage}
+                total={totalItemsCount}
+                onPageChange={(p) => {
+                  setInternalCurrentPage(p);
+                  onPageChange?.(p);
+                }}
                 label="Projects pagination"
               />
             </div>
@@ -597,7 +711,10 @@ export function ProjectsScreen({
       {/* Detail Panel */}
       <DetailPanel
         open={Boolean(selectedDetailProject)}
-        onClose={() => setSelectedDetailProject(null)}
+        onClose={() => {
+          setInternalSelectedProject(null);
+          onSelectProject?.(null);
+        }}
         title={selectedDetailProject?.name ?? "Project details"}
         content={
           selectedDetailProject ? (

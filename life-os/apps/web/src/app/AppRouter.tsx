@@ -12,6 +12,7 @@ import {
   LoginRoute,
   NotFoundRoute,
   OnboardingRoute,
+  ProjectsRoute,
   ResetPasswordRoute,
   SettingsRoute,
   SignupRoute,
@@ -125,7 +126,7 @@ export function AppRoutes() {
           <Route path="time-blocks" element={<ComingSoonRoute />} />
           <Route path="calendar" element={<ComingSoonRoute />} />
           <Route path="focus" element={<ComingSoonRoute />} />
-          <Route path="projects" element={<ComingSoonRoute />} />
+          <Route path="projects" element={<ProjectsRoute />} />
           <Route path="projects/:projectId" element={<ComingSoonRoute />} />
           <Route path="sprints" element={<ComingSoonRoute />} />
           <Route path="sprints/:sprintId" element={<ComingSoonRoute />} />
