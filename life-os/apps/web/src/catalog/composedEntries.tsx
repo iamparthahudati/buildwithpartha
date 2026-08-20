@@ -21,6 +21,7 @@ import {
   ProjectSummaryMetricsDemo,
 } from "./ComposedDemos";
 
+import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
 import type { CatalogEntry } from "./registry";
 
 /* Composed-component entries (LOS-0401 onward). */
@@ -256,6 +257,22 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Interactive metric strip with active filter selection.",
         render: () => <ProjectSummaryMetricsDemo />,
+      },
+    ],
+  },
+  {
+    id: "projects-screen",
+    name: "ProjectsScreen",
+    group: "Composed",
+    summary:
+      "Full responsive Projects screen composition with header, metrics, search/filters/sort/view controls, cards/table view, detail panel, form dialog, and pagination.",
+    states: [
+      {
+        id: "projects-screen-default",
+        name: "Default",
+        description:
+          "Projects screen with interactive states (populated, first-use empty, loading, error).",
+        render: () => <ProjectsScreenDemo />,
       },
     ],
   },

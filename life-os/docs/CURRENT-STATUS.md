@@ -16,6 +16,7 @@ Phase 2 — Identity and application shell.
 - LOS-0706 — Responsive, accessible ProjectRow and ProjectCard components with ready/loading/archived/overdue states and catalog coverage. See `docs/handoffs/LOS-0706.md`.
 - LOS-0707 — Responsive, progressive disclosure ProjectForm dialog with validation, dirty tracking, theme picker, and conflict handling. See `docs/handoffs/LOS-0707.md`.
 - LOS-0708 — Project summary metric strip displaying total/active/completed/on-hold/at-risk/progress metrics with interactive filter triggers. See `docs/handoffs/LOS-0708.md`.
+- LOS-0709 — Composed Projects screen with header/add, metric strip, tabs/search/filter/sort/view controls, cards/table views, form dialog, confirm dialogs, detail panel, and pagination across mock states. See `docs/handoffs/LOS-0709.md`.
 
 ## Completed
 

@@ -1,0 +1,65 @@
+/* ProjectsScreen (LOS-0709) */
+.lifeos-projects-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-spacing-6);
+  width: 100%;
+}
+
+.lifeos-projects-screen__controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-spacing-4);
+}
+
+.lifeos-projects-screen__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-spacing-4);
+}
+
+.lifeos-projects-screen__search {
+  flex: 1 1 16rem;
+  max-width: 24rem;
+}
+
+.lifeos-projects-screen__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-spacing-3);
+}
+
+.lifeos-projects-screen__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: var(--lifeos-spacing-4);
+}
+
+.lifeos-projects-screen__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-spacing-3);
+}
+
+.lifeos-projects-screen__pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--lifeos-spacing-4);
+}
+
+.lifeos-projects-detail-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-spacing-4);
+  padding: var(--lifeos-spacing-4);
+}
+
+.lifeos-projects-detail-preview__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-spacing-2);
+  color: var(--lifeos-color-text-subtle);
+}

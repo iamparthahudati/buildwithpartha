@@ -7,5 +7,5 @@ export {
   type ProjectSummaryCounts,
   type ProjectFilterCategory,
 } from "./components/ProjectSummaryMetrics";
+export { ProjectsScreen, type ProjectsScreenProps } from "./components/ProjectsScreen";
 export type { Project, ProjectStatus, ProjectPriority, ProjectHealth } from "./model/project";
-
