@@ -17,6 +17,7 @@ import {
   SearchFieldSubmitDemo,
   ProjectRowDemo,
   ProjectCardDemo,
+  ProjectFormDemo,
 } from "./ComposedDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -224,6 +225,21 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Renders cards in active, overdue, archived, and loading states.",
         render: () => <ProjectCardDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-form",
+    name: "ProjectForm",
+    group: "Composed",
+    summary:
+      "A comprehensive project creation and edit dialog form with progressive disclosure, field validations, dirty state tracking, theme picker, and optimistic concurrency conflict handling.",
+    states: [
+      {
+        id: "project-form-default",
+        name: "Default",
+        description: "Interactive project form dialog with basic and advanced options.",
+        render: () => <ProjectFormDemo />,
       },
     ],
   },

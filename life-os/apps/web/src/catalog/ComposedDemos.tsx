@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from "react";
 
 import { Button, Select, Text, TextInput } from "@components/ui";
-import { ProjectRow, ProjectCard, type Project } from "@features/projects";
+import { ProjectRow, ProjectCard, ProjectForm, type Project } from "@features/projects";
 import {
   buildCommonDateRangePresets,
   ColorIconPicker,
@@ -497,3 +497,26 @@ export function ProjectCardDemo() {
     </div>
   );
 }
+
+export function ProjectFormDemo() {
+  const [open, setOpen] = useState(false);
+  const [submittedData, setSubmittedData] = useState<string | null>(null);
+
+  return (
+    <div className="specimen-stack">
+      <Button type="button" onClick={() => setOpen(true)}>
+        Open ProjectForm Dialog
+      </Button>
+      {submittedData ? <Text tone="success">Submitted: {submittedData}</Text> : null}
+      <ProjectForm
+        open={open}
+        onClose={() => setOpen(false)}
+        onSubmit={(data) => {
+          setSubmittedData(JSON.stringify(data));
+          setOpen(false);
+        }}
+      />
+    </div>
+  );
+}
+

@@ -14,6 +14,7 @@ Phase 2 — Identity and application shell.
 - LOS-0704 — Ordered, user-scoped milestone lifecycle API with parent date validation and optimistic concurrency. See `docs/handoffs/LOS-0704.md`.
 - LOS-0705 — Count/weight progress and manual/derived health calculation policy. Automated checks pass, but merge is blocked until the calculation-facing task contract is reconciled with LOS-0801. See `docs/handoffs/LOS-0705.md`.
 - LOS-0706 — Responsive, accessible ProjectRow and ProjectCard components with ready/loading/archived/overdue states and catalog coverage. See `docs/handoffs/LOS-0706.md`.
+- LOS-0707 — Responsive, progressive disclosure ProjectForm dialog with validation, dirty tracking, theme picker, and conflict handling. See `docs/handoffs/LOS-0707.md`.
 
 ## Completed
 
