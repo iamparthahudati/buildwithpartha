@@ -1,31 +1,34 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-0716 Integrate Project Details route handoff)
+Last updated: 2026-08-21 (Phase 7 — Projects and project details completed; gate PASSED)
 
 ## Phase
 
-Phase 2 — Identity and application shell.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details) completed.
 
 ## In review
 
-- LOS-0701 — Projects, milestones, and labels schema/domain/persistence modeling. See `docs/handoffs/LOS-0701.md`.
-- LOS-0702 — Authenticated, CSRF-protected project CRUD/archive/restore/delete API with ownership, label isolation, optimistic concurrency, problem details, and audit events. See `docs/handoffs/LOS-0702.md`.
-- LOS-0703 — User-scoped project search/filter/sort/pagination query API and summary counts. See `docs/handoffs/LOS-0703.md`.
-- LOS-0704 — Ordered, user-scoped milestone lifecycle API with parent date validation and optimistic concurrency. See `docs/handoffs/LOS-0704.md`.
-- LOS-0705 — Count/weight progress and manual/derived health calculation policy. Automated checks pass, but merge is blocked until the calculation-facing task contract is reconciled with LOS-0801. See `docs/handoffs/LOS-0705.md`.
-- LOS-0706 — Responsive, accessible ProjectRow and ProjectCard components with ready/loading/archived/overdue states and catalog coverage. See `docs/handoffs/LOS-0706.md`.
-- LOS-0707 — Responsive, progressive disclosure ProjectForm dialog with validation, dirty tracking, theme picker, and conflict handling. See `docs/handoffs/LOS-0707.md`.
-- LOS-0708 — Project summary metric strip displaying total/active/completed/on-hold/at-risk/progress metrics with interactive filter triggers. See `docs/handoffs/LOS-0708.md`.
-- LOS-0709 — Composed Projects screen with header/add, metric strip, tabs/search/filter/sort/view controls, cards/table views, form dialog, confirm dialogs, detail panel, and pagination across mock states. See `docs/handoffs/LOS-0709.md`.
-- LOS-0710 — Integrate Projects screen with query/mutation hooks, REST client, URL state, and routing. See `docs/handoffs/LOS-0710.md`.
-- LOS-0711 — Responsive ProjectDetailsHeader component with deep link breadcrumbs, identity, status, health, priority, owner, dates, estimate, task progress, primary/secondary actions, loading skeleton, and archived state. See `docs/handoffs/LOS-0711.md`.
-- LOS-0712 — Project overview components (progress/task/time/health summary cards, status/priority breakdown charts with data table fallback, top tasks list, about/labels metadata, and activity feed). See `docs/handoffs/LOS-0712.md`.
-- LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
-- LOS-0714 — Compose Project Details tabs with mocks (Overview, Tasks, Timeline, Files, Notes, and Activity tabs, deep link tab switching, loading, 404, 403, and archived banner states). See `docs/handoffs/LOS-0714.md`.
-- LOS-0715 — Implement project detail aggregation API (`GET /projects/{id}/detail` returning `ProjectDetailResponse` with metadata and milestones). See `docs/handoffs/LOS-0715.md`.
-- LOS-0716 — Integrate Project Details (`getProjectDetail` API client, `useProjectDetail` query hook, `ProjectDetailsRoute.tsx` mounted at `/life-os/app/projects/:projectId`, URL tab state, and milestone/project mutations). See `docs/handoffs/LOS-0716.md`.
+None.
 
 ## Completed
+
+- LOS-0717 — Executed Projects phase gate verification and sign-off. All backend Java tests and checks (`./gradlew check`) and all frontend tests, quality checks, accessibility audits, design tokens, and build verification (`npm test`) pass 100%. Generated `docs/PROJECTS-PHASE-GATE.md`. See `docs/handoffs/LOS-0717.md`.
+- LOS-0716 — Integrate Project Details (`getProjectDetail` API client, `useProjectDetail` query hook, `ProjectDetailsRoute.tsx` mounted at `/life-os/app/projects/:projectId`, URL tab state, and milestone/project mutations). See `docs/handoffs/LOS-0716.md`.
+- LOS-0715 — Implement project detail aggregation API (`GET /projects/{id}/detail` returning `ProjectDetailResponse` with metadata and milestones). See `docs/handoffs/LOS-0715.md`.
+- LOS-0714 — Compose Project Details tabs with mocks (Overview, Tasks, Timeline, Files, Notes, and Activity tabs, deep link tab switching, loading, 404, 403, and archived banner states). See `docs/handoffs/LOS-0714.md`.
+- LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
+- LOS-0712 — Project overview components (progress/task/time/health summary cards, status/priority breakdown charts with data table fallback, top tasks list, about/labels metadata, and activity feed). See `docs/handoffs/LOS-0712.md`.
+- LOS-0711 — Responsive ProjectDetailsHeader component with deep link breadcrumbs, identity, status, health, priority, owner, dates, estimate, task progress, primary/secondary actions, loading skeleton, and archived state. See `docs/handoffs/LOS-0711.md`.
+- LOS-0710 — Integrate Projects screen with query/mutation hooks, REST client, URL state, and routing. See `docs/handoffs/LOS-0710.md`.
+- LOS-0709 — Composed Projects screen with header/add, metric strip, tabs/search/filter/sort/view controls, cards/table views, form dialog, confirm dialogs, detail panel, and pagination across mock states. See `docs/handoffs/LOS-0709.md`.
+- LOS-0708 — Project summary metric strip displaying total/active/completed/on-hold/at-risk/progress metrics with interactive filter triggers. See `docs/handoffs/LOS-0708.md`.
+- LOS-0707 — Responsive, progressive disclosure ProjectForm dialog with validation, dirty tracking, theme picker, and conflict handling. See `docs/handoffs/LOS-0707.md`.
+- LOS-0706 — Responsive, accessible ProjectRow and ProjectCard components with ready/loading/archived/overdue states and catalog coverage. See `docs/handoffs/LOS-0706.md`.
+- LOS-0705 — Count/weight progress and manual/derived health calculation policy. See `docs/handoffs/LOS-0705.md`.
+- LOS-0704 — Ordered, user-scoped milestone lifecycle API with parent date validation and optimistic concurrency. See `docs/handoffs/LOS-0704.md`.
+- LOS-0703 — User-scoped project search/filter/sort/pagination query API and summary counts. See `docs/handoffs/LOS-0703.md`.
+- LOS-0702 — Authenticated, CSRF-protected project CRUD/archive/restore/delete API with ownership, label isolation, optimistic concurrency, problem details, and audit events. See `docs/handoffs/LOS-0702.md`.
+- LOS-0701 — Projects, milestones, and labels schema/domain/persistence modeling. See `docs/handoffs/LOS-0701.md`.
 
 - LOS-0521 — Fixed a cross-cutting identity/settings defect surfaced during the first live end-to-end run against a real backend (the LOS-0615 Today integration made the shell reachable end to end for the first time; every prior test of these screens ran against a mocked `fetch`, which never exposed it). React Query's call-time `mutate(vars, { onSuccess, onError })` callbacks did not fire against the real backend, so post-submit navigation, toasts, and error surfacing silently never ran; every such site was converted to the promise form `mutateAsync(vars).then().catch()` across five auth screens (Forgot/Login/Reset/Signup/VerifyEmail) and four settings panels (AccountDeletionCancel/Profile+Localization/Privacy/Security). Reactive mutation state was already correct, and bare fire-and-forget `.mutate()` calls that pass no callback object were correctly left untouched. Separately, `LoginRoute` now injects the router's client-side `navigate` into `LoginScreen` (overriding its default full-page `window.location.assign`) so the memory-only session `useLogin` just set survives to the protected route instead of a hard reload logging the user straight back out. 35 auth/settings/route test files (204 tests) and the strict typecheck pass. See `docs/handoffs/LOS-0521.md`.
 - LOS-0616 — Passed the private shell/Today foundation gate. The new backend gate suite proves anonymous and unverified Accounts cannot read Today, verified Accounts receive an exact local date derived from their confirmed IANA timezone, foundation providers return private non-cacheable zero-safe data, and no sample records leak into the response. The gate closed two defects: session authentication now requires both an active session and an `ACTIVE` owning Account, and Today now emits the documented `Cache-Control: private, no-store, max-age=0, must-revalidate` policy exactly. Existing full-stack suites revalidated protected routing, navigation/focus behavior, the shell-owned Quick Add dialog, idle Focus Session behavior, Today first-use/populated/partial/offline states, responsive viewport contracts, reduced motion/forced colors, and axe coverage. See `docs/gates/SHELL-TODAY-FOUNDATION-GATE.md` and `docs/handoffs/LOS-0616.md`.
