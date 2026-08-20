@@ -52,13 +52,7 @@ describe("ProjectForm", () => {
       version: 2,
     };
 
-    render(
-      <ProjectForm
-        {...defaultProps}
-        mode="edit"
-        initialValues={initialValues}
-      />
-    );
+    render(<ProjectForm {...defaultProps} mode="edit" initialValues={initialValues} />);
 
     expect(screen.getByRole("heading", { name: "Edit project" })).toBeInTheDocument();
     expect(screen.getByLabelText(/Project name/i)).toHaveValue("Existing Project");
@@ -135,7 +129,7 @@ describe("ProjectForm", () => {
         mode="edit"
         conflictError="This project was modified by another user."
         onResolveConflict={onResolveConflict}
-      />
+      />,
     );
 
     expect(screen.getByText("This project was modified by another user.")).toBeInTheDocument();

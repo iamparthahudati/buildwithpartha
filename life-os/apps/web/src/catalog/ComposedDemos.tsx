@@ -550,5 +550,3 @@ export function ProjectSummaryMetricsDemo() {
     </div>
   );
 }
-
-

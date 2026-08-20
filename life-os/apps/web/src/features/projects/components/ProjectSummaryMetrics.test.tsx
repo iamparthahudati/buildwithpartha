@@ -1,10 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {
-  ProjectSummaryMetrics,
-  type ProjectSummaryCounts,
-} from "./ProjectSummaryMetrics";
+import { ProjectSummaryMetrics, type ProjectSummaryCounts } from "./ProjectSummaryMetrics";
 
 describe("ProjectSummaryMetrics", () => {
   const sampleCounts: ProjectSummaryCounts = {
@@ -49,12 +46,7 @@ describe("ProjectSummaryMetrics", () => {
     const user = userEvent.setup();
     const onRetry = vi.fn();
 
-    render(
-      <ProjectSummaryMetrics
-        error="Failed to load metric counts"
-        onRetry={onRetry}
-      />
-    );
+    render(<ProjectSummaryMetrics error="Failed to load metric counts" onRetry={onRetry} />);
 
     const errorMessages = screen.getAllByText("Failed to load metric counts");
     expect(errorMessages.length).toBeGreaterThan(0);
@@ -73,7 +65,7 @@ describe("ProjectSummaryMetrics", () => {
         counts={sampleCounts}
         activeFilter="ALL"
         onSelectFilter={onSelectFilter}
-      />
+      />,
     );
 
     const filterBtns = screen.getAllByRole("button", { name: /Filter/i });

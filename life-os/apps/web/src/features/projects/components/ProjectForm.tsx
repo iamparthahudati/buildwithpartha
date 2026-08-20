@@ -1,11 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  TextInput,
-  Textarea,
-  Select,
-  Button,
-  DateInput,
-} from "@components/ui";
+import { TextInput, Textarea, Select, Button, DateInput } from "@components/ui";
 import {
   FormFieldGroup,
   FormField,
@@ -18,11 +12,7 @@ import {
   type ComboboxOption,
 } from "@components/forms";
 import { FormDialog, Alert } from "@components/feedback";
-import type {
-  ProjectStatus,
-  ProjectPriority,
-  ProjectHealth,
-} from "../model/project";
+import type { ProjectStatus, ProjectPriority, ProjectHealth } from "../model/project";
 import "./project-form.css";
 
 export interface ProjectFormData {
@@ -76,18 +66,24 @@ const HEALTH_OPTIONS = [
   { value: "OFF_TRACK", label: "Off Track" },
 ];
 
-const DEFAULT_LABELS: readonly string[] = ["Frontend", "Backend", "Design", "DevOps", "Infrastructure"];
+const DEFAULT_LABELS: readonly string[] = [
+  "Frontend",
+  "Backend",
+  "Design",
+  "DevOps",
+  "Infrastructure",
+];
 
 function hasAdvancedValues(initial: Partial<ProjectFormData> | null | undefined): boolean {
   if (!initial) return false;
   return Boolean(
     (initial.health && initial.health !== "NOT_SET") ||
-      initial.startDate ||
-      initial.deadlineDate ||
-      (initial.estimatedMinutes !== undefined && initial.estimatedMinutes !== null) ||
-      (initial.color && initial.color !== "blue") ||
-      (initial.icon && initial.icon !== "folder") ||
-      (initial.labels && initial.labels.length > 0)
+    initial.startDate ||
+    initial.deadlineDate ||
+    (initial.estimatedMinutes !== undefined && initial.estimatedMinutes !== null) ||
+    (initial.color && initial.color !== "blue") ||
+    (initial.icon && initial.icon !== "folder") ||
+    (initial.labels && initial.labels.length > 0),
   );
 }
 
@@ -113,14 +109,16 @@ export function ProjectForm({
   const [startDate, setStartDate] = useState(initialValues?.startDate ?? "");
   const [deadlineDate, setDeadlineDate] = useState(initialValues?.deadlineDate ?? "");
   const [estimatedMinutes, setEstimatedMinutes] = useState<number | null>(
-    initialValues?.estimatedMinutes ?? null
+    initialValues?.estimatedMinutes ?? null,
   );
   const [selectedLabels, setSelectedLabels] = useState<readonly string[]>(
-    initialValues?.labels ?? []
+    initialValues?.labels ?? [],
   );
   const [labelQuery, setLabelQuery] = useState("");
 
-  const [showAdvanced, setShowAdvanced] = useState(() => mode === "edit" || hasAdvancedValues(initialValues));
+  const [showAdvanced, setShowAdvanced] = useState(
+    () => mode === "edit" || hasAdvancedValues(initialValues),
+  );
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const errorSummaryRef = useRef<HTMLDivElement>(null);
 
@@ -242,7 +240,12 @@ export function ProjectForm({
             )}
           </FormField>
 
-          <FormField name="description" label="Description" required={false} error={fieldErrors.description}>
+          <FormField
+            name="description"
+            label="Description"
+            required={false}
+            error={fieldErrors.description}
+          >
             {(fieldProps) => (
               <Textarea
                 {...fieldProps}
@@ -310,7 +313,12 @@ export function ProjectForm({
               />
 
               <div className="lifeos-project-form__grid">
-                <FormField name="startDate" label="Start date" required={false} error={fieldErrors.startDate}>
+                <FormField
+                  name="startDate"
+                  label="Start date"
+                  required={false}
+                  error={fieldErrors.startDate}
+                >
                   {(fieldProps) => (
                     <DateInput
                       {...fieldProps}
@@ -320,7 +328,12 @@ export function ProjectForm({
                   )}
                 </FormField>
 
-                <FormField name="deadlineDate" label="Deadline date" required={false} error={fieldErrors.deadlineDate}>
+                <FormField
+                  name="deadlineDate"
+                  label="Deadline date"
+                  required={false}
+                  error={fieldErrors.deadlineDate}
+                >
                   {(fieldProps) => (
                     <DateInput
                       {...fieldProps}
