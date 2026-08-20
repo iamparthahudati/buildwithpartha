@@ -202,9 +202,11 @@ Phase 2 — Identity and application shell.
 
 - LOS-0512 — Recovery screens added: Implemented `ForgotPasswordScreen` and `ResetPasswordScreen` (+ `recovery-screen.css`), completing the account recovery user journey. `authApi.ts` added `forgotPassword` (`POST /auth/forgot-password`) and `resetPassword` (`POST /auth/reset-password`), wrapped by `useForgotPassword` and `useResetPassword` mutation hooks. `ForgotPasswordScreen` provides client-side validation, callback-ref focus management for `FormErrorSummary`, generic sent confirmation preventing account enumeration (`"If an account matches that email, we've sent password reset instructions. The link expires in 1 hour."`), and direct return-to-login navigation. `ResetPasswordScreen` reads token from prop or `?token=` query param and handles all lifecycle states: `missing-token` guidance, `form` with `newPassword`/`confirmPassword` (`autoComplete="new-password"`), client and server-side password policy validation (mapping `TOO_SHORT`, `TOO_LONG`, `COMMONLY_EXPOSED` while safely preserving user input without burning valid links), `expired` token warning (1-hour TTL), `already-used` token guidance, `invalid` token warning, and `success` state with explicit session revocation notice (`"Your password has been changed. For your security, all active sessions on all devices have been signed out. Please sign in with your new password."`) and return-to-login button. Passes all WCAG 2.2 AA accessibility audits with 0 violations.
 
+- LOS-0609 — Today plan component added as an isolated feature contract: `TodayMitCard` keeps the user-local-date MIT ahead of the limited Task list and exposes open/start-focus/mark-done/change paths; `TodayTaskList` composes the shared generic `DataTable` on wide screens and its caller-supplied card renderer below 768px, with projectless context, canonical priority/status labels, set-MIT/mark-done/start-focus actions and pending/disabled behavior. Loading, first-use, partial-error and ready states stay independent so one failed provider cannot suppress usable work. LOS-0615 still owns API mapping/mutation invalidation, and LOS-0614 owns full Today screen composition.
+
 ## Next recommended ticket
 
-LOS-0609 (`docs/backlog/EPIC-06-SHELL-TODAY.md`) — build the Today plan component.
+LOS-0610 (`docs/backlog/EPIC-06-SHELL-TODAY.md`) — build the Today schedule component.
 
 ## Known decisions requiring implementation-time values
 

@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthSessionProvider } from "@state/AuthSessionProvider";
 import { FocusMiniPlayer } from "@features/focus";
-import { TodayHeader, TodayMetricStrip, TodayHeaderSection } from "@features/today";
+import {
+  TodayHeader,
+  TodayHeaderSection,
+  TodayMetricStrip,
+  TodayPlan,
+  type TodayPlanTask,
+} from "@features/today";
 import {
   AlertTriangle,
   Archive,
@@ -1404,6 +1410,105 @@ export function TodayHeaderSectionDemo() {
       focusTimeStatus={{ type: "empty", message: "No focus time recorded today." }}
       activeProjectsStatus={{ type: "empty", message: "No active projects yet." }}
       weekProgressStatus={{ type: "empty", message: "No Weekly Plan yet." }}
+    />
+  );
+}
+
+const TODAY_PLAN_DEMO_TASKS: readonly TodayPlanTask[] = [
+  {
+    id: "prepare-review",
+    title: "Prepare weekly review",
+    href: "#prepare-review",
+    priority: "P1",
+    status: "IN_PROGRESS",
+    project: { name: "Learning plan", href: "#learning-plan" },
+    dueLabel: "Due today, 20 Aug 2026",
+  },
+  {
+    id: "organize-documents",
+    title: "Organize tax documents",
+    href: "#organize-documents",
+    priority: "P2",
+    status: "TO_DO",
+  },
+  {
+    id: "compare-hosting",
+    title: "Compare hosting options",
+    href: "#compare-hosting",
+    priority: "P3",
+    status: "BLOCKED",
+    project: { name: "Portfolio refresh", href: "#portfolio-refresh" },
+    disabledActions: ["start-focus"],
+  },
+];
+
+export function TodayPlanReadyDemo() {
+  const [tasks, setTasks] = useState(TODAY_PLAN_DEMO_TASKS);
+  const [mitId, setMitId] = useState<string | null>("prepare-review");
+  const tasksWithMit = tasks.map((task) => ({ ...task, isMit: task.id === mitId }));
+  const mit = tasksWithMit.find((task) => task.isMit && task.status !== "DONE");
+
+  function chooseFirstAvailableMit() {
+    setMitId(tasks.find((task) => task.status !== "DONE")?.id ?? null);
+  }
+
+  function markDone(taskId: string) {
+    setTasks((current) =>
+      current.map((task) => (task.id === taskId ? { ...task, status: "DONE" as const } : task)),
+    );
+    if (taskId === mitId) setMitId(null);
+  }
+
+  return (
+    <TodayPlan
+      mitState={mit ? { type: "ready", task: mit } : { type: "empty" }}
+      tasksState={{ type: "ready", tasks: tasksWithMit }}
+      tasksHref="#tasks"
+      onChooseMit={chooseFirstAvailableMit}
+      onChangeMit={() => {
+        const next = tasks.find((task) => task.status !== "DONE" && task.id !== mitId);
+        setMitId(next?.id ?? null);
+      }}
+      onSetMit={setMitId}
+      onMarkDone={markDone}
+      onStartFocus={() => {}}
+      onAddTask={() => {}}
+    />
+  );
+}
+
+export function TodayPlanFirstUseDemo() {
+  return (
+    <TodayPlan
+      mitState={{ type: "empty" }}
+      tasksState={{ type: "empty" }}
+      tasksHref="#tasks"
+      onChooseMit={() => {}}
+      onChangeMit={() => {}}
+      onSetMit={() => {}}
+      onMarkDone={() => {}}
+      onStartFocus={() => {}}
+      onAddTask={() => {}}
+    />
+  );
+}
+
+export function TodayPlanPartialErrorDemo() {
+  return (
+    <TodayPlan
+      mitState={{ type: "ready", task: { ...TODAY_PLAN_DEMO_TASKS[0]!, isMit: true } }}
+      tasksState={{
+        type: "error",
+        message: "Other Today sections are still available.",
+      }}
+      tasksHref="#tasks"
+      onChooseMit={() => {}}
+      onChangeMit={() => {}}
+      onSetMit={() => {}}
+      onMarkDone={() => {}}
+      onStartFocus={() => {}}
+      onAddTask={() => {}}
+      onRetryTasks={() => {}}
     />
   );
 }

@@ -50,6 +50,9 @@ import {
   TodayMetricStripReadyDemo,
   TodayMetricStripMixedDemo,
   TodayHeaderSectionDemo,
+  TodayPlanFirstUseDemo,
+  TodayPlanPartialErrorDemo,
+  TodayPlanReadyDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -613,6 +616,36 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Morning greeting, local date, approved Today helper, Quick Add trigger, and six honest zero-data cards below.",
         render: () => <TodayHeaderSectionDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-plan",
+    name: "TodayPlan",
+    group: "Composed",
+    summary:
+      "The daily decision surface: today's MIT precedes a deliberately limited Task list built on DataTable. MIT and list data fail independently; wide layouts place them side by side, while narrow layouts preserve the focus-before-list reading order and switch Task rows to cards.",
+    states: [
+      {
+        id: "today-plan-ready",
+        name: "Ready and interactive",
+        description:
+          "Set or change the MIT and mark Tasks done. The selected MIT, priority, status, project context, and actions stay consistent across the table and responsive cards.",
+        render: () => <TodayPlanReadyDemo />,
+      },
+      {
+        id: "today-plan-first-use",
+        name: "First use",
+        description:
+          "No fabricated Task data or zero-percent judgment: the MIT and list regions each offer one truthful next step.",
+        render: () => <TodayPlanFirstUseDemo />,
+      },
+      {
+        id: "today-plan-partial-error",
+        name: "Task-list error with usable MIT",
+        description:
+          "The selected MIT and its actions remain available while only the failed Task-list region offers retry and source navigation.",
+        render: () => <TodayPlanPartialErrorDemo />,
       },
     ],
   },
