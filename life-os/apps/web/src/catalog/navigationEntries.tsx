@@ -50,6 +50,10 @@ import {
   TodayMetricStripReadyDemo,
   TodayMetricStripMixedDemo,
   TodayHeaderSectionDemo,
+  TodayScheduleReadyDemo,
+  TodayScheduleFirstUseDemo,
+  TodayScheduleLoadingDemo,
+  TodayScheduleErrorDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -613,6 +617,41 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Morning greeting, local date, approved Today helper, Quick Add trigger, and six honest zero-data cards below.",
         render: () => <TodayHeaderSectionDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-schedule",
+    name: "TodaySchedule",
+    group: "Composed",
+    summary:
+      "A chronological Today projection of canonical Time Blocks. Current, next, upcoming, completed and conflict states are visible text; Add, Start focus and Open remain real controls. It stacks each row's time, context and actions on narrow screens without introducing an inner scroll area.",
+    states: [
+      {
+        id: "today-schedule-ready",
+        name: "Ready with every state",
+        description:
+          "Completed, current with a named overlap, next and upcoming Time Blocks in chronological order.",
+        render: () => <TodayScheduleReadyDemo />,
+      },
+      {
+        id: "today-schedule-first-use",
+        name: "First use",
+        description: "No fictional schedule rows; offers the canonical Add time block action.",
+        render: () => <TodayScheduleFirstUseDemo />,
+      },
+      {
+        id: "today-schedule-loading",
+        name: "Loading",
+        description: "One announced loading region with three row-sized placeholders.",
+        render: () => <TodayScheduleLoadingDemo />,
+      },
+      {
+        id: "today-schedule-error",
+        name: "Isolated error",
+        description:
+          "Explains that other Today sections remain available and offers Retry plus the canonical Time Blocks route.",
+        render: () => <TodayScheduleErrorDemo />,
       },
     ],
   },

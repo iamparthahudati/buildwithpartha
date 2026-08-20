@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthSessionProvider } from "@state/AuthSessionProvider";
 import { FocusMiniPlayer } from "@features/focus";
-import { TodayHeader, TodayMetricStrip, TodayHeaderSection } from "@features/today";
+import {
+  TodayHeader,
+  TodayMetricStrip,
+  TodayHeaderSection,
+  TodaySchedule,
+  type TodayScheduleBlockModel,
+} from "@features/today";
 import {
   AlertTriangle,
   Archive,
@@ -1404,6 +1410,92 @@ export function TodayHeaderSectionDemo() {
       focusTimeStatus={{ type: "empty", message: "No focus time recorded today." }}
       activeProjectsStatus={{ type: "empty", message: "No active projects yet." }}
       weekProgressStatus={{ type: "empty", message: "No Weekly Plan yet." }}
+    />
+  );
+}
+
+const TODAY_SCHEDULE_DEMO_BLOCKS: readonly TodayScheduleBlockModel[] = [
+  {
+    id: "schedule-planning",
+    title: "Plan the day",
+    href: "#time-block-planning",
+    startTime: "08:30",
+    endTime: "09:00",
+    state: "completed",
+    category: "Planning",
+  },
+  {
+    id: "schedule-outline",
+    title: "Write launch outline",
+    href: "#time-block-outline",
+    startTime: "09:30",
+    endTime: "10:30",
+    state: "current",
+    category: "Deep work",
+    project: { id: "website", name: "Website launch", href: "#project-website" },
+    conflictDescriptions: ["This Time Block overlaps Research by 30 minutes."],
+  },
+  {
+    id: "schedule-review",
+    title: "Review launch copy",
+    href: "#time-block-review",
+    startTime: "11:00",
+    endTime: "11:30",
+    state: "next",
+    project: { id: "website", name: "Website launch", href: "#project-website" },
+  },
+  {
+    id: "schedule-daily-review",
+    title: "Daily review",
+    href: "#time-block-daily-review",
+    startTime: "17:00",
+    endTime: "17:15",
+    state: "upcoming",
+    category: "Review",
+  },
+];
+
+export function TodayScheduleReadyDemo() {
+  return (
+    <TodaySchedule
+      state={{ type: "ready", blocks: TODAY_SCHEDULE_DEMO_BLOCKS }}
+      locale="en-IN"
+      onAddTimeBlock={() => {}}
+      onStartFocus={() => {}}
+    />
+  );
+}
+
+export function TodayScheduleFirstUseDemo() {
+  return (
+    <TodaySchedule
+      state={{ type: "empty" }}
+      locale="en-IN"
+      onAddTimeBlock={() => {}}
+      onStartFocus={() => {}}
+    />
+  );
+}
+
+export function TodayScheduleLoadingDemo() {
+  return (
+    <TodaySchedule
+      state={{ type: "loading" }}
+      locale="en-IN"
+      onAddTimeBlock={() => {}}
+      onStartFocus={() => {}}
+    />
+  );
+}
+
+export function TodayScheduleErrorDemo() {
+  return (
+    <TodaySchedule
+      state={{ type: "error", message: "Other Today sections are still available." }}
+      locale="en-IN"
+      onAddTimeBlock={() => {}}
+      onStartFocus={() => {}}
+      onRetry={() => {}}
     />
   );
 }
