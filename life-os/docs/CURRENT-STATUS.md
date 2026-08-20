@@ -15,6 +15,7 @@ Phase 2 — Identity and application shell.
 - LOS-0705 — Count/weight progress and manual/derived health calculation policy. Automated checks pass, but merge is blocked until the calculation-facing task contract is reconciled with LOS-0801. See `docs/handoffs/LOS-0705.md`.
 - LOS-0706 — Responsive, accessible ProjectRow and ProjectCard components with ready/loading/archived/overdue states and catalog coverage. See `docs/handoffs/LOS-0706.md`.
 - LOS-0707 — Responsive, progressive disclosure ProjectForm dialog with validation, dirty tracking, theme picker, and conflict handling. See `docs/handoffs/LOS-0707.md`.
+- LOS-0708 — Project summary metric strip displaying total/active/completed/on-hold/at-risk/progress metrics with interactive filter triggers. See `docs/handoffs/LOS-0708.md`.
 
 ## Completed
 

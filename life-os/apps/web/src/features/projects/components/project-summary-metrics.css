@@ -1,0 +1,17 @@
+/* ProjectSummaryMetrics (LOS-0708) */
+.lifeos-project-summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--lifeos-spacing-4);
+  width: 100%;
+}
+
+.lifeos-project-summary-metrics__item {
+  display: flex;
+  flex-direction: column;
+}
+
+.lifeos-project-summary-metrics__item--active .lifeos-surface {
+  outline: 2px solid var(--lifeos-color-brand-primary);
+  outline-offset: -2px;
+}

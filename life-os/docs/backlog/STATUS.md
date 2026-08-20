@@ -138,6 +138,7 @@ Last updated: 2026-08-20
 | LOS-0705 | In Review (blocked) | `feature/LOS-0701-model-projects-milestones` | Progress/health policy and tests are committed; blocked until the calculation-facing task contract is reconciled with LOS-0801. See `docs/handoffs/LOS-0705.md`. |
 | LOS-0706 | In Review     | `feature/LOS-0701-model-projects-milestones`    | Responsive ProjectRow/ProjectCard, catalog states, and automated accessibility/behavior coverage committed. See `docs/handoffs/LOS-0706.md`. |
 | LOS-0707 | In Review     | `feature/LOS-0701-model-projects-milestones`    | Progressive disclosure ProjectForm dialog with validation, dirty tracking, theme picker, and conflict handling. See `docs/handoffs/LOS-0707.md`. |
+| LOS-0708 | In Review     | `feature/LOS-0701-model-projects-milestones`    | Project summary metric strip displaying total/active/completed/on-hold/at-risk/progress metrics with interactive filter triggers. See `docs/handoffs/LOS-0708.md`. |
 | LOS-1403 | Done          | `develop`                                       | Persistent background job framework (V5 migration, BackgroundJob domain aggregate, transactional enqueue port in common.job, scheduled poller/runner with retry backoff, and daily R1 retention cleanup). |
 | LOS-1405 | Done          | `develop`                                       | Private generated-file lifecycle (V6 migration, ExportFile domain aggregate, ExportFilePort in common.export, local private storage, secure download tokens, and daily cleanup). |
 

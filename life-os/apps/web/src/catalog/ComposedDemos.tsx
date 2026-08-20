@@ -1,7 +1,14 @@
 import { useRef, useState, type FormEvent } from "react";
 
 import { Button, Select, Text, TextInput } from "@components/ui";
-import { ProjectRow, ProjectCard, ProjectForm, type Project } from "@features/projects";
+import {
+  ProjectRow,
+  ProjectCard,
+  ProjectForm,
+  ProjectSummaryMetrics,
+  type Project,
+  type ProjectFilterCategory,
+} from "@features/projects";
 import {
   buildCommonDateRangePresets,
   ColorIconPicker,
@@ -519,4 +526,29 @@ export function ProjectFormDemo() {
     </div>
   );
 }
+
+export function ProjectSummaryMetricsDemo() {
+  const [filter, setFilter] = useState<ProjectFilterCategory>("ALL");
+
+  return (
+    <div className="specimen-stack">
+      <Text tone="secondary" size="xs">
+        Active filter: {filter}
+      </Text>
+      <ProjectSummaryMetrics
+        counts={{
+          total: 15,
+          active: 8,
+          completed: 5,
+          onHold: 2,
+          atRisk: 3,
+          averageProgress: 72,
+        }}
+        activeFilter={filter}
+        onSelectFilter={setFilter}
+      />
+    </div>
+  );
+}
+
 

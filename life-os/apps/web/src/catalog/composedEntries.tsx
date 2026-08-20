@@ -18,6 +18,7 @@ import {
   ProjectRowDemo,
   ProjectCardDemo,
   ProjectFormDemo,
+  ProjectSummaryMetricsDemo,
 } from "./ComposedDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -240,6 +241,21 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Interactive project form dialog with basic and advanced options.",
         render: () => <ProjectFormDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-summary-metrics",
+    name: "ProjectSummaryMetrics",
+    group: "Composed",
+    summary:
+      "A responsive metric strip showing total, active, completed, on hold, at risk, and average progress metrics with interactive filter triggers.",
+    states: [
+      {
+        id: "project-summary-metrics-default",
+        name: "Default",
+        description: "Interactive metric strip with active filter selection.",
+        render: () => <ProjectSummaryMetricsDemo />,
       },
     ],
   },
