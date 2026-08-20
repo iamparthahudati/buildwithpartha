@@ -22,5 +22,5 @@ export {
   type UseCommandPaletteShortcutOptions,
 } from "./useCommandPaletteShortcut";
 export { TimerRing, type TimerRingProps, type TimerRingStatus } from "./TimerRing";
-export { QuickAddDialog, type QuickAddDialogProps } from "./QuickAddDialog";
+export { QuickAddDialog, type QuickAddDialogProps, type QuickAddType } from "./QuickAddDialog";
 export { useQuickAddShortcut, type UseQuickAddShortcutOptions } from "./useQuickAddShortcut";

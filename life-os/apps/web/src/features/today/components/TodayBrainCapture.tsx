@@ -33,6 +33,8 @@ export interface TodayBrainCaptureProps {
   readonly countStatus: TodayBrainDumpCountStatus;
   readonly captureStatus: TodayBrainCaptureStatus;
   readonly isOnline: boolean;
+  /** True only when the caller actually persists an account/session-scoped device draft. */
+  readonly offlineDraftSupported?: boolean;
   readonly brainDumpHref: string;
   readonly onRetryCount?: () => void;
   readonly disabled?: boolean;
@@ -82,6 +84,7 @@ export function TodayBrainCapture({
   countStatus,
   captureStatus,
   isOnline,
+  offlineDraftSupported = true,
   brainDumpHref,
   onRetryCount,
   disabled = false,
@@ -89,6 +92,7 @@ export function TodayBrainCapture({
 }: TodayBrainCaptureProps) {
   const [validationError, setValidationError] = useState<string | undefined>(undefined);
   const isSaving = captureStatus.type === "saving";
+  const captureUnavailableOffline = !isOnline && !offlineDraftSupported;
   const rootClassName = ["lifeos-today-brain-capture", className].filter(Boolean).join(" ");
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -101,7 +105,9 @@ export function TodayBrainCapture({
     }
 
     setValidationError(undefined);
-    onCapture({ content, mode: isOnline ? "create" : "device-draft" });
+    if (!captureUnavailableOffline) {
+      onCapture({ content, mode: isOnline ? "create" : "device-draft" });
+    }
   };
 
   const countAction =
@@ -129,7 +135,7 @@ export function TodayBrainCapture({
           value={value}
           rows={3}
           autoGrow
-          disabled={disabled || isSaving}
+          disabled={disabled || isSaving || captureUnavailableOffline}
           onChange={(event) => {
             onValueChange(event.target.value);
             if (validationError) setValidationError(undefined);
@@ -138,7 +144,9 @@ export function TodayBrainCapture({
 
         {!isOnline && captureStatus.type !== "offline-draft" ? (
           <InlineMessage tone="warning">
-            Offline. Save a device draft to keep this text on this device.
+            {offlineDraftSupported
+              ? "Offline. Save a device draft to keep this text on this device."
+              : "Offline. Keep this page open and reconnect to add this Brain Dump Item."}
           </InlineMessage>
         ) : null}
 
@@ -164,9 +172,13 @@ export function TodayBrainCapture({
             iconStart={Plus}
             loading={isSaving}
             loadingLabel={isOnline ? "Adding Brain Dump Item" : "Saving device draft"}
-            disabled={disabled}
+            disabled={disabled || captureUnavailableOffline}
           >
-            {isOnline ? "Capture" : "Save device draft"}
+            {isOnline
+              ? "Capture"
+              : offlineDraftSupported
+                ? "Save device draft"
+                : "Capture unavailable offline"}
           </Button>
           <Link href={brainDumpHref} quiet>
             Open Brain Dump

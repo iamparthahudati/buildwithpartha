@@ -1,24 +1,33 @@
-import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useCallback, useMemo, useState } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 import type { AppShellOutletContext } from "@components/layout";
-import { TodayScreen, type TodayBrainCaptureStatus, type TodayMetricsData } from "@features/today";
-import { todayLocalDate } from "@lib/localDateTime";
+import {
+  createErrorTodayViewModel,
+  createLoadingTodayViewModel,
+  formatTodayLastUpdated,
+  mapTodayResponse,
+  TodayScreen,
+  useToday,
+  useTodayOnlineStatus,
+  type TodayBrainCaptureStatus,
+} from "@features/today";
 import { useAuthSession } from "@state/authSession";
 
 import "./today-route.css";
 
 /**
- * TodayRoute (LOS-0614).
+ * TodayRoute (LOS-0615).
  *
  * The Today screen's outermost route element, mounted inside `ProtectedShell`
  * at `/life-os/app/today`. Reads the authenticated session that `RequireAuth`
  * already guarantees is non-null — the same pattern `ProtectedShell` in
  * `AppRouter.tsx` already uses — so the route does not need its own auth check.
  *
- * Composes the complete Today screen using the confirmed user `timeZone`,
- * `locale`, and `displayName`. Until LOS-0615 integrates the Today aggregation
- * endpoint, every data-bearing region renders its honest first-use state.
+ * Fetches the modular Today aggregation and maps every provider independently
+ * into the complete screen composed by LOS-0614. A failed provider remains an
+ * isolated retryable region; a failed refresh keeps the last successful query
+ * data visible. The shared API client owns session-expiry recovery.
  *
  * The Quick Add dialog is already mounted at shell level by `ProtectedShell`
  * and triggered via `AppShell`'s `onQuickAddTriggerClick`. The inline Quick
@@ -29,72 +38,110 @@ import "./today-route.css";
 
 const TODAY_HELPER = "See what needs attention and choose what to do next.";
 
-const FOUNDATION_EMPTY_METRICS: TodayMetricsData = {
-  mitStatus: { type: "empty", message: "No focus chosen yet." },
-  tasksStatus: { type: "empty", message: "No tasks planned for today." },
-  scheduledTimeStatus: { type: "empty", message: "No Time Blocks scheduled today." },
-  focusTimeStatus: { type: "empty", message: "No focus time recorded today." },
-  activeProjectsStatus: { type: "empty", message: "No active projects yet." },
-  weekProgressStatus: { type: "empty", message: "No Weekly Plan yet." },
-};
-
 export function TodayRoute() {
   const { user } = useAuthSession();
   const { onQuickAddClick } = useOutletContext<AppShellOutletContext>();
+  const navigate = useNavigate();
   const [captureValue, setCaptureValue] = useState("");
   const [captureStatus, setCaptureStatus] = useState<TodayBrainCaptureStatus>({ type: "idle" });
+  const todayQuery = useToday(user?.timeZone ?? "UTC", user !== null);
+  const { refetch: refetchToday } = todayQuery;
+  const isOnline = useTodayOnlineStatus();
+
+  const viewModel = useMemo(() => {
+    if (todayQuery.data && user) return mapTodayResponse(todayQuery.data, user.locale);
+    return todayQuery.isPending && isOnline
+      ? createLoadingTodayViewModel()
+      : createErrorTodayViewModel();
+  }, [isOnline, todayQuery.data, todayQuery.isPending, user]);
+
+  const retryToday = useCallback(() => {
+    void refetchToday();
+  }, [refetchToday]);
 
   // RequireAuth guarantees this but TypeScript cannot see it from here.
   if (user === null) return null;
 
-  const dailyReviewHref = `/life-os/app/reviews/daily/${todayLocalDate(user.timeZone)}`;
+  const timeZone = viewModel.userTimeZone ?? user.timeZone;
+  const connectionState = !isOnline
+    ? {
+        type: "offline" as const,
+        ...(viewModel.generatedAt
+          ? {
+              lastUpdatedLabel: formatTodayLastUpdated(
+                viewModel.generatedAt,
+                user.locale,
+                timeZone,
+              ),
+            }
+          : {}),
+      }
+    : ({ type: "online" } as const);
 
   return (
     <div className="lifeos-today-route">
       <TodayScreen
         displayName={user.displayName}
-        timeZone={user.timeZone}
+        timeZone={timeZone}
         locale={user.locale}
         subtitle={TODAY_HELPER}
-        onQuickAddClick={onQuickAddClick}
-        {...FOUNDATION_EMPTY_METRICS}
+        onQuickAddClick={() => onQuickAddClick()}
+        mitStatus={viewModel.mitStatus}
+        tasksStatus={viewModel.tasksStatus}
+        scheduledTimeStatus={viewModel.scheduledTimeStatus}
+        focusTimeStatus={viewModel.focusTimeStatus}
+        activeProjectsStatus={viewModel.activeProjectsStatus}
+        weekProgressStatus={viewModel.weekProgressStatus}
+        onRetryMit={retryToday}
+        onRetryTasks={retryToday}
+        onRetryScheduledTime={retryToday}
+        onRetryFocusTime={retryToday}
+        onRetryActiveProjects={retryToday}
+        onRetryWeekProgress={retryToday}
+        connectionState={connectionState}
+        planningState={viewModel.planningState}
         plan={{
-          mitState: { type: "empty" },
-          tasksState: { type: "empty" },
-          onChooseMit: onQuickAddClick,
-          onChangeMit: () => {},
+          ...viewModel.plan,
+          onChooseMit: () => navigate("/life-os/app/tasks"),
+          onChangeMit: () => navigate("/life-os/app/tasks"),
           onSetMit: () => {},
           onMarkDone: () => {},
           onStartFocus: () => {},
-          onAddTask: onQuickAddClick,
+          onAddTask: () => onQuickAddClick("task"),
+          onRetryMit: retryToday,
+          onRetryTasks: retryToday,
         }}
         nextUp={{
-          status: { type: "empty", availability: "no-focus-selected" },
+          status: viewModel.nextUpStatus,
           sourceLabel: "Open tasks",
           rankingRule: "Priority, then due date, then planned order",
           tasksHref: "/life-os/app/tasks",
+          onRetry: retryToday,
         }}
         schedule={{
-          state: { type: "empty" },
-          onAddTimeBlock: onQuickAddClick,
+          state: viewModel.scheduleState,
+          onAddTimeBlock: () => onQuickAddClick("time-block"),
           onStartFocus: () => {},
+          onRetry: retryToday,
+          startDisabledReason: "Focus actions aren't available from Today yet.",
         }}
         review={{
-          status: {
-            type: "ready",
-            data: {
-              morning: { state: "NOT_STARTED", href: dailyReviewHref },
-              evening: { state: "NOT_STARTED", href: dailyReviewHref },
-            },
-          },
+          status: viewModel.reviewStatus,
           reviewsHref: "/life-os/app/reviews",
+          onRetry: retryToday,
         }}
-        sprintWeek={{ sprintState: { type: "empty" }, weekState: { type: "empty" } }}
+        sprintWeek={{
+          sprintState: viewModel.sprintState,
+          weekState: viewModel.weekState,
+          onRetrySprint: retryToday,
+          onRetryWeek: retryToday,
+        }}
         activeProjects={{
-          status: { type: "empty" },
+          status: viewModel.projectsStatus,
           sourceLabel: "Active Projects",
           projectsHref: "/life-os/app/projects",
-          onAddProject: onQuickAddClick,
+          onAddProject: () => onQuickAddClick("project"),
+          onRetry: retryToday,
         }}
         brainCapture={{
           value: captureValue,
@@ -107,10 +154,12 @@ export function TodayRoute() {
               type: "error",
               message: "Brain Dump capture isn't connected yet. Your text remains here.",
             }),
-          countStatus: { type: "ready", unprocessedCount: 0 },
+          countStatus: viewModel.brainDumpCountStatus,
           captureStatus,
-          isOnline: true,
+          isOnline,
+          offlineDraftSupported: false,
           brainDumpHref: "/life-os/app/brain-dump",
+          onRetryCount: retryToday,
         }}
       />
     </div>

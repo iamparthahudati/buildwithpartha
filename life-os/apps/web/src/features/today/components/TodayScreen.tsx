@@ -14,7 +14,7 @@ import type { TodayMetricsData } from "./TodayMetricStrip";
 import "./today-screen.css";
 
 export type TodayConnectionState =
-  { readonly type: "online" } | { readonly type: "offline"; readonly lastUpdatedLabel: string };
+  { readonly type: "online" } | { readonly type: "offline"; readonly lastUpdatedLabel?: string };
 
 export type TodayPlanningState =
   { readonly type: "balanced" } | { readonly type: "overloaded"; readonly reviewPlanHref: string };
@@ -85,7 +85,9 @@ export function TodayScreen({
       <div className="lifeos-today-screen__notices">
         {connectionState.type === "offline" ? (
           <Alert tone="warning" heading="You're offline">
-            Showing the last available Today data from {connectionState.lastUpdatedLabel}.
+            {connectionState.lastUpdatedLabel
+              ? `Showing the last available Today data from ${connectionState.lastUpdatedLabel}. `
+              : "No confirmed Today data is available on this device. "}
             Server-dependent actions remain unavailable; device-draft actions say so explicitly.
           </Alert>
         ) : null}

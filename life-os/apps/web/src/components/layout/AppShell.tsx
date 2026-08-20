@@ -3,7 +3,7 @@ import { Menu as MenuIcon } from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { IconButton } from "@components/ui";
-import { ErrorBoundary, ToastViewport } from "@components/feedback";
+import { ErrorBoundary, ToastViewport, type QuickAddType } from "@components/feedback";
 import {
   Sidebar,
   TopBar,
@@ -83,7 +83,7 @@ export interface AppShellProps {
   readonly timeZone: string;
   readonly locale: string;
   /** No canonical route exists for Quick Add (LOS-0604) — it is a dialog, not a page. */
-  readonly onQuickAddTriggerClick: () => void;
+  readonly onQuickAddTriggerClick: (type?: QuickAddType) => void;
   readonly onSignOut: () => void;
   /** Injected for deterministic tests; forwarded to `TopBar`. */
   readonly now?: Date;
@@ -91,7 +91,7 @@ export interface AppShellProps {
 
 /** Actions owned by the application shell that routed screens may invoke. */
 export interface AppShellOutletContext {
-  readonly onQuickAddClick: () => void;
+  readonly onQuickAddClick: (type?: QuickAddType) => void;
 }
 
 export function AppShell({
@@ -197,7 +197,7 @@ export function AppShell({
               <FocusMiniPlayer timeZone={timeZone} locale={locale} {...(now ? { now } : {})} />
             }
             onSearchTriggerClick={() => navigate("/life-os/app/search")}
-            onQuickAddTriggerClick={onQuickAddTriggerClick}
+            onQuickAddTriggerClick={() => onQuickAddTriggerClick()}
             onNotificationsTriggerClick={() => navigate("/life-os/app/notifications")}
             account={{ name: displayName, email, items: accountItems }}
           />

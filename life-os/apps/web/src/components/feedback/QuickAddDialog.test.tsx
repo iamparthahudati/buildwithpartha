@@ -8,10 +8,16 @@ import { renderWithUser } from "@test/render";
 import { ToastProvider } from "@state/ToastProvider";
 import { ToastViewport } from "./ToastViewport";
 
-import { QuickAddDialog } from "./QuickAddDialog";
+import { QuickAddDialog, type QuickAddType } from "./QuickAddDialog";
 import { useQuickAddShortcut } from "./useQuickAddShortcut";
 
-function QuickAddHarness({ initialOpen = true }: { readonly initialOpen?: boolean }) {
+function QuickAddHarness({
+  initialOpen = true,
+  initialType,
+}: {
+  readonly initialOpen?: boolean;
+  readonly initialType?: QuickAddType;
+}) {
   const [open, setOpen] = useState(initialOpen);
   return (
     <ToastProvider>
@@ -19,7 +25,12 @@ function QuickAddHarness({ initialOpen = true }: { readonly initialOpen?: boolea
         <button type="button" onClick={() => setOpen(true)}>
           Open trigger
         </button>
-        <QuickAddDialog open={open} onClose={() => setOpen(false)} timeZone="Asia/Kolkata" />
+        <QuickAddDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          timeZone="Asia/Kolkata"
+          {...(initialType ? { initialType } : {})}
+        />
         <ToastViewport />
       </MemoryRouter>
     </ToastProvider>
@@ -65,6 +76,23 @@ describe("QuickAddDialog", () => {
 
     const taskBtn = within(dialog).getByRole("button", { name: "Task" });
     expect(taskBtn).toHaveFocus();
+  });
+
+  it("opens directly on a caller-requested creation type", () => {
+    renderWithUser(<QuickAddHarness initialType="time-block" />);
+
+    expect(screen.getByRole("button", { name: "Time Block" })).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Add time block" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Start Time")).toBeInTheDocument();
+  });
+
+  it("focuses the More selector for a requested Project form", () => {
+    renderWithUser(<QuickAddHarness initialType="project" />);
+
+    expect(screen.getByLabelText("More creation types")).toHaveFocus();
+    expect(screen.getByLabelText("More creation types")).toHaveValue("project");
+    expect(screen.getByLabelText("Project Name")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Create project" })).toBeInTheDocument();
   });
 
   it("validates required fields on submit and displays error summary", async () => {

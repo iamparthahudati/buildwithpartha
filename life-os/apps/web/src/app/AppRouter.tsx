@@ -2,7 +2,7 @@ import { useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "@components/layout";
-import { QuickAddDialog, useQuickAddShortcut } from "@components/feedback";
+import { QuickAddDialog, useQuickAddShortcut, type QuickAddType } from "@components/feedback";
 import { RequireAuth, useLogout } from "@features/auth";
 import { useAuthSession } from "@state/authSession";
 import {
@@ -35,9 +35,17 @@ function ProtectedShell() {
   const { user } = useAuthSession();
   const logout = useLogout();
   const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const [quickAddType, setQuickAddType] = useState<QuickAddType>("task");
+  const [quickAddRequestId, setQuickAddRequestId] = useState(0);
+
+  const openQuickAdd = (type: QuickAddType = "task") => {
+    setQuickAddType(type);
+    setQuickAddRequestId((current) => current + 1);
+    setQuickAddOpen(true);
+  };
 
   // Bind global keyboard shortcut to open Quick Add dialog
-  useQuickAddShortcut(() => setQuickAddOpen(true), { enabled: !quickAddOpen });
+  useQuickAddShortcut(() => openQuickAdd(), { enabled: !quickAddOpen });
 
   if (user === null) {
     // Unreachable in practice — RequireAuth renders nothing while
@@ -53,13 +61,15 @@ function ProtectedShell() {
         email={user.email}
         timeZone={user.timeZone}
         locale={user.locale}
-        onQuickAddTriggerClick={() => setQuickAddOpen(true)}
+        onQuickAddTriggerClick={openQuickAdd}
         onSignOut={() => logout.mutate()}
       />
       <QuickAddDialog
+        key={quickAddRequestId}
         open={quickAddOpen}
         onClose={() => setQuickAddOpen(false)}
         timeZone={user.timeZone}
+        initialType={quickAddType}
       />
     </>
   );

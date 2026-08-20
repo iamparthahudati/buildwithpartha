@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-20 (LOS-0614 complete mocked Today screen)
+Last updated: 2026-08-20 (LOS-0615 foundational Today integration)
 
 ## Phase
 
@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## Completed
 
+- LOS-0615 — Connected the composed Today screen to the authenticated `GET /today` foundation endpoint through the shared cookie/CSRF-aware API client and TanStack Query. The account timezone keys date-bound cache entries, local midnight invalidates Today, background refresh retains confirmed data, and the existing global `AUTHENTICATION_REQUIRED` handler clears private queries/session state before returning to sign-in. A typed mapper preserves each provider's independent success/empty/error state, maps foundation and future-ready provider data without changing `TodayScreen`, derives deterministic Next up facts, and exposes one shared invalidation boundary for later domain mutations. Initial loading reserves every widget; provider and aggregate retries refetch the endpoint; offline cached data names `generatedAt`, while unsupported offline Brain Dump persistence is disabled instead of falsely claiming a device draft. First-use Task, Time Block, Project, and MIT discovery actions route through existing shell/canonical paths. See `docs/handoffs/LOS-0615.md`.
 - LOS-0614 — Composed every completed Today widget into the responsive `TodayScreen` contract and mounted its honest first-use state at `/life-os/app/today`. The narrow-screen source order keeps the daily decision path ahead of planning context; tablet uses a readable two-column grid; desktop uses a 12-column layout without changing semantic order. Screen-level offline and overloaded notices name last update/recovery behavior without claiming sync, rescheduling, or reprioritization; widget-level partial failures remain isolated. The development catalog now exposes first-use, normal, overloaded, partial-failure, and offline screen specimens at the shared 320px/tablet/desktop viewport presets. See `docs/handoffs/LOS-0614.md`.
 - LOS-0613 — Built the independent Daily Review and Brain Dump capture widgets. Morning/evening Review states expose canonical start/resume/open paths and preserve saved state through refresh/error; controlled capture preserves text, separates online create from device-draft intent, isolates count failures, and never implements private browser storage inside the component. See `docs/handoffs/LOS-0613.md`.
 - LOS-0612 — Built the independently composable Today active Projects and Next up widgets. Active Projects renders a Today-sized, source-labelled subset with canonical task progress, honest no-denominator handling, full loading/empty/error states, and a path to the canonical Projects inventory. Next up stays absent while a selected focus remains active; when no focus is selected or the focus is complete, it shows the ranked open Task together with its canonical source, deterministic ranking rule, and the recorded facts that put it first—without an AI recommendation claim. Both widgets include responsive, disabled/pending, catalog, behavior, and accessibility coverage. See `docs/handoffs/LOS-0612.md`.

@@ -58,7 +58,7 @@ function TodayContent() {
   return (
     <>
       <p>Today content</p>
-      <button type="button" onClick={onQuickAddClick}>
+      <button type="button" onClick={() => onQuickAddClick()}>
         Open Quick Add from Today
       </button>
       <Link to="/life-os/app/tasks">Go to tasks</Link>

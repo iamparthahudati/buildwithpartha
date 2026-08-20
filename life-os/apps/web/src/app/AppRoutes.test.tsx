@@ -45,9 +45,15 @@ vi.mock("@features/onboarding", async (importOriginal) => {
   return { ...actual, OnboardingScreen: () => <p>Onboarding screen</p> };
 });
 
-vi.mock("@features/today", () => ({
-  TodayScreen: () => <h1>Today</h1>,
-}));
+vi.mock("@features/today", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@features/today")>();
+  return {
+    ...actual,
+    TodayScreen: () => <h1>Today</h1>,
+    useToday: () => ({ isPending: true, refetch: vi.fn() }),
+    useTodayOnlineStatus: () => true,
+  };
+});
 
 const MOCK_USER: AuthUser = {
   id: "user-1",

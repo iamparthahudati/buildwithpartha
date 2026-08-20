@@ -74,6 +74,23 @@ describe("TodayBrainCapture", () => {
     expect(onCapture).toHaveBeenCalledWith({ content: "Remember this", mode: "device-draft" });
   });
 
+  it("disables offline capture when the integration has no approved device-draft storage", () => {
+    const onCapture = vi.fn();
+    renderWithUser(
+      <ControlledCapture
+        value="Keep this visible"
+        isOnline={false}
+        offlineDraftSupported={false}
+        onCapture={onCapture}
+      />,
+    );
+
+    expect(screen.getByText(/Keep this page open and reconnect/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Capture unavailable offline" })).toBeDisabled();
+    expect(screen.getByRole("textbox")).toHaveValue("Keep this visible");
+    expect(onCapture).not.toHaveBeenCalled();
+  });
+
   it("announces saved, failed, and offline-draft outcomes without clearing caller text", () => {
     const { rerender } = renderWithUser(
       <TodayBrainCapture {...BASE_PROPS} value="Draft remains" captureStatus={{ type: "saved" }} />,

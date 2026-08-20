@@ -20,7 +20,11 @@ export interface QuickAddDialogProps {
   readonly open: boolean;
   readonly onClose: () => void;
   readonly timeZone: string;
+  readonly initialType?: QuickAddType;
 }
+
+export type QuickAddType =
+  "task" | "brain-dump" | "time-block" | "note" | "project" | "habit" | "goal";
 
 const PROJECT_OPTIONS = [
   { value: "work", label: "Work" },
@@ -63,11 +67,16 @@ const ICON_OPTIONS = [
   { value: "star", label: "Star" },
 ];
 
-export function QuickAddDialog({ open, onClose, timeZone }: QuickAddDialogProps) {
+export function QuickAddDialog({
+  open,
+  onClose,
+  timeZone,
+  initialType = "task",
+}: QuickAddDialogProps) {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const [activeType, setActiveType] = useState<string>("task");
+  const [activeType, setActiveType] = useState<QuickAddType>(initialType);
   const [isPending, setIsPending] = useState(false);
   const [submitError, setSubmitError] = useState<string | undefined>(undefined);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -78,6 +87,10 @@ export function QuickAddDialog({ open, onClose, timeZone }: QuickAddDialogProps)
 
   const errorSummaryRef = useRef<HTMLDivElement>(null);
   const taskBtnRef = useRef<HTMLButtonElement>(null);
+  const brainDumpBtnRef = useRef<HTMLButtonElement>(null);
+  const timeBlockBtnRef = useRef<HTMLButtonElement>(null);
+  const noteBtnRef = useRef<HTMLButtonElement>(null);
+  const moreTypesRef = useRef<HTMLSelectElement>(null);
 
   // Monitor network connection status
   useEffect(() => {
@@ -186,10 +199,21 @@ export function QuickAddDialog({ open, onClose, timeZone }: QuickAddDialogProps)
       resetAllFields();
       setFieldErrors({});
       setSubmitError(undefined);
-      setActiveType("task");
+      setActiveType(initialType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [initialType, open]);
+
+  const initialFocusRef =
+    initialType === "brain-dump"
+      ? brainDumpBtnRef
+      : initialType === "time-block"
+        ? timeBlockBtnRef
+        : initialType === "note"
+          ? noteBtnRef
+          : ["project", "habit", "goal"].includes(initialType)
+            ? moreTypesRef
+            : taskBtnRef;
 
   // If the active type becomes unavailable due to offline transition, handle it
   const isTypeOfflineSafe = ["task", "note", "brain-dump"].includes(activeType);
@@ -435,7 +459,7 @@ export function QuickAddDialog({ open, onClose, timeZone }: QuickAddDialogProps)
       pending={isPending}
       isDirty={isDirty}
       error={submitError}
-      initialFocusRef={taskBtnRef}
+      initialFocusRef={initialFocusRef}
     >
       <div className="lifeos-quick-add">
         {/* Type Chooser */}
@@ -455,6 +479,7 @@ export function QuickAddDialog({ open, onClose, timeZone }: QuickAddDialogProps)
               Task
             </Button>
             <Button
+              ref={brainDumpBtnRef}
               variant={activeType === "brain-dump" ? "primary" : "secondary"}
               disabled={isPending}
               onClick={() => {
@@ -466,6 +491,7 @@ export function QuickAddDialog({ open, onClose, timeZone }: QuickAddDialogProps)
               Brain Dump
             </Button>
             <Button
+              ref={timeBlockBtnRef}
               variant={activeType === "time-block" ? "primary" : "secondary"}
               disabled={!isOnline || isPending}
               title={!isOnline ? "Unavailable offline" : undefined}
@@ -478,6 +504,7 @@ export function QuickAddDialog({ open, onClose, timeZone }: QuickAddDialogProps)
               Time Block
             </Button>
             <Button
+              ref={noteBtnRef}
               variant={activeType === "note" ? "primary" : "secondary"}
               disabled={isPending}
               onClick={() => {
@@ -498,6 +525,7 @@ export function QuickAddDialog({ open, onClose, timeZone }: QuickAddDialogProps)
                 .join(" ")}
             >
               <Select
+                ref={moreTypesRef}
                 label="More creation types"
                 labelHidden
                 placeholder="More creation types..."
@@ -511,7 +539,7 @@ export function QuickAddDialog({ open, onClose, timeZone }: QuickAddDialogProps)
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val) {
-                    setActiveType(val);
+                    setActiveType(val as QuickAddType);
                     setFieldErrors({});
                     setSubmitError(undefined);
                   }
