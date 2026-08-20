@@ -1,0 +1,120 @@
+/* TodaySchedule (LOS-0610). All values come from the frozen token contract. */
+
+.lifeos-today-schedule__list {
+  display: grid;
+  gap: var(--lifeos-space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-today-schedule-block {
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-today-schedule-block--current {
+  border-inline-start: var(--lifeos-border-width-thick) solid var(--lifeos-color-primary);
+}
+
+.lifeos-today-schedule-block--conflict {
+  border-color: var(--lifeos-color-warning);
+}
+
+.lifeos-today-schedule-block__time,
+.lifeos-today-schedule-block__heading-row,
+.lifeos-today-schedule-block__context,
+.lifeos-today-schedule-block__actions,
+.lifeos-today-schedule__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-today-schedule-block__time {
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lifeos-today-schedule-block__content {
+  display: grid;
+  min-width: 0;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-today-schedule-block__heading-row h3 {
+  min-width: 0;
+  margin: 0;
+}
+
+.lifeos-today-schedule-block__context {
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-today-schedule-block__conflict {
+  justify-self: start;
+}
+
+.lifeos-today-schedule-block__actions {
+  justify-content: flex-end;
+  min-width: max-content;
+}
+
+.lifeos-today-schedule__footer {
+  justify-content: flex-end;
+  margin-block-start: var(--lifeos-space-4);
+}
+
+.lifeos-today-schedule__loading {
+  display: grid;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-today-schedule__skeleton-row {
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--lifeos-space-4);
+  min-height: var(--lifeos-space-12);
+  padding: var(--lifeos-space-4);
+  border: var(--lifeos-border-width) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+}
+
+@media (width < 768px) {
+  .lifeos-today-schedule {
+    padding: var(--lifeos-space-4);
+  }
+
+  .lifeos-today-schedule-block,
+  .lifeos-today-schedule__skeleton-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--lifeos-space-3);
+  }
+
+  .lifeos-today-schedule > .lifeos-surface__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lifeos-today-schedule-block__actions {
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  .lifeos-today-schedule__footer {
+    justify-content: flex-start;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-today-schedule-block--current,
+  .lifeos-today-schedule-block--conflict {
+    border-color: CanvasText;
+  }
+}
