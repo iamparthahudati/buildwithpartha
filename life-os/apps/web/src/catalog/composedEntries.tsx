@@ -18,6 +18,7 @@ import {
   ProjectRowDemo,
   ProjectCardDemo,
   ProjectDetailsHeaderDemo,
+  ProjectOverviewDemo,
   ProjectFormDemo,
   ProjectSummaryMetricsDemo,
 } from "./ComposedDemos";
@@ -243,6 +244,21 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Renders project details header in active, archived, and loading states.",
         render: () => <ProjectDetailsHeaderDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-overview",
+    name: "ProjectOverview",
+    group: "Composed",
+    summary:
+      "Comprehensive project overview component displaying progress/task/time/health summary cards, breakdown charts, top tasks list, about/labels metadata, and activity feed.",
+    states: [
+      {
+        id: "project-overview-default",
+        name: "Default",
+        description: "Project overview with populated, loading, empty, and error UX states.",
+        render: () => <ProjectOverviewDemo />,
       },
     ],
   },

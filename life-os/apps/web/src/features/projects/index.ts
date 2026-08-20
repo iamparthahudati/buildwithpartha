@@ -4,6 +4,11 @@ export {
   ProjectDetailsHeader,
   type ProjectDetailsHeaderProps,
 } from "./components/ProjectDetailsHeader";
+export {
+  ProjectOverview,
+  type ProjectOverviewProps,
+  type ProjectOverviewTask,
+} from "./components/ProjectOverview";
 export { ProjectForm, type ProjectFormProps, type ProjectFormData } from "./components/ProjectForm";
 export {
   ProjectSummaryMetrics,

@@ -5,10 +5,12 @@ import {
   ProjectRow,
   ProjectCard,
   ProjectDetailsHeader,
+  ProjectOverview,
   ProjectForm,
   ProjectSummaryMetrics,
   type Project,
   type ProjectFilterCategory,
+  type ProjectOverviewTask,
 } from "@features/projects";
 import {
   buildCommonDateRangePresets,
@@ -600,6 +602,91 @@ export function ProjectDetailsHeaderDemo() {
           </Text>
         </div>
         <ProjectDetailsHeader loading />
+      </div>
+    </div>
+  );
+}
+
+export function ProjectOverviewDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  const sampleTasks: readonly ProjectOverviewTask[] = [
+    {
+      id: "task-101",
+      title: "Design token audit & accessibility checks",
+      status: "IN_PROGRESS",
+      priority: "P1",
+      dueDate: "2026-08-25",
+      assigneeName: "Sarah Connor",
+    },
+    {
+      id: "task-102",
+      title: "Backend Flyway baseline migration",
+      status: "COMPLETED",
+      priority: "P2",
+      dueDate: "2026-08-15",
+      assigneeName: "John Doe",
+    },
+  ];
+
+  const sampleActivity = [
+    {
+      id: "act-101",
+      actorName: "Sarah Connor",
+      action: "updated health to",
+      object: { label: "On track", href: "#health" },
+      createdAt: "2026-08-20T14:30:00Z",
+    },
+  ];
+
+  const statusData = [
+    { id: "status-completed", label: "Completed", value: 4 },
+    { id: "status-in-progress", label: "In progress", value: 4 },
+    { id: "status-planned", label: "Planned", value: 2 },
+  ];
+
+  const priorityData = [
+    { id: "p1", label: "P1 — High", value: 3 },
+    { id: "p2", label: "P2 — Medium", value: 5 },
+    { id: "p3", label: "P3 — Low", value: 2 },
+  ];
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Populated Project Overview
+          </Text>
+        </div>
+        <ProjectOverview
+          project={MOCK_PROJECT_READY}
+          ownerName="Sarah Connor"
+          estimatedHours={40}
+          actualHours={20}
+          labels={["Frontend", "Core", "Phase 2"]}
+          topTasks={sampleTasks}
+          activityEvents={sampleActivity}
+          statusBreakdown={statusData}
+          priorityBreakdown={priorityData}
+          now={now}
+          locale="en-US"
+          timeZone="UTC"
+          onAddTask={() => alert("Add task")}
+          onEditProject={() => alert("Edit project")}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Overview
+          </Text>
+        </div>
+        <ProjectOverview loading />
       </div>
     </div>
   );

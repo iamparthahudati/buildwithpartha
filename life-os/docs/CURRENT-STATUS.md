@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-0711 project details header handoff)
+Last updated: 2026-08-21 (LOS-0712 project overview components handoff)
 
 ## Phase
 
@@ -19,6 +19,7 @@ Phase 2 — Identity and application shell.
 - LOS-0709 — Composed Projects screen with header/add, metric strip, tabs/search/filter/sort/view controls, cards/table views, form dialog, confirm dialogs, detail panel, and pagination across mock states. See `docs/handoffs/LOS-0709.md`.
 - LOS-0710 — Integrate Projects screen with query/mutation hooks, REST client, URL state, and routing. See `docs/handoffs/LOS-0710.md`.
 - LOS-0711 — Responsive ProjectDetailsHeader component with deep link breadcrumbs, identity, status, health, priority, owner, dates, estimate, task progress, primary/secondary actions, loading skeleton, and archived state. See `docs/handoffs/LOS-0711.md`.
+- LOS-0712 — Project overview components (progress/task/time/health summary cards, status/priority breakdown charts with data table fallback, top tasks list, about/labels metadata, and activity feed). See `docs/handoffs/LOS-0712.md`.
 
 ## Completed
 
