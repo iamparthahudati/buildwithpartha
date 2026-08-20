@@ -50,6 +50,12 @@ import {
   TodayMetricStripReadyDemo,
   TodayMetricStripMixedDemo,
   TodayHeaderSectionDemo,
+  TodayReviewMorningDemo,
+  TodayReviewEveningDraftDemo,
+  TodayReviewPreservedErrorDemo,
+  TodayBrainCaptureDemo,
+  TodayBrainCaptureErrorDemo,
+  TodayBrainCaptureOfflineDemo,
 } from "./NavigationDemos";
 
 import type { CatalogEntry } from "./registry";
@@ -613,6 +619,64 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "Morning greeting, local date, approved Today helper, Quick Add trigger, and six honest zero-data cards below.",
         render: () => <TodayHeaderSectionDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-review-prompt",
+    name: "TodayReviewPrompt",
+    group: "Composed",
+    summary:
+      "Morning and evening Daily Review status with locally appropriate start, resume, and open actions. A failed refresh can retain last-known saved state, so a Draft is never hidden or implied lost.",
+    states: [
+      {
+        id: "today-review-morning",
+        name: "Morning prompt",
+        description: "Both Reviews are not started; the short morning Review is suggested now.",
+        render: () => <TodayReviewMorningDemo />,
+      },
+      {
+        id: "today-review-evening-draft",
+        name: "Evening draft",
+        description:
+          "The morning Review is finalized and the evening Review has a saved Draft ready to resume.",
+        render: () => <TodayReviewEveningDraftDemo />,
+      },
+      {
+        id: "today-review-preserved-error",
+        name: "Refresh failed with saved state",
+        description:
+          "The refresh failure remains inside the widget while the last-known finalized and Draft states stay actionable.",
+        render: () => <TodayReviewPreservedErrorDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-brain-capture",
+    name: "TodayBrainCapture",
+    group: "Composed",
+    summary:
+      "Compact controlled Brain Dump capture with an independent unprocessed count. Online success, request failure with preserved text, and explicit device-only offline draft states remain distinguishable.",
+    states: [
+      {
+        id: "today-brain-capture-ready",
+        name: "Interactive capture",
+        description: "Enter text and Capture to see the quiet confirmed-success state.",
+        render: () => <TodayBrainCaptureDemo />,
+      },
+      {
+        id: "today-brain-capture-error",
+        name: "Failed create with preserved draft",
+        description:
+          "Both the count and create request failed; the private draft remains editable and independently retryable.",
+        render: () => <TodayBrainCaptureErrorDemo />,
+      },
+      {
+        id: "today-brain-capture-offline",
+        name: "Device draft",
+        description:
+          "The text is saved only on this device and the UI does not claim server synchronization.",
+        render: () => <TodayBrainCaptureOfflineDemo />,
       },
     ],
   },

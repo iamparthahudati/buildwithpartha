@@ -2,7 +2,14 @@ import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthSessionProvider } from "@state/AuthSessionProvider";
 import { FocusMiniPlayer } from "@features/focus";
-import { TodayHeader, TodayMetricStrip, TodayHeaderSection } from "@features/today";
+import {
+  TodayBrainCapture,
+  TodayHeader,
+  TodayMetricStrip,
+  TodayHeaderSection,
+  TodayReviewPrompt,
+  type TodayBrainCaptureStatus,
+} from "@features/today";
 import {
   AlertTriangle,
   Archive,
@@ -1404,6 +1411,111 @@ export function TodayHeaderSectionDemo() {
       focusTimeStatus={{ type: "empty", message: "No focus time recorded today." }}
       activeProjectsStatus={{ type: "empty", message: "No active projects yet." }}
       weekProgressStatus={{ type: "empty", message: "No Weekly Plan yet." }}
+    />
+  );
+}
+
+export function TodayReviewMorningDemo() {
+  return (
+    <TodayReviewPrompt
+      status={{
+        type: "ready",
+        data: {
+          morning: { state: "NOT_STARTED", href: "#morning-review" },
+          evening: { state: "NOT_STARTED", href: "#evening-review" },
+          suggestedPeriod: "morning",
+        },
+      }}
+      reviewsHref="#reviews"
+    />
+  );
+}
+
+export function TodayReviewEveningDraftDemo() {
+  return (
+    <TodayReviewPrompt
+      status={{
+        type: "ready",
+        data: {
+          morning: { state: "FINALIZED", href: "#morning-review" },
+          evening: { state: "DRAFT", href: "#evening-review" },
+          suggestedPeriod: "evening",
+        },
+      }}
+      reviewsHref="#reviews"
+    />
+  );
+}
+
+export function TodayReviewPreservedErrorDemo() {
+  return (
+    <TodayReviewPrompt
+      status={{
+        type: "error",
+        message: "Review status is unavailable.",
+        data: {
+          morning: { state: "FINALIZED", href: "#morning-review" },
+          evening: { state: "DRAFT", href: "#evening-review" },
+          suggestedPeriod: "evening",
+        },
+      }}
+      reviewsHref="#reviews"
+      onRetry={() => {}}
+    />
+  );
+}
+
+export function TodayBrainCaptureDemo() {
+  const [value, setValue] = useState("");
+  const [captureStatus, setCaptureStatus] = useState<TodayBrainCaptureStatus>({ type: "idle" });
+
+  return (
+    <TodayBrainCapture
+      value={value}
+      onValueChange={(nextValue) => {
+        setValue(nextValue);
+        setCaptureStatus({ type: "idle" });
+      }}
+      onCapture={() => {
+        setValue("");
+        setCaptureStatus({ type: "saved" });
+      }}
+      countStatus={{ type: "ready", unprocessedCount: 3 }}
+      captureStatus={captureStatus}
+      isOnline
+      brainDumpHref="#brain-dump"
+    />
+  );
+}
+
+export function TodayBrainCaptureErrorDemo() {
+  return (
+    <TodayBrainCapture
+      value="Compare hosting options"
+      onValueChange={() => {}}
+      onCapture={() => {}}
+      countStatus={{ type: "error", message: "The unprocessed count couldn't load." }}
+      captureStatus={{
+        type: "error",
+        message: "We couldn't add this Brain Dump Item. Your draft is still here.",
+      }}
+      isOnline
+      brainDumpHref="#brain-dump"
+      onRetryCount={() => {}}
+    />
+  );
+}
+
+export function TodayBrainCaptureOfflineDemo() {
+  return (
+    <TodayBrainCapture
+      value="Remember to review the travel checklist"
+      onValueChange={() => {}}
+      onCapture={() => {}}
+      countStatus={{ type: "ready", unprocessedCount: 4 }}
+      captureStatus={{ type: "offline-draft" }}
+      isOnline={false}
+      brainDumpHref="#brain-dump"
     />
   );
 }
