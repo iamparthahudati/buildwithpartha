@@ -19,6 +19,10 @@ export {
 export { ProjectsScreen, type ProjectsScreenProps } from "./components/ProjectsScreen";
 export { ProjectTimeline, type ProjectTimelineProps } from "./components/ProjectTimeline";
 export {
+  ProjectDetailsScreen,
+  type ProjectDetailsScreenProps,
+} from "./components/ProjectDetailsScreen";
+export {
   MilestoneFormDialog,
   type MilestoneFormDialogProps,
   type MilestoneFormData,

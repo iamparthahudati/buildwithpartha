@@ -9,6 +9,7 @@ import {
   ProjectForm,
   ProjectSummaryMetrics,
   ProjectTimeline,
+  ProjectDetailsScreen,
   type Project,
   type ProjectFilterCategory,
   type ProjectOverviewTask,
@@ -804,6 +805,93 @@ export function ProjectTimelineDemo() {
           </Text>
         </div>
         <ProjectTimeline loading />
+      </div>
+    </div>
+  );
+}
+
+export function ProjectDetailsScreenDemo() {
+  const [selectedTab, setSelectedTab] = useState("overview");
+
+  const sampleMilestones: readonly Milestone[] = [
+    {
+      id: "m1",
+      projectId: "p1",
+      title: "Architecture & Design Baseline",
+      date: "2026-08-10",
+      status: "COMPLETED",
+      ordering: 1,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-10T15:00:00Z",
+      version: 1,
+    },
+    {
+      id: "m2",
+      projectId: "p1",
+      title: "Phase 1 Beta Milestone",
+      date: "2026-08-18",
+      status: "PLANNED",
+      ordering: 2,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-01T10:00:00Z",
+      version: 1,
+    },
+  ];
+
+  const sampleProject: Project = {
+    id: "p1",
+    name: "Website Redesign v2",
+    description: "Redesigning main marketing site and user dashboard.",
+    status: "ACTIVE",
+    priority: "P1",
+    health: "ON_TRACK",
+    color: "blue",
+    icon: "layout",
+    startDate: "2026-08-01",
+    deadlineDate: "2026-09-30",
+    completedTasksCount: 5,
+    totalTasksCount: 10,
+    updatedAt: "2026-08-20T10:00:00Z",
+    version: 2,
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-6)" }}>
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Interactive ProjectDetailsScreen (Tab: {selectedTab})
+          </Text>
+        </div>
+        <ProjectDetailsScreen
+          project={sampleProject}
+          milestones={sampleMilestones}
+          selectedTab={selectedTab}
+          onTabChange={setSelectedTab}
+          ownerName="Partha Hudati"
+          estimatedHours={40}
+          actualHours={18}
+          labels={["Design", "Frontend", "Q3-Goal"]}
+          now={new Date("2026-08-20T12:00:00Z")}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Screen State
+          </Text>
+        </div>
+        <ProjectDetailsScreen loading />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Not Found 404 Screen State
+          </Text>
+        </div>
+        <ProjectDetailsScreen notFound />
       </div>
     </div>
   );
