@@ -72,6 +72,7 @@ public class TaskController {
       @RequestParam(name = "archived", required = false) Boolean archived,
       @RequestParam(name = "dueBefore", required = false) Instant dueBefore,
       @RequestParam(name = "dueAfter", required = false) Instant dueAfter,
+      @RequestParam(name = "labelId", required = false) Set<UUID> labelIds,
       @RequestParam(name = "page", required = false, defaultValue = "0") int page,
       @RequestParam(name = "size", required = false, defaultValue = "20") int size,
       @RequestParam(name = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
@@ -111,6 +112,7 @@ public class TaskController {
             archived,
             dueBefore,
             dueAfter,
+            labelIds,
             page,
             size,
             sortBy,
@@ -163,7 +165,8 @@ public class TaskController {
                 request.spentMinutes() != null ? request.spentMinutes() : 0,
                 request.progress() != null ? request.progress() : 0,
                 Optional.ofNullable(request.mitDate()),
-                request.position() != null ? request.position() : 0));
+                request.position() != null ? request.position() : 0,
+                request.labelIds()));
 
     return TaskResponse.fromDomain(created);
   }
@@ -213,10 +216,12 @@ public class TaskController {
                 request.progress() != null ? request.progress() : 0,
                 Optional.ofNullable(request.mitDate()),
                 request.position() != null ? request.position() : 0,
+                request.labelIds(),
                 request.version()));
 
     return TaskResponse.fromDomain(updated);
   }
+
 
   @Operation(summary = "Change task status", description = "Updates task status.")
   @ApiResponse(responseCode = "200", description = "Task status updated.")

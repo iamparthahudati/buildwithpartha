@@ -179,6 +179,11 @@ public class JpaTaskRepository implements TaskRepository {
       predicates.add(cb.greaterThanOrEqualTo(root.get("dueAt"), query.dueAfter()));
     }
 
+    if (query.labelIds() != null && !query.labelIds().isEmpty()) {
+      jakarta.persistence.criteria.Join<TaskEntity, UUID> labelJoin = root.join("labelIds");
+      predicates.add(labelJoin.in(query.labelIds()));
+    }
+
     if (Boolean.TRUE.equals(query.overdue())) {
       predicates.add(cb.lessThan(root.get("dueAt"), now));
       predicates.add(cb.not(root.get("status").in(TaskStatus.DONE, TaskStatus.CANCELLED)));
@@ -250,6 +255,7 @@ public class JpaTaskRepository implements TaskRepository {
         entity.getCreatedAt(),
         entity.getUpdatedAt(),
         subtasks,
+        entity.getLabelIds(),
         entity.getVersion());
   }
 
@@ -272,8 +278,10 @@ public class JpaTaskRepository implements TaskRepository {
         domain.deletedAt().orElse(null),
         domain.createdAt(),
         domain.updatedAt(),
+        domain.labelIds(),
         domain.version());
   }
+
 
   static Subtask toSubtaskDomain(SubtaskEntity entity) {
     return new Subtask(
