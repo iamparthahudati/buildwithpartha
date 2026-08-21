@@ -28,6 +28,13 @@ public class JpaLabelRepository implements LabelRepository {
   }
 
   @Override
+  public Optional<Label> findByUserIdAndNameNormalized(UUID userId, String nameNormalized) {
+    return jpaRepository
+        .findByUserIdAndNameNormalized(userId, nameNormalized)
+        .map(JpaLabelRepository::toDomain);
+  }
+
+  @Override
   public Label save(Label label) {
     LabelEntity entity = toEntity(label);
     LabelEntity saved = jpaRepository.save(entity);
@@ -38,6 +45,16 @@ public class JpaLabelRepository implements LabelRepository {
   public void delete(Label label) {
     jpaRepository.delete(toEntity(label));
   }
+
+  @Override
+  public void deleteWithReplacement(UUID userId, UUID labelId, UUID replacementLabelId) {
+    jpaRepository.deleteDuplicateProjectLabels(labelId, replacementLabelId);
+    jpaRepository.reassignProjectLabels(userId, labelId, replacementLabelId);
+    jpaRepository.deleteDuplicateTaskLabels(labelId, replacementLabelId);
+    jpaRepository.reassignTaskLabels(userId, labelId, replacementLabelId);
+    jpaRepository.deleteById(labelId);
+  }
+
 
   static Label toDomain(LabelEntity entity) {
     return new Label(

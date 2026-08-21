@@ -21,5 +21,18 @@ public record Label(
     Objects.requireNonNull(nameNormalized, "nameNormalized must not be null");
     Objects.requireNonNull(createdAt, "createdAt must not be null");
     Objects.requireNonNull(updatedAt, "updatedAt must not be null");
+    if (name.isBlank()) {
+      throw new IllegalArgumentException("Label name must not be blank");
+    }
+    if (color != null && !color.isBlank() && color.length() > 30) {
+      throw new IllegalArgumentException("Color must not exceed 30 characters");
+    }
+  }
+
+  public static String normalizeName(String name) {
+    Objects.requireNonNull(name, "name must not be null");
+    return name.trim().toLowerCase(java.util.Locale.ROOT);
   }
 }
+
+
