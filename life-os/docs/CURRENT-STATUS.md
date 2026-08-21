@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-0810 TaskForm handoff)
+Last updated: 2026-08-21 (LOS-0811 task summary metrics handoff)
 
 ## Phase
 
@@ -30,6 +30,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 ## Completed
 
+- LOS-0811 — Built six controlled Task summary metrics for All, To Do, In progress, Done, Blocked, and Overdue. Each ready/loading/empty/error value remains accessibly named, filter actions expose exact names and pressed state, and pure URL helpers apply/read backend-compatible `status`/`overdue` presets while preserving unrelated filters and resetting pagination. Catalog specimens, 28 focused tests, the full frontend gate, and live 320px/tablet/desktop checks pass. See `docs/handoffs/LOS-0811.md`.
 - LOS-0810 — Built TaskForm as a responsive create/edit FormDialog with a compact Quick Add presentation, canonical Project/status/priority fields, timezone-safe due instant conversion, Estimate, progress, Labels, dated MIT selection, dirty protection, pending/error states, and version-conflict reload handling. Validation is linked through a focusable error summary; catalog specimens and live 320px/desktop verification cover both presentations. See `docs/handoffs/LOS-0810.md`.
 - LOS-0809 — Built responsive TaskRow and TaskCard components over one typed list projection. Both render controlled selection, Task and Project links, canonical status/priority labels, timezone-aware due instants, progress, comment counts, MIT designation, blocked/overdue/done/archived states, loading skeletons, and lifecycle-valid action menus. Catalog specimens cover every required state, 15 focused behavior/accessibility tests pass, and live 320px/desktop checks have no overflow or console errors. See `docs/handoffs/LOS-0809.md`.
 - LOS-0808 — Implemented `POST /tasks/bulk-actions` for bounded status, priority, Project, Label, due-date scheduling, clear-schedule, and archive mutations. Each selected Task is authorized and committed independently, responses preserve ordered partial outcomes, concurrent conflicts stay item-scoped, and retries are no-ops for already-applied state. See `docs/handoffs/LOS-0808.md`.
@@ -259,7 +260,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0811 (`docs/backlog/EPIC-08-TASKS.md`) — build task summary metrics and URL-compatible filter presets.
+LOS-0812 (`docs/backlog/EPIC-08-TASKS.md`) — compose the Tasks screen with mocked data and every required UX state.
 
 ## Known decisions requiring implementation-time values
 

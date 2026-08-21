@@ -1,0 +1,47 @@
+/* TaskSummaryMetrics (LOS-0811). */
+
+.lifeos-task-summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+  gap: var(--lifeos-space-3);
+  width: 100%;
+}
+
+.lifeos-task-summary-metrics__item,
+.lifeos-task-summary-metrics__item > .lifeos-metric-card {
+  height: 100%;
+}
+
+.lifeos-task-summary-metrics__item--active > .lifeos-metric-card {
+  border-color: var(--lifeos-color-primary-border);
+  background: var(--lifeos-color-primary-soft);
+}
+
+@media (min-width: 72rem) {
+  .lifeos-task-summary-metrics {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 30rem) {
+  .lifeos-task-summary-metrics {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--lifeos-space-1);
+    margin: calc(-1 * var(--lifeos-space-1));
+  }
+
+  .lifeos-task-summary-metrics__item {
+    flex: 0 0 min(10rem, 72vw);
+    scroll-snap-align: start;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-task-summary-metrics__item--active > .lifeos-metric-card {
+    outline: var(--lifeos-border-width-medium) solid Highlight;
+    outline-offset: calc(-1 * var(--lifeos-border-width-medium));
+  }
+}

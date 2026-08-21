@@ -15,7 +15,16 @@ import {
   type ProjectOverviewTask,
   type Milestone,
 } from "@features/projects";
-import { TaskCard, TaskForm, TaskRow, type TaskListItem } from "@features/tasks";
+import {
+  TASK_FILTER_PRESETS,
+  TaskCard,
+  TaskForm,
+  TaskRow,
+  TaskSummaryMetrics,
+  type TaskFilterPresetId,
+  type TaskListItem,
+  type TaskSummaryMetricsStatus,
+} from "@features/tasks";
 import { TimeBlockRow, type TimeBlock } from "@features/time-blocks";
 import {
   buildCommonDateRangePresets,
@@ -679,6 +688,39 @@ export function TaskFormDemo({
           { id: "weekly-planning", name: "Weekly planning" },
         ]}
       />
+    </div>
+  );
+}
+
+export function TaskSummaryMetricsDemo({
+  state = "ready",
+}: {
+  readonly state?: TaskSummaryMetricsStatus["type"];
+}) {
+  const [preset, setPreset] = useState<TaskFilterPresetId>("ALL");
+  const [retryCount, setRetryCount] = useState(0);
+  const status: TaskSummaryMetricsStatus =
+    state === "ready"
+      ? {
+          type: "ready",
+          counts: { total: 24, toDo: 8, inProgress: 5, done: 7, blocked: 3, overdue: 1 },
+        }
+      : state === "error"
+        ? {
+            type: "error",
+            message: "Couldn't load task counts.",
+            onRetry: () => setRetryCount((count) => count + 1),
+          }
+        : { type: state };
+  const presetLabel = TASK_FILTER_PRESETS.find((item) => item.id === preset)?.label ?? "Custom";
+
+  return (
+    <div className="specimen-stack">
+      <Text tone="secondary" size="xs">
+        Active preset: {presetLabel}
+        {retryCount > 0 ? `; retries: ${retryCount}` : ""}
+      </Text>
+      <TaskSummaryMetrics status={status} activePreset={preset} onSelectPreset={setPreset} />
     </div>
   );
 }
