@@ -252,7 +252,6 @@ export function TasksScreen({
     setInternalTab(next);
     setInternalPage(1);
     onTabChange?.(next);
-    onPageChange?.(1);
   }
 
   function setSelectedIds(next: ReadonlySet<string>) {
@@ -585,7 +584,6 @@ export function TasksScreen({
               setInternalSearchQuery("");
               setInternalPage(1);
               onSearchQueryChange?.("");
-              onPageChange?.(1);
             },
           },
         ]
@@ -599,7 +597,6 @@ export function TasksScreen({
               setInternalPriority("ALL");
               setInternalPage(1);
               onPriorityFilterChange?.("ALL");
-              onPageChange?.(1);
             },
           },
         ]
@@ -617,7 +614,6 @@ export function TasksScreen({
               setInternalProject("ALL");
               setInternalPage(1);
               onProjectFilterChange?.("ALL");
-              onPageChange?.(1);
             },
           },
         ]
@@ -635,7 +631,6 @@ export function TasksScreen({
     onPriorityFilterChange?.("ALL");
     onProjectFilterChange?.("ALL");
     onTabChange?.("ALL");
-    onPageChange?.(1);
   }
 
   return (
@@ -748,14 +743,12 @@ export function TasksScreen({
                       setInternalSearchQuery("");
                       setInternalPage(1);
                       onSearchQueryChange?.("");
-                      onPageChange?.(1);
                     }
                   }}
                   onSearch={(query) => {
                     setInternalSearchQuery(query);
                     setInternalPage(1);
                     onSearchQueryChange?.(query);
-                    onPageChange?.(1);
                   }}
                 />
                 <Select
@@ -767,7 +760,6 @@ export function TasksScreen({
                     setInternalPriority(value);
                     setInternalPage(1);
                     onPriorityFilterChange?.(value);
-                    onPageChange?.(1);
                   }}
                   options={[
                     { value: "ALL", label: "All priorities" },
@@ -786,7 +778,6 @@ export function TasksScreen({
                     setInternalProject(value);
                     setInternalPage(1);
                     onProjectFilterChange?.(value);
-                    onPageChange?.(1);
                   }}
                   options={[
                     { value: "ALL", label: "All projects" },
@@ -863,7 +854,14 @@ export function TasksScreen({
         isPending={formPending}
         {...(formError ? { error: formError } : {})}
         {...(formConflictError ? { conflictError: formConflictError } : {})}
-        {...(onReloadLatest ? { onReloadLatest } : {})}
+        {...(onReloadLatest
+          ? {
+              onReloadLatest: () => {
+                onReloadLatest();
+                setFormOpen(false);
+              },
+            }
+          : {})}
         initialValues={
           editingTask
             ? {

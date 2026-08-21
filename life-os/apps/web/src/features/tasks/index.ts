@@ -43,3 +43,39 @@ export {
   type TasksViewMode,
   type TasksViewTab,
 } from "./model/taskScreen";
+
+export {
+  queryTasks,
+  mapTaskResponse,
+  mapTaskSummary,
+  mapBulkOutcome,
+  toBulkRequest,
+  type TaskQueryParams,
+  type TaskQueryResult,
+  type TaskResponseDto,
+  type TaskSummaryCountsDto,
+  type CreateTaskRequestDto,
+  type UpdateTaskRequestDto,
+} from "./api/tasksApi";
+
+export {
+  TASKS_QUERY_KEY,
+  tasksQueryKeys,
+  invalidateTasksQueries,
+  useTasks,
+  useTaskLabels,
+} from "./hooks/useTasks";
+
+export {
+  useCreateTask,
+  useUpdateTask,
+  useCompleteTask,
+  useChangeTaskStatus,
+  useArchiveTask,
+  useRestoreTask,
+  useDeleteTask,
+  useDuplicateTask,
+  useToggleTaskMit,
+  useBulkTaskAction,
+  isConflict,
+} from "./hooks/useTaskMutations";

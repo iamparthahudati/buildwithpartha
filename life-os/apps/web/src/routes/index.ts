@@ -7,6 +7,7 @@ export { CancelDeletionRoute } from "./CancelDeletionRoute";
 export { OnboardingRoute } from "./OnboardingRoute";
 export { SettingsRoute } from "./SettingsRoute";
 export { TodayRoute } from "./TodayRoute";
+export { TasksRoute } from "./TasksRoute";
 export { ProjectsRoute } from "./ProjectsRoute";
 export { ProjectDetailsRoute } from "./ProjectDetailsRoute";
 export { ComingSoonRoute } from "./ComingSoonRoute";

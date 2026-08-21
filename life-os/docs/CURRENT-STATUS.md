@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-0812 Tasks screen composition handoff)
+Last updated: 2026-08-21 (LOS-0813 Tasks screen integration handoff)
 
 ## Phase
 
@@ -30,6 +30,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 ## Completed
 
+- LOS-0813 — Integrated the Tasks screen with list/summary query, CRUD/status/MIT/bulk mutations, URL state, safe optimistic updates, partial bulk failures, and preserved failed selection. See `docs/handoffs/LOS-0813.md`.
 - LOS-0812 — Composed the Tasks screen with header/add, summary presets, tabs, search/filters/sort/view, DataTable and cards, bulk actions, pagination, detail selection, TaskForm, and loading/empty/error/partial-failure mock states. See `docs/handoffs/LOS-0812.md`.
 - LOS-0811 — Built six controlled Task summary metrics for All, To Do, In progress, Done, Blocked, and Overdue. Each ready/loading/empty/error value remains accessibly named, filter actions expose exact names and pressed state, and pure URL helpers apply/read backend-compatible `status`/`overdue` presets while preserving unrelated filters and resetting pagination. Catalog specimens, 28 focused tests, the full frontend gate, and live 320px/tablet/desktop checks pass. See `docs/handoffs/LOS-0811.md`.
 - LOS-0810 — Built TaskForm as a responsive create/edit FormDialog with a compact Quick Add presentation, canonical Project/status/priority fields, timezone-safe due instant conversion, Estimate, progress, Labels, dated MIT selection, dirty protection, pending/error states, and version-conflict reload handling. Validation is linked through a focusable error summary; catalog specimens and live 320px/desktop verification cover both presentations. See `docs/handoffs/LOS-0810.md`.
@@ -261,7 +262,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0813 (`docs/backlog/EPIC-08-TASKS.md`) — integrate the Tasks screen with list/summary CRUD, MIT, bulk actions, URL state, safe optimistic updates, and preserved partial-failure selection.
+LOS-0814 (`docs/backlog/EPIC-08-TASKS.md`) — build TaskDetailsHeader and metadata.
 
 ## Known decisions requiring implementation-time values
 
