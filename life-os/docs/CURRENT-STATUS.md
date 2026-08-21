@@ -8,6 +8,7 @@ Phase 2 — Identity and application shell.
 
 ## In review
 
+- LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 - LOS-0701 — Projects, milestones, and labels schema/domain/persistence modeling. See `docs/handoffs/LOS-0701.md`.
 - LOS-0702 — Authenticated, CSRF-protected project CRUD/archive/restore/delete API with ownership, label isolation, optimistic concurrency, problem details, and audit events. See `docs/handoffs/LOS-0702.md`.
 - LOS-0703 — User-scoped project search/filter/sort/pagination query API and summary counts. See `docs/handoffs/LOS-0703.md`.

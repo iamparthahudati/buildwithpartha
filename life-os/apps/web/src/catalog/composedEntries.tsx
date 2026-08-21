@@ -22,6 +22,7 @@ import {
   ProjectTimelineDemo,
   ProjectFormDemo,
   ProjectSummaryMetricsDemo,
+  TimeBlockRowDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -321,6 +322,22 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Projects screen with interactive states (populated, first-use empty, loading, error).",
         render: () => <ProjectsScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "time-block-row",
+    name: "TimeBlockRow",
+    group: "Composed",
+    summary:
+      "TimeBlockRow composed component displaying category color swatch and icon, title, local times and duration, status badges, conflict warnings, project/task context, and action controls.",
+    states: [
+      {
+        id: "time-block-row-default",
+        name: "Default",
+        description:
+          "TimeBlockRow in scheduled, active current, completed, conflict warning, and loading skeleton states.",
+        render: () => <TimeBlockRowDemo />,
       },
     ],
   },
