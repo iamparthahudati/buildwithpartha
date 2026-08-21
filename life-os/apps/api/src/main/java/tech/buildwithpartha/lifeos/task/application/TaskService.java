@@ -1,7 +1,11 @@
 package tech.buildwithpartha.lifeos.task.application;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
+import tech.buildwithpartha.lifeos.task.domain.Subtask;
 import tech.buildwithpartha.lifeos.task.domain.Task;
 import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
 import tech.buildwithpartha.lifeos.task.domain.TaskQuery;
@@ -180,6 +185,124 @@ public class TaskService {
     Instant now = Instant.now();
     Task duplicated = existing.duplicate(UUID.randomUUID(), newTitle, now);
     return taskRepository.save(duplicated);
+  }
+
+  public Task addSubtask(UUID userId, UUID taskId, String title, Integer requestedPosition) {
+    Task task = getTask(userId, taskId);
+    Instant now = Instant.now();
+    int position =
+        requestedPosition != null
+            ? requestedPosition
+            : task.subtasks().stream().mapToInt(Subtask::position).max().orElse(-1) + 1;
+
+    Subtask newSubtask =
+        new Subtask(UUID.randomUUID(), taskId, title.trim(), false, position, now, now, 0L);
+
+    List<Subtask> updatedSubtasks = new ArrayList<>(task.subtasks());
+    updatedSubtasks.add(newSubtask);
+
+    Task updatedTask = task.withSubtasks(updatedSubtasks, now);
+    return taskRepository.save(recalculateTaskProgress(updatedTask, now));
+  }
+
+  public Task updateSubtask(
+      UUID userId, UUID taskId, UUID subtaskId, String title, Boolean completed, Integer position) {
+    Task task = getTask(userId, taskId);
+    Instant now = Instant.now();
+
+    List<Subtask> updatedSubtasks =
+        task.subtasks().stream()
+            .map(
+                s -> {
+                  if (s.id().equals(subtaskId)) {
+                    String newTitle = title != null ? title.trim() : s.title();
+                    boolean newCompleted = completed != null ? completed : s.completed();
+                    int newPosition = position != null ? position : s.position();
+                    return new Subtask(
+                        s.id(),
+                        s.taskId(),
+                        newTitle,
+                        newCompleted,
+                        newPosition,
+                        s.createdAt(),
+                        now,
+                        s.version());
+                  }
+                  return s;
+                })
+            .toList();
+
+    Task updatedTask = task.withSubtasks(updatedSubtasks, now);
+    return taskRepository.save(recalculateTaskProgress(updatedTask, now));
+  }
+
+  public Task toggleSubtask(UUID userId, UUID taskId, UUID subtaskId) {
+    Task task = getTask(userId, taskId);
+    Instant now = Instant.now();
+
+    List<Subtask> updatedSubtasks =
+        task.subtasks().stream()
+            .map(s -> s.id().equals(subtaskId) ? s.withCompleted(!s.completed(), now) : s)
+            .toList();
+
+    Task updatedTask = task.withSubtasks(updatedSubtasks, now);
+    return taskRepository.save(recalculateTaskProgress(updatedTask, now));
+  }
+
+  public Task deleteSubtask(UUID userId, UUID taskId, UUID subtaskId) {
+    Task task = getTask(userId, taskId);
+    Instant now = Instant.now();
+
+    List<Subtask> updatedSubtasks =
+        task.subtasks().stream().filter(s -> !s.id().equals(subtaskId)).toList();
+
+    Task updatedTask = task.withSubtasks(updatedSubtasks, now);
+    return taskRepository.save(recalculateTaskProgress(updatedTask, now));
+  }
+
+  public Task reorderSubtasks(UUID userId, UUID taskId, List<UUID> subtaskIds) {
+    Task task = getTask(userId, taskId);
+    Instant now = Instant.now();
+
+    Map<UUID, Integer> positionMap = new HashMap<>();
+    for (int i = 0; i < subtaskIds.size(); i++) {
+      positionMap.put(subtaskIds.get(i), i);
+    }
+
+    List<Subtask> reordered =
+        task.subtasks().stream()
+            .map(
+                s -> {
+                  Integer newPos = positionMap.get(s.id());
+                  return newPos != null ? s.withPosition(newPos, now) : s;
+                })
+            .sorted(Comparator.comparingInt(Subtask::position))
+            .toList();
+
+    Task updatedTask = task.withSubtasks(reordered, now);
+    return taskRepository.save(updatedTask);
+  }
+
+  private Task recalculateTaskProgress(Task task, Instant now) {
+    List<Subtask> subtasks = task.subtasks();
+    if (subtasks.isEmpty()) {
+      return task;
+    }
+    long completedCount = subtasks.stream().filter(Subtask::completed).count();
+    int progress = (int) Math.round(((double) completedCount / subtasks.size()) * 100.0);
+    return task.withUpdates(
+        task.projectId(),
+        task.title(),
+        task.description(),
+        task.status(),
+        task.priority(),
+        task.dueAt(),
+        task.estimateMinutes(),
+        task.spentMinutes(),
+        progress,
+        task.mitDate(),
+        task.position(),
+        now);
   }
 
   private void checkVersion(Task existing, long expectedVersion) {
