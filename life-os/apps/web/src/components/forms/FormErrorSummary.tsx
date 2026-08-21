@@ -64,7 +64,7 @@ export const FormErrorSummary = forwardRef<HTMLDivElement, FormErrorSummaryProps
                 onClick={() => {
                   const target = document.getElementById(field.id);
                   target?.focus();
-                  target?.scrollIntoView({ block: "center" });
+                  target?.scrollIntoView?.({ block: "center" });
                 }}
               >
                 {field.error}

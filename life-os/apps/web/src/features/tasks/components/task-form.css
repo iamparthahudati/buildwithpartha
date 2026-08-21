@@ -1,0 +1,40 @@
+/* TaskForm (LOS-0810). */
+.lifeos-task-form-dialog {
+  max-width: 44rem;
+}
+
+.lifeos-task-form__fieldset {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.lifeos-task-form,
+.lifeos-task-form__advanced {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-task-form__advanced {
+  padding-block-start: var(--lifeos-space-4);
+  border-block-start: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-task-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-4);
+  align-items: start;
+}
+
+.lifeos-task-form__advanced-toggle {
+  align-self: flex-start;
+}
+
+@media (max-width: 640px) {
+  .lifeos-task-form__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
