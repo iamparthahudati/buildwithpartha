@@ -246,3 +246,12 @@ CREATE TABLE IF NOT EXISTS task_labels (
     PRIMARY KEY (task_id, label_id)
 );
 
+-- Added by LOS-0807: Task dependencies.
+CREATE TABLE IF NOT EXISTS task_dependencies (
+    blocking_task_id UUID                     NOT NULL,
+    blocked_task_id  UUID                     NOT NULL,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    PRIMARY KEY (blocking_task_id, blocked_task_id)
+);
+
+

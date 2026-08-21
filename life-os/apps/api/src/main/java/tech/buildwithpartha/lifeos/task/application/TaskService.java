@@ -14,10 +14,17 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
+import tech.buildwithpartha.lifeos.common.error.FieldProblem;
+import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.common.label.LabelOwnershipValidator;
+import tech.buildwithpartha.lifeos.task.domain.DependencyCycleValidator;
 import tech.buildwithpartha.lifeos.task.domain.Subtask;
 import tech.buildwithpartha.lifeos.task.domain.Task;
+import tech.buildwithpartha.lifeos.task.domain.TaskDependenciesSummary;
+import tech.buildwithpartha.lifeos.task.domain.TaskDependency;
+import tech.buildwithpartha.lifeos.task.domain.TaskDependencyRepository;
+import tech.buildwithpartha.lifeos.task.domain.TaskDependencyType;
 import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
 import tech.buildwithpartha.lifeos.task.domain.TaskQuery;
 import tech.buildwithpartha.lifeos.task.domain.TaskQueryResult;
@@ -31,11 +38,15 @@ public class TaskService {
 
   private final TaskRepository taskRepository;
   private final LabelOwnershipValidator labelOwnershipValidator;
+  private final TaskDependencyRepository taskDependencyRepository;
 
   public TaskService(
-      TaskRepository taskRepository, LabelOwnershipValidator labelOwnershipValidator) {
+      TaskRepository taskRepository,
+      LabelOwnershipValidator labelOwnershipValidator,
+      TaskDependencyRepository taskDependencyRepository) {
     this.taskRepository = taskRepository;
     this.labelOwnershipValidator = labelOwnershipValidator;
+    this.taskDependencyRepository = taskDependencyRepository;
   }
 
   public Task createTask(UUID userId, CreateTaskCommand command) {
@@ -156,7 +167,11 @@ public class TaskService {
             existing.position(),
             now);
 
-    return taskRepository.save(updated);
+    Task saved = taskRepository.save(updated);
+    if (status.isTerminal()) {
+      unblockDependentsIfAllBlockersResolved(userId, taskId);
+    }
+    return saved;
   }
 
   public Task completeTask(UUID userId, UUID taskId, long version) {
@@ -399,6 +414,129 @@ public class TaskService {
               + expectedVersion
               + " but was "
               + existing.version());
+    }
+  }
+
+  public TaskDependency addDependency(
+      UUID userId, UUID taskId, UUID targetTaskId, TaskDependencyType type) {
+    Objects.requireNonNull(userId, "userId must not be null");
+    Objects.requireNonNull(taskId, "taskId must not be null");
+    Objects.requireNonNull(targetTaskId, "targetTaskId must not be null");
+    Objects.requireNonNull(type, "type must not be null");
+
+    if (taskId.equals(targetTaskId)) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("targetTaskId", "INVALID_DEPENDENCY")));
+    }
+
+    Task task = getTask(userId, taskId);
+    Task targetTask = getTask(userId, targetTaskId);
+
+    if (task.isDeleted() || targetTask.isDeleted()) {
+      throw new ResourceNotFoundException("Task not found or deleted");
+    }
+
+    UUID blockingTaskId = type == TaskDependencyType.BLOCKER ? targetTaskId : taskId;
+    UUID blockedTaskId = type == TaskDependencyType.BLOCKER ? taskId : targetTaskId;
+
+    if (taskDependencyRepository.exists(blockingTaskId, blockedTaskId)) {
+      return taskDependencyRepository
+          .find(blockingTaskId, blockedTaskId)
+          .orElseGet(
+              () ->
+                  taskDependencyRepository.save(
+                      new TaskDependency(blockingTaskId, blockedTaskId, Instant.now())));
+    }
+
+    List<TaskDependency> existingUserDependencies = taskDependencyRepository.findAllForUser(userId);
+
+    if (DependencyCycleValidator.wouldCreateCycle(
+        existingUserDependencies, blockingTaskId, blockedTaskId)) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("targetTaskId", "INVALID_DEPENDENCY")));
+    }
+
+    return taskDependencyRepository.save(
+        new TaskDependency(blockingTaskId, blockedTaskId, Instant.now()));
+  }
+
+  public void removeDependency(
+      UUID userId, UUID taskId, UUID targetTaskId, TaskDependencyType type) {
+    Objects.requireNonNull(userId, "userId must not be null");
+    Objects.requireNonNull(taskId, "taskId must not be null");
+    Objects.requireNonNull(targetTaskId, "targetTaskId must not be null");
+    Objects.requireNonNull(type, "type must not be null");
+
+    // Verify main task exists and belongs to user
+    getTask(userId, taskId);
+
+    UUID blockingTaskId = type == TaskDependencyType.BLOCKER ? targetTaskId : taskId;
+    UUID blockedTaskId = type == TaskDependencyType.BLOCKER ? taskId : targetTaskId;
+
+    taskDependencyRepository.delete(blockingTaskId, blockedTaskId);
+  }
+
+  @Transactional(readOnly = true)
+  public TaskDependenciesSummary getTaskDependencies(UUID userId, UUID taskId) {
+    Objects.requireNonNull(userId, "userId must not be null");
+    Objects.requireNonNull(taskId, "taskId must not be null");
+
+    getTask(userId, taskId);
+
+    List<TaskDependency> blockerDeps = taskDependencyRepository.findBlockersForTask(taskId);
+    List<TaskDependency> dependentDeps = taskDependencyRepository.findDependentsForTask(taskId);
+
+    List<Task> blockers =
+        blockerDeps.stream()
+            .map(dep -> taskRepository.findByIdAndUserId(dep.blockingTaskId(), userId))
+            .flatMap(Optional::stream)
+            .filter(t -> !t.isDeleted())
+            .toList();
+
+    List<Task> dependents =
+        dependentDeps.stream()
+            .map(dep -> taskRepository.findByIdAndUserId(dep.blockedTaskId(), userId))
+            .flatMap(Optional::stream)
+            .filter(t -> !t.isDeleted())
+            .toList();
+
+    long unresolvedBlockerCount = blockers.stream().filter(t -> !t.status().isTerminal()).count();
+
+    boolean isBlocked = unresolvedBlockerCount > 0;
+
+    return new TaskDependenciesSummary(blockers, dependents, isBlocked, unresolvedBlockerCount);
+  }
+
+  private void unblockDependentsIfAllBlockersResolved(UUID userId, UUID blockingTaskId) {
+    List<TaskDependency> dependents =
+        taskDependencyRepository.findDependentsForTask(blockingTaskId);
+    Instant now = Instant.now();
+    for (TaskDependency dep : dependents) {
+      Optional<Task> dependentTaskOpt =
+          taskRepository.findByIdAndUserId(dep.blockedTaskId(), userId);
+      if (dependentTaskOpt.isPresent()) {
+        Task dependentTask = dependentTaskOpt.get();
+        if (dependentTask.status() == TaskStatus.BLOCKED) {
+          TaskDependenciesSummary summary = getTaskDependencies(userId, dependentTask.id());
+          if (!summary.isBlocked()) {
+            Task unblocked =
+                dependentTask.withUpdates(
+                    dependentTask.projectId(),
+                    dependentTask.title(),
+                    dependentTask.description(),
+                    TaskStatus.TO_DO,
+                    dependentTask.priority(),
+                    dependentTask.dueAt(),
+                    dependentTask.estimateMinutes(),
+                    dependentTask.spentMinutes(),
+                    dependentTask.progress(),
+                    dependentTask.mitDate(),
+                    dependentTask.position(),
+                    now);
+            taskRepository.save(unblocked);
+          }
+        }
+      }
     }
   }
 }

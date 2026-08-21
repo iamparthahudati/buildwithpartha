@@ -32,6 +32,8 @@ import tech.buildwithpartha.lifeos.task.application.CreateTaskCommand;
 import tech.buildwithpartha.lifeos.task.application.TaskService;
 import tech.buildwithpartha.lifeos.task.application.UpdateTaskCommand;
 import tech.buildwithpartha.lifeos.task.domain.Task;
+import tech.buildwithpartha.lifeos.task.domain.TaskDependenciesSummary;
+import tech.buildwithpartha.lifeos.task.domain.TaskDependencyType;
 import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
 import tech.buildwithpartha.lifeos.task.domain.TaskQuery;
 import tech.buildwithpartha.lifeos.task.domain.TaskQueryResult;
@@ -464,6 +466,59 @@ public class TaskController {
         .getMitForDate(userId, effectiveDate)
         .map(t -> ResponseEntity.ok(TaskResponse.fromDomain(t)))
         .orElseGet(() -> ResponseEntity.noContent().build());
+  }
+
+  @Operation(
+      summary = "Get task dependencies",
+      description = "Retrieves blockers, dependents, and derived blocked state for a task.")
+  @ApiResponse(responseCode = "200", description = "Task dependency summary.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping("/{id}/dependencies")
+  public TaskDependenciesSummaryResponse getTaskDependencies(
+      @AuthenticationPrincipal UUID userId, @PathVariable("id") UUID id) {
+    TaskDependenciesSummary summary = taskService.getTaskDependencies(userId, id);
+    return TaskDependenciesSummaryResponse.fromDomain(summary);
+  }
+
+  @Operation(
+      summary = "Add task dependency",
+      description = "Creates a directed dependency edge linking a task to a blocker or dependent.")
+  @ApiResponse(responseCode = "201", description = "Dependency edge created.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/{id}/dependencies")
+  @ResponseStatus(HttpStatus.CREATED)
+  public TaskDependenciesSummaryResponse addDependency(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @Valid @RequestBody AddDependencyRequest request) {
+    taskService.addDependency(userId, id, request.targetTaskId(), request.type());
+    TaskDependenciesSummary summary = taskService.getTaskDependencies(userId, id);
+    return TaskDependenciesSummaryResponse.fromDomain(summary);
+  }
+
+  @Operation(
+      summary = "Remove task dependency",
+      description = "Removes a directed dependency edge linking a task to a blocker or dependent.")
+  @ApiResponse(responseCode = "200", description = "Dependency edge removed.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @DeleteMapping("/{id}/dependencies/{targetTaskId}")
+  public TaskDependenciesSummaryResponse removeDependency(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @PathVariable("targetTaskId") UUID targetTaskId,
+      @RequestParam(name = "type", required = false, defaultValue = "BLOCKER")
+          TaskDependencyType type) {
+    taskService.removeDependency(userId, id, targetTaskId, type);
+    TaskDependenciesSummary summary = taskService.getTaskDependencies(userId, id);
+    return TaskDependenciesSummaryResponse.fromDomain(summary);
   }
 
   private Set<TaskStatus> parseStatuses(Set<String> values) {
