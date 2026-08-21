@@ -154,6 +154,21 @@ class SecurityControllerTests {
   }
 
   @Test
+  void bootstrapsCurrentSession() throws Exception {
+    mockMvc
+        .perform(get("/auth/session").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.email").exists())
+        .andExpect(jsonPath("$.displayName").value("Security User"))
+        .andExpect(jsonPath("$.csrfToken").exists());
+  }
+
+  @Test
+  void rejectsUnauthenticatedSessionBootstrap() throws Exception {
+    mockMvc.perform(get("/auth/session")).andExpect(status().isUnauthorized());
+  }
+
+  @Test
   void listsActiveSessions() throws Exception {
     mockMvc
         .perform(get("/auth/sessions").cookie(sessionCookie))

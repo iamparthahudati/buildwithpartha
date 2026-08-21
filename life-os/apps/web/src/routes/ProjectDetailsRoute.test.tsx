@@ -5,6 +5,7 @@ import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProjectDetailsRoute } from "./ProjectDetailsRoute";
 import * as projectsFeature from "@features/projects";
+import * as tasksFeature from "@features/tasks";
 import { AuthSessionContext, type AuthSessionValue } from "@state/authSession";
 
 vi.mock("@features/projects", async () => {
@@ -63,7 +64,16 @@ vi.mock("@features/projects", async () => {
   };
 });
 
+vi.mock("@features/tasks", async () => {
+  const actual = await vi.importActual<typeof tasksFeature>("@features/tasks");
+  return {
+    ...actual,
+    useTasks: vi.fn(),
+  };
+});
+
 const mockUseProjectDetail = vi.mocked(projectsFeature.useProjectDetail);
+const mockUseTasks = vi.mocked(tasksFeature.useTasks);
 const mockUseCreateMilestone = vi.mocked(projectsFeature.useCreateMilestone);
 const mockUseUpdateMilestone = vi.mocked(projectsFeature.useUpdateMilestone);
 const mockUseUpdateMilestoneStatus = vi.mocked(projectsFeature.useUpdateMilestoneStatus);
@@ -99,11 +109,44 @@ const MOCK_PROJECT: projectsFeature.Project = {
   icon: "rocket",
   startDate: "2026-08-01",
   deadlineDate: "2026-08-30",
-  completedTasksCount: 4,
-  totalTasksCount: 10,
+  completedTasksCount: 0,
+  totalTasksCount: 0,
   updatedAt: "2026-08-20T12:00:00Z",
   version: 1,
 };
+
+const EMPTY_TASKS_QUERY = {
+  data: {
+    items: [],
+    page: { items: [], page: 0, size: 100, totalItems: 0, totalPages: 0 },
+    summary: { total: 0, toDo: 0, inProgress: 0, blocked: 0, done: 0, overdue: 0 },
+  },
+  isPending: false,
+  isError: false,
+  error: null,
+  refetch: vi.fn(),
+};
+
+const DONE_TASKS_QUERY = {
+  data: {
+    items: [],
+    page: { items: [], page: 0, size: 1, totalItems: 0, totalPages: 0 },
+    summary: { total: 0, toDo: 0, inProgress: 0, blocked: 0, done: 0, overdue: 0 },
+  },
+  isPending: false,
+  isError: false,
+  error: null,
+  refetch: vi.fn(),
+};
+
+function mockProjectTasksQueries() {
+  mockUseTasks.mockImplementation((params) => {
+    if (params.status?.includes("DONE")) {
+      return DONE_TASKS_QUERY as unknown as ReturnType<typeof tasksFeature.useTasks>;
+    }
+    return EMPTY_TASKS_QUERY as unknown as ReturnType<typeof tasksFeature.useTasks>;
+  });
+}
 
 function renderRoute(initialPath = "/life-os/app/projects/proj-123") {
   const queryClient = new QueryClient({
@@ -129,6 +172,7 @@ function renderRoute(initialPath = "/life-os/app/projects/proj-123") {
 describe("ProjectDetailsRoute", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockProjectTasksQueries();
 
     mockUseCreateMilestone.mockReturnValue({
       mutateAsync: vi.fn(),
@@ -293,5 +337,79 @@ describe("ProjectDetailsRoute", () => {
     props.onGoBack();
 
     expect(mockMutateAsync).toHaveBeenCalled();
+  });
+
+  it("loads project-scoped tasks and passes them to the details screen", () => {
+    mockUseTasks.mockImplementation((params) => {
+      if (params.status?.includes("DONE")) {
+        return {
+          ...DONE_TASKS_QUERY,
+          data: {
+            ...DONE_TASKS_QUERY.data,
+            page: { ...DONE_TASKS_QUERY.data.page, totalItems: 0 },
+          },
+        } as unknown as ReturnType<typeof tasksFeature.useTasks>;
+      }
+
+      return {
+        ...EMPTY_TASKS_QUERY,
+        data: {
+          items: [
+            {
+              id: "task-1",
+              title: "Draft outline",
+              description: null,
+              status: "TO_DO",
+              priority: "P2",
+              project: { id: "proj-123", name: "Launch Platform v1" },
+              dueAt: null,
+              estimateMinutes: null,
+              progress: 0,
+              mitDate: null,
+              isMit: false,
+              commentCount: 0,
+              blockerCount: 0,
+              overdue: false,
+              archivedAt: null,
+              labelIds: [],
+              version: 1,
+              createdAt: "2026-08-21T08:00:00Z",
+              updatedAt: "2026-08-21T08:00:00Z",
+              href: "/life-os/app/tasks/task-1",
+            },
+          ],
+          page: {
+            items: [],
+            page: 0,
+            size: 100,
+            totalItems: 1,
+            totalPages: 1,
+          },
+          summary: EMPTY_TASKS_QUERY.data.summary,
+        },
+      } as unknown as ReturnType<typeof tasksFeature.useTasks>;
+    });
+
+    mockUseProjectDetail.mockReturnValue({
+      data: { project: MOCK_PROJECT, milestones: [] },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof projectsFeature.useProjectDetail>);
+
+    renderRoute();
+
+    const props = (globalThis as Record<string, any>).__lastDetailsProps;
+    expect(props.topTasks).toEqual([
+      expect.objectContaining({
+        id: "task-1",
+        title: "Draft outline",
+        status: "PLANNED",
+        priority: "P2",
+      }),
+    ]);
+    expect(props.tasksTotalCount).toBe(1);
+    expect(props.project.totalTasksCount).toBe(1);
   });
 });

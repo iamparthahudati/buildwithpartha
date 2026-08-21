@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import {
   ProjectDetailsScreen,
@@ -12,8 +12,14 @@ import {
   useDeleteProject,
   type MilestoneFormData,
   type MilestoneStatus,
+  type Project,
 } from "@features/projects";
+import { useTasks } from "@features/tasks";
 import { useAuthSession } from "@state/authSession";
+
+import { mapTaskRecordToProjectOverviewTask } from "./projectTaskMapping";
+
+const PROJECT_TASKS_PAGE_SIZE = 100;
 
 export function ProjectDetailsRoute() {
   const { projectId = "" } = useParams<{ projectId: string }>();
@@ -42,6 +48,54 @@ export function ProjectDetailsRoute() {
   );
 
   const { data, isLoading, isError, error, refetch } = useProjectDetail(projectId);
+  const tasksEnabled = user !== null && projectId !== "";
+  const timeZone = user?.timeZone ?? "UTC";
+
+  const projectTasksQuery = useTasks(
+    {
+      projectId,
+      archived: false,
+      page: 0,
+      size: PROJECT_TASKS_PAGE_SIZE,
+      sortBy: "updatedAt",
+      sortDirection: "DESC",
+    },
+    tasksEnabled,
+  );
+
+  const completedProjectTasksQuery = useTasks(
+    {
+      projectId,
+      archived: false,
+      status: ["DONE"],
+      page: 0,
+      size: 1,
+    },
+    tasksEnabled,
+  );
+
+  const topTasks = useMemo(
+    () =>
+      (projectTasksQuery.data?.items ?? []).map((task) =>
+        mapTaskRecordToProjectOverviewTask(task, timeZone),
+      ),
+    [projectTasksQuery.data?.items, timeZone],
+  );
+
+  const totalTasksCount = projectTasksQuery.data?.page.totalItems ?? 0;
+  const completedTasksCount = completedProjectTasksQuery.data?.page.totalItems ?? 0;
+
+  const projectWithTaskCounts = useMemo((): Project | undefined => {
+    if (!data?.project) {
+      return undefined;
+    }
+
+    return {
+      ...data.project,
+      totalTasksCount,
+      completedTasksCount,
+    };
+  }, [completedTasksCount, data?.project, totalTasksCount]);
 
   const createMilestoneMutation = useCreateMilestone();
   const updateMilestoneMutation = useUpdateMilestone();
@@ -141,10 +195,23 @@ export function ProjectDetailsRoute() {
     navigate("/life-os/app/projects");
   }, [navigate]);
 
+  const handleAddTask = useCallback(() => {
+    navigate(`/life-os/app/tasks?projectId=${encodeURIComponent(projectId)}`);
+  }, [navigate, projectId]);
+
+  const handleRetry = useCallback(() => {
+    void refetch();
+    void projectTasksQuery.refetch();
+    void completedProjectTasksQuery.refetch();
+  }, [completedProjectTasksQuery, projectTasksQuery, refetch]);
+
   return (
     <ProjectDetailsScreen
-      {...(data?.project ? { project: data.project } : {})}
+      {...(projectWithTaskCounts ? { project: projectWithTaskCounts } : {})}
       milestones={data?.milestones ?? []}
+      topTasks={topTasks}
+      tasksTotalCount={totalTasksCount}
+      tasksLoading={projectTasksQuery.isPending}
       ownerName={user?.displayName ?? "You"}
       selectedTab={currentTab}
       onTabChange={handleTabChange}
@@ -152,8 +219,9 @@ export function ProjectDetailsRoute() {
       notFound={isError && error?.message?.includes("404")}
       forbidden={isError && error?.message?.includes("403")}
       error={isError ? error : null}
-      onRetry={refetch}
+      onRetry={handleRetry}
       onGoBack={handleGoBack}
+      onAddTask={handleAddTask}
       onAddMilestone={handleAddMilestone}
       onUpdateMilestone={handleUpdateMilestone}
       onMilestoneStatusChange={handleMilestoneStatusChange}

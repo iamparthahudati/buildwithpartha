@@ -80,6 +80,29 @@ final class FakeSessionRepository implements SessionRepository {
     return revokedCount;
   }
 
+  @Override
+  public boolean rotateCsrfSecret(UUID sessionId, String csrfSecretHash, Instant lastSeenAt) {
+    for (int i = 0; i < saved.size(); i++) {
+      Session session = saved.get(i);
+      if (session.id().equals(sessionId) && session.revokedAt().isEmpty()) {
+        saved.set(
+            i,
+            new Session(
+                session.id(),
+                session.userId(),
+                session.tokenHash(),
+                csrfSecretHash,
+                session.createdAt(),
+                lastSeenAt,
+                session.expiresAt(),
+                session.revokedAt(),
+                session.deviceHint()));
+        return true;
+      }
+    }
+    return false;
+  }
+
   List<Session> all() {
     return List.copyOf(saved);
   }

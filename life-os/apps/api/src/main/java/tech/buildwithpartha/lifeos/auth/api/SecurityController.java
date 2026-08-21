@@ -24,6 +24,8 @@ import tech.buildwithpartha.lifeos.auth.application.AccountDeletionOutcome;
 import tech.buildwithpartha.lifeos.auth.application.AccountDeletionService;
 import tech.buildwithpartha.lifeos.auth.application.ChangePasswordCommand;
 import tech.buildwithpartha.lifeos.auth.application.ChangePasswordService;
+import tech.buildwithpartha.lifeos.auth.application.SessionBootstrapResult;
+import tech.buildwithpartha.lifeos.auth.application.SessionBootstrapService;
 import tech.buildwithpartha.lifeos.auth.application.SessionDto;
 import tech.buildwithpartha.lifeos.auth.application.SessionManagementService;
 import tech.buildwithpartha.lifeos.auth.domain.RawPassword;
@@ -38,15 +40,36 @@ public class SecurityController {
 
   private final ChangePasswordService changePasswordService;
   private final SessionManagementService sessionManagementService;
+  private final SessionBootstrapService sessionBootstrapService;
   private final AccountDeletionService accountDeletionService;
 
   public SecurityController(
       ChangePasswordService changePasswordService,
       SessionManagementService sessionManagementService,
+      SessionBootstrapService sessionBootstrapService,
       AccountDeletionService accountDeletionService) {
     this.changePasswordService = changePasswordService;
     this.sessionManagementService = sessionManagementService;
+    this.sessionBootstrapService = sessionBootstrapService;
     this.accountDeletionService = accountDeletionService;
+  }
+
+  @Operation(
+      summary = "Bootstrap the current session",
+      description =
+          "Returns the safe account profile and a fresh CSRF token for the authenticated session"
+              + " cookie. Used after a full page load to restore in-memory frontend session state.")
+  @ApiResponse(responseCode = "200", description = "Current session bootstrapped.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping("/session")
+  public LoginResponse getSession(
+      @AuthenticationPrincipal UUID userId, HttpServletRequest servletRequest) {
+    SessionBootstrapResult result =
+        sessionBootstrapService
+            .bootstrap(userId, sessionCookieValue(servletRequest).orElse(null))
+            .orElseThrow(() -> new IllegalStateException("Active session missing"));
+    return LoginResponse.of(result.user(), result.csrfToken().value());
   }
 
   @Operation(

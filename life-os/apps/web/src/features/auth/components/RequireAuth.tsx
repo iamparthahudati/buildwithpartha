@@ -32,7 +32,7 @@ export interface RequireAuthProps {
 }
 
 export function RequireAuth({ children, navigate }: RequireAuthProps) {
-  const { user } = useAuthSession();
+  const { user, isBootstrapping } = useAuthSession();
 
   // Kept current without retriggering the redirect effect on every render —
   // only a real change in `user` should ever cause a second redirect.
@@ -42,12 +42,15 @@ export function RequireAuth({ children, navigate }: RequireAuthProps) {
   });
 
   useEffect(() => {
+    if (isBootstrapping) {
+      return;
+    }
     if (user === null) {
       navigateRef.current(buildLoginPathWithReturnTo(currentPathForReturnTo()));
     }
-  }, [user]);
+  }, [user, isBootstrapping]);
 
-  if (user === null) {
+  if (isBootstrapping || user === null) {
     return null;
   }
 

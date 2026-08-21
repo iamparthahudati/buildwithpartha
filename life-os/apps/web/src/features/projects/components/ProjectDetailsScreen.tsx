@@ -47,6 +47,8 @@ export interface ProjectDetailsScreenProps {
   readonly actualHours?: number;
   readonly labels?: readonly string[];
   readonly topTasks?: readonly ProjectOverviewTask[];
+  readonly tasksTotalCount?: number;
+  readonly tasksLoading?: boolean;
   readonly activityEvents?: readonly ActivityEvent[];
   readonly statusBreakdown?: readonly ChartDatum[];
   readonly priorityBreakdown?: readonly ChartDatum[];
@@ -107,6 +109,8 @@ export function ProjectDetailsScreen({
   actualHours,
   labels = [],
   topTasks = [],
+  tasksTotalCount,
+  tasksLoading = false,
   activityEvents = [],
   statusBreakdown = [],
   priorityBreakdown = [],
@@ -214,6 +218,7 @@ export function ProjectDetailsScreen({
   }
 
   const isArchived = Boolean(project.archivedAt);
+  const visibleTaskCount = tasksTotalCount ?? topTasks.length;
 
   // Column config for Tasks tab
   const taskColumns: readonly DataTableColumn<ProjectOverviewTask>[] = [
@@ -294,7 +299,7 @@ export function ProjectDetailsScreen({
     {
       id: "tasks",
       label: "Tasks",
-      badge: topTasks.length > 0 ? <Badge tone="neutral">{topTasks.length}</Badge> : undefined,
+      badge: visibleTaskCount > 0 ? <Badge tone="neutral">{visibleTaskCount}</Badge> : undefined,
       panel: (
         <Surface
           as="section"
@@ -303,7 +308,7 @@ export function ProjectDetailsScreen({
         >
           <div className="lifeos-project-details-screen__tasks-header">
             <Heading level={2} size="md">
-              Tasks ({topTasks.length})
+              Tasks ({visibleTaskCount})
             </Heading>
             {!isArchived && onAddTask ? (
               <Button variant="primary" iconStart={Plus} onClick={onAddTask}>
@@ -312,7 +317,9 @@ export function ProjectDetailsScreen({
             ) : null}
           </div>
 
-          {topTasks.length === 0 ? (
+          {tasksLoading ? (
+            <SkeletonCard aria-label="Loading project tasks" />
+          ) : visibleTaskCount === 0 ? (
             <EmptyState
               variant="first-use"
               title="No tasks in this project"

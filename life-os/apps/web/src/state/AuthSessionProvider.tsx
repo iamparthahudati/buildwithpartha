@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { configureApiClient } from "@lib/apiClient";
 import { buildLoginPathWithReturnTo, currentPathForReturnTo } from "@lib/returnPath";
+import { getSession } from "@features/auth/api/authApi";
 
 import { AuthSessionContext, type AuthSessionValue, type AuthUser } from "./authSession";
 
@@ -47,6 +48,8 @@ export interface AuthSessionProviderProps {
 export function AuthSessionProvider({ children, navigate }: AuthSessionProviderProps) {
   const queryClient = useQueryClient();
   const [session, setSessionState] = useState<AuthSessionState>(LOGGED_OUT_STATE);
+  const [bootstrapStatus, setBootstrapStatus] = useState<"pending" | "done">("pending");
+  const isBootstrapping = session.user === null && bootstrapStatus === "pending";
 
   // Kept current without retriggering the `configureApiClient` effect below
   // on every render — only `clearSession` changing identity should do that.
@@ -98,14 +101,53 @@ export function AuthSessionProvider({ children, navigate }: AuthSessionProviderP
     });
   }, [clearSession]);
 
+  useEffect(() => {
+    if (session.user !== null) {
+      return;
+    }
+
+    let cancelled = false;
+    void getSession()
+      .then((response) => {
+        if (cancelled) {
+          return;
+        }
+        const { csrfToken, ...user } = response;
+        setSession(
+          {
+            id: String(user.id),
+            email: user.email,
+            displayName: user.displayName,
+            timeZone: user.timeZone,
+            locale: user.locale,
+            weekStart: user.weekStart,
+          },
+          csrfToken,
+        );
+      })
+      .catch(() => {
+        // No cookie-backed session to restore after a full page load.
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setBootstrapStatus("done");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session.user, setSession]);
+
   const value = useMemo<AuthSessionValue>(
     () => ({
       user: session.user,
       csrfToken: session.csrfToken,
+      isBootstrapping,
       setSession,
       clearSession,
     }),
-    [session, setSession, clearSession],
+    [session, isBootstrapping, setSession, clearSession],
   );
 
   return <AuthSessionContext value={value}>{children}</AuthSessionContext>;

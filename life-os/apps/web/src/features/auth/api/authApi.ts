@@ -74,6 +74,14 @@ export function login(request: LoginRequest): Promise<LoginResponse> {
   return apiRequest<LoginResponse>("/auth/login", { method: "POST", body: request });
 }
 
+/** Restores the safe account profile and a fresh CSRF token for an existing session cookie. */
+export function getSession(): Promise<LoginResponse> {
+  return apiRequest<LoginResponse>("/auth/session", {
+    method: "GET",
+    suppressAuthenticationRecovery: true,
+  });
+}
+
 export interface LogoutResponse {
   readonly status: "LOGGED_OUT";
 }

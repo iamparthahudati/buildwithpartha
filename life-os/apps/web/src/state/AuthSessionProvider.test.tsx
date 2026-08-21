@@ -1,7 +1,7 @@
 import { act } from "react";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook } from "@testing-library/react";
+import { renderHook, waitFor as waitForHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { apiRequest, resetApiClientConfiguration } from "@lib/apiClient";
@@ -38,12 +38,37 @@ function renderAuthSession(queryClient: QueryClient, navigate?: (url: string) =>
 }
 
 describe("AuthSessionProvider", () => {
-  afterEach(() => {
-    resetApiClientConfiguration();
+  beforeEach(() => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            type: "https://buildwithpartha.tech/life-os/problems/v1/example",
+            title: "Unauthorized",
+            status: 401,
+            detail: "Authentication required.",
+            instance: "/life-os/api/v1/auth/session",
+            code: "AUTHENTICATION_REQUIRED",
+            correlationId: "11111111-1111-4111-8111-111111111111",
+          }),
+          { status: 401, headers: { "Content-Type": "application/json" } },
+        ),
+      ),
+    );
   });
 
-  it("starts logged out: no user and no CSRF token in memory", () => {
+  afterEach(() => {
+    resetApiClientConfiguration();
+    vi.unstubAllGlobals();
+  });
+
+  it("starts logged out: no user and no CSRF token in memory", async () => {
     const { result } = renderAuthSession(new QueryClient());
+
+    await waitForHook(() => {
+      expect(result.current.isBootstrapping).toBe(false);
+    });
 
     expect(result.current.user).toBeNull();
     expect(result.current.csrfToken).toBeNull();
@@ -173,10 +198,15 @@ describe("AuthSessionProvider", () => {
       });
       fetchMock.mockResolvedValueOnce(new Response("{}", { status: 200 }));
 
-      await apiRequest("/tasks", { method: "POST", body: {} });
+      await act(async () => {
+        await apiRequest("/tasks", { method: "POST", body: {} });
+      });
 
-      const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-      expect((init.headers as Headers).get("X-CSRF-TOKEN")).toBe("csrf-token-a");
+      const postCall = fetchMock.mock.calls.find(
+        ([, init]) => (init as RequestInit).method === "POST",
+      ) as [string, RequestInit] | undefined;
+      expect(postCall).toBeDefined();
+      expect((postCall![1].headers as Headers).get("X-CSRF-TOKEN")).toBe("csrf-token-a");
     });
 
     it("clears the session and redirects to login with a returnTo on 401 AUTHENTICATION_REQUIRED", async () => {

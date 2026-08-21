@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthSessionProvider } from "@state/AuthSessionProvider";
 import { useAuthSession } from "@state/authSession";
@@ -48,32 +48,62 @@ function renderGuarded(navigate: (url: string) => void) {
 }
 
 describe("RequireAuth", () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            type: "https://buildwithpartha.tech/life-os/problems/v1/example",
+            title: "Unauthorized",
+            status: 401,
+            detail: "Authentication required.",
+            instance: "/life-os/api/v1/auth/session",
+            code: "AUTHENTICATION_REQUIRED",
+            correlationId: "11111111-1111-4111-8111-111111111111",
+          }),
+          { status: 401, headers: { "Content-Type": "application/json" } },
+        ),
+      ),
+    );
+  });
+
   afterEach(() => {
+    vi.unstubAllGlobals();
     window.history.pushState({}, "", "/");
   });
 
-  it("redirects to login with the current path as returnTo when signed out", () => {
+  it("redirects to login with the current path as returnTo when signed out", async () => {
     window.history.pushState({}, "", "/life-os/app/tasks?status=open");
     const navigate = vi.fn();
 
     renderGuarded(navigate);
 
-    expect(navigate).toHaveBeenCalledWith(
-      "/life-os/login?returnTo=%2Flife-os%2Fapp%2Ftasks%3Fstatus%3Dopen",
-    );
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalledWith(
+        "/life-os/login?returnTo=%2Flife-os%2Fapp%2Ftasks%3Fstatus%3Dopen",
+      );
+    });
   });
 
-  it("renders nothing while signed out — no flash of protected content", () => {
+  it("renders nothing while signed out — no flash of protected content", async () => {
     const navigate = vi.fn();
 
     renderGuarded(navigate);
 
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalled();
+    });
     expect(screen.queryByText("Protected content")).not.toBeInTheDocument();
   });
 
   it("renders children once a session exists, without navigating away", async () => {
     const navigate = vi.fn();
     const { user } = renderGuarded(navigate);
+
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalled();
+    });
     navigate.mockClear();
 
     await user.click(screen.getByRole("button", { name: "Sign in" }));
@@ -85,6 +115,12 @@ describe("RequireAuth", () => {
   it("redirects again once the session is cleared", async () => {
     const navigate = vi.fn();
     const { user } = renderGuarded(navigate);
+
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalled();
+    });
+    navigate.mockClear();
+
     await user.click(screen.getByRole("button", { name: "Sign in" }));
     navigate.mockClear();
 
@@ -97,6 +133,10 @@ describe("RequireAuth", () => {
   it("has no accessibility violations once content renders", async () => {
     const navigate = vi.fn();
     const { user, container } = renderGuarded(navigate);
+
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalled();
+    });
 
     await user.click(screen.getByRole("button", { name: "Sign in" }));
 

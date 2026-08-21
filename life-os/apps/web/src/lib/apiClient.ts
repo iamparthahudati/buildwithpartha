@@ -90,6 +90,8 @@ export interface ApiRequestInit {
   readonly method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   readonly body?: unknown;
   readonly signal?: AbortSignal;
+  /** When true, a 401 does not clear the in-memory session or redirect to login. */
+  readonly suppressAuthenticationRecovery?: boolean;
 }
 
 /**
@@ -136,7 +138,7 @@ export async function apiRequest<TResponse = void>(
   }
 
   const problem = await readProblem(response);
-  if (problem?.code === "AUTHENTICATION_REQUIRED") {
+  if (problem?.code === "AUTHENTICATION_REQUIRED" && !init.suppressAuthenticationRecovery) {
     configuration?.onAuthenticationRequired();
   }
   throw new ApiError(response.status, problem);

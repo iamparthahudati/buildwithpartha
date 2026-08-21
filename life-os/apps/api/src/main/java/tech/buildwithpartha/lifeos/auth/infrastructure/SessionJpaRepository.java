@@ -52,4 +52,13 @@ interface SessionJpaRepository extends JpaRepository<SessionEntity, UUID> {
       @Param("userId") UUID userId,
       @Param("currentSessionId") UUID currentSessionId,
       @Param("revokedAt") Instant revokedAt);
+
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Query(
+      "update SessionEntity s set s.csrfSecretHash = :csrfSecretHash, s.lastSeenAt = :lastSeenAt "
+          + "where s.id = :id and s.revokedAt is null")
+  int rotateCsrfSecret(
+      @Param("id") UUID id,
+      @Param("csrfSecretHash") String csrfSecretHash,
+      @Param("lastSeenAt") Instant lastSeenAt);
 }

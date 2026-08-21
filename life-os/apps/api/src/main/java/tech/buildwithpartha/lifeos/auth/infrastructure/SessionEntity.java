@@ -28,7 +28,7 @@ class SessionEntity {
   @Column(name = "token_hash", nullable = false, updatable = false)
   private String tokenHash;
 
-  @Column(name = "csrf_secret", nullable = false, updatable = false)
+  @Column(name = "csrf_secret", nullable = false)
   private String csrfSecretHash;
 
   @Column(name = "created_at", nullable = false, updatable = false)

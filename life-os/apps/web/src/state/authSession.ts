@@ -30,6 +30,8 @@ export interface AuthUser {
 export interface AuthSessionValue {
   readonly user: AuthUser | null;
   readonly csrfToken: string | null;
+  /** True while the provider is attempting to restore a cookie-backed session after load. */
+  readonly isBootstrapping: boolean;
   /**
    * Records a freshly issued session (after login). Clears every cached
    * query result first if this replaces a *different* signed-in account —

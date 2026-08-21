@@ -43,4 +43,10 @@ public interface SessionRepository {
    * when changing passwords or clicking "Sign out of all other sessions".
    */
   int revokeAllOtherSessionsForUser(UUID userId, UUID currentSessionId, Instant revokedAt);
+
+  /**
+   * Atomically replaces the CSRF secret hash and refreshes {@code last_seen_at} for an active
+   * session. Returns {@code true} when the session was still active and the update applied.
+   */
+  boolean rotateCsrfSecret(UUID sessionId, String csrfSecretHash, Instant lastSeenAt);
 }

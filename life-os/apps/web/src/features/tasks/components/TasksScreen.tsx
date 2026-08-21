@@ -4,6 +4,7 @@ import { MessageSquare, Plus } from "lucide-react";
 import {
   DataTable,
   PageHeader,
+  SortControl,
   Tabs,
   ViewToggle,
   type DataTableColumn,
@@ -732,60 +733,62 @@ export function TasksScreen({
           }
           filters={{
             controls: (
-              <>
-                <SearchField
-                  label="Search tasks"
-                  placeholder="Search tasks"
-                  value={searchDraft}
-                  onValueChange={(value) => {
-                    setSearchDraft(value);
-                    if (value === "") {
-                      setInternalSearchQuery("");
+              <div className="lifeos-tasks-screen__toolbar">
+                <div className="lifeos-tasks-screen__search">
+                  <SearchField
+                    label="Search tasks"
+                    placeholder="Search tasks"
+                    value={searchDraft}
+                    onValueChange={(value) => {
+                      setSearchDraft(value);
+                      if (value === "") {
+                        setInternalSearchQuery("");
+                        setInternalPage(1);
+                        onSearchQueryChange?.("");
+                      }
+                    }}
+                    onSearch={(query) => {
+                      setInternalSearchQuery(query);
                       setInternalPage(1);
-                      onSearchQueryChange?.("");
-                    }
-                  }}
-                  onSearch={(query) => {
-                    setInternalSearchQuery(query);
-                    setInternalPage(1);
-                    onSearchQueryChange?.(query);
-                  }}
-                />
-                <Select
-                  label="Priority"
-                  labelHidden
-                  value={priorityFilter}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setInternalPriority(value);
-                    setInternalPage(1);
-                    onPriorityFilterChange?.(value);
-                  }}
-                  options={[
-                    { value: "ALL", label: "All priorities" },
-                    { value: "P1", label: TASK_PRIORITY_LABEL.P1 },
-                    { value: "P2", label: TASK_PRIORITY_LABEL.P2 },
-                    { value: "P3", label: TASK_PRIORITY_LABEL.P3 },
-                    { value: "P4", label: TASK_PRIORITY_LABEL.P4 },
-                  ]}
-                />
-                <Select
-                  label="Project"
-                  labelHidden
-                  value={projectFilter}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setInternalProject(value);
-                    setInternalPage(1);
-                    onProjectFilterChange?.(value);
-                  }}
-                  options={[
-                    { value: "ALL", label: "All projects" },
-                    { value: "NONE", label: "No project" },
-                    ...projects.map((project) => ({ value: project.id, label: project.name })),
-                  ]}
-                />
-                <div className="lifeos-tasks-screen__view">
+                      onSearchQueryChange?.(query);
+                    }}
+                  />
+                </div>
+                <div className="lifeos-tasks-screen__filters">
+                  <Select
+                    label="Priority"
+                    labelHidden
+                    value={priorityFilter}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setInternalPriority(value);
+                      setInternalPage(1);
+                      onPriorityFilterChange?.(value);
+                    }}
+                    options={[
+                      { value: "ALL", label: "All priorities" },
+                      { value: "P1", label: TASK_PRIORITY_LABEL.P1 },
+                      { value: "P2", label: TASK_PRIORITY_LABEL.P2 },
+                      { value: "P3", label: TASK_PRIORITY_LABEL.P3 },
+                      { value: "P4", label: TASK_PRIORITY_LABEL.P4 },
+                    ]}
+                  />
+                  <Select
+                    label="Project"
+                    labelHidden
+                    value={projectFilter}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setInternalProject(value);
+                      setInternalPage(1);
+                      onProjectFilterChange?.(value);
+                    }}
+                    options={[
+                      { value: "ALL", label: "All projects" },
+                      { value: "NONE", label: "No project" },
+                      ...projects.map((project) => ({ value: project.id, label: project.name })),
+                    ]}
+                  />
                   <ViewToggle
                     label="Task list view"
                     value={viewMode}
@@ -794,20 +797,22 @@ export function TasksScreen({
                       onViewModeChange?.(mode);
                     }}
                   />
+                  <SortControl
+                    options={TASK_SORT_OPTIONS}
+                    value={sortState}
+                    onChange={(next) => {
+                      setInternalSort(next);
+                      onSortChange?.(next);
+                    }}
+                  />
                 </div>
-              </>
+                <Text tone="secondary" size="sm" className="lifeos-tasks-screen__result-count">
+                  {totalItemsCount} {totalItemsCount === 1 ? "task" : "tasks"}
+                </Text>
+              </div>
             ),
             activeChips,
-            resultCount: `${totalItemsCount} ${totalItemsCount === 1 ? "task" : "tasks"}`,
             ...(hasActiveFilters ? { onClearAll: clearFilters } : {}),
-          }}
-          sort={{
-            options: TASK_SORT_OPTIONS,
-            value: sortState,
-            onChange: (next) => {
-              setInternalSort(next);
-              onSortChange?.(next);
-            },
           }}
           {...(totalItemsCount > pageSize
             ? {

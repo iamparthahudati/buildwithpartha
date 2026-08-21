@@ -54,6 +54,11 @@ class JpaSessionRepository implements SessionRepository {
     return jpaRepository.revokeAllOtherSessionsForUser(userId, currentSessionId, revokedAt);
   }
 
+  @Override
+  public boolean rotateCsrfSecret(UUID sessionId, String csrfSecretHash, Instant lastSeenAt) {
+    return jpaRepository.rotateCsrfSecret(sessionId, csrfSecretHash, lastSeenAt) == 1;
+  }
+
   private static SessionEntity toEntity(Session session) {
     return new SessionEntity(
         session.id(),
