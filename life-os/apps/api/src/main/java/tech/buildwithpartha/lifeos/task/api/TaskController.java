@@ -414,6 +414,54 @@ public class TaskController {
     return TaskResponse.fromDomain(updated);
   }
 
+  @Operation(
+      summary = "Set task as MIT",
+      description = "Sets task as Most Important Task for a date.")
+  @ApiResponse(responseCode = "200", description = "MIT set.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/{id}/mit")
+  public TaskResponse setMit(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @Valid @RequestBody SetMitRequest request) {
+
+    Task updated = taskService.setMit(userId, id, request.date());
+    return TaskResponse.fromDomain(updated);
+  }
+
+  @Operation(summary = "Clear MIT status", description = "Clears MIT date from task.")
+  @ApiResponse(responseCode = "200", description = "MIT cleared.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @DeleteMapping("/{id}/mit")
+  public TaskResponse clearMit(@AuthenticationPrincipal UUID userId, @PathVariable("id") UUID id) {
+
+    Task updated = taskService.clearMit(userId, id);
+    return TaskResponse.fromDomain(updated);
+  }
+
+  @Operation(
+      summary = "Get MIT for date",
+      description = "Retrieves user's MIT for a specific date.")
+  @ApiResponse(responseCode = "200", description = "MIT details or empty if not designated.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping("/mit")
+  public ResponseEntity<TaskResponse> getMitForDate(
+      @AuthenticationPrincipal UUID userId,
+      @RequestParam(name = "date", required = false) LocalDate date) {
+
+    LocalDate effectiveDate = date != null ? date : LocalDate.now();
+    return taskService
+        .getMitForDate(userId, effectiveDate)
+        .map(t -> ResponseEntity.ok(TaskResponse.fromDomain(t)))
+        .orElseGet(() -> ResponseEntity.noContent().build());
+  }
+
   private Set<TaskStatus> parseStatuses(Set<String> values) {
     if (values == null || values.isEmpty()) {
       return Set.of();
