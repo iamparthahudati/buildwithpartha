@@ -91,15 +91,16 @@ export function SprintFormDialog({
       return;
     }
 
-    onSubmit({
+    const payload: SprintFormData = {
       ...(initialValues?.id ? { id: initialValues.id } : {}),
       name: name.trim(),
-      goal: goal.trim() || undefined,
+      ...(goal.trim() ? { goal: goal.trim() } : {}),
       startDate,
       endDate,
       targetCapacityPoints: targetCapacityPoints ?? 0,
       ...(initialValues?.status ? { status: initialValues.status } : {}),
-    });
+    };
+    onSubmit(payload);
   }
 
   const title = mode === "create" ? "Create Sprint" : "Edit Sprint";
@@ -121,19 +122,16 @@ export function SprintFormDialog({
       submitLabel={submitLabel}
       isDirty={isDirty}
       pending={isPending}
-      error={error}
+      {...(error ? { error } : {})}
     >
       <div className="sprint-form-dialog__fields">
-        {Object.keys(fieldErrors).length > 0 ? (
-          <FormErrorSummary
-            errors={Object.entries(fieldErrors).map(([field, msg]) => ({
-              fieldId: field,
-              message: msg,
-            }))}
-          />
-        ) : null}
+        {Object.keys(fieldErrors).length > 0 ? <FormErrorSummary /> : null}
 
-        <FormField name="name" label="Sprint Name" error={fieldErrors.name}>
+        <FormField
+          name="name"
+          label="Sprint Name"
+          {...(fieldErrors.name ? { error: fieldErrors.name } : {})}
+        >
           {(fieldProps) => (
             <TextInput
               {...fieldProps}
@@ -144,7 +142,12 @@ export function SprintFormDialog({
           )}
         </FormField>
 
-        <FormField name="goal" label="Sprint Goal" required={false} error={fieldErrors.goal}>
+        <FormField
+          name="goal"
+          label="Sprint Goal"
+          required={false}
+          {...(fieldErrors.goal ? { error: fieldErrors.goal } : {})}
+        >
           {(fieldProps) => (
             <Textarea
               {...fieldProps}
@@ -157,7 +160,11 @@ export function SprintFormDialog({
         </FormField>
 
         <div className="sprint-form-dialog__grid">
-          <FormField name="startDate" label="Start Date" error={fieldErrors.startDate}>
+          <FormField
+            name="startDate"
+            label="Start Date"
+            {...(fieldErrors.startDate ? { error: fieldErrors.startDate } : {})}
+          >
             {(fieldProps) => (
               <DateInput
                 {...fieldProps}
@@ -167,7 +174,11 @@ export function SprintFormDialog({
             )}
           </FormField>
 
-          <FormField name="endDate" label="End Date" error={fieldErrors.endDate}>
+          <FormField
+            name="endDate"
+            label="End Date"
+            {...(fieldErrors.endDate ? { error: fieldErrors.endDate } : {})}
+          >
             {(fieldProps) => (
               <DateInput
                 {...fieldProps}
@@ -181,13 +192,16 @@ export function SprintFormDialog({
         <FormField
           name="targetCapacityPoints"
           label="Target Capacity (Story Points)"
-          error={fieldErrors.targetCapacityPoints}
+          {...(fieldErrors.targetCapacityPoints ? { error: fieldErrors.targetCapacityPoints } : {})}
         >
           {(fieldProps) => (
             <NumberInput
               {...fieldProps}
-              value={targetCapacityPoints}
-              onChange={(val) => setTargetCapacityPoints(val)}
+              value={targetCapacityPoints ?? ""}
+              onChange={(e) => {
+                const val = e.target.valueAsNumber;
+                setTargetCapacityPoints(Number.isNaN(val) ? undefined : val);
+              }}
               min={0}
               step={1}
             />

@@ -15,6 +15,7 @@ import {
   type ProjectOverviewTask,
   type Milestone,
 } from "@features/projects";
+import { TimeBlockRow, type TimeBlock } from "@features/time-blocks";
 import {
   buildCommonDateRangePresets,
   ColorIconPicker,
@@ -892,6 +893,136 @@ export function ProjectDetailsScreenDemo() {
           </Text>
         </div>
         <ProjectDetailsScreen notFound />
+      </div>
+    </div>
+  );
+}
+
+const MOCK_TIME_BLOCK_SCHEDULED: TimeBlock = {
+  id: "tb-demo-1",
+  title: "Deep Work: Architecture Spec",
+  category: "Deep work",
+  categoryColor: "blue",
+  categoryIcon: "brain",
+  date: "2026-08-21",
+  startTime: "09:00",
+  endTime: "10:30",
+  status: "SCHEDULED",
+  projectName: "LifeOS Core",
+  taskTitle: "Write OpenAPI schema",
+};
+
+const MOCK_TIME_BLOCK_CURRENT: TimeBlock = {
+  id: "tb-demo-2",
+  title: "Team Architecture Sync",
+  category: "Meeting",
+  categoryColor: "purple",
+  categoryIcon: "users",
+  date: "2026-08-21",
+  startTime: "11:00",
+  endTime: "12:00",
+  status: "IN_PROGRESS",
+  isCurrent: true,
+  projectName: "LifeOS Core",
+};
+
+const MOCK_TIME_BLOCK_COMPLETED: TimeBlock = {
+  id: "tb-demo-3",
+  title: "Morning Routine & Planning",
+  category: "Personal",
+  categoryColor: "green",
+  categoryIcon: "heart",
+  date: "2026-08-21",
+  startTime: "08:00",
+  endTime: "08:45",
+  status: "COMPLETED",
+  completed: true,
+};
+
+const MOCK_TIME_BLOCK_CONFLICT: TimeBlock = {
+  id: "tb-demo-4",
+  title: "Sprint Retrospective",
+  category: "Meeting",
+  categoryColor: "amber",
+  categoryIcon: "users",
+  date: "2026-08-21",
+  startTime: "11:30",
+  endTime: "12:30",
+  status: "SCHEDULED",
+  hasConflict: true,
+  conflictDescriptions: ["Overlaps with Team Architecture Sync (11:00 – 12:00)"],
+};
+
+export function TimeBlockRowDemo() {
+  const now = new Date("2026-08-21T11:15:00Z");
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Scheduled TimeBlockRow (With Project & Task)
+          </Text>
+        </div>
+        <TimeBlockRow
+          timeBlock={MOCK_TIME_BLOCK_SCHEDULED}
+          onStartFocus={() => alert("Start focus clicked")}
+          onComplete={() => alert("Complete clicked")}
+          onEdit={() => alert("Edit clicked")}
+          onDuplicate={() => alert("Duplicate clicked")}
+          onDelete={() => alert("Delete clicked")}
+          now={now}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Current Active TimeBlockRow
+          </Text>
+        </div>
+        <TimeBlockRow
+          timeBlock={MOCK_TIME_BLOCK_CURRENT}
+          onStartFocus={() => alert("Start focus clicked")}
+          onComplete={() => alert("Complete clicked")}
+          onEdit={() => alert("Edit clicked")}
+          now={now}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Completed TimeBlockRow
+          </Text>
+        </div>
+        <TimeBlockRow timeBlock={MOCK_TIME_BLOCK_COMPLETED} now={now} />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Conflict Warning TimeBlockRow
+          </Text>
+        </div>
+        <TimeBlockRow
+          timeBlock={MOCK_TIME_BLOCK_CONFLICT}
+          onStartFocus={() => alert("Start focus clicked")}
+          onEdit={() => alert("Edit clicked")}
+          now={now}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Skeleton State
+          </Text>
+        </div>
+        <TimeBlockRow loading />
       </div>
     </div>
   );

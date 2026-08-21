@@ -67,14 +67,16 @@ export function SprintRetrospectiveDialog({
       .map((item) => item.trim())
       .filter(Boolean);
 
-    onSubmit({
+    const payload: SprintRetrospectiveData = {
       sprintId: sprint.id,
-      whatWentWell: whatWentWell.trim() || undefined,
-      whatCouldBeImproved: whatCouldBeImproved.trim() || undefined,
-      actionItems: actionItems.length > 0 ? actionItems : undefined,
-      retrospectiveNotes: retrospectiveNotes.trim() || undefined,
       carryOverDestination,
-    });
+      ...(whatWentWell.trim() ? { whatWentWell: whatWentWell.trim() } : {}),
+      ...(whatCouldBeImproved.trim() ? { whatCouldBeImproved: whatCouldBeImproved.trim() } : {}),
+      ...(actionItems.length > 0 ? { actionItems } : {}),
+      ...(retrospectiveNotes.trim() ? { retrospectiveNotes: retrospectiveNotes.trim() } : {}),
+    };
+
+    onSubmit(payload);
   }
 
   const isReadOnly = sprint?.status === "COMPLETED";
@@ -93,7 +95,7 @@ export function SprintRetrospectiveDialog({
       }
       submitLabel={isReadOnly ? "Save Notes" : "Complete Sprint"}
       pending={isPending}
-      error={error}
+      {...(error ? { error } : {})}
     >
       <div className="sprint-retrospective-dialog__content">
         <div className="sprint-retrospective-dialog__summary">

@@ -59,9 +59,9 @@
 }
 
 .sprint-task-commitment-list__status-toggle.is-done {
-  background-color: var(--color-success, #10b981);
-  border-color: var(--color-success, #10b981);
-  color: #ffffff;
+  background-color: var(--lifeos-color-success);
+  border-color: var(--lifeos-color-success);
+  color: var(--lifeos-color-text-on-brand);
 }
 
 .sprint-task-commitment-list__item-details {

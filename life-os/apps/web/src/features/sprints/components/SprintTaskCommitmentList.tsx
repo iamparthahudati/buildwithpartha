@@ -40,16 +40,17 @@ export function SprintTaskCommitmentList({
   className,
 }: SprintTaskCommitmentListProps) {
   if (loading) {
-    return <SkeletonTable rows={4} className={className} />;
+    return <SkeletonTable rows={4} {...(className ? { className } : {})} />;
   }
 
   if (error) {
     return (
       <ErrorState
+        scope="region"
         title="Unable to load sprint tasks"
         description={error}
         {...(onRetry ? { onRetry } : {})}
-        className={className}
+        {...(className ? { className } : {})}
       />
     );
   }
@@ -84,6 +85,7 @@ export function SprintTaskCommitmentList({
 
       {tasks.length === 0 ? (
         <EmptyState
+          variant="first-use"
           title="No tasks committed"
           description="No tasks are currently assigned to this sprint."
           {...(isEditable && onAddTask

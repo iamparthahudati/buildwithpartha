@@ -36,7 +36,7 @@
   gap: var(--space-1);
   padding: var(--space-3);
   border-radius: var(--radius-sm);
-  background-color: var(--color-surface-subtle, var(--color-background-subtle, #f8fafc));
+  background-color: var(--lifeos-color-bg-subtle);
   border-inline-start: 3px solid var(--color-primary);
 }
 

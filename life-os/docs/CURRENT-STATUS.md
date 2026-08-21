@@ -8,7 +8,21 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## In review
 
-None.
+- LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
+- LOS-0701 — Projects, milestones, and labels schema/domain/persistence modeling. See `docs/handoffs/LOS-0701.md`.
+- LOS-0702 — Authenticated, CSRF-protected project CRUD/archive/restore/delete API with ownership, label isolation, optimistic concurrency, problem details, and audit events. See `docs/handoffs/LOS-0702.md`.
+- LOS-0703 — User-scoped project search/filter/sort/pagination query API and summary counts. See `docs/handoffs/LOS-0703.md`.
+- LOS-0704 — Ordered, user-scoped milestone lifecycle API with parent date validation and optimistic concurrency. See `docs/handoffs/LOS-0704.md`.
+- LOS-0705 — Count/weight progress and manual/derived health calculation policy. Automated checks pass, but merge is blocked until the calculation-facing task contract is reconciled with LOS-0801. See `docs/handoffs/LOS-0705.md`.
+- LOS-0706 — Responsive, accessible ProjectRow and ProjectCard components with ready/loading/archived/overdue states and catalog coverage. See `docs/handoffs/LOS-0706.md`.
+- LOS-0707 — Responsive, progressive disclosure ProjectForm dialog with validation, dirty tracking, theme picker, and conflict handling. See `docs/handoffs/LOS-0707.md`.
+- LOS-0708 — Project summary metric strip displaying total/active/completed/on-hold/at-risk/progress metrics with interactive filter triggers. See `docs/handoffs/LOS-0708.md`.
+- LOS-0709 — Composed Projects screen with header/add, metric strip, tabs/search/filter/sort/view controls, cards/table views, form dialog, confirm dialogs, detail panel, and pagination across mock states. See `docs/handoffs/LOS-0709.md`.
+- LOS-0710 — Integrate Projects screen with query/mutation hooks, REST client, URL state, and routing. See `docs/handoffs/LOS-0710.md`.
+- LOS-0711 — Responsive ProjectDetailsHeader component with deep link breadcrumbs, identity, status, health, priority, owner, dates, estimate, task progress, primary/secondary actions, loading skeleton, and archived state. See `docs/handoffs/LOS-0711.md`.
+- LOS-0712 — Project overview components (progress/task/time/health summary cards, status/priority breakdown charts with data table fallback, top tasks list, about/labels metadata, and activity feed). See `docs/handoffs/LOS-0712.md`.
+- LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
+>>>>>>> feature/LOS-0903-build-time-block-row
 
 ## Completed
 

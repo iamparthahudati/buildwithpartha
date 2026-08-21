@@ -22,8 +22,14 @@ describe("SprintCard", () => {
   it("renders sprint card with title, status, goal, and actions", async () => {
     const onComplete = vi.fn();
     const onEditScope = vi.fn();
+    const onEditSprint = vi.fn();
     const { container } = render(
-      <SprintCard sprint={MOCK_SPRINT} onCompleteSprint={onComplete} onEditScope={onEditScope} />,
+      <SprintCard
+        sprint={MOCK_SPRINT}
+        onCompleteSprint={onComplete}
+        onEditScope={onEditScope}
+        onEditSprint={onEditSprint}
+      />,
     );
 
     expect(screen.getByText("Sprint 14 - Foundation")).toBeInTheDocument();
@@ -33,6 +39,14 @@ describe("SprintCard", () => {
     const completeBtn = screen.getByRole("button", { name: "Complete & Retrospective" });
     await userEvent.click(completeBtn);
     expect(onComplete).toHaveBeenCalledWith(MOCK_SPRINT);
+
+    const editScopeBtn = screen.getByRole("button", { name: "Edit Scope" });
+    await userEvent.click(editScopeBtn);
+    expect(onEditScope).toHaveBeenCalledWith(MOCK_SPRINT);
+
+    const editDetailsBtn = screen.getByRole("button", { name: "Edit Details" });
+    await userEvent.click(editDetailsBtn);
+    expect(onEditSprint).toHaveBeenCalledWith(MOCK_SPRINT);
 
     await expectNoAccessibilityViolations(container);
   });

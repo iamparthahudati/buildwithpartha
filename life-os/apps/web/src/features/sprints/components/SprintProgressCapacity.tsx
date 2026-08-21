@@ -1,10 +1,11 @@
-import { ProgressBar, Badge, Skeleton } from "@components/ui";
 import { EmptyState, ErrorState } from "@components/feedback";
+import { Badge, ProgressBar, Skeleton } from "@components/ui";
+
 import type { Sprint } from "../model/sprint";
 import "./sprint-progress-capacity.css";
 
 export interface SprintProgressCapacityProps {
-  readonly sprint?: Sprint;
+  readonly sprint?: Sprint | null;
   readonly loading?: boolean;
   readonly error?: string;
   readonly onRetry?: () => void;
@@ -23,9 +24,9 @@ export function SprintProgressCapacity({
       <div
         className={["sprint-progress-capacity", "is-loading", className].filter(Boolean).join(" ")}
       >
-        <Skeleton height="24px" width="60%" />
-        <Skeleton height="16px" width="100%" />
-        <Skeleton height="20px" width="40%" />
+        <Skeleton height="24px" width="40%" />
+        <Skeleton height="40px" width="100%" />
+        <Skeleton height="40px" width="100%" />
       </div>
     );
   }
@@ -33,10 +34,11 @@ export function SprintProgressCapacity({
   if (error) {
     return (
       <ErrorState
+        scope="region"
         title="Unable to load sprint progress"
         description={error}
         {...(onRetry ? { onRetry } : {})}
-        className={className}
+        {...(className ? { className } : {})}
       />
     );
   }
@@ -44,9 +46,10 @@ export function SprintProgressCapacity({
   if (!sprint) {
     return (
       <EmptyState
+        variant="first-use"
         title="No sprint data"
         description="Select or create a sprint to view capacity and progress."
-        className={className}
+        {...(className ? { className } : {})}
       />
     );
   }
@@ -58,8 +61,7 @@ export function SprintProgressCapacity({
     : 0;
   const capacityPercent =
     targetCapacityPoints > 0 ? Math.round((totalStoryPoints / targetCapacityPoints) * 100) : 0;
-
-  const isOverCapacity = totalStoryPoints > targetCapacityPoints;
+  const isOverCapacity = targetCapacityPoints > 0 && totalStoryPoints > targetCapacityPoints;
 
   return (
     <div
@@ -107,7 +109,7 @@ export function SprintProgressCapacity({
           max={targetCapacityPoints > 0 ? targetCapacityPoints : 100}
           showValue
           valueText={`${totalStoryPoints} of ${targetCapacityPoints} pts capacity planned`}
-          tone={isOverCapacity ? "danger" : "info"}
+          tone={isOverCapacity ? "danger" : "primary"}
         />
       </div>
     </div>

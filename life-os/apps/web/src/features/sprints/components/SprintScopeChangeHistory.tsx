@@ -45,16 +45,17 @@ export function SprintScopeChangeHistory({
   className,
 }: SprintScopeChangeHistoryProps) {
   if (loading) {
-    return <SkeletonTable rows={3} className={className} />;
+    return <SkeletonTable rows={3} {...(className ? { className } : {})} />;
   }
 
   if (error) {
     return (
       <ErrorState
+        scope="region"
         title="Unable to load scope change history"
         description={error}
         {...(onRetry ? { onRetry } : {})}
-        className={className}
+        {...(className ? { className } : {})}
       />
     );
   }
@@ -73,6 +74,7 @@ export function SprintScopeChangeHistory({
 
       {events.length === 0 ? (
         <EmptyState
+          variant="first-use"
           title="No scope changes"
           description="Scope changes made after sprint start will be recorded here."
         />
@@ -102,7 +104,7 @@ export function SprintScopeChangeHistory({
                     <Text
                       size="xs"
                       weight="medium"
-                      tone={event.pointsDelta > 0 ? "warning" : "muted"}
+                      tone={event.pointsDelta > 0 ? "danger" : "muted"}
                     >
                       Impact: {event.pointsDelta > 0 ? `+${event.pointsDelta}` : event.pointsDelta}{" "}
                       pts

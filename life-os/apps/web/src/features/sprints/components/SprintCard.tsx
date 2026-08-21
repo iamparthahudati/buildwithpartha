@@ -57,16 +57,17 @@ export function SprintCard({
   className,
 }: SprintCardProps) {
   if (loading) {
-    return <SkeletonCard className={className} />;
+    return <SkeletonCard {...(className ? { className } : {})} />;
   }
 
   if (error) {
     return (
       <ErrorState
+        scope="region"
         title="Unable to load sprint"
         description={error}
         {...(onRetry ? { onRetry } : {})}
-        className={className}
+        {...(className ? { className } : {})}
       />
     );
   }
@@ -77,7 +78,7 @@ export function SprintCard({
 
   const statusTone = getStatusBadgeTone(sprint.status);
   const statusLabel = getStatusLabel(sprint.status);
-  const dateRangeText = `${formatLocalDate(sprint.startDate)} – ${formatLocalDate(sprint.endDate)}`;
+  const dateRangeText = `${formatLocalDate(sprint.startDate, "en-US")} – ${formatLocalDate(sprint.endDate, "en-US")}`;
 
   return (
     <article
