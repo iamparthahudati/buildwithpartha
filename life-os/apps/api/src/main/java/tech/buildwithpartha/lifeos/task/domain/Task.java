@@ -203,4 +203,40 @@ public record Task(
         newSubtasks,
         version);
   }
+
+  public Task duplicate(UUID newId, String newTitle, Instant now) {
+    Objects.requireNonNull(newId, "newId must not be null");
+    Objects.requireNonNull(now, "now must not be null");
+    String effectiveTitle =
+        (newTitle != null && !newTitle.isBlank()) ? newTitle.trim() : "Copy of " + title;
+
+    List<Subtask> duplicatedSubtasks =
+        subtasks.stream()
+            .map(
+                s ->
+                    new Subtask(
+                        UUID.randomUUID(), newId, s.title(), false, s.position(), now, now, 0L))
+            .toList();
+
+    return new Task(
+        newId,
+        userId,
+        projectId,
+        effectiveTitle,
+        description,
+        TaskStatus.TO_DO,
+        priority,
+        dueAt,
+        estimateMinutes,
+        0,
+        0,
+        Optional.empty(),
+        position,
+        Optional.empty(),
+        Optional.empty(),
+        now,
+        now,
+        duplicatedSubtasks,
+        0L);
+  }
 }

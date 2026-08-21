@@ -1,0 +1,260 @@
+package tech.buildwithpartha.lifeos.task.api;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import tech.buildwithpartha.lifeos.common.error.FieldProblem;
+import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.task.application.CreateTaskCommand;
+import tech.buildwithpartha.lifeos.task.application.TaskService;
+import tech.buildwithpartha.lifeos.task.application.UpdateTaskCommand;
+import tech.buildwithpartha.lifeos.task.domain.Task;
+import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
+import tech.buildwithpartha.lifeos.task.domain.TaskStatus;
+
+@RestController
+@RequestMapping("/tasks")
+@SecurityRequirement(name = "sessionCookie")
+public class TaskController {
+
+  private final TaskService taskService;
+
+  public TaskController(TaskService taskService) {
+    this.taskService = taskService;
+  }
+
+  @Operation(summary = "Create task", description = "Creates a new user-owned task.")
+  @ApiResponse(responseCode = "201", description = "Task created successfully.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public TaskResponse createTask(
+      @AuthenticationPrincipal UUID userId, @Valid @RequestBody CreateTaskRequest request) {
+
+    TaskStatus status = parseStatus(request.status(), TaskStatus.TO_DO);
+    TaskPriority priority = parsePriority(request.priority(), TaskPriority.P3);
+
+    Task created =
+        taskService.createTask(
+            userId,
+            new CreateTaskCommand(
+                Optional.ofNullable(request.projectId()),
+                request.title(),
+                Optional.ofNullable(request.description()),
+                status,
+                priority,
+                Optional.ofNullable(request.dueAt()),
+                request.estimateMinutes() != null ? request.estimateMinutes() : 0,
+                request.spentMinutes() != null ? request.spentMinutes() : 0,
+                request.progress() != null ? request.progress() : 0,
+                Optional.ofNullable(request.mitDate()),
+                request.position() != null ? request.position() : 0));
+
+    return TaskResponse.fromDomain(created);
+  }
+
+  @Operation(summary = "Get task", description = "Retrieves an existing task by ID.")
+  @ApiResponse(responseCode = "200", description = "Task details.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping("/{id}")
+  public TaskResponse getTask(@AuthenticationPrincipal UUID userId, @PathVariable("id") UUID id) {
+    Task task = taskService.getTask(userId, id);
+    return TaskResponse.fromDomain(task);
+  }
+
+  @Operation(
+      summary = "Update task",
+      description = "Updates an existing task with optimistic lock check.")
+  @ApiResponse(responseCode = "200", description = "Task updated successfully.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "409", ref = "#/components/responses/Conflict")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PutMapping("/{id}")
+  public TaskResponse updateTask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @Valid @RequestBody UpdateTaskRequest request) {
+
+    TaskStatus status = parseStatus(request.status(), TaskStatus.TO_DO);
+    TaskPriority priority = parsePriority(request.priority(), TaskPriority.P3);
+
+    Task updated =
+        taskService.updateTask(
+            userId,
+            id,
+            new UpdateTaskCommand(
+                Optional.ofNullable(request.projectId()),
+                request.title(),
+                Optional.ofNullable(request.description()),
+                status,
+                priority,
+                Optional.ofNullable(request.dueAt()),
+                request.estimateMinutes() != null ? request.estimateMinutes() : 0,
+                request.spentMinutes() != null ? request.spentMinutes() : 0,
+                request.progress() != null ? request.progress() : 0,
+                Optional.ofNullable(request.mitDate()),
+                request.position() != null ? request.position() : 0,
+                request.version()));
+
+    return TaskResponse.fromDomain(updated);
+  }
+
+  @Operation(summary = "Change task status", description = "Updates task status.")
+  @ApiResponse(responseCode = "200", description = "Task status updated.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "409", ref = "#/components/responses/Conflict")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PatchMapping("/{id}/status")
+  public TaskResponse changeStatus(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @Valid @RequestBody ChangeTaskStatusRequest request) {
+
+    TaskStatus status = parseStatus(request.status(), null);
+    Task updated = taskService.changeStatus(userId, id, status, request.version());
+    return TaskResponse.fromDomain(updated);
+  }
+
+  @Operation(summary = "Complete task", description = "Marks task status as DONE.")
+  @ApiResponse(responseCode = "200", description = "Task completed.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "409", ref = "#/components/responses/Conflict")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/{id}/complete")
+  public TaskResponse completeTask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @Valid @RequestBody ArchiveTaskRequest request) {
+
+    Task completed = taskService.completeTask(userId, id, request.version());
+    return TaskResponse.fromDomain(completed);
+  }
+
+  @Operation(summary = "Cancel task", description = "Marks task status as CANCELLED.")
+  @ApiResponse(responseCode = "200", description = "Task cancelled.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "409", ref = "#/components/responses/Conflict")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/{id}/cancel")
+  public TaskResponse cancelTask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @Valid @RequestBody ArchiveTaskRequest request) {
+
+    Task cancelled = taskService.cancelTask(userId, id, request.version());
+    return TaskResponse.fromDomain(cancelled);
+  }
+
+  @Operation(summary = "Archive task", description = "Archives an active task.")
+  @ApiResponse(responseCode = "200", description = "Task archived.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "409", ref = "#/components/responses/Conflict")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/{id}/archive")
+  public TaskResponse archiveTask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @Valid @RequestBody ArchiveTaskRequest request) {
+
+    Task archived = taskService.archiveTask(userId, id, request.version());
+    return TaskResponse.fromDomain(archived);
+  }
+
+  @Operation(summary = "Restore task", description = "Restores an archived task.")
+  @ApiResponse(responseCode = "200", description = "Task restored.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "409", ref = "#/components/responses/Conflict")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/{id}/restore")
+  public TaskResponse restoreTask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @Valid @RequestBody RestoreTaskRequest request) {
+
+    Task restored = taskService.restoreTask(userId, id, request.version());
+    return TaskResponse.fromDomain(restored);
+  }
+
+  @Operation(summary = "Delete task", description = "Soft-deletes a task.")
+  @ApiResponse(responseCode = "204", description = "Task deleted.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public ResponseEntity<Void> deleteTask(
+      @AuthenticationPrincipal UUID userId, @PathVariable("id") UUID id) {
+    taskService.deleteTask(userId, id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "Duplicate task", description = "Duplicates a task and its subtasks.")
+  @ApiResponse(responseCode = "201", description = "Task duplicated.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/{id}/duplicate")
+  @ResponseStatus(HttpStatus.CREATED)
+  public TaskResponse duplicateTask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("id") UUID id,
+      @RequestBody(required = false) DuplicateTaskRequest request) {
+
+    String newTitle = request != null ? request.newTitle() : null;
+    Task duplicated = taskService.duplicateTask(userId, id, newTitle);
+    return TaskResponse.fromDomain(duplicated);
+  }
+
+  private TaskStatus parseStatus(String value, TaskStatus defaultValue) {
+    if (value == null || value.isBlank()) {
+      return defaultValue;
+    }
+    try {
+      return TaskStatus.valueOf(value.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("status", "INVALID")));
+    }
+  }
+
+  private TaskPriority parsePriority(String value, TaskPriority defaultValue) {
+    if (value == null || value.isBlank()) {
+      return defaultValue;
+    }
+    try {
+      return TaskPriority.valueOf(value.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("priority", "INVALID")));
+    }
+  }
+}
