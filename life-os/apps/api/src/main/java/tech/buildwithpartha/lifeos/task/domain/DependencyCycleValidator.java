@@ -35,6 +35,10 @@ public final class DependencyCycleValidator {
       return true;
     }
 
+    if (existingDependencies == null || existingDependencies.isEmpty()) {
+      return false;
+    }
+
     // Build adjacency list: node -> list of nodes it blocks (downstream dependents)
     Map<UUID, List<UUID>> graph = new HashMap<>();
     for (TaskDependency dep : existingDependencies) {

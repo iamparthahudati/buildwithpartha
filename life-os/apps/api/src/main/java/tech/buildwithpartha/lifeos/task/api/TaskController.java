@@ -516,7 +516,8 @@ public class TaskController {
       @PathVariable("targetTaskId") UUID targetTaskId,
       @RequestParam(name = "type", required = false, defaultValue = "BLOCKER")
           TaskDependencyType type) {
-    taskService.removeDependency(userId, id, targetTaskId, type);
+    TaskDependencyType effectiveType = type != null ? type : TaskDependencyType.BLOCKER;
+    taskService.removeDependency(userId, id, targetTaskId, effectiveType);
     TaskDependenciesSummary summary = taskService.getTaskDependencies(userId, id);
     return TaskDependenciesSummaryResponse.fromDomain(summary);
   }
