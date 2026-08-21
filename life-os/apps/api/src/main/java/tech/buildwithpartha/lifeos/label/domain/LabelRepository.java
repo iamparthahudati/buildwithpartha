@@ -11,7 +11,12 @@ public interface LabelRepository {
 
   List<Label> findByUserId(UUID userId);
 
+  Optional<Label> findByUserIdAndNameNormalized(UUID userId, String nameNormalized);
+
   Label save(Label label);
 
   void delete(Label label);
+
+  void deleteWithReplacement(UUID userId, UUID labelId, UUID replacementLabelId);
 }
+
