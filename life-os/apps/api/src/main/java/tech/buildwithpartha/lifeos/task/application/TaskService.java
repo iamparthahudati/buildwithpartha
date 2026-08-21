@@ -514,7 +514,7 @@ public class TaskService {
     for (TaskDependency dep : dependents) {
       Optional<Task> dependentTaskOpt =
           taskRepository.findByIdAndUserId(dep.blockedTaskId(), userId);
-      if (dependentTaskOpt.isPresent()) {
+      if (dependentTaskOpt.isPresent() && !dependentTaskOpt.get().isDeleted()) {
         Task dependentTask = dependentTaskOpt.get();
         if (dependentTask.status() == TaskStatus.BLOCKED) {
           TaskDependenciesSummary summary = getTaskDependencies(userId, dependentTask.id());

@@ -248,4 +248,31 @@ class TaskDependencyIntegrationTests {
     Task updatedDependent = taskService.getTask(userId, dependent.id());
     assertThat(updatedDependent.status()).isEqualTo(TaskStatus.IN_PROGRESS);
   }
+
+  @Test
+  void reportsCompletedBlockersInSummaryWithZeroUnresolvedCount() {
+    Task blocker = createTask(userId, "Completed Blocker", TaskStatus.DONE);
+    Task task = createTask(userId, "Main Task", TaskStatus.TO_DO);
+
+    taskService.addDependency(userId, task.id(), blocker.id(), TaskDependencyType.BLOCKER);
+
+    TaskDependenciesSummary summary = taskService.getTaskDependencies(userId, task.id());
+    assertThat(summary.blockers()).hasSize(1);
+    assertThat(summary.unresolvedBlockerCount()).isEqualTo(0);
+    assertThat(summary.isBlocked()).isFalse();
+  }
+
+  @Test
+  void completeBlockerHandlesDeletedDependentTaskSafely() {
+    Task blocker = createTask(userId, "Blocker", TaskStatus.TO_DO);
+    Task dependent = createTask(userId, "Dependent", TaskStatus.BLOCKED);
+
+    taskService.addDependency(userId, dependent.id(), blocker.id(), TaskDependencyType.BLOCKER);
+    taskService.deleteTask(userId, dependent.id());
+
+    taskService.completeTask(userId, blocker.id(), blocker.version());
+
+    TaskDependenciesSummary summary = taskService.getTaskDependencies(userId, blocker.id());
+    assertThat(summary.dependents()).isEmpty();
+  }
 }
