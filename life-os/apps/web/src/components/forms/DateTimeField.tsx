@@ -34,6 +34,7 @@ export interface DateTimeValue {
 }
 
 export interface DateTimeFieldProps {
+  readonly id?: string;
   readonly legend: string;
   readonly description?: string;
   /** A server or otherwise externally known problem. Takes priority over the built-in DST check. */
@@ -52,6 +53,7 @@ export interface DateTimeFieldProps {
 }
 
 export function DateTimeField({
+  id,
   legend,
   description,
   error,
@@ -66,7 +68,8 @@ export function DateTimeField({
   readOnly = false,
   className,
 }: DateTimeFieldProps) {
-  const baseId = useId();
+  const generatedId = useId();
+  const baseId = id ?? generatedId;
 
   const resolution =
     value.date !== null && value.time !== null
@@ -101,6 +104,8 @@ export function DateTimeField({
 
   return (
     <fieldset
+      id={baseId}
+      tabIndex={-1}
       className={["lifeos-datetime-field", className].filter(Boolean).join(" ")}
       aria-describedby={describedBy}
       aria-invalid={effectiveError ? true : undefined}

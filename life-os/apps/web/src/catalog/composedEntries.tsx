@@ -19,6 +19,7 @@ import {
   ProjectCardDemo,
   TaskRowDemo,
   TaskCardDemo,
+  TaskFormDemo,
   ProjectDetailsHeaderDemo,
   ProjectOverviewDemo,
   ProjectTimelineDemo,
@@ -269,6 +270,28 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Lifecycle and loading states",
         description: "Active MIT, overdue and blocked, done, archived, and loading cards.",
         render: () => <TaskCardDemo />,
+      },
+    ],
+  },
+  {
+    id: "task-form",
+    name: "TaskForm",
+    group: "Composed",
+    summary:
+      "A create/edit Task dialog with canonical status and priority, timezone-safe due entry, Estimate, progress, Labels, dated MIT selection, dirty protection, version-conflict recovery, and a compact Quick Add presentation.",
+    states: [
+      {
+        id: "task-form-full",
+        name: "Full form",
+        description: "All Task fields with progressive advanced details.",
+        render: () => <TaskFormDemo />,
+      },
+      {
+        id: "task-form-quick-add",
+        name: "Quick Add",
+        description:
+          "Title, optional Project, and due time first; all details remain one action away.",
+        render: () => <TaskFormDemo presentation="quick-add" />,
       },
     ],
   },

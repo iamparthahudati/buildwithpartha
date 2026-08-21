@@ -12,6 +12,7 @@ import { FormDialog } from "./FormDialog";
 function OpenableFormDialog(props: {
   readonly isDirty?: boolean;
   readonly pending?: boolean;
+  readonly submitDisabled?: boolean;
   readonly error?: string;
   readonly onSubmit?: () => void;
 }) {
@@ -32,6 +33,7 @@ function OpenableFormDialog(props: {
         submitLabel="Add project"
         {...(props.isDirty === undefined ? {} : { isDirty: props.isDirty })}
         {...(props.pending === undefined ? {} : { pending: props.pending })}
+        {...(props.submitDisabled === undefined ? {} : { submitDisabled: props.submitDisabled })}
         {...(props.error === undefined ? {} : { error: props.error })}
       >
         <TextInput
@@ -83,6 +85,18 @@ describe("FormDialog", () => {
     const submit = screen.getByRole("button", { name: "Add project" });
     expect(submit).toHaveAttribute("aria-busy", "true");
     expect(screen.getByRole("button", { name: "Cancel" })).toBeDisabled();
+  });
+
+  it("can disable submission without presenting a pending state", async () => {
+    const onSubmit = vi.fn();
+    const { user } = renderWithUser(<OpenableFormDialog submitDisabled onSubmit={onSubmit} />);
+    await user.click(screen.getByRole("button", { name: "Open trigger" }));
+
+    const submit = screen.getByRole("button", { name: "Add project" });
+    expect(submit).toBeDisabled();
+    expect(submit).not.toHaveAttribute("aria-busy", "true");
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeEnabled();
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it("closes directly on Escape when not dirty", async () => {

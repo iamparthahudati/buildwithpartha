@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-0809 TaskRow and TaskCard handoff)
+Last updated: 2026-08-21 (LOS-0810 TaskForm handoff)
 
 ## Phase
 
@@ -30,6 +30,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 ## Completed
 
+- LOS-0810 — Built TaskForm as a responsive create/edit FormDialog with a compact Quick Add presentation, canonical Project/status/priority fields, timezone-safe due instant conversion, Estimate, progress, Labels, dated MIT selection, dirty protection, pending/error states, and version-conflict reload handling. Validation is linked through a focusable error summary; catalog specimens and live 320px/desktop verification cover both presentations. See `docs/handoffs/LOS-0810.md`.
 - LOS-0809 — Built responsive TaskRow and TaskCard components over one typed list projection. Both render controlled selection, Task and Project links, canonical status/priority labels, timezone-aware due instants, progress, comment counts, MIT designation, blocked/overdue/done/archived states, loading skeletons, and lifecycle-valid action menus. Catalog specimens cover every required state, 15 focused behavior/accessibility tests pass, and live 320px/desktop checks have no overflow or console errors. See `docs/handoffs/LOS-0809.md`.
 - LOS-0808 — Implemented `POST /tasks/bulk-actions` for bounded status, priority, Project, Label, due-date scheduling, clear-schedule, and archive mutations. Each selected Task is authorized and committed independently, responses preserve ordered partial outcomes, concurrent conflicts stay item-scoped, and retries are no-ops for already-applied state. See `docs/handoffs/LOS-0808.md`.
 - LOS-1002 — Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, zero-denominator / over-capacity states, catalog coverage, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`.
@@ -258,7 +259,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0810 (`docs/backlog/EPIC-08-TASKS.md`) — build TaskForm on the shared form-dialog and Label foundations.
+LOS-0811 (`docs/backlog/EPIC-08-TASKS.md`) — build task summary metrics and URL-compatible filter presets.
 
 ## Known decisions requiring implementation-time values
 

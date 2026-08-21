@@ -41,6 +41,7 @@ import "./duration-field.css";
  */
 
 export interface DurationFieldProps {
+  readonly id?: string;
   readonly legend: string;
   readonly description?: string;
   /** A problem the caller already knows about. Takes priority over the built-in bounds check. */
@@ -63,6 +64,7 @@ export interface DurationFieldProps {
 const MINUTES_IN_HOUR = 60;
 
 export function DurationField({
+  id,
   legend,
   description,
   error,
@@ -78,7 +80,8 @@ export function DurationField({
   readOnly = false,
   className,
 }: DurationFieldProps) {
-  const baseId = useId();
+  const generatedId = useId();
+  const baseId = id ?? generatedId;
 
   const boundsError =
     value === null
@@ -114,6 +117,8 @@ export function DurationField({
 
   return (
     <fieldset
+      id={baseId}
+      tabIndex={-1}
       className={["lifeos-duration-field", className].filter(Boolean).join(" ")}
       aria-describedby={ids.describedBy}
       aria-invalid={effectiveError ? true : undefined}

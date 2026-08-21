@@ -48,6 +48,8 @@ export interface FormDialogProps {
   readonly isDirty?: boolean;
   readonly pending?: boolean;
   readonly pendingLabel?: string;
+  /** Prevents submission while the fields remain readable, for example after a version conflict. */
+  readonly submitDisabled?: boolean;
   /** A server-level problem from the last attempt — not a single field's own error. */
   readonly error?: string;
   readonly discardTitle?: string;
@@ -69,6 +71,7 @@ export function FormDialog({
   isDirty = false,
   pending = false,
   pendingLabel,
+  submitDisabled = false,
   error,
   discardTitle = "Discard unsaved changes?",
   discardDescription = "Your changes will be lost. This can't be undone.",
@@ -103,7 +106,7 @@ export function FormDialog({
           noValidate
           onSubmit={(event) => {
             event.preventDefault();
-            if (!pending) {
+            if (!pending && !submitDisabled) {
               onSubmit();
             }
           }}
@@ -123,6 +126,7 @@ export function FormDialog({
             <Button
               type="submit"
               loading={pending}
+              disabled={pending || submitDisabled}
               {...(pendingLabel !== undefined ? { loadingLabel: pendingLabel } : {})}
             >
               {submitLabel}

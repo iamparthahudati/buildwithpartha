@@ -15,7 +15,7 @@ import {
   type ProjectOverviewTask,
   type Milestone,
 } from "@features/projects";
-import { TaskCard, TaskRow, type TaskListItem } from "@features/tasks";
+import { TaskCard, TaskForm, TaskRow, type TaskListItem } from "@features/tasks";
 import { TimeBlockRow, type TimeBlock } from "@features/time-blocks";
 import {
   buildCommonDateRangePresets,
@@ -642,6 +642,43 @@ export function TaskCardDemo() {
         />
       ))}
       <TaskCard loading />
+    </div>
+  );
+}
+
+export function TaskFormDemo({
+  presentation = "full",
+}: {
+  readonly presentation?: "full" | "quick-add";
+}) {
+  const [open, setOpen] = useState(false);
+  const [submittedTitle, setSubmittedTitle] = useState<string | null>(null);
+
+  return (
+    <div className="specimen-stack">
+      <Button type="button" onClick={() => setOpen(true)}>
+        {presentation === "quick-add" ? "Open Quick Add task" : "Open task form"}
+      </Button>
+      {submittedTitle ? <Text tone="success">Submitted: {submittedTitle}</Text> : null}
+      <TaskForm
+        open={open}
+        onClose={() => setOpen(false)}
+        onSubmit={(data) => {
+          setSubmittedTitle(data.title);
+          setOpen(false);
+        }}
+        presentation={presentation}
+        timeZone="Asia/Kolkata"
+        locale="en-IN"
+        projects={[
+          { id: "portfolio-refresh", name: "Portfolio refresh" },
+          { id: "home-records-cleanup", name: "Home records cleanup" },
+        ]}
+        labels={[
+          { id: "deep-work", name: "Deep work" },
+          { id: "weekly-planning", name: "Weekly planning" },
+        ]}
+      />
     </div>
   );
 }
