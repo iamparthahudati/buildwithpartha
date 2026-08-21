@@ -238,3 +238,11 @@ CREATE TABLE IF NOT EXISTS subtasks (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
     version    BIGINT                   NOT NULL
 );
+
+-- Added by LOS-0806: Task labels.
+CREATE TABLE IF NOT EXISTS task_labels (
+    task_id  UUID NOT NULL,
+    label_id UUID NOT NULL,
+    PRIMARY KEY (task_id, label_id)
+);
+
