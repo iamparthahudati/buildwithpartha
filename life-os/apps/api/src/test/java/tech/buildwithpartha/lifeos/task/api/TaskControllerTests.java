@@ -2,6 +2,7 @@ package tech.buildwithpartha.lifeos.task.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -416,5 +417,149 @@ class TaskControllerTests {
         .andExpect(jsonPath("$.status").value("TO_DO"))
         .andExpect(jsonPath("$.progress").value(0))
         .andExpect(jsonPath("$.priority").value("P1"));
+
+    // Duplicate with custom title
+    String duplicateBody = "{\"newTitle\": \"Custom Copy Title\"}";
+    mockMvc
+        .perform(
+            post("/tasks/" + task.id() + "/duplicate")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(duplicateBody))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.title").value("Custom Copy Title"));
+  }
+
+  @Test
+  void cancelTaskAndPatchStatus() throws Exception {
+    Instant now = Instant.now();
+    Task task =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                userId,
+                Optional.empty(),
+                "Task to Cancel",
+                Optional.empty(),
+                TaskStatus.TO_DO,
+                TaskPriority.P2,
+                Optional.empty(),
+                0,
+                0,
+                0,
+                Optional.empty(),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                now,
+                now,
+                List.of(),
+                0L));
+
+    // Cancel via POST /tasks/{id}/cancel
+    mockMvc
+        .perform(
+            post("/tasks/" + task.id() + "/cancel")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"version\": 0}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("CANCELLED"));
+
+    // Patch status back to IN_PROGRESS
+    mockMvc
+        .perform(
+            patch("/tasks/" + task.id() + "/status")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\": \"IN_PROGRESS\", \"version\": 1}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+  }
+
+  @Test
+  void idempotentArchiveAndRestore() throws Exception {
+    Instant now = Instant.now();
+    Task task =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                userId,
+                Optional.empty(),
+                "Idempotent Task",
+                Optional.empty(),
+                TaskStatus.TO_DO,
+                TaskPriority.P3,
+                Optional.empty(),
+                0,
+                0,
+                0,
+                Optional.empty(),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                now,
+                now,
+                List.of(),
+                0L));
+
+    // Restore when already restored (not archived) returns unchanged task
+    mockMvc
+        .perform(
+            post("/tasks/" + task.id() + "/restore")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"version\": 0}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.archived").value(false));
+
+    // Archive first time
+    mockMvc
+        .perform(
+            post("/tasks/" + task.id() + "/archive")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"version\": 0}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.archived").value(true));
+
+    // Archive second time (already archived) returns unchanged task
+    mockMvc
+        .perform(
+            post("/tasks/" + task.id() + "/archive")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"version\": 1}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.archived").value(true));
+  }
+
+  @Test
+  void invalidStatusOrPriorityReturnsBadRequest() throws Exception {
+    String invalidStatusBody = "{\"title\": \"Task\", \"status\": \"INVALID_STATUS\"}";
+    mockMvc
+        .perform(
+            post("/tasks")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidStatusBody))
+        .andExpect(status().isBadRequest());
+
+    String invalidPriorityBody = "{\"title\": \"Task\", \"priority\": \"INVALID_PRIORITY\"}";
+    mockMvc
+        .perform(
+            post("/tasks")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidPriorityBody))
+        .andExpect(status().isBadRequest());
   }
 }
