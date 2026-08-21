@@ -8,6 +8,10 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## In review
 
+- LOS-0802 — Authenticated, validated Task CRUD REST API with optimistic concurrency (`version`), soft deletion, duplication, and cross-user security isolation. See `docs/handoffs/LOS-0802.md`.
+- LOS-0803 — User-scoped task list query REST API (`GET /tasks`) with text search, filtering, stable sorting, bounded pagination, and summary counts (`GET /tasks/summary-counts`). See `docs/handoffs/LOS-0803.md`.
+- LOS-0804 — Ordered subtask REST API (`/tasks/{taskId}/subtasks`) with position tracking, completion toggling, reordering, and transactional task progress percentage recalculation. See `docs/handoffs/LOS-0804.md`.
+- LOS-0805 — Most Important Task (MIT) REST API (`/tasks/{id}/mit`, `/tasks/mit`) with single active MIT per user/local date invariant and atomic replacement. See `docs/handoffs/LOS-0805.md`.
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 - LOS-0701 — Projects, milestones, and labels schema/domain/persistence modeling. See `docs/handoffs/LOS-0701.md`.
 - LOS-0702 — Authenticated, CSRF-protected project CRUD/archive/restore/delete API with ownership, label isolation, optimistic concurrency, problem details, and audit events. See `docs/handoffs/LOS-0702.md`.
