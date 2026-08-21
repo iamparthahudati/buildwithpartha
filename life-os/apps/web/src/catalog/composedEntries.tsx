@@ -17,6 +17,8 @@ import {
   SearchFieldSubmitDemo,
   ProjectRowDemo,
   ProjectCardDemo,
+  TaskRowDemo,
+  TaskCardDemo,
   ProjectDetailsHeaderDemo,
   ProjectOverviewDemo,
   ProjectTimelineDemo,
@@ -237,6 +239,36 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Renders cards in active, overdue, archived, and loading states.",
         render: () => <ProjectCardDemo />,
+      },
+    ],
+  },
+  {
+    id: "task-row",
+    name: "TaskRow",
+    group: "Composed",
+    summary:
+      "A responsive Task list row with controlled selection, Project context, priority and status, timezone-aware due text, progress, comments, MIT designation, lifecycle states, and an accessible action menu.",
+    states: [
+      {
+        id: "task-row-states",
+        name: "Lifecycle and loading states",
+        description: "Active MIT, overdue and blocked, done, archived, and loading rows.",
+        render: () => <TaskRowDemo />,
+      },
+    ],
+  },
+  {
+    id: "task-card",
+    name: "TaskCard",
+    group: "Composed",
+    summary:
+      "The card counterpart to TaskRow, preserving the same controlled selection, metadata, state, progress, and action contracts in a compact responsive layout.",
+    states: [
+      {
+        id: "task-card-states",
+        name: "Lifecycle and loading states",
+        description: "Active MIT, overdue and blocked, done, archived, and loading cards.",
+        render: () => <TaskCardDemo />,
       },
     ],
   },

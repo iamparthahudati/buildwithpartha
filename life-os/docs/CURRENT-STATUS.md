@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-0808 bulk task actions handoff)
+Last updated: 2026-08-21 (LOS-0809 TaskRow and TaskCard handoff)
 
 ## Phase
 
@@ -28,10 +28,9 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0711 — Responsive ProjectDetailsHeader component with deep link breadcrumbs, identity, status, health, priority, owner, dates, estimate, task progress, primary/secondary actions, loading skeleton, and archived state. See `docs/handoffs/LOS-0711.md`.
 - LOS-0712 — Project overview components (progress/task/time/health summary cards, status/priority breakdown charts with data table fallback, top tasks list, about/labels metadata, and activity feed). See `docs/handoffs/LOS-0712.md`.
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
->>>>>>> feature/LOS-0903-build-time-block-row
-
 ## Completed
 
+- LOS-0809 — Built responsive TaskRow and TaskCard components over one typed list projection. Both render controlled selection, Task and Project links, canonical status/priority labels, timezone-aware due instants, progress, comment counts, MIT designation, blocked/overdue/done/archived states, loading skeletons, and lifecycle-valid action menus. Catalog specimens cover every required state, 15 focused behavior/accessibility tests pass, and live 320px/desktop checks have no overflow or console errors. See `docs/handoffs/LOS-0809.md`.
 - LOS-0808 — Implemented `POST /tasks/bulk-actions` for bounded status, priority, Project, Label, due-date scheduling, clear-schedule, and archive mutations. Each selected Task is authorized and committed independently, responses preserve ordered partial outcomes, concurrent conflicts stay item-scoped, and retries are no-ops for already-applied state. See `docs/handoffs/LOS-0808.md`.
 - LOS-1002 — Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, zero-denominator / over-capacity states, catalog coverage, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`.
 - LOS-0801 — Modeled core Task and Subtask domain aggregates, persistence entities, repositories, validation invariants, Flyway V9 schema (`V9__tasks_and_subtasks_schema.sql`), and contract reconciliation with calculation-facing `ProjectTask`. Verified via 100% clean `./gradlew check`. See `docs/handoffs/LOS-0801.md`.
@@ -259,7 +258,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0615 (`docs/backlog/EPIC-06-SHELL-TODAY.md`) — integrate the foundational Today endpoint while preserving the composed screen's independent state contracts.
+LOS-0810 (`docs/backlog/EPIC-08-TASKS.md`) — build TaskForm on the shared form-dialog and Label foundations.
 
 ## Known decisions requiring implementation-time values
 
