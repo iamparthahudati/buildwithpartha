@@ -47,4 +47,3 @@ public record CreateTaskRequest(
         Set.of());
   }
 }
-

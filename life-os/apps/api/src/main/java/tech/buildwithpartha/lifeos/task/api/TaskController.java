@@ -222,7 +222,6 @@ public class TaskController {
     return TaskResponse.fromDomain(updated);
   }
 
-
   @Operation(summary = "Change task status", description = "Updates task status.")
   @ApiResponse(responseCode = "200", description = "Task status updated.")
   @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")

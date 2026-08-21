@@ -12,7 +12,6 @@ import jakarta.servlet.http.Cookie;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,11 +96,10 @@ class LabelControllerTests {
     otherUserCookie = new Cookie("lifeos_session", otherSessionToken.value());
   }
 
-
-
   @Test
   void createLabel_validRequest_createsAndReturnsLabel() throws Exception {
-    String requestJson = """
+    String requestJson =
+        """
         {
           "name": "  Work Project  ",
           "color": "#FF5733"
@@ -130,7 +128,8 @@ class LabelControllerTests {
     labelRepository.save(
         new Label(UUID.randomUUID(), userId, "Urgent", "urgent", "#FF0000", now, now, 0L));
 
-    String requestJson = """
+    String requestJson =
+        """
         {
           "name": "urgent",
           "color": "#00FF00"
@@ -148,7 +147,6 @@ class LabelControllerTests {
         .andExpect(jsonPath("$.errors[0].field").value("name"))
         .andExpect(jsonPath("$.errors[0].code").value("DUPLICATE_LABEL_NAME"));
   }
-
 
   @Test
   void getLabels_returnsOnlyCurrentUsersLabels() throws Exception {
@@ -201,7 +199,8 @@ class LabelControllerTests {
         labelRepository.save(
             new Label(UUID.randomUUID(), userId, "Old Title", "old title", "#000", now, now, 0L));
 
-    String updateJson = """
+    String updateJson =
+        """
         {
           "name": "New Title",
           "color": "#111",

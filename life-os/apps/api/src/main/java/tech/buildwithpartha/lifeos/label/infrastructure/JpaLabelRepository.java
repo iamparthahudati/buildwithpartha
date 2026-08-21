@@ -28,7 +28,6 @@ public class JpaLabelRepository implements LabelRepository {
     this.entityManager = entityManager;
   }
 
-
   @Override
   public Optional<Label> findById(UUID id) {
     return jpaRepository.findById(id).map(JpaLabelRepository::toDomain);
@@ -73,7 +72,6 @@ public class JpaLabelRepository implements LabelRepository {
       entityManager.clear();
     }
   }
-
 
   static Label toDomain(LabelEntity entity) {
     return new Label(

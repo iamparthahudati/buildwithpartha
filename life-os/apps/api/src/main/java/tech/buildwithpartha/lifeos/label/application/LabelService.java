@@ -40,7 +40,6 @@ public class LabelService {
           "Validation failed", List.of(new FieldProblem("color", "INVALID_COLOR_FORMAT")));
     }
 
-
     String normalizedName = Label.normalizeName(rawName);
     if (labelRepository.findByUserIdAndNameNormalized(userId, normalizedName).isPresent()) {
       throw new FieldValidationException(
@@ -94,7 +93,10 @@ public class LabelService {
 
     if (existing.version() != command.version()) {
       throw new ConcurrencyConflictException(
-          "Label version mismatch. Expected " + existing.version() + " but got " + command.version());
+          "Label version mismatch. Expected "
+              + existing.version()
+              + " but got "
+              + command.version());
     }
 
     String rawName = command.name() != null ? command.name().trim() : "";
@@ -108,7 +110,6 @@ public class LabelService {
       throw new FieldValidationException(
           "Validation failed", List.of(new FieldProblem("color", "INVALID_COLOR_FORMAT")));
     }
-
 
     String normalizedName = Label.normalizeName(rawName);
     if (!normalizedName.equals(existing.nameNormalized())) {

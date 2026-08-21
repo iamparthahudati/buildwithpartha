@@ -282,7 +282,6 @@ public class JpaTaskRepository implements TaskRepository {
         domain.version());
   }
 
-
   static Subtask toSubtaskDomain(SubtaskEntity entity) {
     return new Subtask(
         entity.getId(),

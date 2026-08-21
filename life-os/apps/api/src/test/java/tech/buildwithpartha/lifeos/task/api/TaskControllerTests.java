@@ -133,6 +133,42 @@ class TaskControllerTests {
   }
 
   @Test
+  void createTaskWithFullFields() throws Exception {
+    String body =
+        """
+        {
+          "title": "Task with all optional fields",
+          "description": "Comprehensive details",
+          "status": "TO_DO",
+          "priority": "P2",
+          "dueAt": "2026-12-31T23:59:59Z",
+          "estimateMinutes": 120,
+          "spentMinutes": 30,
+          "progress": 25,
+          "mitDate": "2026-12-31",
+          "position": 5,
+          "labelIds": []
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/tasks")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.title").value("Task with all optional fields"))
+        .andExpect(jsonPath("$.description").value("Comprehensive details"))
+        .andExpect(jsonPath("$.estimateMinutes").value(120))
+        .andExpect(jsonPath("$.spentMinutes").value(30))
+        .andExpect(jsonPath("$.progress").value(25))
+        .andExpect(jsonPath("$.mitDate").value("2026-12-31"))
+        .andExpect(jsonPath("$.position").value(5));
+  }
+
+  @Test
   void createTaskFailsWhenTitleIsBlank() throws Exception {
     String body =
         """

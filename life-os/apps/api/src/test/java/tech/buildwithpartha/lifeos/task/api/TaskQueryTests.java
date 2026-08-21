@@ -200,6 +200,32 @@ class TaskQueryTests {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.page.totalItems").value(1))
         .andExpect(jsonPath("$.page.items[0].title").value("Backend API Design"));
+
+    // Label filter with non-matching labelId
+    UUID dummyLabelId = UUID.randomUUID();
+    mockMvc
+        .perform(get("/tasks?labelId=" + dummyLabelId).cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.totalItems").value(0));
+
+    // Priority filter
+    mockMvc
+        .perform(get("/tasks?priority=P1").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.totalItems").value(1))
+        .andExpect(jsonPath("$.page.items[0].title").value("Backend API Design"));
+
+    // MIT filter
+    mockMvc
+        .perform(get("/tasks?isMit=true").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.totalItems").value(1));
+
+    // Due dates filter
+    mockMvc
+        .perform(get("/tasks?dueBefore=" + now.plusSeconds(7200)).cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.page.totalItems").value(1));
   }
 
   @Test
@@ -221,6 +247,10 @@ class TaskQueryTests {
 
     mockMvc
         .perform(get("/tasks?sortBy=invalidField").cookie(sessionCookie))
+        .andExpect(status().isBadRequest());
+
+    mockMvc
+        .perform(get("/tasks?sortDirection=INVALID").cookie(sessionCookie))
         .andExpect(status().isBadRequest());
   }
 }
