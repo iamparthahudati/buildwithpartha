@@ -15,6 +15,7 @@ import {
   type ProjectOverviewTask,
   type Milestone,
 } from "@features/projects";
+import { TaskCard, TaskRow, type TaskListItem } from "@features/tasks";
 import { TimeBlockRow, type TimeBlock } from "@features/time-blocks";
 import {
   buildCommonDateRangePresets,
@@ -508,6 +509,139 @@ export function ProjectCardDemo() {
         </Text>
         <ProjectCard loading />
       </div>
+    </div>
+  );
+}
+
+const MOCK_TASK_ACTIVE: TaskListItem = {
+  id: "task-809",
+  title: "Build TaskRow and TaskCard",
+  status: "IN_PROGRESS",
+  priority: "P1",
+  project: { id: "life-os", name: "LifeOS" },
+  dueAt: "2026-08-22T12:00:00Z",
+  progress: 45,
+  commentCount: 3,
+  isMit: true,
+};
+
+const MOCK_TASK_BLOCKED: TaskListItem = {
+  ...MOCK_TASK_ACTIVE,
+  id: "task-blocked",
+  title: "Connect the task list API",
+  status: "BLOCKED",
+  priority: "P2",
+  dueAt: "2026-08-19T12:00:00Z",
+  progress: 20,
+  commentCount: 1,
+  isMit: false,
+  blockerCount: 2,
+};
+
+const MOCK_TASK_DONE: TaskListItem = {
+  ...MOCK_TASK_ACTIVE,
+  id: "task-done",
+  title: "Approve task interaction states",
+  status: "DONE",
+  priority: "P3",
+  dueAt: null,
+  progress: 100,
+  commentCount: 0,
+  isMit: false,
+};
+
+const MOCK_TASK_ARCHIVED: TaskListItem = {
+  ...MOCK_TASK_DONE,
+  id: "task-archived",
+  title: "Retire the old task list",
+  status: "CANCELLED",
+  archivedAt: "2026-08-20T08:00:00Z",
+};
+
+function handleTaskDemoAction() {
+  alert("Task action selected");
+}
+
+export function TaskRowDemo() {
+  const [selected, setSelected] = useState(true);
+  const now = new Date("2026-08-21T12:00:00Z");
+
+  return (
+    <div className="specimen-stack" style={{ width: "100%" }}>
+      <Text tone="secondary" size="xs">
+        Active MIT with selection
+      </Text>
+      <TaskRow
+        task={MOCK_TASK_ACTIVE}
+        selected={selected}
+        onSelectedChange={setSelected}
+        onStartFocus={handleTaskDemoAction}
+        onToggleMit={handleTaskDemoAction}
+        onMarkDone={handleTaskDemoAction}
+        onEdit={handleTaskDemoAction}
+        onArchive={handleTaskDemoAction}
+        now={now}
+      />
+
+      <Text tone="secondary" size="xs">
+        Overdue and blocked
+      </Text>
+      <TaskRow task={MOCK_TASK_BLOCKED} now={now} />
+
+      <Text tone="secondary" size="xs">
+        Done
+      </Text>
+      <TaskRow task={MOCK_TASK_DONE} now={now} />
+
+      <Text tone="secondary" size="xs">
+        Archived
+      </Text>
+      <TaskRow
+        task={MOCK_TASK_ARCHIVED}
+        onRestore={handleTaskDemoAction}
+        onDelete={handleTaskDemoAction}
+        now={now}
+      />
+
+      <Text tone="secondary" size="xs">
+        Loading
+      </Text>
+      <TaskRow loading />
+    </div>
+  );
+}
+
+export function TaskCardDemo() {
+  const [selected, setSelected] = useState(true);
+  const now = new Date("2026-08-21T12:00:00Z");
+  const cards = [MOCK_TASK_ACTIVE, MOCK_TASK_BLOCKED, MOCK_TASK_DONE, MOCK_TASK_ARCHIVED];
+
+  return (
+    <div
+      className="specimen-grid"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(18rem, 1fr))",
+        gap: "var(--lifeos-space-4)",
+        width: "100%",
+      }}
+    >
+      {cards.map((task, index) => (
+        <TaskCard
+          key={task.id}
+          task={task}
+          selected={index === 0 && selected}
+          {...(index === 0 ? { onSelectedChange: setSelected } : {})}
+          {...(task.archivedAt
+            ? {
+                onRestore: handleTaskDemoAction,
+                onDelete: handleTaskDemoAction,
+              }
+            : { onEdit: handleTaskDemoAction })}
+          now={now}
+        />
+      ))}
+      <TaskCard loading />
     </div>
   );
 }
