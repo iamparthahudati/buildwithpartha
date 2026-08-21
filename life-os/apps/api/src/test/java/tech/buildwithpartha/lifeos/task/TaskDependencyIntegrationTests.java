@@ -167,4 +167,58 @@ class TaskDependencyIntegrationTests {
     assertThat(summaryB.blockers()).isEmpty();
     assertThat(summaryB.isBlocked()).isFalse();
   }
+
+  @Test
+  void addAndRemoveDependentDependencyType() {
+    Task taskA = createTask(userId, "Main Task A", TaskStatus.TO_DO);
+    Task taskB = createTask(userId, "Dependent Task B", TaskStatus.TO_DO);
+
+    // Main Task A blocks Task B (Task A has DEPENDENT Task B)
+    TaskDependency dep =
+        taskService.addDependency(userId, taskA.id(), taskB.id(), TaskDependencyType.DEPENDENT);
+
+    assertThat(dep.blockingTaskId()).isEqualTo(taskA.id());
+    assertThat(dep.blockedTaskId()).isEqualTo(taskB.id());
+
+    // Re-adding existing dependency returns existing edge idempotently
+    TaskDependency duplicateDep =
+        taskService.addDependency(userId, taskA.id(), taskB.id(), TaskDependencyType.DEPENDENT);
+    assertThat(duplicateDep).isEqualTo(dep);
+
+    // Remove dependency using DEPENDENT type
+    taskService.removeDependency(userId, taskA.id(), taskB.id(), TaskDependencyType.DEPENDENT);
+
+    TaskDependenciesSummary summaryA = taskService.getTaskDependencies(userId, taskA.id());
+    assertThat(summaryA.dependents()).isEmpty();
+  }
+
+  @Test
+  void keepsDependentBlockedIfAnotherBlockerRemains() {
+    Task blocker1 = createTask(userId, "Blocker 1", TaskStatus.TO_DO);
+    Task blocker2 = createTask(userId, "Blocker 2", TaskStatus.TO_DO);
+    Task dependent = createTask(userId, "Dependent Task", TaskStatus.BLOCKED);
+
+    taskService.addDependency(userId, dependent.id(), blocker1.id(), TaskDependencyType.BLOCKER);
+    taskService.addDependency(userId, dependent.id(), blocker2.id(), TaskDependencyType.BLOCKER);
+
+    // Completing blocker1 still leaves blocker2 unresolved
+    taskService.completeTask(userId, blocker1.id(), blocker1.version());
+
+    Task updatedDependent = taskService.getTask(userId, dependent.id());
+    assertThat(updatedDependent.status()).isEqualTo(TaskStatus.BLOCKED);
+  }
+
+  @Test
+  void preventsDependencyOnSoftDeletedTask() {
+    Task taskA = createTask(userId, "Task A", TaskStatus.TO_DO);
+    Task taskB = createTask(userId, "Task B", TaskStatus.TO_DO);
+
+    taskService.deleteTask(userId, taskB.id());
+
+    assertThatThrownBy(
+            () ->
+                taskService.addDependency(
+                    userId, taskA.id(), taskB.id(), TaskDependencyType.BLOCKER))
+        .isInstanceOf(ResourceNotFoundException.class);
+  }
 }

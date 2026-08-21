@@ -598,4 +598,82 @@ class TaskControllerTests {
                 .content(invalidPriorityBody))
         .andExpect(status().isBadRequest());
   }
+
+  @Test
+  void taskDependencyEndpointsWork() throws Exception {
+    Task taskA =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                userId,
+                Optional.empty(),
+                "Blocker Task A",
+                Optional.empty(),
+                TaskStatus.TO_DO,
+                TaskPriority.P2,
+                Optional.empty(),
+                0,
+                0,
+                0,
+                Optional.empty(),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                Instant.now(),
+                Instant.now(),
+                List.of(),
+                0));
+
+    Task taskB =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                userId,
+                Optional.empty(),
+                "Blocked Task B",
+                Optional.empty(),
+                TaskStatus.TO_DO,
+                TaskPriority.P2,
+                Optional.empty(),
+                0,
+                0,
+                0,
+                Optional.empty(),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                Instant.now(),
+                Instant.now(),
+                List.of(),
+                0));
+
+    // GET empty dependencies
+    mockMvc
+        .perform(get("/tasks/" + taskB.id() + "/dependencies").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.isBlocked").value(false))
+        .andExpect(jsonPath("$.blockers").isEmpty());
+
+    // POST add dependency (A blocks B)
+    String addBody = "{\"targetTaskId\": \"" + taskA.id() + "\", \"type\": \"BLOCKER\"}";
+    mockMvc
+        .perform(
+            post("/tasks/" + taskB.id() + "/dependencies")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(addBody))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.isBlocked").value(true))
+        .andExpect(jsonPath("$.blockers[0].id").value(taskA.id().toString()));
+
+    // DELETE remove dependency (with type parameter)
+    mockMvc
+        .perform(
+            delete("/tasks/" + taskB.id() + "/dependencies/" + taskA.id() + "?type=BLOCKER")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.isBlocked").value(false));
+  }
 }
