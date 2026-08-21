@@ -1,0 +1,87 @@
+/* TasksScreen (LOS-0812) */
+
+.lifeos-tasks-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-density-section-gap);
+  width: 100%;
+}
+
+.lifeos-tasks-screen__controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-tasks-screen__view {
+  display: flex;
+  align-items: center;
+}
+
+.lifeos-task-bulk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-tasks-screen__title-button {
+  font-weight: var(--lifeos-font-weight-medium);
+}
+
+.lifeos-tasks-screen__title-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  margin-top: var(--lifeos-space-1);
+}
+
+.lifeos-tasks-screen__results--grid .lifeos-data-table__table-view,
+.lifeos-tasks-screen__results--list .lifeos-data-table__table-view {
+  display: none;
+}
+
+.lifeos-tasks-screen__results--grid .lifeos-data-table__card-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-tasks-screen__results--grid .lifeos-data-table__card-view > li + li {
+  margin-top: 0;
+}
+
+.lifeos-tasks-screen__results--list .lifeos-data-table__card-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-tasks-screen__results--list .lifeos-data-table__card-view > li + li {
+  margin-top: 0;
+}
+
+.lifeos-tasks-detail-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+  padding: var(--lifeos-space-4);
+}
+
+.lifeos-tasks-detail-preview__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-tasks-bulk-failures {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-tasks-screen * {
+    scroll-behavior: auto;
+  }
+}

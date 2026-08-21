@@ -36,6 +36,7 @@ import {
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
+import { TasksScreenDemo } from "./TasksScreenDemos";
 import type { CatalogEntry } from "./registry";
 
 /* Composed-component entries (LOS-0401 onward). */
@@ -328,6 +329,22 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "The shared summary failure is named on every affected value with one retry action.",
         render: () => <TaskSummaryMetricsDemo state="error" />,
+      },
+    ],
+  },
+  {
+    id: "tasks-screen",
+    name: "TasksScreen",
+    group: "Composed",
+    summary:
+      "Full Tasks screen with header/add, summary presets, tabs, search/filters/sort/view, DataTable and cards, bulk actions, pagination, detail selection, and loading/empty/error/partial-failure states.",
+    states: [
+      {
+        id: "tasks-screen-default",
+        name: "Default",
+        description:
+          "Tasks screen with populated, first-use, loading, error, and partial bulk-failure specimens.",
+        render: () => <TasksScreenDemo />,
       },
     ],
   },
