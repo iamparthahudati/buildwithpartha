@@ -1,6 +1,7 @@
 package tech.buildwithpartha.lifeos.task.application;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -303,6 +304,75 @@ public class TaskService {
         task.mitDate(),
         task.position(),
         now);
+  }
+
+  public Task setMit(UUID userId, UUID taskId, LocalDate date) {
+    Objects.requireNonNull(userId, "userId must not be null");
+    Objects.requireNonNull(taskId, "taskId must not be null");
+    Objects.requireNonNull(date, "date must not be null");
+
+    Task task = getTask(userId, taskId);
+    if (task.status().isTerminal()) {
+      throw new IllegalArgumentException("Cannot set terminal task as MIT");
+    }
+
+    taskRepository.clearMitDateForUserAndDate(userId, date);
+
+    Instant now = Instant.now();
+    Task updated =
+        task.withUpdates(
+            task.projectId(),
+            task.title(),
+            task.description(),
+            task.status(),
+            task.priority(),
+            task.dueAt(),
+            task.estimateMinutes(),
+            task.spentMinutes(),
+            task.progress(),
+            Optional.of(date),
+            task.position(),
+            now);
+
+    return taskRepository.save(updated);
+  }
+
+  public Task clearMit(UUID userId, UUID taskId) {
+    Objects.requireNonNull(userId, "userId must not be null");
+    Objects.requireNonNull(taskId, "taskId must not be null");
+
+    Task task = getTask(userId, taskId);
+    if (task.mitDate().isEmpty()) {
+      return task;
+    }
+
+    Instant now = Instant.now();
+    Task updated =
+        task.withUpdates(
+            task.projectId(),
+            task.title(),
+            task.description(),
+            task.status(),
+            task.priority(),
+            task.dueAt(),
+            task.estimateMinutes(),
+            task.spentMinutes(),
+            task.progress(),
+            Optional.empty(),
+            task.position(),
+            now);
+
+    return taskRepository.save(updated);
+  }
+
+  @Transactional(readOnly = true)
+  public Optional<Task> getMitForDate(UUID userId, LocalDate date) {
+    Objects.requireNonNull(userId, "userId must not be null");
+    Objects.requireNonNull(date, "date must not be null");
+
+    return taskRepository.findByUserIdAndMitDate(userId, date).stream()
+        .filter(t -> !t.isDeleted() && !t.isArchived())
+        .findFirst();
   }
 
   private void checkVersion(Task existing, long expectedVersion) {
