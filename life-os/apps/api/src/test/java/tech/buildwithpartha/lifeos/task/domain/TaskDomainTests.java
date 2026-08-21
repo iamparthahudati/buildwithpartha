@@ -184,4 +184,43 @@ class TaskDomainTests {
     assertThat(projectTask.estimateMinutes()).isEqualTo(60);
     assertThat(projectTask.archived()).isFalse();
   }
+
+  @Test
+  @DisplayName("Task validates spentMinutes and supports duplicate/restore")
+  void validatesSpentMinutesAndDuplicate() {
+    UUID id = UUID.randomUUID();
+
+    assertThatThrownBy(
+            () ->
+                new Task(
+                    id,
+                    USER_ID,
+                    Optional.empty(),
+                    "Valid Title",
+                    Optional.empty(),
+                    TaskStatus.TO_DO,
+                    TaskPriority.P2,
+                    Optional.empty(),
+                    0,
+                    -10,
+                    0,
+                    Optional.empty(),
+                    0,
+                    Optional.empty(),
+                    Optional.empty(),
+                    NOW,
+                    NOW,
+                    List.of(),
+                    0L))
+        .isInstanceOf(IllegalArgumentException.class);
+
+    Task sample = TaskDomainFixture.createSampleTask(USER_ID, Optional.of(PROJECT_ID));
+    Task duplicated = sample.duplicate(UUID.randomUUID(), "Copy of " + sample.title(), NOW);
+    assertThat(duplicated.id()).isNotEqualTo(sample.id());
+    assertThat(duplicated.title()).isEqualTo("Copy of " + sample.title());
+
+    Task archived = sample.archive(NOW, NOW);
+    Task restored = archived.restore(NOW);
+    assertThat(restored.isArchived()).isFalse();
+  }
 }

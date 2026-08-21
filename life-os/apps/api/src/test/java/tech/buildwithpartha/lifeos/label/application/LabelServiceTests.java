@@ -61,8 +61,7 @@ class LabelServiceTests {
     CreateLabelCommand command = new CreateLabelCommand("Work", "#FF0000");
     Instant now = Instant.now();
 
-    Label existing =
-        new Label(UUID.randomUUID(), userId, "Work", "work", "#00FF00", now, now, 0L);
+    Label existing = new Label(UUID.randomUUID(), userId, "Work", "work", "#00FF00", now, now, 0L);
     Mockito.when(labelRepository.findByUserIdAndNameNormalized(userId, "work"))
         .thenReturn(Optional.of(existing));
 
@@ -80,7 +79,6 @@ class LabelServiceTests {
     assertThatThrownBy(() -> labelService.createLabel(userId, command))
         .isInstanceOf(FieldValidationException.class);
   }
-
 
   @Test
   void getLabels_returnsUserLabels() {
@@ -189,5 +187,82 @@ class LabelServiceTests {
 
     assertThatThrownBy(() -> labelService.deleteLabel(userId, labelId, Optional.of(labelId)))
         .isInstanceOf(FieldValidationException.class);
+  }
+
+  @Test
+  void createLabel_nullName_throwsException() {
+    UUID userId = UUID.randomUUID();
+    CreateLabelCommand command = new CreateLabelCommand(null, "#FF0000");
+
+    assertThatThrownBy(() -> labelService.createLabel(userId, command))
+        .isInstanceOf(FieldValidationException.class);
+  }
+
+  @Test
+  void updateLabel_sameNameNormalized_success() {
+    UUID userId = UUID.randomUUID();
+    UUID labelId = UUID.randomUUID();
+    Instant now = Instant.now();
+
+    Label existing = new Label(labelId, userId, "Work", "work", "#000", now, now, 0L);
+    Mockito.when(labelRepository.findById(labelId)).thenReturn(Optional.of(existing));
+    Mockito.when(labelRepository.save(any(Label.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    UpdateLabelCommand command = new UpdateLabelCommand("WORK", "#FFF", 0L);
+    Label updated = labelService.updateLabel(userId, labelId, command);
+
+    assertThat(updated.name()).isEqualTo("WORK");
+    assertThat(updated.nameNormalized()).isEqualTo("work");
+    assertThat(updated.color()).isEqualTo("#FFF");
+  }
+
+  @Test
+  void updateLabel_blankName_throwsException() {
+    UUID userId = UUID.randomUUID();
+    UUID labelId = UUID.randomUUID();
+    Instant now = Instant.now();
+
+    Label existing = new Label(labelId, userId, "Work", "work", "#000", now, now, 0L);
+    Mockito.when(labelRepository.findById(labelId)).thenReturn(Optional.of(existing));
+
+    UpdateLabelCommand command = new UpdateLabelCommand("   ", "#FFF", 0L);
+
+    assertThatThrownBy(() -> labelService.updateLabel(userId, labelId, command))
+        .isInstanceOf(FieldValidationException.class);
+  }
+
+  @Test
+  void updateLabel_invalidColor_throwsException() {
+    UUID userId = UUID.randomUUID();
+    UUID labelId = UUID.randomUUID();
+    Instant now = Instant.now();
+
+    Label existing = new Label(labelId, userId, "Work", "work", "#000", now, now, 0L);
+    Mockito.when(labelRepository.findById(labelId)).thenReturn(Optional.of(existing));
+
+    UpdateLabelCommand command =
+        new UpdateLabelCommand("Work", "a-color-string-that-is-way-too-long-for-validation", 0L);
+
+    assertThatThrownBy(() -> labelService.updateLabel(userId, labelId, command))
+        .isInstanceOf(FieldValidationException.class);
+  }
+
+  @Test
+  void deleteLabel_otherUserReplacement_throwsException() {
+    UUID userId = UUID.randomUUID();
+    UUID otherUserId = UUID.randomUUID();
+    UUID labelId = UUID.randomUUID();
+    UUID replaceId = UUID.randomUUID();
+    Instant now = Instant.now();
+
+    Label target = new Label(labelId, userId, "Work", "work", null, now, now, 0L);
+    Label foreignReplacement = new Label(replaceId, otherUserId, "Job", "job", null, now, now, 0L);
+
+    Mockito.when(labelRepository.findById(labelId)).thenReturn(Optional.of(target));
+    Mockito.when(labelRepository.findById(replaceId)).thenReturn(Optional.of(foreignReplacement));
+
+    assertThatThrownBy(() -> labelService.deleteLabel(userId, labelId, Optional.of(replaceId)))
+        .isInstanceOf(ResourceNotFoundException.class);
   }
 }

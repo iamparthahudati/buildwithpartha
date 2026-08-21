@@ -34,5 +34,3 @@ public record Label(
     return name.trim().toLowerCase(java.util.Locale.ROOT);
   }
 }
-
-

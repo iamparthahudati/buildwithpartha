@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
@@ -105,8 +104,7 @@ public class TaskService {
     Task existing = getTask(userId, taskId);
     checkVersion(existing, command.version());
 
-    Set<UUID> labelIds =
-        command.labelIds() != null ? command.labelIds() : existing.labelIds();
+    Set<UUID> labelIds = command.labelIds() != null ? command.labelIds() : existing.labelIds();
 
     labelOwnershipValidator.validateOwnership(userId, labelIds);
 
@@ -129,7 +127,6 @@ public class TaskService {
 
     return taskRepository.save(updated);
   }
-
 
   public Task changeStatus(UUID userId, UUID taskId, TaskStatus status, long version) {
     Objects.requireNonNull(userId, "userId must not be null");

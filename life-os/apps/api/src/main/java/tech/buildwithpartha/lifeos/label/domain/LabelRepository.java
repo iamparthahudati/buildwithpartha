@@ -19,4 +19,3 @@ public interface LabelRepository {
 
   void deleteWithReplacement(UUID userId, UUID labelId, UUID replacementLabelId);
 }
-
