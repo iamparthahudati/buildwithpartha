@@ -1,5 +1,6 @@
 package tech.buildwithpartha.lifeos.task.domain;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -23,4 +24,8 @@ public interface TaskRepository {
   void deleteById(UUID id);
 
   void clearMitDateForUserAndDate(UUID userId, LocalDate mitDate);
+
+  TaskQueryResult queryTasks(TaskQuery query);
+
+  TaskSummaryCounts getSummaryCounts(UUID userId, Instant now);
 }

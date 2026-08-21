@@ -25,11 +25,13 @@ class JpaTaskRepositoryTests {
 
   @Autowired private TaskJpaRepository taskJpaRepository;
   @Autowired private SubtaskJpaRepository subtaskJpaRepository;
+  @Autowired private jakarta.persistence.EntityManager entityManager;
 
   @Test
   @DisplayName("Saved task and subtasks round-trip through JPA repository")
   void roundTripsTaskAndSubtasks() {
-    JpaTaskRepository repository = new JpaTaskRepository(taskJpaRepository, subtaskJpaRepository);
+    JpaTaskRepository repository =
+        new JpaTaskRepository(taskJpaRepository, subtaskJpaRepository, entityManager);
     UUID id = UUID.randomUUID();
     UUID userId = UUID.randomUUID();
     UUID projectId = UUID.randomUUID();
@@ -89,7 +91,8 @@ class JpaTaskRepositoryTests {
   @Test
   @DisplayName("findByUserId, findByProjectId, and findByUserIdAndMitDate query correctly")
   void queryFiltersByUserIdProjectAndMitDate() {
-    JpaTaskRepository repository = new JpaTaskRepository(taskJpaRepository, subtaskJpaRepository);
+    JpaTaskRepository repository =
+        new JpaTaskRepository(taskJpaRepository, subtaskJpaRepository, entityManager);
     UUID userA = UUID.randomUUID();
     UUID userB = UUID.randomUUID();
     UUID projectId = UUID.randomUUID();
@@ -180,7 +183,8 @@ class JpaTaskRepositoryTests {
   @Test
   @DisplayName("clearMitDateForUserAndDate clears MIT designation atomically")
   void clearsMitDateForUserAndDate() {
-    JpaTaskRepository repository = new JpaTaskRepository(taskJpaRepository, subtaskJpaRepository);
+    JpaTaskRepository repository =
+        new JpaTaskRepository(taskJpaRepository, subtaskJpaRepository, entityManager);
     UUID userId = UUID.randomUUID();
     Instant now = Instant.parse("2026-08-21T02:00:00Z");
     LocalDate mitDate = LocalDate.of(2026, 8, 21);
@@ -221,7 +225,8 @@ class JpaTaskRepositoryTests {
   @Test
   @DisplayName("deleteById removes task and cascades subtasks")
   void deleteByIdRemovesTaskAndSubtasks() {
-    JpaTaskRepository repository = new JpaTaskRepository(taskJpaRepository, subtaskJpaRepository);
+    JpaTaskRepository repository =
+        new JpaTaskRepository(taskJpaRepository, subtaskJpaRepository, entityManager);
     UUID taskId = UUID.randomUUID();
     UUID userId = UUID.randomUUID();
     Instant now = Instant.parse("2026-08-21T02:00:00Z");
