@@ -1,0 +1,420 @@
+package tech.buildwithpartha.lifeos.task.api;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import jakarta.servlet.http.Cookie;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import tech.buildwithpartha.lifeos.auth.domain.EmailAddress;
+import tech.buildwithpartha.lifeos.auth.domain.RawToken;
+import tech.buildwithpartha.lifeos.auth.domain.SecureTokenGenerator;
+import tech.buildwithpartha.lifeos.auth.domain.Session;
+import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
+import tech.buildwithpartha.lifeos.auth.domain.User;
+import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
+import tech.buildwithpartha.lifeos.task.domain.Task;
+import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
+import tech.buildwithpartha.lifeos.task.domain.TaskRepository;
+import tech.buildwithpartha.lifeos.task.domain.TaskStatus;
+
+@ActiveProfiles("test")
+@SpringBootTest
+@AutoConfigureMockMvc
+class TaskControllerTests {
+
+  private final MockMvc mockMvc;
+  private final UserRepository userRepository;
+  private final SessionRepository sessionRepository;
+  private final TaskRepository taskRepository;
+  private final SecureTokenGenerator tokenGenerator;
+
+  private UUID userId;
+  private RawToken sessionToken;
+  private RawToken csrfToken;
+  private Cookie sessionCookie;
+  private UUID otherUserId;
+
+  @Autowired
+  TaskControllerTests(
+      MockMvc mockMvc,
+      UserRepository userRepository,
+      SessionRepository sessionRepository,
+      TaskRepository taskRepository,
+      SecureTokenGenerator tokenGenerator) {
+    this.mockMvc = mockMvc;
+    this.userRepository = userRepository;
+    this.sessionRepository = sessionRepository;
+    this.taskRepository = taskRepository;
+    this.tokenGenerator = tokenGenerator;
+  }
+
+  @BeforeEach
+  void setUp() {
+    userId =
+        userRepository
+            .save(
+                User.signup(
+                        UUID.randomUUID(),
+                        EmailAddress.of("task-test-" + UUID.randomUUID() + "@example.test"),
+                        "Task Tester",
+                        Instant.now())
+                    .verify(Instant.now()))
+            .id();
+
+    otherUserId =
+        userRepository
+            .save(
+                User.signup(
+                        UUID.randomUUID(),
+                        EmailAddress.of("task-other-" + UUID.randomUUID() + "@example.test"),
+                        "Task Other",
+                        Instant.now())
+                    .verify(Instant.now()))
+            .id();
+
+    sessionToken = tokenGenerator.generate();
+    csrfToken = tokenGenerator.generate();
+    sessionRepository.save(
+        Session.issue(
+            UUID.randomUUID(),
+            userId,
+            sessionToken.hash(),
+            csrfToken.hash(),
+            Instant.now(),
+            Optional.empty()));
+
+    sessionCookie = new Cookie("lifeos_session", sessionToken.value());
+  }
+
+  @Test
+  void createTaskSuccess() throws Exception {
+    String body =
+        """
+        {
+          "title": "Complete backend task CRUD",
+          "description": "Task API implementation details",
+          "priority": "P1",
+          "status": "TO_DO",
+          "estimateMinutes": 60
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/tasks")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.title").value("Complete backend task CRUD"))
+        .andExpect(jsonPath("$.priority").value("P1"))
+        .andExpect(jsonPath("$.status").value("TO_DO"))
+        .andExpect(jsonPath("$.estimateMinutes").value(60))
+        .andExpect(jsonPath("$.archived").value(false))
+        .andExpect(jsonPath("$.deleted").value(false));
+  }
+
+  @Test
+  void createTaskFailsWhenTitleIsBlank() throws Exception {
+    String body =
+        """
+        {
+          "title": "   ",
+          "priority": "P2"
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/tasks")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void getTaskSuccessAndCrossUserIsolation() throws Exception {
+    Instant now = Instant.now();
+    Task myTask =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                userId,
+                Optional.empty(),
+                "My Task",
+                Optional.empty(),
+                TaskStatus.TO_DO,
+                TaskPriority.P2,
+                Optional.empty(),
+                30,
+                0,
+                0,
+                Optional.empty(),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                now,
+                now,
+                List.of(),
+                0L));
+
+    Task otherTask =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                otherUserId,
+                Optional.empty(),
+                "Other Task",
+                Optional.empty(),
+                TaskStatus.TO_DO,
+                TaskPriority.P2,
+                Optional.empty(),
+                30,
+                0,
+                0,
+                Optional.empty(),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                now,
+                now,
+                List.of(),
+                0L));
+
+    mockMvc
+        .perform(get("/tasks/" + myTask.id()).cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.title").value("My Task"));
+
+    mockMvc
+        .perform(get("/tasks/" + otherTask.id()).cookie(sessionCookie))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void updateTaskSuccessAndVersionConflict() throws Exception {
+    Instant now = Instant.now();
+    Task task =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                userId,
+                Optional.empty(),
+                "Initial Title",
+                Optional.empty(),
+                TaskStatus.TO_DO,
+                TaskPriority.P3,
+                Optional.empty(),
+                0,
+                0,
+                0,
+                Optional.empty(),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                now,
+                now,
+                List.of(),
+                0L));
+
+    String updateBody =
+        """
+        {
+          "title": "Updated Title",
+          "status": "IN_PROGRESS",
+          "priority": "P1",
+          "version": 0
+        }
+        """;
+
+    mockMvc
+        .perform(
+            put("/tasks/" + task.id())
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateBody))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.title").value("Updated Title"))
+        .andExpect(jsonPath("$.status").value("IN_PROGRESS"))
+        .andExpect(jsonPath("$.priority").value("P1"));
+
+    // Updating with outdated version (0 instead of 1) returns 409 Conflict
+    mockMvc
+        .perform(
+            put("/tasks/" + task.id())
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateBody))
+        .andExpect(status().isConflict());
+  }
+
+  @Test
+  void statusTransitionAndCompleteTask() throws Exception {
+    Instant now = Instant.now();
+    Task task =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                userId,
+                Optional.empty(),
+                "Task to Complete",
+                Optional.empty(),
+                TaskStatus.TO_DO,
+                TaskPriority.P2,
+                Optional.empty(),
+                0,
+                0,
+                0,
+                Optional.of(LocalDate.now()),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                now,
+                now,
+                List.of(),
+                0L));
+
+    String completeBody =
+        """
+        {
+          "version": 0
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/tasks/" + task.id() + "/complete")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(completeBody))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("DONE"))
+        .andExpect(jsonPath("$.progress").value(100))
+        .andExpect(jsonPath("$.mitDate").isEmpty());
+  }
+
+  @Test
+  void archiveRestoreAndDeleteTask() throws Exception {
+    Instant now = Instant.now();
+    Task task =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                userId,
+                Optional.empty(),
+                "Task Lifecycle",
+                Optional.empty(),
+                TaskStatus.TO_DO,
+                TaskPriority.P3,
+                Optional.empty(),
+                0,
+                0,
+                0,
+                Optional.empty(),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                now,
+                now,
+                List.of(),
+                0L));
+
+    String versionBody = "{\"version\": 0}";
+
+    // Archive
+    mockMvc
+        .perform(
+            post("/tasks/" + task.id() + "/archive")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(versionBody))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.archived").value(true));
+
+    // Restore
+    String restoredVersionBody = "{\"version\": 1}";
+    mockMvc
+        .perform(
+            post("/tasks/" + task.id() + "/restore")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(restoredVersionBody))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.archived").value(false));
+
+    // Delete
+    mockMvc
+        .perform(
+            delete("/tasks/" + task.id())
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value()))
+        .andExpect(status().isNoContent());
+
+    // Subsequent GET returns 404
+    mockMvc
+        .perform(get("/tasks/" + task.id()).cookie(sessionCookie))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void duplicateTaskSuccess() throws Exception {
+    Instant now = Instant.now();
+    Task task =
+        taskRepository.save(
+            new Task(
+                UUID.randomUUID(),
+                userId,
+                Optional.empty(),
+                "Original Task",
+                Optional.empty(),
+                TaskStatus.IN_PROGRESS,
+                TaskPriority.P1,
+                Optional.empty(),
+                60,
+                15,
+                25,
+                Optional.empty(),
+                0,
+                Optional.empty(),
+                Optional.empty(),
+                now,
+                now,
+                List.of(),
+                0L));
+
+    mockMvc
+        .perform(
+            post("/tasks/" + task.id() + "/duplicate")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value()))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.title").value("Copy of Original Task"))
+        .andExpect(jsonPath("$.status").value("TO_DO"))
+        .andExpect(jsonPath("$.progress").value(0))
+        .andExpect(jsonPath("$.priority").value("P1"));
+  }
+}
