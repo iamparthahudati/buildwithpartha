@@ -4,8 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,26 +22,118 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
 import tech.buildwithpartha.lifeos.task.application.CreateTaskCommand;
 import tech.buildwithpartha.lifeos.task.application.TaskService;
 import tech.buildwithpartha.lifeos.task.application.UpdateTaskCommand;
 import tech.buildwithpartha.lifeos.task.domain.Task;
 import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
+import tech.buildwithpartha.lifeos.task.domain.TaskQuery;
+import tech.buildwithpartha.lifeos.task.domain.TaskQueryResult;
 import tech.buildwithpartha.lifeos.task.domain.TaskStatus;
+import tech.buildwithpartha.lifeos.task.domain.TaskSummaryCounts;
 
 @RestController
 @RequestMapping("/tasks")
 @SecurityRequirement(name = "sessionCookie")
 public class TaskController {
 
+  private static final Set<String> ALLOWED_SORT_FIELDS =
+      Set.of("title", "status", "priority", "dueAt", "createdAt", "updatedAt", "position");
+
   private final TaskService taskService;
 
   public TaskController(TaskService taskService) {
     this.taskService = taskService;
+  }
+
+  @Operation(
+      summary = "Query tasks",
+      description = "Search, filter, paginate and retrieve summary counts for tasks.")
+  @ApiResponse(responseCode = "200", description = "Query results.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping
+  public TaskQueryResponse queryTasks(
+      @AuthenticationPrincipal UUID userId,
+      @RequestParam(name = "q", required = false) String q,
+      @RequestParam(name = "projectId", required = false) UUID projectId,
+      @RequestParam(name = "status", required = false) Set<String> statusStrings,
+      @RequestParam(name = "priority", required = false) Set<String> priorityStrings,
+      @RequestParam(name = "mitDate", required = false) LocalDate mitDate,
+      @RequestParam(name = "isMit", required = false) Boolean isMit,
+      @RequestParam(name = "overdue", required = false) Boolean overdue,
+      @RequestParam(name = "archived", required = false) Boolean archived,
+      @RequestParam(name = "dueBefore", required = false) Instant dueBefore,
+      @RequestParam(name = "dueAfter", required = false) Instant dueAfter,
+      @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+      @RequestParam(name = "size", required = false, defaultValue = "20") int size,
+      @RequestParam(name = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
+      @RequestParam(name = "sortDirection", required = false, defaultValue = "DESC")
+          String sortDirection) {
+
+    if (page < 0) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("page", "INVALID")));
+    }
+    if (size < 1 || size > 100) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("size", "INVALID")));
+    }
+    if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("sortBy", "INVALID")));
+    }
+    if (!"ASC".equalsIgnoreCase(sortDirection) && !"DESC".equalsIgnoreCase(sortDirection)) {
+      throw new FieldValidationException(
+          "Validation failed", List.of(new FieldProblem("sortDirection", "INVALID")));
+    }
+
+    Set<TaskStatus> statuses = parseStatuses(statusStrings);
+    Set<TaskPriority> priorities = parsePriorities(priorityStrings);
+
+    TaskQuery query =
+        new TaskQuery(
+            userId,
+            q,
+            projectId,
+            statuses,
+            priorities,
+            mitDate,
+            isMit,
+            overdue,
+            archived,
+            dueBefore,
+            dueAfter,
+            page,
+            size,
+            sortBy,
+            sortDirection);
+
+    TaskQueryResult queryResult = taskService.queryTasks(query);
+    TaskSummaryCounts summary = taskService.getSummaryCounts(userId);
+
+    List<TaskResponse> items = queryResult.tasks().stream().map(TaskResponse::fromDomain).toList();
+
+    PageResponse<TaskResponse> pageResponse =
+        PageResponse.of(items, page, size, queryResult.totalItems());
+
+    return new TaskQueryResponse(pageResponse, summary);
+  }
+
+  @Operation(summary = "Get task summary counts", description = "Retrieves user's task counts.")
+  @ApiResponse(responseCode = "200", description = "Summary counts.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping("/summary-counts")
+  public TaskSummaryCounts getSummaryCounts(@AuthenticationPrincipal UUID userId) {
+    return taskService.getSummaryCounts(userId);
   }
 
   @Operation(summary = "Create task", description = "Creates a new user-owned task.")
@@ -232,6 +328,38 @@ public class TaskController {
     String newTitle = request != null ? request.newTitle() : null;
     Task duplicated = taskService.duplicateTask(userId, id, newTitle);
     return TaskResponse.fromDomain(duplicated);
+  }
+
+  private Set<TaskStatus> parseStatuses(Set<String> values) {
+    if (values == null || values.isEmpty()) {
+      return Set.of();
+    }
+    Set<TaskStatus> result = new HashSet<>();
+    for (String val : values) {
+      try {
+        result.add(TaskStatus.valueOf(val.toUpperCase()));
+      } catch (IllegalArgumentException e) {
+        throw new FieldValidationException(
+            "Validation failed", List.of(new FieldProblem("status", "INVALID")));
+      }
+    }
+    return result;
+  }
+
+  private Set<TaskPriority> parsePriorities(Set<String> values) {
+    if (values == null || values.isEmpty()) {
+      return Set.of();
+    }
+    Set<TaskPriority> result = new HashSet<>();
+    for (String val : values) {
+      try {
+        result.add(TaskPriority.valueOf(val.toUpperCase()));
+      } catch (IllegalArgumentException e) {
+        throw new FieldValidationException(
+            "Validation failed", List.of(new FieldProblem("priority", "INVALID")));
+      }
+    }
+    return result;
   }
 
   private TaskStatus parseStatus(String value, TaskStatus defaultValue) {

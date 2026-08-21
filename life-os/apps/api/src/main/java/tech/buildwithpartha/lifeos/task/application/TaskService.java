@@ -11,8 +11,11 @@ import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.task.domain.Task;
 import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
+import tech.buildwithpartha.lifeos.task.domain.TaskQuery;
+import tech.buildwithpartha.lifeos.task.domain.TaskQueryResult;
 import tech.buildwithpartha.lifeos.task.domain.TaskRepository;
 import tech.buildwithpartha.lifeos.task.domain.TaskStatus;
+import tech.buildwithpartha.lifeos.task.domain.TaskSummaryCounts;
 
 @Service
 @Transactional
@@ -63,6 +66,18 @@ public class TaskService {
         .findByIdAndUserId(taskId, userId)
         .filter(t -> !t.isDeleted())
         .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + taskId));
+  }
+
+  @Transactional(readOnly = true)
+  public TaskQueryResult queryTasks(TaskQuery query) {
+    Objects.requireNonNull(query, "query must not be null");
+    return taskRepository.queryTasks(query);
+  }
+
+  @Transactional(readOnly = true)
+  public TaskSummaryCounts getSummaryCounts(UUID userId) {
+    Objects.requireNonNull(userId, "userId must not be null");
+    return taskRepository.getSummaryCounts(userId, Instant.now());
   }
 
   public Task updateTask(UUID userId, UUID taskId, UpdateTaskCommand command) {
