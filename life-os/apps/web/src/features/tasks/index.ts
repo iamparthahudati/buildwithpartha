@@ -8,8 +8,21 @@ export {
   type TaskFormProps,
 } from "./components/TaskForm";
 export {
+  TaskSummaryMetrics,
+  type TaskSummaryCounts,
+  type TaskSummaryMetricsProps,
+  type TaskSummaryMetricsStatus,
+} from "./components/TaskSummaryMetrics";
+export {
   type TaskListItem,
   type TaskPriority,
   type TaskProjectContext,
   type TaskStatus,
 } from "./model/task";
+export {
+  TASK_FILTER_PRESETS,
+  applyTaskFilterPreset,
+  readTaskFilterPreset,
+  type TaskFilterPresetDefinition,
+  type TaskFilterPresetId,
+} from "./model/taskFilterPresets";

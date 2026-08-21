@@ -20,6 +20,7 @@ import {
   TaskRowDemo,
   TaskCardDemo,
   TaskFormDemo,
+  TaskSummaryMetricsDemo,
   ProjectDetailsHeaderDemo,
   ProjectOverviewDemo,
   ProjectTimelineDemo,
@@ -292,6 +293,41 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Title, optional Project, and due time first; all details remain one action away.",
         render: () => <TaskFormDemo presentation="quick-add" />,
+      },
+    ],
+  },
+  {
+    id: "task-summary-metrics",
+    name: "TaskSummaryMetrics",
+    group: "Composed",
+    summary:
+      "Six controlled Task counts with accessible values and actions for URL-compatible All, To Do, In progress, Done, Blocked, and Overdue filter presets.",
+    states: [
+      {
+        id: "task-summary-metrics-ready",
+        name: "Ready and interactive",
+        description:
+          "Every action exposes its exact Task filter name and the selected preset uses aria-pressed as well as a visible treatment.",
+        render: () => <TaskSummaryMetricsDemo />,
+      },
+      {
+        id: "task-summary-metrics-loading",
+        name: "Loading",
+        description: "All six labels remain visible while their values load.",
+        render: () => <TaskSummaryMetricsDemo state="loading" />,
+      },
+      {
+        id: "task-summary-metrics-empty",
+        name: "No tasks",
+        description: "A new Account sees truthful zero values without losing the filter actions.",
+        render: () => <TaskSummaryMetricsDemo state="empty" />,
+      },
+      {
+        id: "task-summary-metrics-error",
+        name: "Error and retry",
+        description:
+          "The shared summary failure is named on every affected value with one retry action.",
+        render: () => <TaskSummaryMetricsDemo state="error" />,
       },
     ],
   },
