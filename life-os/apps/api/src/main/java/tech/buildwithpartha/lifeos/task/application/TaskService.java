@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,6 +19,7 @@ import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.common.label.LabelOwnershipValidator;
+import tech.buildwithpartha.lifeos.common.project.ProjectOwnershipValidator;
 import tech.buildwithpartha.lifeos.task.domain.DependencyCycleValidator;
 import tech.buildwithpartha.lifeos.task.domain.Subtask;
 import tech.buildwithpartha.lifeos.task.domain.Task;
@@ -39,14 +41,17 @@ public class TaskService {
   private final TaskRepository taskRepository;
   private final LabelOwnershipValidator labelOwnershipValidator;
   private final TaskDependencyRepository taskDependencyRepository;
+  private final ProjectOwnershipValidator projectOwnershipValidator;
 
   public TaskService(
       TaskRepository taskRepository,
       LabelOwnershipValidator labelOwnershipValidator,
-      TaskDependencyRepository taskDependencyRepository) {
+      TaskDependencyRepository taskDependencyRepository,
+      ProjectOwnershipValidator projectOwnershipValidator) {
     this.taskRepository = taskRepository;
     this.labelOwnershipValidator = labelOwnershipValidator;
     this.taskDependencyRepository = taskDependencyRepository;
+    this.projectOwnershipValidator = projectOwnershipValidator;
   }
 
   public Task createTask(UUID userId, CreateTaskCommand command) {
@@ -216,6 +221,152 @@ public class TaskService {
     Instant now = Instant.now();
     Task duplicated = existing.duplicate(UUID.randomUUID(), newTitle, now);
     return taskRepository.save(duplicated);
+  }
+
+  public Task applyBulkAction(UUID userId, UUID taskId, BulkTaskActionCommand command) {
+    Objects.requireNonNull(command, "command must not be null");
+    Task existing = getTask(userId, taskId);
+
+    return switch (command.action()) {
+      case STATUS -> applyBulkStatus(userId, existing, command.status());
+      case PRIORITY -> applyBulkPriority(existing, command.priority());
+      case PROJECT -> applyBulkProject(userId, existing, command.projectId());
+      case ADD_LABEL -> applyBulkLabel(userId, existing, command.labelId(), true);
+      case REMOVE_LABEL -> applyBulkLabel(userId, existing, command.labelId(), false);
+      case SCHEDULE -> applyBulkDueAt(existing, command.dueAt());
+      case CLEAR_SCHEDULE -> applyBulkDueAt(existing, Optional.empty());
+      case ARCHIVE -> applyBulkArchive(existing);
+    };
+  }
+
+  private Task applyBulkStatus(UUID userId, Task existing, TaskStatus status) {
+    Objects.requireNonNull(status, "status must not be null");
+    if (existing.status() == status) {
+      return existing;
+    }
+
+    int progress = status == TaskStatus.DONE ? 100 : existing.progress();
+    Optional<LocalDate> mitDate = status.isTerminal() ? Optional.empty() : existing.mitDate();
+    Task saved =
+        saveBulkFields(
+            existing,
+            existing.projectId(),
+            status,
+            existing.priority(),
+            existing.dueAt(),
+            mitDate,
+            existing.labelIds(),
+            progress);
+    if (status.isTerminal()) {
+      unblockDependentsIfAllBlockersResolved(userId, existing.id());
+    }
+    return saved;
+  }
+
+  private Task applyBulkPriority(Task existing, TaskPriority priority) {
+    Objects.requireNonNull(priority, "priority must not be null");
+    if (existing.priority() == priority) {
+      return existing;
+    }
+    return saveBulkFields(
+        existing,
+        existing.projectId(),
+        existing.status(),
+        priority,
+        existing.dueAt(),
+        existing.mitDate(),
+        existing.labelIds(),
+        existing.progress());
+  }
+
+  private Task applyBulkProject(UUID userId, Task existing, Optional<UUID> projectId) {
+    projectId.ifPresent(id -> projectOwnershipValidator.validateAssignment(userId, id));
+    if (existing.projectId().equals(projectId)) {
+      return existing;
+    }
+    return saveBulkFields(
+        existing,
+        projectId,
+        existing.status(),
+        existing.priority(),
+        existing.dueAt(),
+        existing.mitDate(),
+        existing.labelIds(),
+        existing.progress());
+  }
+
+  private Task applyBulkLabel(UUID userId, Task existing, UUID labelId, boolean add) {
+    Objects.requireNonNull(labelId, "labelId must not be null");
+    labelOwnershipValidator.validateOwnership(userId, Set.of(labelId));
+    boolean alreadyApplied = add == existing.labelIds().contains(labelId);
+    if (alreadyApplied) {
+      return existing;
+    }
+
+    Set<UUID> labelIds = new HashSet<>(existing.labelIds());
+    if (add) {
+      labelIds.add(labelId);
+    } else {
+      labelIds.remove(labelId);
+    }
+    return saveBulkFields(
+        existing,
+        existing.projectId(),
+        existing.status(),
+        existing.priority(),
+        existing.dueAt(),
+        existing.mitDate(),
+        labelIds,
+        existing.progress());
+  }
+
+  private Task applyBulkDueAt(Task existing, Optional<Instant> dueAt) {
+    if (existing.dueAt().equals(dueAt)) {
+      return existing;
+    }
+    return saveBulkFields(
+        existing,
+        existing.projectId(),
+        existing.status(),
+        existing.priority(),
+        dueAt,
+        existing.mitDate(),
+        existing.labelIds(),
+        existing.progress());
+  }
+
+  private Task applyBulkArchive(Task existing) {
+    if (existing.isArchived()) {
+      return existing;
+    }
+    Instant now = Instant.now();
+    return taskRepository.save(existing.archive(now, now));
+  }
+
+  private Task saveBulkFields(
+      Task existing,
+      Optional<UUID> projectId,
+      TaskStatus status,
+      TaskPriority priority,
+      Optional<Instant> dueAt,
+      Optional<LocalDate> mitDate,
+      Set<UUID> labelIds,
+      int progress) {
+    return taskRepository.save(
+        existing.withUpdates(
+            projectId,
+            existing.title(),
+            existing.description(),
+            status,
+            priority,
+            dueAt,
+            existing.estimateMinutes(),
+            existing.spentMinutes(),
+            progress,
+            mitDate,
+            existing.position(),
+            labelIds,
+            Instant.now()));
   }
 
   public Task addSubtask(UUID userId, UUID taskId, String title, Integer requestedPosition) {

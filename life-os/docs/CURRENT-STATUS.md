@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-1002 Sprint components handoff)
+Last updated: 2026-08-21 (LOS-0808 bulk task actions handoff)
 
 ## Phase
 
@@ -32,6 +32,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0808 — Implemented `POST /tasks/bulk-actions` for bounded status, priority, Project, Label, due-date scheduling, clear-schedule, and archive mutations. Each selected Task is authorized and committed independently, responses preserve ordered partial outcomes, concurrent conflicts stay item-scoped, and retries are no-ops for already-applied state. See `docs/handoffs/LOS-0808.md`.
 - LOS-1002 — Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, zero-denominator / over-capacity states, catalog coverage, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`.
 - LOS-0801 — Modeled core Task and Subtask domain aggregates, persistence entities, repositories, validation invariants, Flyway V9 schema (`V9__tasks_and_subtasks_schema.sql`), and contract reconciliation with calculation-facing `ProjectTask`. Verified via 100% clean `./gradlew check`. See `docs/handoffs/LOS-0801.md`.
 

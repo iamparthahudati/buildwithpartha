@@ -35,6 +35,14 @@ Every later controller ticket must annotate or customize its operations without 
 - Use `If-Match`/version or an equivalent explicit version field for collision-sensitive updates.
 - Never expose entity classes directly from controllers; use request/response records.
 
+### Task bulk actions
+
+`POST /tasks/bulk-actions` applies one online-only mutation to an ordered selection of 1–100 unique task IDs. Supported actions are `STATUS`, `PRIORITY`, `PROJECT`, `ADD_LABEL`, `REMOVE_LABEL`, `SCHEDULE`, `CLEAR_SCHEDULE`, and `ARCHIVE`. `SCHEDULE` sets the Task `dueAt` instant; linking Tasks to Time Blocks remains owned by the later scheduling API.
+
+The request is rejected as a normal `400` Problem when the selection or action parameters are structurally invalid. Once accepted, each Task runs in an independent transaction and the endpoint returns `200` with `requested`, `succeeded`, `failed`, and an ordered `results` entry for every requested ID. A result is either `SUCCEEDED` with the current Task representation or `FAILED` with only a safe stable error code. Missing and cross-user Task IDs are indistinguishable as `RESOURCE_NOT_FOUND`; Project and Label references are re-authorized server-side.
+
+Bulk actions are retry-safe: already-applied item states are no-ops and retain their version, while failed IDs can be resubmitted without duplicating successful mutations. Concurrent writes still use the Task entity version and surface `CONCURRENCY_CONFLICT` for the affected item rather than rolling back unrelated successes.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:

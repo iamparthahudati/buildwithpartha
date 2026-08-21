@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-20
+Last updated: 2026-08-21
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -141,6 +141,7 @@ Last updated: 2026-08-20
 | LOS-0708 | In Review     | `feature/LOS-0701-model-projects-milestones`    | Project summary metric strip displaying total/active/completed/on-hold/at-risk/progress metrics with interactive filter triggers. See `docs/handoffs/LOS-0708.md`. |
 | LOS-0709 | In Review     | `feature/LOS-0701-model-projects-milestones`    | Composed Projects screen with header/add, metrics, tabs/filters/sort/view, cards/table, details, pagination and mock UX states. See `docs/handoffs/LOS-0709.md`. |
 | LOS-0801 | Done          | `develop`                                       | Modeled core Task and Subtask domain aggregates, persistence entities, repositories, Flyway V9 schema, and contract reconciliation. See `docs/handoffs/LOS-0801.md`. |
+| LOS-0808 | Done          | `feature/LOS-0808-implement-bulk-task-actions`  | Added bounded, CSRF-protected bulk status/priority/Project/Label/schedule/archive actions with per-item authorization, isolated partial results, optimistic concurrency handling, and retry-safe no-ops. See `docs/handoffs/LOS-0808.md`. |
 | LOS-1403 | Done          | `develop`                                       | Persistent background job framework (V5 migration, BackgroundJob domain aggregate, transactional enqueue port in common.job, scheduled poller/runner with retry backoff, and daily R1 retention cleanup). |
 | LOS-1405 | Done          | `develop`                                       | Private generated-file lifecycle (V6 migration, ExportFile domain aggregate, ExportFilePort in common.export, local private storage, secure download tokens, and daily cleanup). |
 | LOS-1002 | Done          | `feature/LOS-1002-build-sprint-components`      | Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, catalog specimens, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`. |

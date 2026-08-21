@@ -28,6 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
+import tech.buildwithpartha.lifeos.task.application.BulkTaskActionCommand;
+import tech.buildwithpartha.lifeos.task.application.BulkTaskActionResult;
+import tech.buildwithpartha.lifeos.task.application.BulkTaskActionType;
+import tech.buildwithpartha.lifeos.task.application.BulkTaskService;
 import tech.buildwithpartha.lifeos.task.application.CreateTaskCommand;
 import tech.buildwithpartha.lifeos.task.application.TaskService;
 import tech.buildwithpartha.lifeos.task.application.UpdateTaskCommand;
@@ -49,9 +53,11 @@ public class TaskController {
       Set.of("title", "status", "priority", "dueAt", "createdAt", "updatedAt", "position");
 
   private final TaskService taskService;
+  private final BulkTaskService bulkTaskService;
 
-  public TaskController(TaskService taskService) {
+  public TaskController(TaskService taskService, BulkTaskService bulkTaskService) {
     this.taskService = taskService;
+    this.bulkTaskService = bulkTaskService;
   }
 
   @Operation(
@@ -138,6 +144,28 @@ public class TaskController {
   @GetMapping("/summary-counts")
   public TaskSummaryCounts getSummaryCounts(@AuthenticationPrincipal UUID userId) {
     return taskService.getSummaryCounts(userId);
+  }
+
+  @Operation(
+      summary = "Apply a bulk task action",
+      description =
+          "Applies one action to at most 100 selected tasks and returns ordered per-item outcomes.")
+  @ApiResponse(
+      responseCode = "200",
+      description = "Bulk action outcomes, including partial failures.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/bulk-actions")
+  public BulkTaskActionResponse applyBulkAction(
+      @AuthenticationPrincipal UUID userId, @Valid @RequestBody BulkTaskActionRequest request) {
+    if (new HashSet<>(request.taskIds()).size() != request.taskIds().size()) {
+      throw validationProblem("taskIds", "DUPLICATE");
+    }
+
+    BulkTaskActionCommand command = toBulkCommand(request);
+    BulkTaskActionResult result = bulkTaskService.apply(userId, request.taskIds(), command);
+    return BulkTaskActionResponse.fromApplication(result);
   }
 
   @Operation(summary = "Create task", description = "Creates a new user-owned task.")
@@ -576,5 +604,54 @@ public class TaskController {
       throw new FieldValidationException(
           "Validation failed", List.of(new FieldProblem("priority", "INVALID")));
     }
+  }
+
+  private BulkTaskActionCommand toBulkCommand(BulkTaskActionRequest request) {
+    BulkTaskActionType action;
+    try {
+      action = BulkTaskActionType.valueOf(request.action().toUpperCase());
+    } catch (IllegalArgumentException exception) {
+      throw validationProblem("action", "INVALID");
+    }
+
+    TaskStatus status = null;
+    TaskPriority priority = null;
+    Optional<UUID> projectId = Optional.ofNullable(request.projectId());
+    Optional<Instant> dueAt = Optional.ofNullable(request.dueAt());
+
+    switch (action) {
+      case STATUS -> {
+        status = parseStatus(request.status(), null);
+        if (status == null) {
+          throw validationProblem("status", "REQUIRED");
+        }
+      }
+      case PRIORITY -> {
+        priority = parsePriority(request.priority(), null);
+        if (priority == null) {
+          throw validationProblem("priority", "REQUIRED");
+        }
+      }
+      case ADD_LABEL, REMOVE_LABEL -> {
+        if (request.labelId() == null) {
+          throw validationProblem("labelId", "REQUIRED");
+        }
+      }
+      case SCHEDULE -> {
+        if (request.dueAt() == null) {
+          throw validationProblem("dueAt", "REQUIRED");
+        }
+      }
+      case PROJECT, CLEAR_SCHEDULE, ARCHIVE -> {
+        // These actions need no additional required field.
+      }
+    }
+
+    return new BulkTaskActionCommand(action, status, priority, projectId, request.labelId(), dueAt);
+  }
+
+  private FieldValidationException validationProblem(String field, String code) {
+    return new FieldValidationException(
+        "Validation failed", List.of(new FieldProblem(field, code)));
   }
 }
