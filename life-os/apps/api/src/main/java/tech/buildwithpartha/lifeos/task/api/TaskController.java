@@ -330,6 +330,90 @@ public class TaskController {
     return TaskResponse.fromDomain(duplicated);
   }
 
+  @Operation(summary = "Add subtask", description = "Adds a subtask item to a parent task.")
+  @ApiResponse(responseCode = "201", description = "Subtask added.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PostMapping("/{taskId}/subtasks")
+  @ResponseStatus(HttpStatus.CREATED)
+  public TaskResponse addSubtask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("taskId") UUID taskId,
+      @Valid @RequestBody CreateSubtaskRequest request) {
+
+    Task updated = taskService.addSubtask(userId, taskId, request.title(), request.position());
+    return TaskResponse.fromDomain(updated);
+  }
+
+  @Operation(summary = "Update subtask", description = "Updates a subtask title or position.")
+  @ApiResponse(responseCode = "200", description = "Subtask updated.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PutMapping("/{taskId}/subtasks/{subtaskId}")
+  public TaskResponse updateSubtask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("taskId") UUID taskId,
+      @PathVariable("subtaskId") UUID subtaskId,
+      @Valid @RequestBody UpdateSubtaskRequest request) {
+
+    Task updated =
+        taskService.updateSubtask(
+            userId, taskId, subtaskId, request.title(), request.completed(), request.position());
+    return TaskResponse.fromDomain(updated);
+  }
+
+  @Operation(
+      summary = "Toggle subtask completion",
+      description = "Toggles subtask completed state.")
+  @ApiResponse(responseCode = "200", description = "Subtask toggled.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PatchMapping("/{taskId}/subtasks/{subtaskId}/toggle")
+  public TaskResponse toggleSubtask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("taskId") UUID taskId,
+      @PathVariable("subtaskId") UUID subtaskId) {
+
+    Task updated = taskService.toggleSubtask(userId, taskId, subtaskId);
+    return TaskResponse.fromDomain(updated);
+  }
+
+  @Operation(summary = "Delete subtask", description = "Deletes a subtask item.")
+  @ApiResponse(responseCode = "200", description = "Subtask deleted.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @DeleteMapping("/{taskId}/subtasks/{subtaskId}")
+  public TaskResponse deleteSubtask(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("taskId") UUID taskId,
+      @PathVariable("subtaskId") UUID subtaskId) {
+
+    Task updated = taskService.deleteSubtask(userId, taskId, subtaskId);
+    return TaskResponse.fromDomain(updated);
+  }
+
+  @Operation(summary = "Reorder subtasks", description = "Reorders subtasks by ID sequence.")
+  @ApiResponse(responseCode = "200", description = "Subtasks reordered.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @PutMapping("/{taskId}/subtasks/reorder")
+  public TaskResponse reorderSubtasks(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("taskId") UUID taskId,
+      @Valid @RequestBody ReorderSubtasksRequest request) {
+
+    Task updated = taskService.reorderSubtasks(userId, taskId, request.subtaskIds());
+    return TaskResponse.fromDomain(updated);
+  }
+
   private Set<TaskStatus> parseStatuses(Set<String> values) {
     if (values == null || values.isEmpty()) {
       return Set.of();
