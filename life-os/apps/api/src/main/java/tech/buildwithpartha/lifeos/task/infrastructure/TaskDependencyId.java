@@ -16,9 +16,9 @@ class TaskDependencyId implements Serializable {
   @Column(name = "blocked_task_id", nullable = false)
   private UUID blockedTaskId;
 
-  public TaskDependencyId() {}
+  TaskDependencyId() {}
 
-  public TaskDependencyId(UUID blockingTaskId, UUID blockedTaskId) {
+  TaskDependencyId(UUID blockingTaskId, UUID blockedTaskId) {
     this.blockingTaskId = blockingTaskId;
     this.blockedTaskId = blockedTaskId;
   }

@@ -12,7 +12,7 @@ class JpaTaskDependencyRepository implements TaskDependencyRepository {
 
   private final TaskDependencyJpaRepository jpaRepository;
 
-  public JpaTaskDependencyRepository(TaskDependencyJpaRepository jpaRepository) {
+  JpaTaskDependencyRepository(TaskDependencyJpaRepository jpaRepository) {
     this.jpaRepository = jpaRepository;
   }
 

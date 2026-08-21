@@ -18,9 +18,9 @@ class TaskDependencyEntity {
   @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt;
 
-  public TaskDependencyEntity() {}
+  TaskDependencyEntity() {}
 
-  public TaskDependencyEntity(TaskDependencyId id, Instant createdAt) {
+  TaskDependencyEntity(TaskDependencyId id, Instant createdAt) {
     this.id = id;
     this.createdAt = createdAt;
   }
