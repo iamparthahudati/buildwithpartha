@@ -1,14 +1,20 @@
 package tech.buildwithpartha.lifeos.task.infrastructure;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
 import tech.buildwithpartha.lifeos.task.domain.TaskStatus;
@@ -76,6 +82,14 @@ class TaskEntity {
   @Column(name = "version", nullable = false)
   private long version;
 
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(
+      name = "task_labels",
+      schema = "public",
+      joinColumns = @JoinColumn(name = "task_id"))
+  @Column(name = "label_id")
+  private Set<UUID> labelIds = new HashSet<>();
+
   protected TaskEntity() {}
 
   TaskEntity(
@@ -97,6 +111,49 @@ class TaskEntity {
       Instant createdAt,
       Instant updatedAt,
       long version) {
+    this(
+        id,
+        userId,
+        projectId,
+        title,
+        description,
+        status,
+        priority,
+        dueAt,
+        estimateMinutes,
+        spentMinutes,
+        progress,
+        mitDate,
+        position,
+        archivedAt,
+        deletedAt,
+        createdAt,
+        updatedAt,
+        new HashSet<>(),
+        version);
+  }
+
+  TaskEntity(
+      UUID id,
+      UUID userId,
+      UUID projectId,
+      String title,
+      String description,
+      TaskStatus status,
+      TaskPriority priority,
+      Instant dueAt,
+      int estimateMinutes,
+      int spentMinutes,
+      int progress,
+      LocalDate mitDate,
+      int position,
+      Instant archivedAt,
+      Instant deletedAt,
+      Instant createdAt,
+      Instant updatedAt,
+      Set<UUID> labelIds,
+      long version) {
+
     this.id = id;
     this.userId = userId;
     this.projectId = projectId;
@@ -114,6 +171,7 @@ class TaskEntity {
     this.deletedAt = deletedAt;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+    this.labelIds = labelIds != null ? labelIds : new HashSet<>();
     this.version = version;
   }
 
@@ -183,6 +241,10 @@ class TaskEntity {
 
   Instant getUpdatedAt() {
     return updatedAt;
+  }
+
+  Set<UUID> getLabelIds() {
+    return labelIds;
   }
 
   long getVersion() {

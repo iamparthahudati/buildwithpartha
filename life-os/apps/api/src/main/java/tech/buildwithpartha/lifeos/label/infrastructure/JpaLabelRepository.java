@@ -1,5 +1,6 @@
 package tech.buildwithpartha.lifeos.label.infrastructure;
 
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,10 +13,21 @@ import tech.buildwithpartha.lifeos.label.domain.LabelRepository;
 public class JpaLabelRepository implements LabelRepository {
 
   private final LabelJpaRepository jpaRepository;
+  private final EntityManager entityManager;
 
   public JpaLabelRepository(LabelJpaRepository jpaRepository) {
-    this.jpaRepository = jpaRepository;
+    this(jpaRepository, null);
   }
+
+  @org.springframework.beans.factory.annotation.Autowired
+  public JpaLabelRepository(
+      LabelJpaRepository jpaRepository,
+      @org.springframework.beans.factory.annotation.Autowired(required = false)
+          EntityManager entityManager) {
+    this.jpaRepository = jpaRepository;
+    this.entityManager = entityManager;
+  }
+
 
   @Override
   public Optional<Label> findById(UUID id) {
@@ -48,11 +60,18 @@ public class JpaLabelRepository implements LabelRepository {
 
   @Override
   public void deleteWithReplacement(UUID userId, UUID labelId, UUID replacementLabelId) {
+    if (entityManager != null) {
+      entityManager.flush();
+    }
     jpaRepository.deleteDuplicateProjectLabels(labelId, replacementLabelId);
     jpaRepository.reassignProjectLabels(userId, labelId, replacementLabelId);
     jpaRepository.deleteDuplicateTaskLabels(labelId, replacementLabelId);
     jpaRepository.reassignTaskLabels(userId, labelId, replacementLabelId);
     jpaRepository.deleteById(labelId);
+    if (entityManager != null) {
+      entityManager.flush();
+      entityManager.clear();
+    }
   }
 
 

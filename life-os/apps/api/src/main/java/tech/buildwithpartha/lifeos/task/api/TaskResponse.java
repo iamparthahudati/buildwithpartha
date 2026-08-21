@@ -3,6 +3,7 @@ package tech.buildwithpartha.lifeos.task.api;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import tech.buildwithpartha.lifeos.task.domain.Task;
 import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
@@ -32,6 +33,7 @@ public record TaskResponse(
     List<SubtaskResponse> subtasks,
     int subtaskCount,
     int completedSubtaskCount,
+    Set<UUID> labelIds,
     long version) {
 
   public static TaskResponse fromDomain(Task task) {
@@ -69,6 +71,7 @@ public record TaskResponse(
         subtaskResponses,
         totalSubtasks,
         completedSubtasks,
+        task.labelIds(),
         task.version());
   }
 }

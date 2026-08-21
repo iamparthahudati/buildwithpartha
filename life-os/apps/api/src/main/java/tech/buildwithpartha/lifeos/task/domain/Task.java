@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /** Immutable domain record representing a Task aggregate with invariants. */
@@ -27,6 +28,7 @@ public record Task(
     Instant createdAt,
     Instant updatedAt,
     List<Subtask> subtasks,
+    Set<UUID> labelIds,
     long version) {
 
   public Task {
@@ -44,6 +46,7 @@ public record Task(
     Objects.requireNonNull(createdAt, "createdAt must not be null");
     Objects.requireNonNull(updatedAt, "updatedAt must not be null");
     Objects.requireNonNull(subtasks, "subtasks must not be null");
+    Objects.requireNonNull(labelIds, "labelIds must not be null");
 
     if (title.isBlank()) {
       throw new IllegalArgumentException("Task title must not be blank");
@@ -59,9 +62,54 @@ public record Task(
     }
 
     subtasks = List.copyOf(subtasks);
+    labelIds = Set.copyOf(labelIds);
+  }
+
+  public Task(
+      UUID id,
+      UUID userId,
+      Optional<UUID> projectId,
+      String title,
+      Optional<String> description,
+      TaskStatus status,
+      TaskPriority priority,
+      Optional<Instant> dueAt,
+      int estimateMinutes,
+      int spentMinutes,
+      int progress,
+      Optional<LocalDate> mitDate,
+      int position,
+      Optional<Instant> archivedAt,
+      Optional<Instant> deletedAt,
+      Instant createdAt,
+      Instant updatedAt,
+      List<Subtask> subtasks,
+      long version) {
+    this(
+        id,
+        userId,
+        projectId,
+        title,
+        description,
+        status,
+        priority,
+        dueAt,
+        estimateMinutes,
+        spentMinutes,
+        progress,
+        mitDate,
+        position,
+        archivedAt,
+        deletedAt,
+        createdAt,
+        updatedAt,
+        subtasks,
+        Set.of(),
+        version);
   }
 
   public boolean isArchived() {
+
     return archivedAt.isPresent();
   }
 
@@ -90,6 +138,37 @@ public record Task(
       Optional<LocalDate> newMitDate,
       Integer newPosition,
       Instant newUpdatedAt) {
+    return withUpdates(
+        newProjectId,
+        newTitle,
+        newDescription,
+        newStatus,
+        newPriority,
+        newDueAt,
+        newEstimateMinutes,
+        newSpentMinutes,
+        newProgress,
+        newMitDate,
+        newPosition,
+        labelIds,
+        newUpdatedAt);
+  }
+
+  public Task withUpdates(
+      Optional<UUID> newProjectId,
+      String newTitle,
+      Optional<String> newDescription,
+      TaskStatus newStatus,
+      TaskPriority newPriority,
+      Optional<Instant> newDueAt,
+      Integer newEstimateMinutes,
+      Integer newSpentMinutes,
+      Integer newProgress,
+      Optional<LocalDate> newMitDate,
+      Integer newPosition,
+      Set<UUID> newLabelIds,
+      Instant newUpdatedAt) {
+
     return new Task(
         id,
         userId,
@@ -109,6 +188,7 @@ public record Task(
         createdAt,
         newUpdatedAt,
         subtasks,
+        newLabelIds != null ? newLabelIds : labelIds,
         version);
   }
 
@@ -132,6 +212,7 @@ public record Task(
         createdAt,
         newUpdatedAt,
         subtasks,
+        labelIds,
         version);
   }
 
@@ -155,6 +236,7 @@ public record Task(
         createdAt,
         newUpdatedAt,
         subtasks,
+        labelIds,
         version);
   }
 
@@ -178,6 +260,7 @@ public record Task(
         createdAt,
         newUpdatedAt,
         subtasks,
+        labelIds,
         version);
   }
 
@@ -201,6 +284,7 @@ public record Task(
         createdAt,
         newUpdatedAt,
         newSubtasks,
+        labelIds,
         version);
   }
 
@@ -237,6 +321,7 @@ public record Task(
         now,
         now,
         duplicatedSubtasks,
+        labelIds,
         0L);
   }
 }

@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
+import tech.buildwithpartha.lifeos.common.label.LabelOwnershipValidator;
 import tech.buildwithpartha.lifeos.task.domain.Subtask;
 import tech.buildwithpartha.lifeos.task.domain.Task;
 import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
@@ -28,14 +31,21 @@ import tech.buildwithpartha.lifeos.task.domain.TaskSummaryCounts;
 public class TaskService {
 
   private final TaskRepository taskRepository;
+  private final LabelOwnershipValidator labelOwnershipValidator;
 
-  public TaskService(TaskRepository taskRepository) {
+  public TaskService(
+      TaskRepository taskRepository, LabelOwnershipValidator labelOwnershipValidator) {
     this.taskRepository = taskRepository;
+    this.labelOwnershipValidator = labelOwnershipValidator;
   }
 
   public Task createTask(UUID userId, CreateTaskCommand command) {
     Objects.requireNonNull(userId, "userId must not be null");
     Objects.requireNonNull(command, "command must not be null");
+
+    Set<UUID> labelIds = command.labelIds() != null ? command.labelIds() : Set.of();
+
+    labelOwnershipValidator.validateOwnership(userId, labelIds);
 
     Instant now = Instant.now();
     Task task =
@@ -58,6 +68,7 @@ public class TaskService {
             now,
             now,
             List.of(),
+            labelIds,
             0L);
 
     return taskRepository.save(task);
@@ -94,6 +105,11 @@ public class TaskService {
     Task existing = getTask(userId, taskId);
     checkVersion(existing, command.version());
 
+    Set<UUID> labelIds =
+        command.labelIds() != null ? command.labelIds() : existing.labelIds();
+
+    labelOwnershipValidator.validateOwnership(userId, labelIds);
+
     Instant now = Instant.now();
     Task updated =
         existing.withUpdates(
@@ -108,10 +124,12 @@ public class TaskService {
             command.progress(),
             command.mitDate(),
             command.position(),
+            labelIds,
             now);
 
     return taskRepository.save(updated);
   }
+
 
   public Task changeStatus(UUID userId, UUID taskId, TaskStatus status, long version) {
     Objects.requireNonNull(userId, "userId must not be null");
