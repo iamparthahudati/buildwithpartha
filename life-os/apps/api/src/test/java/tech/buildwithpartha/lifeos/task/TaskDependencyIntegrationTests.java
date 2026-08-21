@@ -221,4 +221,31 @@ class TaskDependencyIntegrationTests {
                     userId, taskA.id(), taskB.id(), TaskDependencyType.BLOCKER))
         .isInstanceOf(ResourceNotFoundException.class);
   }
+
+  @Test
+  void preventsDependencyWhenMainTaskIsSoftDeleted() {
+    Task taskA = createTask(userId, "Task A", TaskStatus.TO_DO);
+    Task taskB = createTask(userId, "Task B", TaskStatus.TO_DO);
+
+    taskService.deleteTask(userId, taskA.id());
+
+    assertThatThrownBy(
+            () ->
+                taskService.addDependency(
+                    userId, taskA.id(), taskB.id(), TaskDependencyType.BLOCKER))
+        .isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
+  void completeBlockerDoesNotChangeStatusIfDependentNotBlocked() {
+    Task blocker = createTask(userId, "Blocker", TaskStatus.TO_DO);
+    Task dependent = createTask(userId, "Dependent", TaskStatus.IN_PROGRESS);
+
+    taskService.addDependency(userId, dependent.id(), blocker.id(), TaskDependencyType.BLOCKER);
+
+    taskService.completeTask(userId, blocker.id(), blocker.version());
+
+    Task updatedDependent = taskService.getTask(userId, dependent.id());
+    assertThat(updatedDependent.status()).isEqualTo(TaskStatus.IN_PROGRESS);
+  }
 }
