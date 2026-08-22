@@ -253,5 +253,3 @@ CREATE TABLE IF NOT EXISTS task_dependencies (
     created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
     PRIMARY KEY (blocking_task_id, blocked_task_id)
 );
-
-
