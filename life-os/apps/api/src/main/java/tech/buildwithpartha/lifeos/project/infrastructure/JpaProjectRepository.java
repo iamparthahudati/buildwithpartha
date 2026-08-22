@@ -219,7 +219,7 @@ public class JpaProjectRepository implements ProjectRepository {
     long onHold = ((Number) result[3]).longValue();
     long atRisk = ((Number) result[4]).longValue();
 
-    return new ProjectSummaryCounts(total, active, completed, onHold, atRisk);
+    return new ProjectSummaryCounts(total, active, completed, onHold, atRisk, 0);
   }
 
   static Project toDomain(ProjectEntity entity) {

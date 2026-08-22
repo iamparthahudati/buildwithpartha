@@ -31,6 +31,13 @@ export interface ProjectSummaryMetricsProps {
   readonly className?: string;
 }
 
+function formatAverageProgress(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+  return Math.round(Math.min(100, Math.max(0, value)));
+}
+
 export function ProjectSummaryMetrics({
   counts,
   loading = false,
@@ -88,7 +95,7 @@ export function ProjectSummaryMetrics({
       key: "PROGRESS" as const,
       label: "Average progress",
       icon: BarChart2,
-      value: counts ? `${Math.round(counts.averageProgress)}%` : undefined,
+      value: counts ? `${formatAverageProgress(counts.averageProgress)}%` : undefined,
     },
   ];
 

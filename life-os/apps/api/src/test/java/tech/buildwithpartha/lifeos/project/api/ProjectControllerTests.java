@@ -651,7 +651,8 @@ class ProjectControllerTests {
         .andExpect(jsonPath("$.summary.active").value(2))
         .andExpect(jsonPath("$.summary.completed").value(1))
         .andExpect(jsonPath("$.summary.onHold").value(1))
-        .andExpect(jsonPath("$.summary.atRisk").value(2));
+        .andExpect(jsonPath("$.summary.atRisk").value(2))
+        .andExpect(jsonPath("$.summary.averageProgress").value(0));
   }
 
   @Test

@@ -107,6 +107,34 @@ describe("projectsApi", () => {
       expect(result.items).toHaveLength(1);
       expect(result.items[0]?.name).toBe("API Test Project");
       expect(result.summary.active).toBe(1);
+      expect(result.summary.averageProgress).toBe(50);
+    });
+
+    it("defaults missing average progress to 0 so the metric never shows NaN", async () => {
+      const mockQueryResponse: ProjectQueryResponseDto = {
+        page: {
+          items: [MOCK_DTO],
+          page: 0,
+          size: 6,
+          totalItems: 1,
+          totalPages: 1,
+          first: true,
+          last: true,
+        },
+        summary: {
+          total: 1,
+          active: 1,
+          completed: 0,
+          onHold: 0,
+          atRisk: 0,
+          averageProgress: Number.NaN,
+        },
+      };
+
+      mockApiRequest.mockResolvedValueOnce(mockQueryResponse);
+
+      const result = await queryProjects();
+      expect(result.summary.averageProgress).toBe(0);
     });
   });
 

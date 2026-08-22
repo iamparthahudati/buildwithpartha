@@ -1,17 +1,44 @@
 /* ProjectSummaryMetrics (LOS-0708) */
 .lifeos-project-summary-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  gap: var(--lifeos-spacing-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  gap: 0;
   width: 100%;
 }
 
 .lifeos-project-summary-metrics__item {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+}
+
+.lifeos-project-summary-metrics__item > .lifeos-surface {
+  height: 100%;
+  border-radius: 0;
+}
+
+.lifeos-project-summary-metrics__item:first-child > .lifeos-surface {
+  border-top-left-radius: var(--lifeos-radius-lg);
+  border-bottom-left-radius: var(--lifeos-radius-lg);
+}
+
+.lifeos-project-summary-metrics__item:last-child > .lifeos-surface {
+  border-top-right-radius: var(--lifeos-radius-lg);
+  border-bottom-right-radius: var(--lifeos-radius-lg);
+}
+
+.lifeos-project-summary-metrics__item + .lifeos-project-summary-metrics__item > .lifeos-surface {
+  margin-inline-start: calc(-1 * var(--lifeos-border-width-hairline));
 }
 
 .lifeos-project-summary-metrics__item--active .lifeos-surface {
-  outline: 2px solid var(--lifeos-color-brand-primary);
+  outline: 2px solid var(--lifeos-color-primary);
   outline-offset: -2px;
+  z-index: 1;
+}
+
+@media (min-width: 72rem) {
+  .lifeos-project-summary-metrics {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
 }

@@ -13,8 +13,8 @@ export function ProjectsScreenDemo() {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "var(--lifeos-spacing-3)",
-          marginBottom: "var(--lifeos-spacing-4)",
+          gap: "var(--lifeos-space-3)",
+          marginBottom: "var(--lifeos-space-4)",
         }}
       >
         <Text size="sm" tone="secondary">

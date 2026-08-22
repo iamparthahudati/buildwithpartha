@@ -117,6 +117,14 @@ export interface ProjectQueryParams {
   readonly sortDirection?: "ASC" | "DESC";
 }
 
+/** Maps summary counts so missing or non-numeric average progress never renders as NaN. */
+export function mapProjectSummary(dto: ProjectSummaryCountsDto): ProjectSummaryCountsDto {
+  return {
+    ...dto,
+    averageProgress: Number.isFinite(dto.averageProgress) ? dto.averageProgress : 0,
+  };
+}
+
 /** Maps a ProjectResponseDto into the frontend Project domain model. */
 export function mapProjectResponse(dto: ProjectResponseDto): Project {
   return {
@@ -209,7 +217,7 @@ export async function queryProjects(
   return {
     items: response.page.items.map(mapProjectResponse),
     page: response.page,
-    summary: response.summary,
+    summary: mapProjectSummary(response.summary),
   };
 }
 

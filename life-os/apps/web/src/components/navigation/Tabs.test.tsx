@@ -50,6 +50,24 @@ describe("Tabs", () => {
     );
   });
 
+  it("does not render an empty tab panel when items have no panel content", () => {
+    renderWithUser(
+      <ControlledTabs
+        items={[
+          { id: "all", label: "All", panel: null },
+          { id: "active", label: "Active", panel: null },
+        ]}
+        initialId="all"
+      />,
+    );
+
+    const panel = document.getElementById(
+      screen.getByRole("tab", { name: "All" }).getAttribute("aria-controls") ?? "",
+    );
+    expect(panel).toHaveClass("lifeos-tabs__panel--empty");
+    expect(panel).not.toBeVisible();
+  });
+
   it("shows only the selected panel and mounts nothing for unvisited tabs", () => {
     renderWithUser(<ControlledTabs />);
 

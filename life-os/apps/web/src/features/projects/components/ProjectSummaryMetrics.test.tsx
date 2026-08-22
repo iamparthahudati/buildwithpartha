@@ -34,6 +34,20 @@ describe("ProjectSummaryMetrics", () => {
     expect(screen.getByText("68%")).toBeInTheDocument();
   });
 
+  it("renders 0% when average progress is missing or not a number", () => {
+    render(
+      <ProjectSummaryMetrics
+        counts={{
+          ...sampleCounts,
+          averageProgress: Number.NaN,
+        }}
+      />,
+    );
+
+    expect(screen.getByText("0%")).toBeInTheDocument();
+    expect(screen.queryByText("NaN%")).not.toBeInTheDocument();
+  });
+
   it("renders loading state across all metrics", () => {
     render(<ProjectSummaryMetrics loading />);
 
