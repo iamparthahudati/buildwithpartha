@@ -18,9 +18,11 @@ import {
 import {
   TASK_FILTER_PRESETS,
   TaskCard,
+  TaskDetailsHeader,
   TaskForm,
   TaskRow,
   TaskSummaryMetrics,
+  type TaskDetailsHeaderTask,
   type TaskFilterPresetId,
   type TaskListItem,
   type TaskSummaryMetricsStatus,
@@ -651,6 +653,80 @@ export function TaskCardDemo() {
         />
       ))}
       <TaskCard loading />
+    </div>
+  );
+}
+
+const MOCK_TASK_DETAILS: TaskDetailsHeaderTask = {
+  id: "task-814",
+  title: "Build Task details header",
+  description: "Make Task context and actions clear before composing the full details screen.",
+  status: "IN_PROGRESS",
+  priority: "P1",
+  project: { id: "life-os", name: "LifeOS" },
+  dueAt: "2026-08-24T12:00:00Z",
+  estimateMinutes: 150,
+  spentMinutes: 75,
+  progress: 50,
+  labels: [
+    { id: "frontend", name: "Frontend" },
+    { id: "accessibility", name: "Accessibility" },
+  ],
+  isMit: true,
+};
+
+export function TaskDetailsHeaderDemo() {
+  const now = new Date("2026-08-23T12:00:00Z");
+
+  return (
+    <div className="specimen-stack" style={{ width: "100%" }}>
+      <Text tone="secondary" size="xs">
+        Active Task
+      </Text>
+      <TaskDetailsHeader
+        task={MOCK_TASK_DETAILS}
+        now={now}
+        timeZone="Asia/Kolkata"
+        onStartFocus={handleTaskDemoAction}
+        onToggleMit={handleTaskDemoAction}
+        onMarkDone={handleTaskDemoAction}
+        onEdit={handleTaskDemoAction}
+        onDuplicate={handleTaskDemoAction}
+        onArchive={handleTaskDemoAction}
+      />
+
+      <Text tone="secondary" size="xs">
+        Sync conflict
+      </Text>
+      <TaskDetailsHeader
+        task={MOCK_TASK_DETAILS}
+        now={now}
+        conflictError="The details shown here may be out of date. Load the latest Task before making more changes."
+        onLoadLatest={handleTaskDemoAction}
+      />
+
+      <Text tone="secondary" size="xs">
+        Archived Task
+      </Text>
+      <TaskDetailsHeader
+        task={{ ...MOCK_TASK_DETAILS, archivedAt: "2026-08-22T12:00:00Z" }}
+        now={now}
+        onRestore={handleTaskDemoAction}
+        onDelete={handleTaskDemoAction}
+      />
+
+      <Text tone="secondary" size="xs">
+        Deleted Task
+      </Text>
+      <TaskDetailsHeader
+        task={{ ...MOCK_TASK_DETAILS, deletedAt: "2026-08-23T09:00:00Z" }}
+        now={now}
+      />
+
+      <Text tone="secondary" size="xs">
+        Loading
+      </Text>
+      <TaskDetailsHeader loading />
     </div>
   );
 }

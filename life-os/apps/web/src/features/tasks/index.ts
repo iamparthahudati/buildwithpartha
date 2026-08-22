@@ -1,6 +1,12 @@
 export { TaskRow, type TaskRowProps } from "./components/TaskRow";
 export { TaskCard, type TaskCardProps } from "./components/TaskCard";
 export {
+  TaskDetailsHeader,
+  type TaskDetailsHeaderProps,
+  type TaskDetailsHeaderTask,
+  type TaskDetailsLabel,
+} from "./components/TaskDetailsHeader";
+export {
   TaskForm,
   type TaskFormData,
   type TaskFormLabelOption,

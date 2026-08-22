@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-21 (LOS-0813 Tasks screen integration handoff)
+Last updated: 2026-08-23 (LOS-0814 Task details header handoff)
 
 ## Phase
 
@@ -28,8 +28,10 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0711 — Responsive ProjectDetailsHeader component with deep link breadcrumbs, identity, status, health, priority, owner, dates, estimate, task progress, primary/secondary actions, loading skeleton, and archived state. See `docs/handoffs/LOS-0711.md`.
 - LOS-0712 — Project overview components (progress/task/time/health summary cards, status/priority breakdown charts with data table fallback, top tasks list, about/labels metadata, and activity feed). See `docs/handoffs/LOS-0712.md`.
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
+
 ## Completed
 
+- LOS-0814 — Built the responsive TaskDetailsHeader with deep-link breadcrumbs, title and description, canonical lifecycle badges, Project/due/estimate/time-spent facts, progress, labels, and the shared lifecycle-valid action menu. Loading, archived, deleted, overdue, blocked, and optimistic-conflict states have focused accessibility coverage and live 320px/tablet/desktop verification. See `docs/handoffs/LOS-0814.md`.
 - LOS-0813 — Integrated the Tasks screen with list/summary query, CRUD/status/MIT/bulk mutations, URL state, safe optimistic updates, partial bulk failures, and preserved failed selection. See `docs/handoffs/LOS-0813.md`.
 - LOS-0812 — Composed the Tasks screen with header/add, summary presets, tabs, search/filters/sort/view, DataTable and cards, bulk actions, pagination, detail selection, TaskForm, and loading/empty/error/partial-failure mock states. See `docs/handoffs/LOS-0812.md`.
 - LOS-0811 — Built six controlled Task summary metrics for All, To Do, In progress, Done, Blocked, and Overdue. Each ready/loading/empty/error value remains accessibly named, filter actions expose exact names and pressed state, and pure URL helpers apply/read backend-compatible `status`/`overdue` presets while preserving unrelated filters and resetting pagination. Catalog specimens, 28 focused tests, the full frontend gate, and live 320px/tablet/desktop checks pass. See `docs/handoffs/LOS-0811.md`.
@@ -262,7 +264,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0814 (`docs/backlog/EPIC-08-TASKS.md`) — build TaskDetailsHeader and metadata.
+LOS-0815 (`docs/backlog/EPIC-08-TASKS.md`) — build SubtaskChecklist.
 
 ## Known decisions requiring implementation-time values
 

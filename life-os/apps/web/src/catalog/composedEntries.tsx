@@ -19,6 +19,7 @@ import {
   ProjectCardDemo,
   TaskRowDemo,
   TaskCardDemo,
+  TaskDetailsHeaderDemo,
   TaskFormDemo,
   TaskSummaryMetricsDemo,
   ProjectDetailsHeaderDemo,
@@ -294,6 +295,21 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Title, optional Project, and due time first; all details remain one action away.",
         render: () => <TaskFormDemo presentation="quick-add" />,
+      },
+    ],
+  },
+  {
+    id: "task-details-header",
+    name: "TaskDetailsHeader",
+    group: "Composed",
+    summary:
+      "A responsive Task details header with deep-link breadcrumbs, canonical status and priority, Project, due date, Estimate, Time spent, progress, Labels, lifecycle-valid actions, and explicit archived, deleted, conflict, and loading states.",
+    states: [
+      {
+        id: "task-details-header-states",
+        name: "Ready and lifecycle states",
+        description: "Active, conflict, archived, deleted, and loading Task header specimens.",
+        render: () => <TaskDetailsHeaderDemo />,
       },
     ],
   },
