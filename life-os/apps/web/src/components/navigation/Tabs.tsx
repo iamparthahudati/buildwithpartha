@@ -152,9 +152,11 @@ export function Tabs({ items, selectedId, onSelectedIdChange, label, className }
             id={panelElementId(item.id)}
             role="tabpanel"
             aria-labelledby={tabElementId(item.id)}
-            tabIndex={0}
-            hidden={!selected}
-            className="lifeos-tabs__panel"
+            tabIndex={item.panel == null ? -1 : 0}
+            hidden={!selected || item.panel == null}
+            className={["lifeos-tabs__panel", item.panel == null && "lifeos-tabs__panel--empty"]
+              .filter(Boolean)
+              .join(" ")}
           >
             {item.panel}
           </div>

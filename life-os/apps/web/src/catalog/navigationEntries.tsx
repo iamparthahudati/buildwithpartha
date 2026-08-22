@@ -35,7 +35,32 @@ import {
   TabsUrlDemo,
   TimelineDemo,
   ViewToggleDemo,
+  SidebarExpandedDemo,
+  SidebarCollapsedDemo,
+  SidebarInteractiveDemo,
+  SidebarDrawerDemo,
+  TopBarDemo,
+  TopBarWithNotificationsDemo,
+  TopBarWithFocusSlotDemo,
+  TopBarOverflowOpenDemo,
+  FocusMiniPlayerDemo,
+  TodayHeaderMorningDemo,
+  TodayHeaderEveningDemo,
+  TodayMetricStripLoadingDemo,
+  TodayMetricStripReadyDemo,
+  TodayMetricStripMixedDemo,
+  TodayHeaderSectionDemo,
+  TodayPlanFirstUseDemo,
+  TodayPlanPartialErrorDemo,
+  TodayPlanReadyDemo,
 } from "./NavigationDemos";
+import {
+  TodayScreenFirstUseDemo,
+  TodayScreenNormalDemo,
+  TodayScreenOfflineDemo,
+  TodayScreenOverloadedDemo,
+  TodayScreenPartialFailureDemo,
+} from "./TodayScreenDemos";
 
 import type { CatalogEntry } from "./registry";
 
@@ -445,6 +470,233 @@ export const NAVIGATION_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze
         description:
           "The partial-failure copy docs/30-CONTENT-AND-TONE-GUIDE.md names for this exact case.",
         render: () => <ActivityFeedErrorDemo />,
+      },
+    ],
+  },
+  {
+    id: "sidebar",
+    name: "Sidebar",
+    group: "Composed",
+    summary:
+      'The primary navigation rail for LifeOS: LifeOS wordmark linking to Today, 4 canonical groups (Execute, Plan, Capture and grow, Reflect) and 14 destinations, active-route styling with aria-current="page", responsive collapse to a compact rail with tooltips, mobile modal drawer, first-tab-stop skip link, and non-sensitive collapse preference saved in localStorage.',
+    states: [
+      {
+        id: "sidebar-expanded",
+        name: "Expanded desktop sidebar",
+        description:
+          "Full 240px persistent navigation showing group titles, item labels, and active route highlight.",
+        render: () => <SidebarExpandedDemo />,
+      },
+      {
+        id: "sidebar-collapsed",
+        name: "Compact rail mode",
+        description:
+          "Icon-only rail for tablet or user preference; hover or focus items to reveal destination tooltips.",
+        render: () => <SidebarCollapsedDemo />,
+      },
+      {
+        id: "sidebar-interactive",
+        name: "Interactive collapse and destination navigation",
+        description:
+          "Toggle collapse using the header chevron button, or click destinations to observe active state changes and localStorage persistence.",
+        render: () => <SidebarInteractiveDemo />,
+      },
+      {
+        id: "sidebar-drawer",
+        name: "Mobile navigation drawer",
+        description:
+          "Slide-out modal drawer with focus trap, backdrop dismissal, and accessible close button for small viewports.",
+        render: () => <SidebarDrawerDemo />,
+      },
+    ],
+  },
+  {
+    id: "topbar",
+    name: "TopBar",
+    group: "Composed",
+    summary:
+      "The shell's top utility row: context label and local date, a global search trigger (click or Cmd/Ctrl+K), Quick Add, Notifications with an unread CountBadge, an optional focus-status slot, and AccountMenu. Renders no CommandPalette, notification list, or focus UI of its own — every action item is a caller-controlled trigger. Below 768px, everything but the context label, Search, and Quick Add collapses behind a single 'More' overflow into a Drawer.",
+    states: [
+      {
+        id: "topbar-default",
+        name: "Default desktop row",
+        description: "Context label, date, and all utility triggers inline.",
+        render: () => <TopBarDemo />,
+      },
+      {
+        id: "topbar-with-notifications",
+        name: "Unread notifications",
+        description: "The bell shows an unread CountBadge, clamped above its max.",
+        render: () => <TopBarWithNotificationsDemo />,
+      },
+      {
+        id: "topbar-with-focus",
+        name: "Active focus status",
+        description: "A caller-supplied focusSlot renders between Notifications and AccountMenu.",
+        render: () => <TopBarWithFocusSlotDemo />,
+      },
+      {
+        id: "topbar-overflow",
+        name: "Mobile overflow drawer",
+        description:
+          "Below 768px, Notifications/Focus/Account collapse behind a 'More' trigger into a Drawer; resize the stage to see the swap, or use this state's button to open it directly.",
+        render: () => <TopBarOverflowOpenDemo />,
+      },
+    ],
+  },
+  {
+    id: "focus-mini-player",
+    name: "FocusMiniPlayer",
+    group: "Composed",
+    summary:
+      "The global focus mode mini-player: handles default starting states, ticking monotonic timers, desktop popover controls, inline mobile rendering inside drawers, and accessible status transition announcements.",
+    states: [
+      {
+        id: "focus-mini-player-default",
+        name: "Interactive focus player",
+        description:
+          "Interactive mini-player. Click the clock button to start a session, or controls to pause/resume/cancel.",
+        render: () => <FocusMiniPlayerDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-header",
+    name: "TodayHeader",
+    group: "Composed",
+    summary:
+      "The greeting band at the top of the Today screen. Derives 'Good morning / afternoon / evening, {name}' from the wall-clock hour in the user's confirmed IANA timezone — same localDateTime rule as TopBar's date label. Renders the local date formatted per the user's locale and a compact Quick Add trigger.",
+    states: [
+      {
+        id: "today-header-morning",
+        name: "Morning greeting",
+        description: "09:00 IST — greeting period is morning; date formatted in en-IN locale.",
+        render: () => <TodayHeaderMorningDemo />,
+      },
+      {
+        id: "today-header-evening",
+        name: "Evening greeting with subtitle",
+        description: "18:30 IST — greeting period is evening; optional subtitle slot filled.",
+        render: () => <TodayHeaderEveningDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-metric-strip",
+    name: "TodayMetricStrip",
+    group: "Composed",
+    summary:
+      "Six at-a-glance metric cards (Today's focus, Tasks today, Scheduled time, Focus time, Active projects, Week progress) composing the shared MetricCard. Each card is independently controlled — a single widget error cannot replace the others. Responsive: six-column desktop grid, two-column wrap on tablet, horizontal scroll-snap row on mobile.",
+    states: [
+      {
+        id: "today-metric-strip-loading",
+        name: "All loading",
+        description:
+          "Initial state before any data arrives — six skeleton placeholders, labels still visible.",
+        render: () => <TodayMetricStripLoadingDemo />,
+      },
+      {
+        id: "today-metric-strip-ready",
+        name: "All ready",
+        description: "Every card showing a real value once data loads.",
+        render: () => <TodayMetricStripReadyDemo />,
+      },
+      {
+        id: "today-metric-strip-mixed",
+        name: "Mixed states",
+        description:
+          "Empty MIT, ready tasks, error scheduled time (no retry), loading focus time, ready projects, empty week — each card independent.",
+        render: () => <TodayMetricStripMixedDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-header-section",
+    name: "TodayHeaderSection",
+    group: "Composed",
+    summary:
+      "Combines TodayHeader and TodayMetricStrip in the wireframe-specified vertical order. Each child remains independently importable and testable; this container owns only the stacking.",
+    states: [
+      {
+        id: "today-header-section-default",
+        name: "Header with empty metric strip",
+        description:
+          "Morning greeting, local date, approved Today helper, Quick Add trigger, and six honest zero-data cards below.",
+        render: () => <TodayHeaderSectionDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-plan",
+    name: "TodayPlan",
+    group: "Composed",
+    summary:
+      "The daily decision surface: today's MIT precedes a deliberately limited Task list built on DataTable. MIT and list data fail independently; wide layouts place them side by side, while narrow layouts preserve the focus-before-list reading order and switch Task rows to cards.",
+    states: [
+      {
+        id: "today-plan-ready",
+        name: "Ready and interactive",
+        description:
+          "Set or change the MIT and mark Tasks done. The selected MIT, priority, status, project context, and actions stay consistent across the table and responsive cards.",
+        render: () => <TodayPlanReadyDemo />,
+      },
+      {
+        id: "today-plan-first-use",
+        name: "First use",
+        description:
+          "No fabricated Task data or zero-percent judgment: the MIT and list regions each offer one truthful next step.",
+        render: () => <TodayPlanFirstUseDemo />,
+      },
+      {
+        id: "today-plan-partial-error",
+        name: "Task-list error with usable MIT",
+        description:
+          "The selected MIT and its actions remain available while only the failed Task-list region offers retry and source navigation.",
+        render: () => <TodayPlanPartialErrorDemo />,
+      },
+    ],
+  },
+  {
+    id: "today-screen",
+    name: "TodayScreen",
+    group: "Screens",
+    summary:
+      "The complete pre-integration Today composition. The catalog viewport control proves the same semantic priority order at the 320px minimum, tablet, and desktop widths; widget failures stay isolated and offline/overload language never overclaims persistence or automatic replanning.",
+    states: [
+      {
+        id: "today-screen-first-use",
+        name: "First use",
+        description:
+          "No fictional Tasks, Time Blocks, Projects, charts, or percentages. Add a Task, reserve a Time Block, and capture a thought remain ordered invitations.",
+        render: () => <TodayScreenFirstUseDemo />,
+      },
+      {
+        id: "today-screen-normal",
+        name: "Normal day",
+        description:
+          "A selected focus, limited Tasks and Time Blocks, Sprint/Weekly Plan context, active Projects, Review status, and Brain Dump capture.",
+        render: () => <TodayScreenNormalDemo />,
+      },
+      {
+        id: "today-screen-overloaded",
+        name: "Overloaded day",
+        description:
+          "Names the schedule conflict and capacity overflow, offers Review plan, and explicitly confirms that nothing was automatically rescheduled or reprioritized.",
+        render: () => <TodayScreenOverloadedDemo />,
+      },
+      {
+        id: "today-screen-partial-failure",
+        name: "Partial failure",
+        description:
+          "Failed Tasks, scheduled-time metric, and active Projects regions retry in place while focus, schedule, Review, Sprint/Week, and capture remain available.",
+        render: () => <TodayScreenPartialFailureDemo />,
+      },
+      {
+        id: "today-screen-offline",
+        name: "Offline",
+        description:
+          "Shows the last update time, disables server-dependent mutations, and labels Brain Dump persistence as a device draft with sync unconfirmed.",
+        render: () => <TodayScreenOfflineDemo />,
       },
     ],
   },

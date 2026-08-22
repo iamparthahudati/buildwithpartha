@@ -15,8 +15,29 @@ import {
   DurationFieldDemo,
   SearchFieldDebouncedDemo,
   SearchFieldSubmitDemo,
+  ProjectRowDemo,
+  ProjectCardDemo,
+  TaskRowDemo,
+  TaskCardDemo,
+  TaskDetailsHeaderDemo,
+  TaskFormDemo,
+  TaskSummaryMetricsDemo,
+  ProjectDetailsHeaderDemo,
+  ProjectOverviewDemo,
+  ProjectTimelineDemo,
+  ProjectFormDemo,
+  ProjectSummaryMetricsDemo,
+  SprintCardDemo,
+  SprintProgressCapacityDemo,
+  SprintTaskCommitmentListDemo,
+  SprintScopeChangeHistoryDemo,
+  SprintFormDialogDemo,
+  SprintRetrospectiveDialogDemo,
+  TimeBlockRowDemo,
 } from "./ComposedDemos";
 
+import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
+import { TasksScreenDemo } from "./TasksScreenDemos";
 import type { CatalogEntry } from "./registry";
 
 /* Composed-component entries (LOS-0401 onward). */
@@ -192,6 +213,308 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Every swatch is independently proven to clear AA as a solid fill under the white preview icon.",
         render: () => <ColorIconPickerDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-row",
+    name: "ProjectRow",
+    group: "Composed",
+    summary:
+      "A responsive row item representing a Project, highlighting name, description, priority, health, status, progress, deadline, relative updated time, and actions menu.",
+    states: [
+      {
+        id: "project-row-default",
+        name: "Default",
+        description: "Renders rows in active, overdue, archived, and loading states.",
+        render: () => <ProjectRowDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-card",
+    name: "ProjectCard",
+    group: "Composed",
+    summary:
+      "A responsive card item representing a Project, displaying name, description, priority, health, status, progress, deadline, relative updated time, and actions menu in a grid layout.",
+    states: [
+      {
+        id: "project-card-default",
+        name: "Default",
+        description: "Renders cards in active, overdue, archived, and loading states.",
+        render: () => <ProjectCardDemo />,
+      },
+    ],
+  },
+  {
+    id: "task-row",
+    name: "TaskRow",
+    group: "Composed",
+    summary:
+      "A responsive Task list row with controlled selection, Project context, priority and status, timezone-aware due text, progress, comments, MIT designation, lifecycle states, and an accessible action menu.",
+    states: [
+      {
+        id: "task-row-states",
+        name: "Lifecycle and loading states",
+        description: "Active MIT, overdue and blocked, done, archived, and loading rows.",
+        render: () => <TaskRowDemo />,
+      },
+    ],
+  },
+  {
+    id: "task-card",
+    name: "TaskCard",
+    group: "Composed",
+    summary:
+      "The card counterpart to TaskRow, preserving the same controlled selection, metadata, state, progress, and action contracts in a compact responsive layout.",
+    states: [
+      {
+        id: "task-card-states",
+        name: "Lifecycle and loading states",
+        description: "Active MIT, overdue and blocked, done, archived, and loading cards.",
+        render: () => <TaskCardDemo />,
+      },
+    ],
+  },
+  {
+    id: "task-form",
+    name: "TaskForm",
+    group: "Composed",
+    summary:
+      "A create/edit Task dialog with canonical status and priority, timezone-safe due entry, Estimate, progress, Labels, dated MIT selection, dirty protection, version-conflict recovery, and a compact Quick Add presentation.",
+    states: [
+      {
+        id: "task-form-full",
+        name: "Full form",
+        description: "All Task fields with progressive advanced details.",
+        render: () => <TaskFormDemo />,
+      },
+      {
+        id: "task-form-quick-add",
+        name: "Quick Add",
+        description:
+          "Title, optional Project, and due time first; all details remain one action away.",
+        render: () => <TaskFormDemo presentation="quick-add" />,
+      },
+    ],
+  },
+  {
+    id: "task-details-header",
+    name: "TaskDetailsHeader",
+    group: "Composed",
+    summary:
+      "A responsive Task details header with deep-link breadcrumbs, canonical status and priority, Project, due date, Estimate, Time spent, progress, Labels, lifecycle-valid actions, and explicit archived, deleted, conflict, and loading states.",
+    states: [
+      {
+        id: "task-details-header-states",
+        name: "Ready and lifecycle states",
+        description: "Active, conflict, archived, deleted, and loading Task header specimens.",
+        render: () => <TaskDetailsHeaderDemo />,
+      },
+    ],
+  },
+  {
+    id: "task-summary-metrics",
+    name: "TaskSummaryMetrics",
+    group: "Composed",
+    summary:
+      "Six controlled Task counts with accessible values and actions for URL-compatible All, To Do, In progress, Done, Blocked, and Overdue filter presets.",
+    states: [
+      {
+        id: "task-summary-metrics-ready",
+        name: "Ready and interactive",
+        description:
+          "Every action exposes its exact Task filter name and the selected preset uses aria-pressed as well as a visible treatment.",
+        render: () => <TaskSummaryMetricsDemo />,
+      },
+      {
+        id: "task-summary-metrics-loading",
+        name: "Loading",
+        description: "All six labels remain visible while their values load.",
+        render: () => <TaskSummaryMetricsDemo state="loading" />,
+      },
+      {
+        id: "task-summary-metrics-empty",
+        name: "No tasks",
+        description: "A new Account sees truthful zero values without losing the filter actions.",
+        render: () => <TaskSummaryMetricsDemo state="empty" />,
+      },
+      {
+        id: "task-summary-metrics-error",
+        name: "Error and retry",
+        description:
+          "The shared summary failure is named on every affected value with one retry action.",
+        render: () => <TaskSummaryMetricsDemo state="error" />,
+      },
+    ],
+  },
+  {
+    id: "tasks-screen",
+    name: "TasksScreen",
+    group: "Composed",
+    summary:
+      "Full Tasks screen with header/add, summary presets, tabs, search/filters/sort/view, DataTable and cards, bulk actions, pagination, detail selection, and loading/empty/error/partial-failure states.",
+    states: [
+      {
+        id: "tasks-screen-default",
+        name: "Default",
+        description:
+          "Tasks screen with populated, first-use, loading, error, and partial bulk-failure specimens.",
+        render: () => <TasksScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-details-header",
+    name: "ProjectDetailsHeader",
+    group: "Composed",
+    summary:
+      "A comprehensive project details header component displaying deep link breadcrumbs, identity, status, owner, priority, health, dates, estimate, task progress, primary/secondary actions, responsive wrapping, and archived state.",
+    states: [
+      {
+        id: "project-details-header-default",
+        name: "Default",
+        description: "Renders project details header in active, archived, and loading states.",
+        render: () => <ProjectDetailsHeaderDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-overview",
+    name: "ProjectOverview",
+    group: "Composed",
+    summary:
+      "Comprehensive project overview component displaying progress/task/time/health summary cards, breakdown charts, top tasks list, about/labels metadata, and activity feed.",
+    states: [
+      {
+        id: "project-overview-default",
+        name: "Default",
+        description: "Project overview with populated, loading, empty, and error UX states.",
+        render: () => <ProjectOverviewDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-form",
+    name: "ProjectForm",
+    group: "Composed",
+    summary:
+      "A comprehensive project creation and edit dialog form with progressive disclosure, field validations, dirty state tracking, theme picker, and optimistic concurrency conflict handling.",
+    states: [
+      {
+        id: "project-form-default",
+        name: "Default",
+        description: "Interactive project form dialog with basic and advanced options.",
+        render: () => <ProjectFormDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-summary-metrics",
+    name: "ProjectSummaryMetrics",
+    group: "Composed",
+    summary:
+      "A responsive metric strip showing total, active, completed, on hold, at risk, and average progress metrics with interactive filter triggers.",
+    states: [
+      {
+        id: "project-summary-metrics-default",
+        name: "Default",
+        description: "Interactive metric strip with active filter selection.",
+        render: () => <ProjectSummaryMetricsDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-timeline",
+    name: "ProjectTimeline",
+    group: "Composed",
+    summary:
+      "Accessible project milestones and timeline view composing Timeline primitive, summary statistics, milestone add/edit dialog, status transitions, and deletion confirmation.",
+    states: [
+      {
+        id: "project-timeline-default",
+        name: "Default",
+        description: "Project timeline in interactive, empty, and loading states.",
+        render: () => <ProjectTimelineDemo />,
+      },
+    ],
+  },
+  {
+    id: "projects-screen",
+    name: "ProjectsScreen",
+    group: "Composed",
+    summary:
+      "Full responsive Projects screen composition with header, metrics, search/filters/sort/view controls, cards/table view, detail panel, form dialog, and pagination.",
+    states: [
+      {
+        id: "projects-screen-default",
+        name: "Default",
+        description:
+          "Projects screen with interactive states (populated, first-use empty, loading, error).",
+        render: () => <ProjectsScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "sprint-components",
+    name: "Sprint components (SprintCard, Progress & Capacity, Task Commitment List, Scope Change History, Form, Retrospective)",
+    group: "Composed",
+    summary:
+      "Comprehensive sprint components (LOS-1002): SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, and SprintRetrospectiveDialog.",
+    states: [
+      {
+        id: "sprint-card-default",
+        name: "SprintCard",
+        description: "Sprint summary card with goal, date range, capacity, and action buttons.",
+        render: () => <SprintCardDemo />,
+      },
+      {
+        id: "sprint-progress-capacity-default",
+        name: "SprintProgressCapacity",
+        description: "Progress meter showing completed points and planned capacity utilization.",
+        render: () => <SprintProgressCapacityDemo />,
+      },
+      {
+        id: "sprint-task-commitment-list-default",
+        name: "SprintTaskCommitmentList",
+        description:
+          "List of committed tasks with status toggle, points, and scope addition badges.",
+        render: () => <SprintTaskCommitmentListDemo />,
+      },
+      {
+        id: "sprint-scope-change-history-default",
+        name: "SprintScopeChangeHistory",
+        description: "Timeline log of scope changes after sprint start.",
+        render: () => <SprintScopeChangeHistoryDemo />,
+      },
+      {
+        id: "sprint-form-dialog-default",
+        name: "SprintFormDialog",
+        description: "Create/edit sprint form dialog with validation and date bounds checking.",
+        render: () => <SprintFormDialogDemo />,
+      },
+      {
+        id: "sprint-retrospective-dialog-default",
+        name: "SprintRetrospectiveDialog",
+        description:
+          "Completion and retrospective dialog for capturing sprint notes and carry-over tasks.",
+        render: () => <SprintRetrospectiveDialogDemo />,
+      },
+    ],
+  },
+  {
+    id: "time-block-row",
+    name: "TimeBlockRow",
+    group: "Composed",
+    summary:
+      "TimeBlockRow composed component displaying category color swatch and icon, title, local times and duration, status badges, conflict warnings, project/task context, and action controls.",
+    states: [
+      {
+        id: "time-block-row-default",
+        name: "Default",
+        description:
+          "TimeBlockRow in scheduled, active current, completed, conflict warning, and loading skeleton states.",
+        render: () => <TimeBlockRowDemo />,
       },
     ],
   },

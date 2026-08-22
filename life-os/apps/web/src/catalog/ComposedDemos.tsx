@@ -2,6 +2,33 @@ import { useRef, useState, type FormEvent } from "react";
 
 import { Button, Select, Text, TextInput } from "@components/ui";
 import {
+  ProjectRow,
+  ProjectCard,
+  ProjectDetailsHeader,
+  ProjectOverview,
+  ProjectForm,
+  ProjectSummaryMetrics,
+  ProjectTimeline,
+  ProjectDetailsScreen,
+  type Project,
+  type ProjectFilterCategory,
+  type ProjectOverviewTask,
+  type Milestone,
+} from "@features/projects";
+import {
+  TASK_FILTER_PRESETS,
+  TaskCard,
+  TaskDetailsHeader,
+  TaskForm,
+  TaskRow,
+  TaskSummaryMetrics,
+  type TaskDetailsHeaderTask,
+  type TaskFilterPresetId,
+  type TaskListItem,
+  type TaskSummaryMetricsStatus,
+} from "@features/tasks";
+import { TimeBlockRow, type TimeBlock } from "@features/time-blocks";
+import {
   buildCommonDateRangePresets,
   ColorIconPicker,
   type ColorIconValue,
@@ -341,3 +368,960 @@ export function ColorIconPickerDemo() {
     </div>
   );
 }
+
+const MOCK_PROJECT_READY: Project = {
+  id: "proj-1",
+  name: "LifeOS App Launch",
+  description: "Bootstrap the UI, build design system, and implement core screens.",
+  status: "ACTIVE",
+  priority: "P1",
+  health: "ON_TRACK",
+  color: "blue",
+  icon: "rocket",
+  startDate: "2026-08-01",
+  deadlineDate: "2026-08-30",
+  completedTasksCount: 8,
+  totalTasksCount: 12,
+  updatedAt: "2026-08-20T10:00:00Z",
+  version: 1,
+};
+
+const MOCK_PROJECT_ARCHIVED: Project = {
+  ...MOCK_PROJECT_READY,
+  id: "proj-2",
+  name: "Legacy Workspaces Migration",
+  description: "Migrate old notes and boards to the new personal OS.",
+  status: "COMPLETED",
+  archivedAt: "2026-08-15T09:00:00Z",
+  updatedAt: "2026-08-15T09:00:00Z",
+};
+
+const MOCK_PROJECT_OVERDUE: Project = {
+  ...MOCK_PROJECT_READY,
+  id: "proj-3",
+  name: "Weekly Rituals & Planning",
+  description: "Establish the weekly review loop and planning screens.",
+  status: "ACTIVE",
+  priority: "P2",
+  health: "OFF_TRACK",
+  color: "red",
+  icon: "calendar",
+  deadlineDate: "2026-08-15",
+  completedTasksCount: 2,
+  totalTasksCount: 5,
+  updatedAt: "2026-08-19T14:30:00Z",
+};
+
+const MOCK_PROJECT_NO_TASKS: Project = {
+  ...MOCK_PROJECT_READY,
+  id: "proj-4",
+  name: "Future Someday Project",
+  description: "Someday/maybe idea that hasn't been started yet.",
+  status: "PLANNED",
+  priority: "P4",
+  health: "NOT_SET",
+  color: "olive",
+  icon: "lightbulb",
+  deadlineDate: null,
+  completedTasksCount: 0,
+  totalTasksCount: 0,
+};
+
+export function ProjectRowDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  return (
+    <div className="specimen-stack" style={{ width: "100%" }}>
+      <Text tone="secondary" size="xs">
+        Default/Active
+      </Text>
+      <ProjectRow
+        project={MOCK_PROJECT_READY}
+        now={now}
+        onEdit={() => alert("Edit project")}
+        onArchive={() => alert("Archive project")}
+      />
+
+      <Text tone="secondary" size="xs">
+        Overdue
+      </Text>
+      <ProjectRow project={MOCK_PROJECT_OVERDUE} now={now} />
+
+      <Text tone="secondary" size="xs">
+        Archived
+      </Text>
+      <ProjectRow
+        project={MOCK_PROJECT_ARCHIVED}
+        now={now}
+        onRestore={() => alert("Restore project")}
+        onDelete={() => alert("Delete project")}
+      />
+
+      <Text tone="secondary" size="xs">
+        No tasks
+      </Text>
+      <ProjectRow project={MOCK_PROJECT_NO_TASKS} now={now} />
+
+      <Text tone="secondary" size="xs">
+        Loading
+      </Text>
+      <ProjectRow loading />
+    </div>
+  );
+}
+
+export function ProjectCardDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  return (
+    <div
+      className="specimen-grid"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(20rem, 1fr))",
+        gap: "var(--lifeos-space-4)",
+        width: "100%",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="xs">
+          Active
+        </Text>
+        <ProjectCard
+          project={MOCK_PROJECT_READY}
+          now={now}
+          onEdit={() => alert("Edit project")}
+          onArchive={() => alert("Archive project")}
+        />
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="xs">
+          Overdue
+        </Text>
+        <ProjectCard project={MOCK_PROJECT_OVERDUE} now={now} />
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="xs">
+          Archived
+        </Text>
+        <ProjectCard
+          project={MOCK_PROJECT_ARCHIVED}
+          now={now}
+          onRestore={() => alert("Restore project")}
+          onDelete={() => alert("Delete project")}
+        />
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="xs">
+          Loading
+        </Text>
+        <ProjectCard loading />
+      </div>
+    </div>
+  );
+}
+
+const MOCK_TASK_ACTIVE: TaskListItem = {
+  id: "task-809",
+  title: "Build TaskRow and TaskCard",
+  status: "IN_PROGRESS",
+  priority: "P1",
+  project: { id: "life-os", name: "LifeOS" },
+  dueAt: "2026-08-22T12:00:00Z",
+  progress: 45,
+  commentCount: 3,
+  isMit: true,
+};
+
+const MOCK_TASK_BLOCKED: TaskListItem = {
+  ...MOCK_TASK_ACTIVE,
+  id: "task-blocked",
+  title: "Connect the task list API",
+  status: "BLOCKED",
+  priority: "P2",
+  dueAt: "2026-08-19T12:00:00Z",
+  progress: 20,
+  commentCount: 1,
+  isMit: false,
+  blockerCount: 2,
+};
+
+const MOCK_TASK_DONE: TaskListItem = {
+  ...MOCK_TASK_ACTIVE,
+  id: "task-done",
+  title: "Approve task interaction states",
+  status: "DONE",
+  priority: "P3",
+  dueAt: null,
+  progress: 100,
+  commentCount: 0,
+  isMit: false,
+};
+
+const MOCK_TASK_ARCHIVED: TaskListItem = {
+  ...MOCK_TASK_DONE,
+  id: "task-archived",
+  title: "Retire the old task list",
+  status: "CANCELLED",
+  archivedAt: "2026-08-20T08:00:00Z",
+};
+
+function handleTaskDemoAction() {
+  alert("Task action selected");
+}
+
+export function TaskRowDemo() {
+  const [selected, setSelected] = useState(true);
+  const now = new Date("2026-08-21T12:00:00Z");
+
+  return (
+    <div className="specimen-stack" style={{ width: "100%" }}>
+      <Text tone="secondary" size="xs">
+        Active MIT with selection
+      </Text>
+      <TaskRow
+        task={MOCK_TASK_ACTIVE}
+        selected={selected}
+        onSelectedChange={setSelected}
+        onStartFocus={handleTaskDemoAction}
+        onToggleMit={handleTaskDemoAction}
+        onMarkDone={handleTaskDemoAction}
+        onEdit={handleTaskDemoAction}
+        onArchive={handleTaskDemoAction}
+        now={now}
+      />
+
+      <Text tone="secondary" size="xs">
+        Overdue and blocked
+      </Text>
+      <TaskRow task={MOCK_TASK_BLOCKED} now={now} />
+
+      <Text tone="secondary" size="xs">
+        Done
+      </Text>
+      <TaskRow task={MOCK_TASK_DONE} now={now} />
+
+      <Text tone="secondary" size="xs">
+        Archived
+      </Text>
+      <TaskRow
+        task={MOCK_TASK_ARCHIVED}
+        onRestore={handleTaskDemoAction}
+        onDelete={handleTaskDemoAction}
+        now={now}
+      />
+
+      <Text tone="secondary" size="xs">
+        Loading
+      </Text>
+      <TaskRow loading />
+    </div>
+  );
+}
+
+export function TaskCardDemo() {
+  const [selected, setSelected] = useState(true);
+  const now = new Date("2026-08-21T12:00:00Z");
+  const cards = [MOCK_TASK_ACTIVE, MOCK_TASK_BLOCKED, MOCK_TASK_DONE, MOCK_TASK_ARCHIVED];
+
+  return (
+    <div
+      className="specimen-grid"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(18rem, 1fr))",
+        gap: "var(--lifeos-space-4)",
+        width: "100%",
+      }}
+    >
+      {cards.map((task, index) => (
+        <TaskCard
+          key={task.id}
+          task={task}
+          selected={index === 0 && selected}
+          {...(index === 0 ? { onSelectedChange: setSelected } : {})}
+          {...(task.archivedAt
+            ? {
+                onRestore: handleTaskDemoAction,
+                onDelete: handleTaskDemoAction,
+              }
+            : { onEdit: handleTaskDemoAction })}
+          now={now}
+        />
+      ))}
+      <TaskCard loading />
+    </div>
+  );
+}
+
+const MOCK_TASK_DETAILS: TaskDetailsHeaderTask = {
+  id: "task-814",
+  title: "Build Task details header",
+  description: "Make Task context and actions clear before composing the full details screen.",
+  status: "IN_PROGRESS",
+  priority: "P1",
+  project: { id: "life-os", name: "LifeOS" },
+  dueAt: "2026-08-24T12:00:00Z",
+  estimateMinutes: 150,
+  spentMinutes: 75,
+  progress: 50,
+  labels: [
+    { id: "frontend", name: "Frontend" },
+    { id: "accessibility", name: "Accessibility" },
+  ],
+  isMit: true,
+};
+
+export function TaskDetailsHeaderDemo() {
+  const now = new Date("2026-08-23T12:00:00Z");
+
+  return (
+    <div className="specimen-stack" style={{ width: "100%" }}>
+      <Text tone="secondary" size="xs">
+        Active Task
+      </Text>
+      <TaskDetailsHeader
+        task={MOCK_TASK_DETAILS}
+        now={now}
+        timeZone="Asia/Kolkata"
+        onStartFocus={handleTaskDemoAction}
+        onToggleMit={handleTaskDemoAction}
+        onMarkDone={handleTaskDemoAction}
+        onEdit={handleTaskDemoAction}
+        onDuplicate={handleTaskDemoAction}
+        onArchive={handleTaskDemoAction}
+      />
+
+      <Text tone="secondary" size="xs">
+        Sync conflict
+      </Text>
+      <TaskDetailsHeader
+        task={MOCK_TASK_DETAILS}
+        now={now}
+        conflictError="The details shown here may be out of date. Load the latest Task before making more changes."
+        onLoadLatest={handleTaskDemoAction}
+      />
+
+      <Text tone="secondary" size="xs">
+        Archived Task
+      </Text>
+      <TaskDetailsHeader
+        task={{ ...MOCK_TASK_DETAILS, archivedAt: "2026-08-22T12:00:00Z" }}
+        now={now}
+        onRestore={handleTaskDemoAction}
+        onDelete={handleTaskDemoAction}
+      />
+
+      <Text tone="secondary" size="xs">
+        Deleted Task
+      </Text>
+      <TaskDetailsHeader
+        task={{ ...MOCK_TASK_DETAILS, deletedAt: "2026-08-23T09:00:00Z" }}
+        now={now}
+      />
+
+      <Text tone="secondary" size="xs">
+        Loading
+      </Text>
+      <TaskDetailsHeader loading />
+    </div>
+  );
+}
+
+export function TaskFormDemo({
+  presentation = "full",
+}: {
+  readonly presentation?: "full" | "quick-add";
+}) {
+  const [open, setOpen] = useState(false);
+  const [submittedTitle, setSubmittedTitle] = useState<string | null>(null);
+
+  return (
+    <div className="specimen-stack">
+      <Button type="button" onClick={() => setOpen(true)}>
+        {presentation === "quick-add" ? "Open Quick Add task" : "Open task form"}
+      </Button>
+      {submittedTitle ? <Text tone="success">Submitted: {submittedTitle}</Text> : null}
+      <TaskForm
+        open={open}
+        onClose={() => setOpen(false)}
+        onSubmit={(data) => {
+          setSubmittedTitle(data.title);
+          setOpen(false);
+        }}
+        presentation={presentation}
+        timeZone="Asia/Kolkata"
+        locale="en-IN"
+        projects={[
+          { id: "portfolio-refresh", name: "Portfolio refresh" },
+          { id: "home-records-cleanup", name: "Home records cleanup" },
+        ]}
+        labels={[
+          { id: "deep-work", name: "Deep work" },
+          { id: "weekly-planning", name: "Weekly planning" },
+        ]}
+      />
+    </div>
+  );
+}
+
+export function TaskSummaryMetricsDemo({
+  state = "ready",
+}: {
+  readonly state?: TaskSummaryMetricsStatus["type"];
+}) {
+  const [preset, setPreset] = useState<TaskFilterPresetId>("ALL");
+  const [retryCount, setRetryCount] = useState(0);
+  const status: TaskSummaryMetricsStatus =
+    state === "ready"
+      ? {
+          type: "ready",
+          counts: { total: 24, toDo: 8, inProgress: 5, done: 7, blocked: 3, overdue: 1 },
+        }
+      : state === "error"
+        ? {
+            type: "error",
+            message: "Couldn't load task counts.",
+            onRetry: () => setRetryCount((count) => count + 1),
+          }
+        : { type: state };
+  const presetLabel = TASK_FILTER_PRESETS.find((item) => item.id === preset)?.label ?? "Custom";
+
+  return (
+    <div className="specimen-stack">
+      <Text tone="secondary" size="xs">
+        Active preset: {presetLabel}
+        {retryCount > 0 ? `; retries: ${retryCount}` : ""}
+      </Text>
+      <TaskSummaryMetrics status={status} activePreset={preset} onSelectPreset={setPreset} />
+    </div>
+  );
+}
+
+export function ProjectFormDemo() {
+  const [open, setOpen] = useState(false);
+  const [submittedData, setSubmittedData] = useState<string | null>(null);
+
+  return (
+    <div className="specimen-stack">
+      <Button type="button" onClick={() => setOpen(true)}>
+        Open ProjectForm Dialog
+      </Button>
+      {submittedData ? <Text tone="success">Submitted: {submittedData}</Text> : null}
+      <ProjectForm
+        open={open}
+        onClose={() => setOpen(false)}
+        onSubmit={(data) => {
+          setSubmittedData(JSON.stringify(data));
+          setOpen(false);
+        }}
+      />
+    </div>
+  );
+}
+
+export function ProjectSummaryMetricsDemo() {
+  const [filter, setFilter] = useState<ProjectFilterCategory>("ALL");
+
+  return (
+    <div className="specimen-stack">
+      <Text tone="secondary" size="xs">
+        Active filter: {filter}
+      </Text>
+      <ProjectSummaryMetrics
+        counts={{
+          total: 15,
+          active: 8,
+          completed: 5,
+          onHold: 2,
+          atRisk: 3,
+          averageProgress: 72,
+        }}
+        activeFilter={filter}
+        onSelectFilter={setFilter}
+      />
+    </div>
+  );
+}
+
+export function ProjectDetailsHeaderDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Active Project Header
+          </Text>
+        </div>
+        <ProjectDetailsHeader
+          project={MOCK_PROJECT_READY}
+          ownerName="Sarah Connor"
+          estimatedHours={40}
+          now={now}
+          onAddTask={() => alert("Add task")}
+          onEdit={() => alert("Edit project")}
+          onArchive={() => alert("Archive project")}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Archived Project Header
+          </Text>
+        </div>
+        <ProjectDetailsHeader
+          project={MOCK_PROJECT_ARCHIVED}
+          ownerName="Sarah Connor"
+          estimatedHours={24}
+          now={now}
+          onRestore={() => alert("Restore project")}
+          onDelete={() => alert("Delete project")}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Header
+          </Text>
+        </div>
+        <ProjectDetailsHeader loading />
+      </div>
+    </div>
+  );
+}
+
+export function ProjectOverviewDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  const sampleTasks: readonly ProjectOverviewTask[] = [
+    {
+      id: "task-101",
+      title: "Design token audit & accessibility checks",
+      status: "IN_PROGRESS",
+      priority: "P1",
+      dueDate: "2026-08-25",
+      assigneeName: "Sarah Connor",
+    },
+    {
+      id: "task-102",
+      title: "Backend Flyway baseline migration",
+      status: "COMPLETED",
+      priority: "P2",
+      dueDate: "2026-08-15",
+      assigneeName: "John Doe",
+    },
+  ];
+
+  const sampleActivity = [
+    {
+      id: "act-101",
+      actorName: "Sarah Connor",
+      action: "updated health to",
+      object: { label: "On track", href: "#health" },
+      createdAt: "2026-08-20T14:30:00Z",
+    },
+  ];
+
+  const statusData = [
+    { id: "status-completed", label: "Completed", value: 4 },
+    { id: "status-in-progress", label: "In progress", value: 4 },
+    { id: "status-planned", label: "Planned", value: 2 },
+  ];
+
+  const priorityData = [
+    { id: "p1", label: "P1 — High", value: 3 },
+    { id: "p2", label: "P2 — Medium", value: 5 },
+    { id: "p3", label: "P3 — Low", value: 2 },
+  ];
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Populated Project Overview
+          </Text>
+        </div>
+        <ProjectOverview
+          project={MOCK_PROJECT_READY}
+          ownerName="Sarah Connor"
+          estimatedHours={40}
+          actualHours={20}
+          labels={["Frontend", "Core", "Phase 2"]}
+          topTasks={sampleTasks}
+          activityEvents={sampleActivity}
+          statusBreakdown={statusData}
+          priorityBreakdown={priorityData}
+          now={now}
+          locale="en-US"
+          timeZone="UTC"
+          onAddTask={() => alert("Add task")}
+          onEditProject={() => alert("Edit project")}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Overview
+          </Text>
+        </div>
+        <ProjectOverview loading />
+      </div>
+    </div>
+  );
+}
+
+export function ProjectTimelineDemo() {
+  const now = new Date("2026-08-20T17:00:00Z");
+
+  const [milestones, setMilestones] = useState<readonly Milestone[]>([
+    {
+      id: "m1",
+      projectId: "p1",
+      title: "Architecture & Design Baseline",
+      date: "2026-08-10",
+      status: "COMPLETED",
+      ordering: 1,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-10T15:00:00Z",
+      version: 1,
+    },
+    {
+      id: "m2",
+      projectId: "p1",
+      title: "Phase 1 Beta Milestone",
+      date: "2026-08-18",
+      status: "PLANNED",
+      ordering: 2,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-01T10:00:00Z",
+      version: 1,
+    },
+    {
+      id: "m3",
+      projectId: "p1",
+      title: "Final QA Gate",
+      date: "2026-09-01",
+      status: "PLANNED",
+      ordering: 3,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-01T10:00:00Z",
+      version: 1,
+    },
+  ]);
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Interactive Project Timeline
+          </Text>
+        </div>
+        <ProjectTimeline
+          projectId="p1"
+          milestones={milestones}
+          now={now}
+          locale="en-US"
+          timeZone="UTC"
+          onAddMilestone={(data) => {
+            const newM: Milestone = {
+              id: `m-${Date.now()}`,
+              projectId: "p1",
+              title: data.title,
+              date: data.date ?? null,
+              status: data.status,
+              ordering: data.ordering ?? milestones.length + 1,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              version: 1,
+            };
+            setMilestones((prev) => [...prev, newM]);
+          }}
+          onUpdateMilestone={(id, data) => {
+            setMilestones((prev) =>
+              prev.map((m) =>
+                m.id === id
+                  ? {
+                      ...m,
+                      title: data.title,
+                      date: data.date ?? null,
+                      status: data.status,
+                      ordering: data.ordering ?? m.ordering,
+                    }
+                  : m,
+              ),
+            );
+          }}
+          onStatusChange={(id, status) => {
+            setMilestones((prev) => prev.map((m) => (m.id === id ? { ...m, status } : m)));
+          }}
+          onDeleteMilestone={(id) => {
+            setMilestones((prev) => prev.filter((m) => m.id !== id));
+          }}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Empty Timeline
+          </Text>
+        </div>
+        <ProjectTimeline milestones={[]} onAddMilestone={() => alert("Add milestone")} />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Timeline
+          </Text>
+        </div>
+        <ProjectTimeline loading />
+      </div>
+    </div>
+  );
+}
+
+export function ProjectDetailsScreenDemo() {
+  const [selectedTab, setSelectedTab] = useState("overview");
+
+  const sampleMilestones: readonly Milestone[] = [
+    {
+      id: "m1",
+      projectId: "p1",
+      title: "Architecture & Design Baseline",
+      date: "2026-08-10",
+      status: "COMPLETED",
+      ordering: 1,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-10T15:00:00Z",
+      version: 1,
+    },
+    {
+      id: "m2",
+      projectId: "p1",
+      title: "Phase 1 Beta Milestone",
+      date: "2026-08-18",
+      status: "PLANNED",
+      ordering: 2,
+      createdAt: "2026-08-01T10:00:00Z",
+      updatedAt: "2026-08-01T10:00:00Z",
+      version: 1,
+    },
+  ];
+
+  const sampleProject: Project = {
+    id: "p1",
+    name: "Website Redesign v2",
+    description: "Redesigning main marketing site and user dashboard.",
+    status: "ACTIVE",
+    priority: "P1",
+    health: "ON_TRACK",
+    color: "blue",
+    icon: "layout",
+    startDate: "2026-08-01",
+    deadlineDate: "2026-09-30",
+    completedTasksCount: 5,
+    totalTasksCount: 10,
+    updatedAt: "2026-08-20T10:00:00Z",
+    version: 2,
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-6)" }}>
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Interactive ProjectDetailsScreen (Tab: {selectedTab})
+          </Text>
+        </div>
+        <ProjectDetailsScreen
+          project={sampleProject}
+          milestones={sampleMilestones}
+          selectedTab={selectedTab}
+          onTabChange={setSelectedTab}
+          ownerName="Partha Hudati"
+          estimatedHours={40}
+          actualHours={18}
+          labels={["Design", "Frontend", "Q3-Goal"]}
+          now={new Date("2026-08-20T12:00:00Z")}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Screen State
+          </Text>
+        </div>
+        <ProjectDetailsScreen loading />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Not Found 404 Screen State
+          </Text>
+        </div>
+        <ProjectDetailsScreen notFound />
+      </div>
+    </div>
+  );
+}
+
+const MOCK_TIME_BLOCK_SCHEDULED: TimeBlock = {
+  id: "tb-demo-1",
+  title: "Deep Work: Architecture Spec",
+  category: "Deep work",
+  categoryColor: "blue",
+  categoryIcon: "brain",
+  date: "2026-08-21",
+  startTime: "09:00",
+  endTime: "10:30",
+  status: "SCHEDULED",
+  projectName: "LifeOS Core",
+  taskTitle: "Write OpenAPI schema",
+};
+
+const MOCK_TIME_BLOCK_CURRENT: TimeBlock = {
+  id: "tb-demo-2",
+  title: "Team Architecture Sync",
+  category: "Meeting",
+  categoryColor: "purple",
+  categoryIcon: "users",
+  date: "2026-08-21",
+  startTime: "11:00",
+  endTime: "12:00",
+  status: "IN_PROGRESS",
+  isCurrent: true,
+  projectName: "LifeOS Core",
+};
+
+const MOCK_TIME_BLOCK_COMPLETED: TimeBlock = {
+  id: "tb-demo-3",
+  title: "Morning Routine & Planning",
+  category: "Personal",
+  categoryColor: "green",
+  categoryIcon: "heart",
+  date: "2026-08-21",
+  startTime: "08:00",
+  endTime: "08:45",
+  status: "COMPLETED",
+  completed: true,
+};
+
+const MOCK_TIME_BLOCK_CONFLICT: TimeBlock = {
+  id: "tb-demo-4",
+  title: "Sprint Retrospective",
+  category: "Meeting",
+  categoryColor: "amber",
+  categoryIcon: "users",
+  date: "2026-08-21",
+  startTime: "11:30",
+  endTime: "12:30",
+  status: "SCHEDULED",
+  hasConflict: true,
+  conflictDescriptions: ["Overlaps with Team Architecture Sync (11:00 – 12:00)"],
+};
+
+export function TimeBlockRowDemo() {
+  const now = new Date("2026-08-21T11:15:00Z");
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Scheduled TimeBlockRow (With Project & Task)
+          </Text>
+        </div>
+        <TimeBlockRow
+          timeBlock={MOCK_TIME_BLOCK_SCHEDULED}
+          onStartFocus={() => alert("Start focus clicked")}
+          onComplete={() => alert("Complete clicked")}
+          onEdit={() => alert("Edit clicked")}
+          onDuplicate={() => alert("Duplicate clicked")}
+          onDelete={() => alert("Delete clicked")}
+          now={now}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Current Active TimeBlockRow
+          </Text>
+        </div>
+        <TimeBlockRow
+          timeBlock={MOCK_TIME_BLOCK_CURRENT}
+          onStartFocus={() => alert("Start focus clicked")}
+          onComplete={() => alert("Complete clicked")}
+          onEdit={() => alert("Edit clicked")}
+          now={now}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Completed TimeBlockRow
+          </Text>
+        </div>
+        <TimeBlockRow timeBlock={MOCK_TIME_BLOCK_COMPLETED} now={now} />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Conflict Warning TimeBlockRow
+          </Text>
+        </div>
+        <TimeBlockRow
+          timeBlock={MOCK_TIME_BLOCK_CONFLICT}
+          onStartFocus={() => alert("Start focus clicked")}
+          onEdit={() => alert("Edit clicked")}
+          now={now}
+        />
+      </div>
+
+      <div>
+        <div style={{ marginBottom: "var(--lifeos-space-2)" }}>
+          <Text tone="secondary" size="xs">
+            Loading Skeleton State
+          </Text>
+        </div>
+        <TimeBlockRow loading />
+      </div>
+    </div>
+  );
+}
+
+export {
+  SprintCardDemo,
+  SprintProgressCapacityDemo,
+  SprintTaskCommitmentListDemo,
+  SprintScopeChangeHistoryDemo,
+  SprintFormDialogDemo,
+  SprintRetrospectiveDialogDemo,
+} from "./SprintDemos";

@@ -4,6 +4,7 @@ import { ATOM_CATALOG_ENTRIES } from "./atomEntries";
 import { COMPOSED_CATALOG_ENTRIES } from "./composedEntries";
 import { FEEDBACK_CATALOG_ENTRIES } from "./feedbackEntries";
 import { FORM_CATALOG_ENTRIES } from "./formEntries";
+import { LAYOUT_CATALOG_ENTRIES } from "./layoutEntries";
 import { MESSAGING_CATALOG_ENTRIES } from "./messagingEntries";
 import { NAVIGATION_CATALOG_ENTRIES } from "./navigationEntries";
 import { STRUCTURE_CATALOG_ENTRIES } from "./structureEntries";
@@ -288,4 +289,5 @@ export const CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
   ...COMPOSED_CATALOG_ENTRIES,
   ...MESSAGING_CATALOG_ENTRIES,
   ...NAVIGATION_CATALOG_ENTRIES,
+  ...LAYOUT_CATALOG_ENTRIES,
 ]);

@@ -44,7 +44,8 @@ class OpenApiArtifactTests {
 
   @Test
   @WithMockUser
-  void validatesAndWritesTheEmptyBaseline() throws Exception {
+  void validatesAndWritesTheBaselineIncludingSignupEmailVerificationLoginLogoutAndPasswordReset()
+      throws Exception {
     MvcResult result =
         mockMvc
             .perform(get("/openapi"))
@@ -56,7 +57,98 @@ class OpenApiArtifactTests {
             .andExpect(jsonPath("$.info.description").value(containsString("CSRF header")))
             .andExpect(jsonPath("$.servers[0].url").value("/life-os/api/v1"))
             .andExpect(jsonPath("$.paths").isMap())
-            .andExpect(jsonPath("$.paths").isEmpty())
+            .andExpect(jsonPath("$.paths['/auth/signup'].post.operationId").value("signup"))
+            .andExpect(jsonPath("$.paths['/auth/signup'].post.security").isEmpty())
+            .andExpect(jsonPath("$.paths['/auth/signup'].post.responses['202'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/signup'].post.responses['400'].$ref")
+                    .value("#/components/responses/BadRequest"))
+            .andExpect(
+                jsonPath("$.paths['/auth/signup'].post.responses['429'].$ref")
+                    .value("#/components/responses/TooManyRequests"))
+            .andExpect(jsonPath("$.components.responses.TooManyRequests").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/verify-email'].post.operationId").value("verifyEmail"))
+            .andExpect(jsonPath("$.paths['/auth/verify-email'].post.security").isEmpty())
+            .andExpect(
+                jsonPath("$.paths['/auth/verify-email'].post.responses['200'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/verify-email'].post.responses['400'].$ref")
+                    .value("#/components/responses/BadRequest"))
+            .andExpect(
+                jsonPath("$.paths['/auth/verify-email'].post.responses['409'].$ref")
+                    .value("#/components/responses/Conflict"))
+            .andExpect(jsonPath("$.components.responses.Conflict").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/resend-verification'].post.operationId")
+                    .value("resendVerification"))
+            .andExpect(jsonPath("$.paths['/auth/resend-verification'].post.security").isEmpty())
+            .andExpect(
+                jsonPath("$.paths['/auth/resend-verification'].post.responses['202'].content")
+                    .exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/resend-verification'].post.responses['400'].$ref")
+                    .value("#/components/responses/BadRequest"))
+            .andExpect(
+                jsonPath("$.paths['/auth/resend-verification'].post.responses['429'].$ref")
+                    .value("#/components/responses/TooManyRequests"))
+            .andExpect(jsonPath("$.paths['/auth/login'].post.operationId").value("login"))
+            .andExpect(jsonPath("$.paths['/auth/login'].post.security").isEmpty())
+            .andExpect(jsonPath("$.paths['/auth/login'].post.responses['200'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/login'].post.responses['401'].$ref")
+                    .value("#/components/responses/Unauthorized"))
+            .andExpect(
+                jsonPath("$.paths['/auth/login'].post.responses['429'].$ref")
+                    .value("#/components/responses/TooManyRequests"))
+            .andExpect(jsonPath("$.components.responses.Unauthorized").exists())
+            .andExpect(jsonPath("$.paths['/auth/logout'].post.operationId").value("logout"))
+            .andExpect(jsonPath("$.paths['/auth/logout'].post.security").isEmpty())
+            .andExpect(jsonPath("$.paths['/auth/logout'].post.responses['200'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/logout'].post.responses['403'].$ref")
+                    .value("#/components/responses/Forbidden"))
+            .andExpect(jsonPath("$.paths['/auth/logout-all'].post.operationId").value("logoutAll"))
+            .andExpect(jsonPath("$.paths['/auth/logout-all'].post.security").isEmpty())
+            .andExpect(
+                jsonPath("$.paths['/auth/logout-all'].post.responses['200'].content").exists())
+            .andExpect(jsonPath("$.components.responses.Forbidden").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/forgot-password'].post.operationId")
+                    .value("forgotPassword"))
+            .andExpect(jsonPath("$.paths['/auth/forgot-password'].post.security").isEmpty())
+            .andExpect(
+                jsonPath("$.paths['/auth/forgot-password'].post.responses['202'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/reset-password'].post.operationId").value("resetPassword"))
+            .andExpect(jsonPath("$.paths['/auth/reset-password'].post.security").isEmpty())
+            .andExpect(
+                jsonPath("$.paths['/auth/reset-password'].post.responses['200'].content").exists())
+            .andExpect(
+                jsonPath("$.paths['/auth/reset-password'].post.responses['409'].$ref")
+                    .value("#/components/responses/Conflict"))
+            .andExpect(jsonPath("$.paths['/onboarding'].get.operationId").value("getOnboarding"))
+            .andExpect(
+                jsonPath("$.paths['/onboarding/welcome'].put.operationId").value("updateWelcome"))
+            .andExpect(
+                jsonPath("$.paths['/onboarding/time-and-week'].put.operationId")
+                    .value("updateTimeAndWeek"))
+            .andExpect(
+                jsonPath("$.paths['/onboarding/planning-defaults'].put.operationId")
+                    .value("updatePlanningDefaults"))
+            .andExpect(
+                jsonPath("$.paths['/onboarding/complete'].post.operationId")
+                    .value("completeOnboarding"))
+            .andExpect(jsonPath("$.paths['/user/profile'].get.operationId").value("getProfile"))
+            .andExpect(jsonPath("$.paths['/user/profile'].put.operationId").value("updateProfile"))
+            .andExpect(
+                jsonPath("$.paths['/user/preferences'].get.operationId").value("getPreferences"))
+            .andExpect(
+                jsonPath("$.paths['/user/preferences'].put.operationId").value("updatePreferences"))
+            .andExpect(jsonPath("$.paths['/today'].get.operationId").value("getToday"))
+            .andExpect(jsonPath("$.components.schemas.TodayResponse").exists())
+            .andExpect(jsonPath("$.components.schemas.MitWidget").exists())
+            .andExpect(jsonPath("$.components.schemas.TasksWidget").exists())
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))

@@ -1,0 +1,106 @@
+.sprint-task-commitment-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.sprint-task-commitment-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.sprint-task-commitment-list__title {
+  margin: 0;
+}
+
+.sprint-task-commitment-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sprint-task-commitment-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-subtle, var(--color-border));
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+}
+
+.sprint-task-commitment-list__item-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sprint-task-commitment-list__status-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sprint-task-commitment-list__status-toggle.is-done {
+  background-color: var(--lifeos-color-success);
+  border-color: var(--lifeos-color-success);
+  color: var(--lifeos-color-text-on-brand);
+}
+
+.sprint-task-commitment-list__item-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sprint-task-commitment-list__item-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-main);
+}
+
+.sprint-task-commitment-list__item-title.is-done {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.sprint-task-commitment-list__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sprint-task-commitment-list__project {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.sprint-task-commitment-list__item-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sprint-task-commitment-list__points {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-main);
+  white-space: nowrap;
+}

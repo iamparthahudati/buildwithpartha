@@ -17,6 +17,7 @@ final class PackageBoundaryRules {
           "auth",
           "user",
           "project",
+          "label",
           "task",
           "calendar",
           "timeblock",
@@ -29,7 +30,9 @@ final class PackageBoundaryRules {
           "report",
           "search",
           "notification",
-          "audit");
+          "audit",
+          "job",
+          "export");
 
   private static final List<String> DOMAIN_LAYERS =
       List.of("api", "application", "domain", "infrastructure");

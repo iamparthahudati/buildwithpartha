@@ -1,0 +1,89 @@
+/* TodayPlan (LOS-0609). All values come from the frozen design-token contract. */
+
+.lifeos-today-plan__layout {
+  display: grid;
+  gap: var(--lifeos-space-5);
+}
+
+.lifeos-today-mit-card,
+.lifeos-today-task-list {
+  min-width: 0;
+}
+
+.lifeos-today-mit-card__loading,
+.lifeos-today-mit-card__content,
+.lifeos-today-task__title-cell,
+.lifeos-today-task-list__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-today-mit-card__badges,
+.lifeos-today-task__inline-badges,
+.lifeos-today-task-card__meta,
+.lifeos-today-mit-card__actions,
+.lifeos-today-task-actions,
+.lifeos-today-task-list__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-today-mit-card__title {
+  font-size: var(--lifeos-font-size-lg);
+  font-weight: var(--lifeos-font-weight-semibold);
+  line-height: var(--lifeos-line-height-tight);
+}
+
+.lifeos-today-mit-card__actions {
+  margin-block-start: var(--lifeos-space-2);
+}
+
+.lifeos-today-task-actions {
+  min-width: max-content;
+}
+
+.lifeos-today-task-card {
+  display: grid;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-today-task-card__meta {
+  justify-content: space-between;
+}
+
+.lifeos-today-task-list__footer {
+  justify-content: space-between;
+  margin-block-start: var(--lifeos-space-4);
+}
+
+@media (width < 768px) {
+  .lifeos-today-plan {
+    padding: var(--lifeos-space-4);
+  }
+
+  .lifeos-today-task-actions {
+    min-width: 0;
+  }
+
+  .lifeos-today-task-list__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (width >= 1200px) {
+  .lifeos-today-plan__layout {
+    grid-template-columns: minmax(16rem, 0.78fr) minmax(0, 1.5fr);
+    align-items: start;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-today-task-card {
+    border-color: CanvasText;
+  }
+}

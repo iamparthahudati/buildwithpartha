@@ -113,3 +113,17 @@ export {
   type ActivityObjectRef,
 } from "./ActivityFeed";
 export { groupActivityEventsByDay, type ActivityEventGroup } from "./activityGrouping";
+export { Sidebar, type SidebarProps } from "./Sidebar";
+export {
+  DEFAULT_NAV_GROUPS,
+  isNavDestinationActive,
+  resolveRouteTitle,
+  type NavDestination,
+  type NavGroup,
+} from "./navigationDestinations";
+export {
+  SIDEBAR_COLLAPSED_STORAGE_KEY,
+  getStoredSidebarCollapsed,
+  setStoredSidebarCollapsed,
+} from "./sidebarStorage";
+export { TopBar, type TopBarProps } from "./TopBar";

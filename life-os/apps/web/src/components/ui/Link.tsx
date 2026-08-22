@@ -1,5 +1,6 @@
 import { forwardRef, type AnchorHTMLAttributes, type ReactNode } from "react";
 import { ExternalLink } from "lucide-react";
+import { Link as RouterLink, useInRouterContext } from "react-router-dom";
 
 import { Icon } from "./Icon";
 import "./link.css";
@@ -15,6 +16,9 @@ import "./visually-hidden.css";
  * thing: removing `href` strips the link role and drops the element from the
  * tab order without telling anyone why. When a destination is unavailable,
  * render text — or a disabled button if it was an action all along.
+ *
+ * Same-origin app paths render through the router when one is present so
+ * navigation stays client-side and the in-memory session survives.
  */
 
 type NativeAnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "className" | "children">;
@@ -39,6 +43,10 @@ export interface LinkProps extends NativeAnchorProps {
   readonly className?: string;
 }
 
+function isInternalAppHref(href: string): boolean {
+  return href.startsWith("/") && !href.startsWith("//") && !href.includes(":");
+}
+
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   {
     href,
@@ -52,6 +60,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   },
   ref,
 ) {
+  const inRouter = useInRouterContext();
   const classes = [
     "lifeos-link",
     inline && "lifeos-link--inline",
@@ -60,6 +69,28 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   ]
     .filter(Boolean)
     .join(" ");
+
+  const externalContent = external ? (
+    <>
+      <Icon icon={ExternalLink} decorative size="sm" className="lifeos-link__external" />
+      <span className="lifeos-visually-hidden">(opens in a new tab)</span>
+    </>
+  ) : null;
+
+  if (!external && inRouter && isInternalAppHref(href)) {
+    return (
+      <RouterLink
+        {...rest}
+        ref={ref}
+        to={href}
+        className={classes}
+        aria-current={current ? "page" : undefined}
+      >
+        {children}
+        {externalContent}
+      </RouterLink>
+    );
+  }
 
   return (
     <a
@@ -76,12 +107,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       {...(external ? { target: "_blank", rel: "noreferrer noopener" } : {})}
     >
       {children}
-      {external ? (
-        <>
-          <Icon icon={ExternalLink} decorative size="sm" className="lifeos-link__external" />
-          <span className="lifeos-visually-hidden">(opens in a new tab)</span>
-        </>
-      ) : null}
+      {externalContent}
     </a>
   );
 });

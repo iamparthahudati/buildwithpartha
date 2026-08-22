@@ -1,4 +1,14 @@
 import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthSessionProvider } from "@state/AuthSessionProvider";
+import { FocusMiniPlayer } from "@features/focus";
+import {
+  TodayHeader,
+  TodayHeaderSection,
+  TodayMetricStrip,
+  TodayPlan,
+  type TodayPlanTask,
+} from "@features/today";
 import {
   AlertTriangle,
   Archive,
@@ -43,6 +53,8 @@ import {
   Tabs,
   Timeline,
   ViewToggle,
+  Sidebar,
+  TopBar,
   type ActiveFilterChip,
   type ActivityEvent,
   type Attachment,
@@ -58,7 +70,17 @@ import {
   type TimelineEntry,
   type ViewMode,
 } from "@components/navigation";
-import { Badge, Button, CountBadge, Link, Select, Surface, Text, TextInput } from "@components/ui";
+import {
+  Badge,
+  Button,
+  CountBadge,
+  Link,
+  Select,
+  StatusDot,
+  Surface,
+  Text,
+  TextInput,
+} from "@components/ui";
 import { useDeepLinkParam } from "@hooks/useDeepLinkParam";
 
 /**
@@ -1032,6 +1054,461 @@ export function ActivityFeedErrorDemo() {
       timeZone="UTC"
       emptyTitle="No activity yet"
       status={{ type: "error", message: "Project activity couldn't load.", onRetry: () => {} }}
+    />
+  );
+}
+
+export function SidebarExpandedDemo() {
+  const [currentPath, setCurrentPath] = useState("/life-os/app/today");
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        minHeight: "28rem",
+        border: "1px solid var(--lifeos-color-border)",
+        borderRadius: "var(--lifeos-radius-lg)",
+        overflow: "hidden",
+      }}
+    >
+      <Sidebar
+        currentPath={currentPath}
+        collapsed={false}
+        onNavigate={(href, e) => {
+          e.preventDefault();
+          setCurrentPath(href);
+        }}
+      />
+      <div
+        style={{
+          flex: 1,
+          padding: "var(--lifeos-space-6)",
+          background: "var(--lifeos-color-canvas)",
+        }}
+      >
+        <Text weight="medium">Active destination: {currentPath}</Text>
+        <Text tone="secondary" size="sm">
+          Click any sidebar item to test active-state navigation.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function SidebarCollapsedDemo() {
+  const [currentPath, setCurrentPath] = useState("/life-os/app/tasks");
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        minHeight: "28rem",
+        border: "1px solid var(--lifeos-color-border)",
+        borderRadius: "var(--lifeos-radius-lg)",
+        overflow: "hidden",
+      }}
+    >
+      <Sidebar
+        currentPath={currentPath}
+        collapsed={true}
+        onNavigate={(href, e) => {
+          e.preventDefault();
+          setCurrentPath(href);
+        }}
+      />
+      <div
+        style={{
+          flex: 1,
+          padding: "var(--lifeos-space-6)",
+          background: "var(--lifeos-color-canvas)",
+        }}
+      >
+        <Text weight="medium">Compact rail mode (collapsed)</Text>
+        <Text tone="secondary" size="sm">
+          Hover or focus the icon buttons to see destination tooltips.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function SidebarInteractiveDemo() {
+  const [currentPath, setCurrentPath] = useState("/life-os/app/today");
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        minHeight: "28rem",
+        border: "1px solid var(--lifeos-color-border)",
+        borderRadius: "var(--lifeos-radius-lg)",
+        overflow: "hidden",
+      }}
+    >
+      <Sidebar
+        currentPath={currentPath}
+        onNavigate={(href, e) => {
+          e.preventDefault();
+          setCurrentPath(href);
+        }}
+      />
+      <div
+        style={{
+          flex: 1,
+          padding: "var(--lifeos-space-6)",
+          background: "var(--lifeos-color-canvas)",
+        }}
+      >
+        <Text weight="medium">Interactive Sidebar with Remembered Collapse Preference</Text>
+        <Text tone="secondary" size="sm">
+          Toggle collapse with the header chevron button or click any destination.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function SidebarDrawerDemo() {
+  const [open, setOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState("/life-os/app/today");
+
+  return (
+    <div>
+      <Button variant="secondary" onClick={() => setOpen(true)}>
+        Open navigation drawer
+      </Button>
+      <div style={{ marginTop: "var(--lifeos-space-2)" }}>
+        <Text tone="secondary" size="sm">
+          Current destination: {currentPath}
+        </Text>
+      </div>
+      <Sidebar
+        drawer={true}
+        drawerOpen={open}
+        onDrawerClose={() => setOpen(false)}
+        currentPath={currentPath}
+        onNavigate={(href, e) => {
+          e.preventDefault();
+          setCurrentPath(href);
+          setOpen(false);
+        }}
+      />
+    </div>
+  );
+}
+
+const TOPBAR_ACCOUNT_ITEMS: readonly MenuItemDescriptor[] = [
+  { type: "item", id: "profile", label: "View profile", onSelect: () => {} },
+  { type: "item", id: "settings", label: "Settings", onSelect: () => {} },
+  { type: "separator", id: "sep-1" },
+  { type: "item", id: "sign-out", label: "Sign out", destructive: true, onSelect: () => {} },
+];
+
+const TOPBAR_ACCOUNT = {
+  name: "Priya Sharma",
+  email: "priya@example.com",
+  items: TOPBAR_ACCOUNT_ITEMS,
+};
+
+const TOPBAR_STAGE_STYLE = {
+  border: "1px solid var(--lifeos-color-border)",
+  borderRadius: "var(--lifeos-radius-lg)",
+} as const;
+
+export function TopBarDemo() {
+  const [log, setLog] = useState<string | null>(null);
+
+  return (
+    <div style={TOPBAR_STAGE_STYLE}>
+      <TopBar
+        contextLabel="Today"
+        timeZone="Asia/Kolkata"
+        locale="en-US"
+        onSearchTriggerClick={() => setLog("Search trigger clicked (or Cmd/Ctrl+K anywhere)")}
+        onQuickAddTriggerClick={() => setLog("Quick Add trigger clicked")}
+        onNotificationsTriggerClick={() => setLog("Notifications trigger clicked")}
+        account={TOPBAR_ACCOUNT}
+      />
+      <div style={{ padding: "var(--lifeos-space-4)" }}>
+        <Text tone="secondary" size="sm">
+          {log ?? "Click a trigger, or press Cmd/Ctrl+K, to see its callback fire."}
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function TopBarWithNotificationsDemo() {
+  return (
+    <div style={TOPBAR_STAGE_STYLE}>
+      <TopBar
+        contextLabel="Tasks"
+        timeZone="America/New_York"
+        locale="en-US"
+        notificationCount={128}
+        onSearchTriggerClick={() => {}}
+        onQuickAddTriggerClick={() => {}}
+        onNotificationsTriggerClick={() => {}}
+        account={TOPBAR_ACCOUNT}
+      />
+      <div style={{ padding: "var(--lifeos-space-4)" }}>
+        <Text tone="secondary" size="sm">
+          128 unread clamps the bell&rsquo;s CountBadge to &ldquo;99+&rdquo; while still announcing
+          the exact count.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function TopBarWithFocusSlotDemo() {
+  return (
+    <div style={TOPBAR_STAGE_STYLE}>
+      <TopBar
+        contextLabel="Today"
+        timeZone="Asia/Kolkata"
+        locale="en-US"
+        focusSlot={<StatusDot tone="success" label="Focus session active, 18 minutes remaining" />}
+        onSearchTriggerClick={() => {}}
+        onQuickAddTriggerClick={() => {}}
+        onNotificationsTriggerClick={() => {}}
+        account={TOPBAR_ACCOUNT}
+      />
+      <div style={{ padding: "var(--lifeos-space-4)" }}>
+        <Text tone="secondary" size="sm">
+          focusSlot is caller-owned; TopBar renders nothing here on its own. LOS-0605&apos;s real
+          mini-player is expected to fill this slot later.
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+export function TopBarOverflowOpenDemo() {
+  return (
+    <div>
+      <Text tone="secondary" size="sm">
+        Resize the catalog stage below 768px to see Notifications, Focus, and Account collapse
+        behind the &ldquo;More&rdquo; trigger, or click it directly below.
+      </Text>
+      <div style={{ ...TOPBAR_STAGE_STYLE, marginTop: "var(--lifeos-space-3)" }}>
+        <TopBar
+          contextLabel="Today"
+          timeZone="Asia/Kolkata"
+          locale="en-US"
+          notificationCount={3}
+          focusSlot={<StatusDot tone="success" label="Focus session active" />}
+          onSearchTriggerClick={() => {}}
+          onQuickAddTriggerClick={() => {}}
+          onNotificationsTriggerClick={() => {}}
+          account={TOPBAR_ACCOUNT}
+        />
+      </div>
+    </div>
+  );
+}
+
+const demoQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+export function FocusMiniPlayerDemo() {
+  return (
+    <QueryClientProvider client={demoQueryClient}>
+      <AuthSessionProvider>
+        <FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />
+      </AuthSessionProvider>
+    </QueryClientProvider>
+  );
+}
+
+const TODAY_DEMO_NOW = new Date("2026-08-20T03:30:00Z"); // 09:00 IST — morning
+
+export function TodayHeaderMorningDemo() {
+  return (
+    <TodayHeader
+      displayName="Partha"
+      timeZone="Asia/Kolkata"
+      locale="en-IN"
+      now={TODAY_DEMO_NOW}
+      onQuickAddClick={() => {}}
+    />
+  );
+}
+
+export function TodayHeaderEveningDemo() {
+  // 18:30 IST
+  const evening = new Date("2026-08-20T13:00:00Z");
+  return (
+    <TodayHeader
+      displayName="Partha"
+      timeZone="Asia/Kolkata"
+      locale="en-IN"
+      now={evening}
+      subtitle="You have 2 tasks still open."
+      onQuickAddClick={() => {}}
+    />
+  );
+}
+
+export function TodayMetricStripLoadingDemo() {
+  const loading = { type: "loading" as const };
+  return (
+    <TodayMetricStrip
+      mitStatus={loading}
+      tasksStatus={loading}
+      scheduledTimeStatus={loading}
+      focusTimeStatus={loading}
+      activeProjectsStatus={loading}
+      weekProgressStatus={loading}
+    />
+  );
+}
+
+export function TodayMetricStripReadyDemo() {
+  return (
+    <TodayMetricStrip
+      mitStatus={{ type: "ready", value: "Write spec" }}
+      tasksStatus={{ type: "ready", value: "4 / 6" }}
+      scheduledTimeStatus={{ type: "ready", value: "2h 30m" }}
+      focusTimeStatus={{ type: "ready", value: "45m / 2h" }}
+      activeProjectsStatus={{ type: "ready", value: "3" }}
+      weekProgressStatus={{ type: "ready", value: "60%" }}
+    />
+  );
+}
+
+export function TodayMetricStripMixedDemo() {
+  return (
+    <TodayMetricStrip
+      mitStatus={{ type: "empty", message: "Choose today's focus" }}
+      tasksStatus={{ type: "ready", value: "2 / 4" }}
+      scheduledTimeStatus={{ type: "error", message: "Unavailable." }}
+      focusTimeStatus={{ type: "loading" }}
+      activeProjectsStatus={{ type: "ready", value: "1" }}
+      weekProgressStatus={{ type: "empty", message: "No weekly plan" }}
+    />
+  );
+}
+
+export function TodayHeaderSectionDemo() {
+  return (
+    <TodayHeaderSection
+      displayName="Partha"
+      timeZone="Asia/Kolkata"
+      locale="en-IN"
+      now={TODAY_DEMO_NOW}
+      subtitle="See what needs attention and choose what to do next."
+      onQuickAddClick={() => {}}
+      mitStatus={{ type: "empty", message: "No focus chosen yet." }}
+      tasksStatus={{ type: "empty", message: "No tasks planned for today." }}
+      scheduledTimeStatus={{ type: "empty", message: "No Time Blocks scheduled today." }}
+      focusTimeStatus={{ type: "empty", message: "No focus time recorded today." }}
+      activeProjectsStatus={{ type: "empty", message: "No active projects yet." }}
+      weekProgressStatus={{ type: "empty", message: "No Weekly Plan yet." }}
+    />
+  );
+}
+
+const TODAY_PLAN_DEMO_TASKS: readonly TodayPlanTask[] = [
+  {
+    id: "prepare-review",
+    title: "Prepare weekly review",
+    href: "#prepare-review",
+    priority: "P1",
+    status: "IN_PROGRESS",
+    project: { name: "Learning plan", href: "#learning-plan" },
+    dueLabel: "Due today, 20 Aug 2026",
+  },
+  {
+    id: "organize-documents",
+    title: "Organize tax documents",
+    href: "#organize-documents",
+    priority: "P2",
+    status: "TO_DO",
+  },
+  {
+    id: "compare-hosting",
+    title: "Compare hosting options",
+    href: "#compare-hosting",
+    priority: "P3",
+    status: "BLOCKED",
+    project: { name: "Portfolio refresh", href: "#portfolio-refresh" },
+    disabledActions: ["start-focus"],
+  },
+];
+
+export function TodayPlanReadyDemo() {
+  const [tasks, setTasks] = useState(TODAY_PLAN_DEMO_TASKS);
+  const [mitId, setMitId] = useState<string | null>("prepare-review");
+  const tasksWithMit = tasks.map((task) => ({ ...task, isMit: task.id === mitId }));
+  const mit = tasksWithMit.find((task) => task.isMit && task.status !== "DONE");
+
+  function chooseFirstAvailableMit() {
+    setMitId(tasks.find((task) => task.status !== "DONE")?.id ?? null);
+  }
+
+  function markDone(taskId: string) {
+    setTasks((current) =>
+      current.map((task) => (task.id === taskId ? { ...task, status: "DONE" as const } : task)),
+    );
+    if (taskId === mitId) setMitId(null);
+  }
+
+  return (
+    <TodayPlan
+      mitState={mit ? { type: "ready", task: mit } : { type: "empty" }}
+      tasksState={{ type: "ready", tasks: tasksWithMit }}
+      tasksHref="#tasks"
+      onChooseMit={chooseFirstAvailableMit}
+      onChangeMit={() => {
+        const next = tasks.find((task) => task.status !== "DONE" && task.id !== mitId);
+        setMitId(next?.id ?? null);
+      }}
+      onSetMit={setMitId}
+      onMarkDone={markDone}
+      onStartFocus={() => {}}
+      onAddTask={() => {}}
+    />
+  );
+}
+
+export function TodayPlanFirstUseDemo() {
+  return (
+    <TodayPlan
+      mitState={{ type: "empty" }}
+      tasksState={{ type: "empty" }}
+      tasksHref="#tasks"
+      onChooseMit={() => {}}
+      onChangeMit={() => {}}
+      onSetMit={() => {}}
+      onMarkDone={() => {}}
+      onStartFocus={() => {}}
+      onAddTask={() => {}}
+    />
+  );
+}
+
+export function TodayPlanPartialErrorDemo() {
+  return (
+    <TodayPlan
+      mitState={{ type: "ready", task: { ...TODAY_PLAN_DEMO_TASKS[0]!, isMit: true } }}
+      tasksState={{
+        type: "error",
+        message: "Other Today sections are still available.",
+      }}
+      tasksHref="#tasks"
+      onChooseMit={() => {}}
+      onChangeMit={() => {}}
+      onSetMit={() => {}}
+      onMarkDone={() => {}}
+      onStartFocus={() => {}}
+      onAddTask={() => {}}
+      onRetryTasks={() => {}}
     />
   );
 }

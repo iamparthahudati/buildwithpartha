@@ -3,8 +3,7 @@
   "configurations": [
     {
       "name": "life-os-web",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "life-os/apps/web", "run", "dev"],
+      "url": "http://127.0.0.1:5173",
       "port": 5173
     }
   ]

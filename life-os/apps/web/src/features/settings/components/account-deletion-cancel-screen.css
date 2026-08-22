@@ -1,0 +1,18 @@
+/*
+ * AccountDeletionCancelScreen layout (LOS-0518 grace-period follow-up).
+ *
+ * Mobile-first single column, matching LoginScreen/VerifyEmailScreen/recovery screens: no app
+ * shell exists at this unauthenticated route, so this is the whole visible page.
+ */
+
+.lifeos-account-deletion-cancel-screen {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 28rem;
+  margin-inline: auto;
+  padding: var(--lifeos-space-6) var(--lifeos-space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--lifeos-space-4);
+}

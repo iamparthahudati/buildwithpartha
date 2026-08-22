@@ -1,0 +1,103 @@
+/* TodayNextUp (LOS-0612). */
+
+.lifeos-today-next-up {
+  min-width: 0;
+}
+
+.lifeos-today-next-up__availability {
+  margin: calc(var(--lifeos-space-2) * -1) 0 var(--lifeos-space-4);
+}
+
+.lifeos-today-next-up__body,
+.lifeos-today-next-up__task,
+.lifeos-today-next-up__task-title-group,
+.lifeos-today-next-up__explanation {
+  display: grid;
+  gap: var(--lifeos-space-3);
+  min-width: 0;
+}
+
+.lifeos-today-next-up__task-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+  min-width: 0;
+}
+
+.lifeos-today-next-up__task-title-group,
+.lifeos-today-next-up__explanation {
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-today-next-up__task-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  min-width: 0;
+  color: var(--lifeos-color-text);
+  font-size: var(--lifeos-font-size-lg);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.lifeos-today-next-up__task-link svg {
+  width: var(--lifeos-icon-sm);
+  height: var(--lifeos-icon-sm);
+  flex: none;
+}
+
+.lifeos-today-next-up__project,
+.lifeos-today-next-up__explanation p {
+  margin: 0;
+}
+
+.lifeos-today-next-up__badges {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--lifeos-space-2);
+  flex-wrap: wrap;
+}
+
+.lifeos-today-next-up__provenance {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-3);
+  margin: var(--lifeos-space-4) 0 0;
+  padding-block-start: var(--lifeos-space-3);
+  border-block-start: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-today-next-up__provenance div {
+  min-width: 0;
+}
+
+.lifeos-today-next-up__provenance dt,
+.lifeos-today-next-up__provenance dd {
+  margin: 0;
+  font-size: var(--lifeos-font-size-xs);
+}
+
+.lifeos-today-next-up__provenance dt {
+  color: var(--lifeos-color-text-muted);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.lifeos-today-next-up__provenance dd {
+  margin-block-start: var(--lifeos-space-1);
+  color: var(--lifeos-color-text-secondary);
+}
+
+@media (max-width: 36rem) {
+  .lifeos-today-next-up__task-heading {
+    flex-direction: column;
+  }
+
+  .lifeos-today-next-up__badges {
+    justify-content: flex-start;
+  }
+
+  .lifeos-today-next-up__provenance {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

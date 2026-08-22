@@ -1,0 +1,71 @@
+.sprint-scope-change-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.sprint-scope-change-history__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sprint-scope-change-history__title {
+  margin: 0;
+}
+
+.sprint-scope-change-history__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sprint-scope-change-history__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-subtle, var(--color-border));
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+}
+
+.sprint-scope-change-history__item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.sprint-scope-change-history__badge-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sprint-scope-change-history__task-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-main);
+}
+
+.sprint-scope-change-history__timestamp {
+  white-space: nowrap;
+}
+
+.sprint-scope-change-history__item-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sprint-scope-change-history__reason {
+  margin: 0;
+}

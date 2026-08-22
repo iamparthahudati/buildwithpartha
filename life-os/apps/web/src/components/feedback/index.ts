@@ -5,6 +5,7 @@ export { Toast, type ToastProps } from "./Toast";
 export { ToastViewport } from "./ToastViewport";
 export { EmptyState, type EmptyStateProps, type EmptyStateVariant } from "./EmptyState";
 export { ErrorState, type ErrorStateProps } from "./ErrorState";
+export { ErrorBoundary, type ErrorBoundaryProps } from "./ErrorBoundary";
 export { Dialog, type DialogProps, type DialogSize } from "./Dialog";
 export { ConfirmDialog, type ConfirmDialogProps } from "./ConfirmDialog";
 export { Drawer, type DrawerPlacement, type DrawerProps } from "./Drawer";
@@ -21,3 +22,5 @@ export {
   type UseCommandPaletteShortcutOptions,
 } from "./useCommandPaletteShortcut";
 export { TimerRing, type TimerRingProps, type TimerRingStatus } from "./TimerRing";
+export { QuickAddDialog, type QuickAddDialogProps, type QuickAddType } from "./QuickAddDialog";
+export { useQuickAddShortcut, type UseQuickAddShortcutOptions } from "./useQuickAddShortcut";

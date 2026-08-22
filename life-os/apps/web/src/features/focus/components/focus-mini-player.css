@@ -1,0 +1,87 @@
+/* focus-mini-player.css (LOS-0605) */
+
+.lifeos-focus-mini-player {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.lifeos-focus-mini-player__trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--lifeos-radius-pill);
+  outline: none;
+}
+
+.lifeos-focus-mini-player__trigger-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--lifeos-color-primary);
+}
+
+.lifeos-focus-mini-player__popover {
+  position: absolute;
+  top: calc(100% + var(--lifeos-space-2));
+  right: 0;
+  background: var(--lifeos-color-surface);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  padding: var(--lifeos-space-4);
+  box-shadow: var(--lifeos-shadow-lg);
+  z-index: var(--lifeos-z-popover);
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  box-sizing: border-box;
+}
+
+.lifeos-focus-mini-player__start-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-focus-mini-player__presets {
+  display: flex;
+  gap: var(--lifeos-space-2);
+  justify-content: center;
+}
+
+.lifeos-focus-mini-player__cancel-btn {
+  margin-top: var(--lifeos-space-2);
+}
+
+.lifeos-focus-mini-player__desktop-only {
+  display: inline-flex;
+}
+
+.lifeos-focus-mini-player__mobile-only {
+  display: none;
+  width: 100%;
+}
+
+/* Responsive collapse rules matching TopBar's width < 768px */
+@media (width < 768px) {
+  .lifeos-focus-mini-player {
+    width: 100%;
+  }
+
+  .lifeos-focus-mini-player__desktop-only {
+    display: none;
+  }
+
+  .lifeos-focus-mini-player__mobile-only {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: var(--lifeos-space-2) 0;
+  }
+
+  .lifeos-focus-mini-player__mobile-only .lifeos-timer-ring {
+    width: 100%;
+  }
+}

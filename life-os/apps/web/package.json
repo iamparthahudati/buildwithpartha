@@ -27,9 +27,11 @@
     "verify:tokens": "node scripts/verify-design-tokens.mjs"
   },
   "dependencies": {
+    "@tanstack/react-query": "5.101.4",
     "lucide-react": "1.31.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-router-dom": "7.18.2"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",

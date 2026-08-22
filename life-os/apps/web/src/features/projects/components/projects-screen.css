@@ -1,0 +1,89 @@
+/* ProjectsScreen (LOS-0709) */
+.lifeos-projects-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-density-section-gap);
+  width: 100%;
+}
+
+.lifeos-projects-screen__controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-projects-screen__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-projects-screen__search {
+  flex: 1 1 16rem;
+  max-width: 24rem;
+}
+
+.lifeos-projects-screen__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-projects-screen__loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.lifeos-projects-screen__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+  gap: 0;
+}
+
+.lifeos-projects-screen__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.lifeos-projects-screen__list > .lifeos-surface {
+  border-radius: 0;
+}
+
+.lifeos-projects-screen__list > .lifeos-surface:first-child {
+  border-top-left-radius: var(--lifeos-radius-lg);
+  border-top-right-radius: var(--lifeos-radius-lg);
+}
+
+.lifeos-projects-screen__list > .lifeos-surface:last-child {
+  border-bottom-left-radius: var(--lifeos-radius-lg);
+  border-bottom-right-radius: var(--lifeos-radius-lg);
+}
+
+.lifeos-projects-screen__list > .lifeos-surface + .lifeos-surface {
+  margin-top: calc(-1 * var(--lifeos-border-width-hairline));
+}
+
+.lifeos-projects-screen__pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--lifeos-space-4);
+}
+
+.lifeos-projects-detail-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+  padding: var(--lifeos-space-4);
+}
+
+.lifeos-projects-detail-preview__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  color: var(--lifeos-color-text-subtle);
+}

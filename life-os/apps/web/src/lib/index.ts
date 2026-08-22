@@ -20,3 +20,19 @@ export {
   toDurationParts,
   type DurationParts,
 } from "./duration";
+export {
+  ApiError,
+  apiRequest,
+  configureApiClient,
+  resetApiClientConfiguration,
+  type ApiProblem,
+  type ApiRequestInit,
+} from "./apiClient";
+export {
+  buildLoginPathWithReturnTo,
+  currentPathForReturnTo,
+  defaultAuthenticatedPath,
+  isSafeReturnPath,
+  loginPath,
+  resolveReturnTarget,
+} from "./returnPath";

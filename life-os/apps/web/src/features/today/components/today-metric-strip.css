@@ -1,0 +1,47 @@
+/* TodayMetricStrip (LOS-0608). */
+
+/*
+ * Desktop: six cards in a single flexible row that wraps when cards would
+ * become too narrow, keeping each card readable.
+ * Mobile: horizontally scrollable so cards never become unreadably narrow;
+ * overflow-x does not remove tab stops, so keyboard users can still reach
+ * each card. A max-width cap keeps cards from stretching on wide screens.
+ */
+
+.lifeos-today-metric-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
+  gap: var(--lifeos-space-3);
+  margin-block: var(--lifeos-space-4) var(--lifeos-space-6);
+}
+
+/* On viewports wide enough to show all six in one row, force six columns. */
+@media (min-width: 72rem) {
+  .lifeos-today-metric-strip {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/*
+ * On very small viewports (below the 768px breakpoint) switch to a
+ * horizontally scrollable single row with a fixed card width.
+ * The grid reverts to a two-column wrapping layout above 480px.
+ */
+@media (max-width: 30rem) {
+  .lifeos-today-metric-strip {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: var(--lifeos-space-3);
+    /* Prevent rubber-band clipping the card focus rings */
+    padding-inline: var(--lifeos-space-1);
+    margin-inline: calc(-1 * var(--lifeos-space-1));
+  }
+
+  .lifeos-today-metric-strip > * {
+    flex: 0 0 min(9rem, 70vw);
+    scroll-snap-align: start;
+  }
+}

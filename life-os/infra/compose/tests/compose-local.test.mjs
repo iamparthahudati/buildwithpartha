@@ -31,6 +31,14 @@ test("local PostgreSQL is versioned, private, persistent and health checked", ()
   assert.match(compose, /life_os_private:[\s\S]*internal: true/);
 });
 
+test("local Mailpit catcher is private, persistent and on the SMTP/UI ports the app expects", () => {
+  assert.match(compose, /image: axllent\/mailpit:v1\.20\.3/);
+  assert.match(compose, /127\.0\.0\.1:\$\{LIFEOS_MAILPIT_SMTP_PORT:-1025\}:1025/);
+  assert.match(compose, /127\.0\.0\.1:\$\{LIFEOS_MAILPIT_UI_PORT:-8025\}:8025/);
+  assert.match(compose, /life_os_mailpit_data:\/data/);
+  assert.match(compose, /name: life-os-local-mailpit-data/);
+});
+
 test("local API role is separate from the PostgreSQL admin role", () => {
   assert.match(compose, /POSTGRES_USER:.*lifeos_local_admin/);
   assert.match(compose, /LIFEOS_MIGRATOR_USERNAME:.*lifeos_local_migrator/);

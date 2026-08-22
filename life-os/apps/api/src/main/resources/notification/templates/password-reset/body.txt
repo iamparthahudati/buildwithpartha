@@ -1,0 +1,9 @@
+Hi {{displayName}},
+
+We received a request to reset your LifeOS password:
+
+{{resetUrl}}
+
+This link expires in {{expiresInMinutes}} minutes and can only be used once. If you didn't request this, you can ignore this message — your password won't change.
+
+— LifeOS

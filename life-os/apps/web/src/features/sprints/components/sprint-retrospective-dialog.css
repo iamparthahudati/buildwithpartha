@@ -1,0 +1,15 @@
+.sprint-retrospective-dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sprint-retrospective-dialog__summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background-color: var(--lifeos-color-bg-subtle);
+  border-inline-start: 3px solid var(--color-primary);
+}

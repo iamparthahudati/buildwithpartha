@@ -1,0 +1,137 @@
+.lifeos-task-details-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-task-details-header--archived {
+  border-color: var(--lifeos-color-border-warning);
+  background-color: var(--lifeos-color-surface-subtle);
+}
+
+.lifeos-task-details-header--deleted {
+  border-color: var(--lifeos-color-danger-soft);
+  background-color: var(--lifeos-color-surface-subtle);
+}
+
+.lifeos-task-details-header--deleted .lifeos-page-header__row,
+.lifeos-task-details-header--deleted .lifeos-task-details-header__metadata {
+  opacity: 0.72;
+}
+
+.lifeos-task-details-header--conflict {
+  border-color: var(--lifeos-color-border-warning);
+}
+
+.lifeos-task-details-header .lifeos-page-header__titleblock {
+  flex: 1 1 30rem;
+}
+
+.lifeos-task-details-header .lifeos-page-header__metadata {
+  display: block;
+}
+
+.lifeos-task-details-header__metadata {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  width: 100%;
+  padding-top: var(--lifeos-space-3);
+  border-top: 1px solid var(--lifeos-color-border-subtle);
+}
+
+.lifeos-task-details-header__badges,
+.lifeos-task-details-header__labels,
+.lifeos-task-details-header__label-list,
+.lifeos-task-details-header__loading-badges,
+.lifeos-task-details-header__loading-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-task-details-header__facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--lifeos-space-3);
+  margin: 0;
+}
+
+.lifeos-task-details-header__fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+  min-width: 0;
+}
+
+.lifeos-task-details-header__fact dt,
+.lifeos-task-details-header__labels-title {
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.lifeos-task-details-header__fact dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-sm);
+}
+
+.lifeos-task-details-header__fact dd a {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
+.lifeos-task-details-header__progress {
+  max-width: 32rem;
+}
+
+.lifeos-task-details-header__label-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-task-details-header__empty-value {
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-sm);
+}
+
+.lifeos-task-details-header--loading {
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-task-details-header__loading-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-task-details-header__loading-title {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  min-width: 0;
+}
+
+@media (width < 64rem) {
+  .lifeos-task-details-header__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width < 40rem) {
+  .lifeos-task-details-header__facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

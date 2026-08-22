@@ -4,6 +4,7 @@
   display: flex;
   gap: var(--lifeos-space-1);
   overflow-x: auto;
+  overflow-y: hidden;
   border-bottom: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
 }
 
@@ -41,6 +42,12 @@
 
 .lifeos-tabs__panel {
   padding-block: var(--lifeos-space-4);
+}
+
+.lifeos-tabs__panel--empty,
+.lifeos-tabs__panel:empty {
+  display: none;
+  padding: 0;
 }
 
 .lifeos-tabs__panel:focus-visible {
