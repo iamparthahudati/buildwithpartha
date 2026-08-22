@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0814 Task details header handoff)
+Last updated: 2026-08-23 (LOS-0815 Subtask checklist handoff)
 
 ## Phase
 
@@ -31,6 +31,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0815 — Built the responsive SubtaskChecklist with ordered add/edit/toggle/delete actions, named button and Alt+Arrow keyboard reordering, exact completed/total progress, preserved drafts, isolated pending/partial failures, permission/loading/empty/error/destructive states, and an explicit guarantee that 100% checklist progress does not complete the parent Task. See `docs/handoffs/LOS-0815.md`.
 - LOS-0814 — Built the responsive TaskDetailsHeader with deep-link breadcrumbs, title and description, canonical lifecycle badges, Project/due/estimate/time-spent facts, progress, labels, and the shared lifecycle-valid action menu. Loading, archived, deleted, overdue, blocked, and optimistic-conflict states have focused accessibility coverage and live 320px/tablet/desktop verification. See `docs/handoffs/LOS-0814.md`.
 - LOS-0813 — Integrated the Tasks screen with list/summary query, CRUD/status/MIT/bulk mutations, URL state, safe optimistic updates, partial bulk failures, and preserved failed selection. See `docs/handoffs/LOS-0813.md`.
 - LOS-0812 — Composed the Tasks screen with header/add, summary presets, tabs, search/filters/sort/view, DataTable and cards, bulk actions, pagination, detail selection, TaskForm, and loading/empty/error/partial-failure mock states. See `docs/handoffs/LOS-0812.md`.
@@ -264,7 +265,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0815 (`docs/backlog/EPIC-08-TASKS.md`) — build SubtaskChecklist.
+LOS-0816 (`docs/backlog/EPIC-08-TASKS.md`) — build DependencyEditor after LOS-0807 is confirmed Done.
 
 ## Known decisions requiring implementation-time values
 

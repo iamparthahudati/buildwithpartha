@@ -7,6 +7,14 @@ export {
   type TaskDetailsLabel,
 } from "./components/TaskDetailsHeader";
 export {
+  SubtaskChecklist,
+  type SubtaskChecklistItem,
+  type SubtaskChecklistOperation,
+  type SubtaskChecklistOperationError,
+  type SubtaskChecklistOperationTarget,
+  type SubtaskChecklistProps,
+} from "./components/SubtaskChecklist";
+export {
   TaskForm,
   type TaskFormData,
   type TaskFormLabelOption,

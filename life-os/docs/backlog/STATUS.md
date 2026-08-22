@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-21
+Last updated: 2026-08-23
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -147,6 +147,7 @@ Last updated: 2026-08-21
 | LOS-0811 | Done          | `feature/LOS-0811-task-summary-filter-presets`  | Built six accessible Task summary metrics with controlled filter actions plus pure URL preset apply/read contracts that preserve unrelated filters and reset pagination. See `docs/handoffs/LOS-0811.md`. |
 | LOS-0812 | Done          | `feature/LOS-0812-compose-tasks-screen`         | Composed the Tasks screen with header/add, metrics/presets, tabs, search/filters/sort/view, DataTable/cards, bulk actions, pagination, detail selection, and all required mock UX states. See `docs/handoffs/LOS-0812.md`. |
 | LOS-0813 | Done          | `feature/LOS-0813-integrate-tasks-screen`       | Wired the Tasks screen to list/summary CRUD, status, MIT, and bulk APIs with URL state, safe optimistic updates, partial bulk failures, and preserved failed selection. See `docs/handoffs/LOS-0813.md`. |
+| LOS-0815 | Done          | `feature/LOS-0815-build-subtask-checklist`      | Built the responsive SubtaskChecklist with add/edit/toggle/delete, named-button and Alt+Arrow reordering, exact progress, explicit parent-Task completion separation, isolated pending/partial failures, lifecycle states, catalog coverage, and accessibility tests. See `docs/handoffs/LOS-0815.md`. |
 | LOS-1403 | Done          | `develop`                                       | Persistent background job framework (V5 migration, BackgroundJob domain aggregate, transactional enqueue port in common.job, scheduled poller/runner with retry backoff, and daily R1 retention cleanup). |
 | LOS-1405 | Done          | `develop`                                       | Private generated-file lifecycle (V6 migration, ExportFile domain aggregate, ExportFilePort in common.export, local private storage, secure download tokens, and daily cleanup). |
 | LOS-1002 | Done          | `feature/LOS-1002-build-sprint-components`      | Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, catalog specimens, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`. |

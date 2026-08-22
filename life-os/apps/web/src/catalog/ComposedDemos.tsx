@@ -21,7 +21,9 @@ import {
   TaskDetailsHeader,
   TaskForm,
   TaskRow,
+  SubtaskChecklist,
   TaskSummaryMetrics,
+  type SubtaskChecklistItem,
   type TaskDetailsHeaderTask,
   type TaskFilterPresetId,
   type TaskListItem,
@@ -728,6 +730,114 @@ export function TaskDetailsHeaderDemo() {
       </Text>
       <TaskDetailsHeader loading />
     </div>
+  );
+}
+
+const MOCK_SUBTASKS: readonly SubtaskChecklistItem[] = [
+  {
+    id: "subtask-outline",
+    title: "Outline the interaction states",
+    completed: true,
+    position: 0,
+    version: 1,
+  },
+  {
+    id: "subtask-keyboard",
+    title: "Verify keyboard reorder controls",
+    completed: false,
+    position: 1,
+    version: 2,
+  },
+  {
+    id: "subtask-responsive",
+    title: "Check the narrow-screen layout",
+    completed: false,
+    position: 2,
+    version: 1,
+  },
+];
+
+export function SubtaskChecklistDemo({
+  state = "ready",
+}: {
+  readonly state?: "ready" | "loading" | "empty" | "error" | "read-only" | "partial";
+}) {
+  const [subtasks, setSubtasks] = useState(MOCK_SUBTASKS);
+
+  if (state === "loading") return <SubtaskChecklist loading />;
+  if (state === "error") {
+    return (
+      <SubtaskChecklist error="Task details are still available." onRetry={handleTaskDemoAction} />
+    );
+  }
+
+  const displayedSubtasks = state === "empty" ? [] : subtasks;
+  const readOnly = state === "read-only";
+
+  return (
+    <SubtaskChecklist
+      subtasks={displayedSubtasks}
+      readOnly={readOnly}
+      {...(readOnly
+        ? {
+            readOnlyReason:
+              "You can view these Subtasks, but you don't have permission to change them.",
+          }
+        : {})}
+      {...(state === "partial"
+        ? {
+            pendingOperations: [{ operation: "toggle" as const, subtaskId: "subtask-outline" }],
+            operationErrors: [
+              {
+                operation: "reorder" as const,
+                subtaskId: "subtask-keyboard",
+                message:
+                  "This Subtask couldn't be moved. The saved order is still shown. Try again.",
+                onRetry: handleTaskDemoAction,
+              },
+            ],
+          }
+        : {})}
+      onAdd={(title) => {
+        setSubtasks((current) => [
+          ...current,
+          {
+            id: `subtask-${current.length + 1}`,
+            title,
+            completed: false,
+            position: current.length,
+            version: 0,
+          },
+        ]);
+      }}
+      onEdit={(subtaskId, title) =>
+        setSubtasks((current) =>
+          current.map((subtask) => (subtask.id === subtaskId ? { ...subtask, title } : subtask)),
+        )
+      }
+      onToggle={(subtaskId, completed) =>
+        setSubtasks((current) =>
+          current.map((subtask) =>
+            subtask.id === subtaskId ? { ...subtask, completed } : subtask,
+          ),
+        )
+      }
+      onReorder={(orderedIds) =>
+        setSubtasks((current) =>
+          orderedIds
+            .map((subtaskId) => current.find((subtask) => subtask.id === subtaskId))
+            .filter((subtask): subtask is SubtaskChecklistItem => Boolean(subtask))
+            .map((subtask, position) => ({ ...subtask, position })),
+        )
+      }
+      onDelete={(subtaskId) =>
+        setSubtasks((current) =>
+          current
+            .filter((subtask) => subtask.id !== subtaskId)
+            .map((subtask, position) => ({ ...subtask, position })),
+        )
+      }
+    />
   );
 }
 

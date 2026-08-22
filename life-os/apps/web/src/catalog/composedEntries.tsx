@@ -20,6 +20,7 @@ import {
   TaskRowDemo,
   TaskCardDemo,
   TaskDetailsHeaderDemo,
+  SubtaskChecklistDemo,
   TaskFormDemo,
   TaskSummaryMetricsDemo,
   ProjectDetailsHeaderDemo,
@@ -310,6 +311,53 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Ready and lifecycle states",
         description: "Active, conflict, archived, deleted, and loading Task header specimens.",
         render: () => <TaskDetailsHeaderDemo />,
+      },
+    ],
+  },
+  {
+    id: "subtask-checklist",
+    name: "SubtaskChecklist",
+    group: "Composed",
+    summary:
+      "An ordered Subtask checklist with exact progress, add/edit/toggle/delete actions, button and Alt+Arrow keyboard reordering, isolated pending/failure states, and an explicit boundary between 100% checklist progress and parent Task completion.",
+    states: [
+      {
+        id: "subtask-checklist-ready",
+        name: "Interactive checklist",
+        description: "Add, edit, reorder, toggle, and delete Subtasks with controlled data.",
+        render: () => <SubtaskChecklistDemo />,
+      },
+      {
+        id: "subtask-checklist-pending-partial",
+        name: "Pending and partial failure",
+        description:
+          "One pending Subtask and one failed reorder stay isolated while the rest remain available.",
+        render: () => <SubtaskChecklistDemo state="partial" />,
+      },
+      {
+        id: "subtask-checklist-empty",
+        name: "First-use empty",
+        description: "The value of Subtasks is explained beside the available add control.",
+        render: () => <SubtaskChecklistDemo state="empty" />,
+      },
+      {
+        id: "subtask-checklist-read-only",
+        name: "Permission read-only",
+        description: "Confirmed Subtasks stay visible while every mutation is unavailable.",
+        render: () => <SubtaskChecklistDemo state="read-only" />,
+      },
+      {
+        id: "subtask-checklist-error",
+        name: "Load error",
+        description:
+          "The failed checklist is isolated while the surrounding Task remains available.",
+        render: () => <SubtaskChecklistDemo state="error" />,
+      },
+      {
+        id: "subtask-checklist-loading",
+        name: "Loading",
+        description: "The checklist reserves its header, progress, and row layout while loading.",
+        render: () => <SubtaskChecklistDemo state="loading" />,
       },
     ],
   },

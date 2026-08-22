@@ -1,0 +1,146 @@
+/* SubtaskChecklist (LOS-0815). */
+
+.lifeos-subtask-checklist {
+  display: grid;
+  gap: var(--lifeos-space-4);
+  min-width: 0;
+}
+
+.lifeos-subtask-checklist__intro {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-subtask-checklist__list {
+  display: grid;
+  gap: var(--lifeos-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lifeos-subtask-checklist__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--lifeos-space-2) var(--lifeos-space-3);
+  padding: var(--lifeos-space-2);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  background: var(--lifeos-color-surface);
+}
+
+.lifeos-subtask-checklist__item.is-pending {
+  background: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-subtask-checklist__checkbox {
+  min-width: 0;
+  align-self: center;
+}
+
+.lifeos-subtask-checklist__checkbox .lifeos-choice__label {
+  overflow-wrap: anywhere;
+}
+
+.lifeos-subtask-checklist__item.is-completed .lifeos-choice__label {
+  color: var(--lifeos-color-text-muted);
+  text-decoration: line-through;
+}
+
+.lifeos-subtask-checklist__item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-subtask-checklist__edit-form {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-subtask-checklist__edit-actions {
+  display: flex;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-subtask-checklist__operation-error {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-subtask-checklist__add-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--lifeos-space-2);
+  padding-block-start: var(--lifeos-space-2);
+  border-block-start: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-subtask-checklist__add-form .lifeos-subtask-checklist__operation-error {
+  grid-column: 1 / -1;
+}
+
+.lifeos-subtask-checklist__empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--lifeos-space-1);
+  padding: var(--lifeos-space-6) var(--lifeos-space-4);
+  border: var(--lifeos-border-width-hairline) dashed var(--lifeos-color-border-strong);
+  border-radius: var(--lifeos-radius-md);
+  background: var(--lifeos-color-surface-muted);
+  text-align: center;
+}
+
+.lifeos-subtask-checklist__skeleton-list {
+  display: grid;
+  gap: var(--lifeos-space-2);
+}
+
+@media (max-width: 479px) {
+  .lifeos-subtask-checklist__intro {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--lifeos-space-1);
+  }
+
+  .lifeos-subtask-checklist__item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lifeos-subtask-checklist__item-actions {
+    justify-content: flex-start;
+    padding-inline-start: calc(var(--lifeos-space-5) + var(--lifeos-space-2));
+  }
+
+  .lifeos-subtask-checklist__edit-form,
+  .lifeos-subtask-checklist__add-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lifeos-subtask-checklist__edit-actions,
+  .lifeos-subtask-checklist__add-form .lifeos-button {
+    width: 100%;
+  }
+
+  .lifeos-subtask-checklist__edit-actions .lifeos-button {
+    flex: 1;
+  }
+}
+
+@media (forced-colors: active) {
+  .lifeos-subtask-checklist__item,
+  .lifeos-subtask-checklist__empty {
+    border-color: CanvasText;
+  }
+}
