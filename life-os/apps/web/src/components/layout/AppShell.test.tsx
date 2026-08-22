@@ -95,7 +95,7 @@ function renderShell(
 
   return renderWithUser(
     <QueryClientProvider client={queryClient}>
-      <AuthSessionProvider>
+      <AuthSessionProvider restoreSession={false}>
         <ToastProvider>
           <MemoryRouter initialEntries={initialEntries}>
             <Routes>

@@ -39,7 +39,7 @@ function renderScreen(props: AccountDeletionCancelScreenProps = {}) {
   });
   return renderWithUser(
     <QueryClientProvider client={queryClient}>
-      <AuthSessionProvider>
+      <AuthSessionProvider restoreSession={false}>
         <AccountDeletionCancelScreen {...props} />
       </AuthSessionProvider>
     </QueryClientProvider>,

@@ -37,7 +37,7 @@ function renderScreen(props: ForgotPasswordScreenProps = {}) {
   });
   return renderWithUser(
     <QueryClientProvider client={queryClient}>
-      <AuthSessionProvider>
+      <AuthSessionProvider restoreSession={false}>
         <ForgotPasswordScreen {...props} />
       </AuthSessionProvider>
     </QueryClientProvider>,

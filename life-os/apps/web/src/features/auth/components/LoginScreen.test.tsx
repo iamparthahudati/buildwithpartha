@@ -60,7 +60,7 @@ function renderScreen(props: LoginScreenProps = {}) {
   });
   return renderWithUser(
     <QueryClientProvider client={queryClient}>
-      <AuthSessionProvider>
+      <AuthSessionProvider restoreSession={false}>
         <LoginScreen {...props} />
       </AuthSessionProvider>
     </QueryClientProvider>,

@@ -54,7 +54,7 @@ function renderPlayer(ui: React.ReactElement) {
   return {
     ...renderWithUser(
       <QueryClientProvider client={queryClient}>
-        <AuthSessionProvider>{ui}</AuthSessionProvider>
+        <AuthSessionProvider restoreSession={false}>{ui}</AuthSessionProvider>
       </QueryClientProvider>,
     ),
     queryClient,

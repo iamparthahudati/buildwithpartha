@@ -47,7 +47,7 @@ function createWrapper(queryClient: QueryClient, user: AuthUser = mockUser) {
   return function Wrapper({ children }: { readonly children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AuthSessionProvider>
+        <AuthSessionProvider restoreSession={false}>
           <SessionSeeder user={user}>{children}</SessionSeeder>
         </AuthSessionProvider>
       </QueryClientProvider>

@@ -30,7 +30,7 @@ function buildWrapper(queryClient: QueryClient) {
   return function Wrapper({ children }: { readonly children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AuthSessionProvider>{children}</AuthSessionProvider>
+        <AuthSessionProvider restoreSession={false}>{children}</AuthSessionProvider>
       </QueryClientProvider>
     );
   };

@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { configureApiClient } from "@lib/apiClient";
 import { buildLoginPathWithReturnTo, currentPathForReturnTo } from "@lib/returnPath";
-import { getSession } from "@features/auth/api/authApi";
+import { getSession } from "@features/auth";
 
 import { AuthSessionContext, type AuthSessionValue, type AuthUser } from "./authSession";
 
@@ -43,12 +43,20 @@ export interface AuthSessionProviderProps {
   readonly children: ReactNode;
   /** Overridable for tests; defaults to a real `window.location.assign` navigation. */
   readonly navigate?: (url: string) => void;
+  /** Disable only in isolated tests whose request mock is reserved for the operation under test. */
+  readonly restoreSession?: boolean;
 }
 
-export function AuthSessionProvider({ children, navigate }: AuthSessionProviderProps) {
+export function AuthSessionProvider({
+  children,
+  navigate,
+  restoreSession = true,
+}: AuthSessionProviderProps) {
   const queryClient = useQueryClient();
   const [session, setSessionState] = useState<AuthSessionState>(LOGGED_OUT_STATE);
-  const [bootstrapStatus, setBootstrapStatus] = useState<"pending" | "done">("pending");
+  const [bootstrapStatus, setBootstrapStatus] = useState<"pending" | "done">(
+    restoreSession ? "pending" : "done",
+  );
   const isBootstrapping = session.user === null && bootstrapStatus === "pending";
 
   // Kept current without retriggering the `configureApiClient` effect below
@@ -102,7 +110,7 @@ export function AuthSessionProvider({ children, navigate }: AuthSessionProviderP
   }, [clearSession]);
 
   useEffect(() => {
-    if (session.user !== null) {
+    if (!restoreSession || session.user !== null) {
       return;
     }
 
@@ -137,7 +145,7 @@ export function AuthSessionProvider({ children, navigate }: AuthSessionProviderP
     return () => {
       cancelled = true;
     };
-  }, [session.user, setSession]);
+  }, [restoreSession, session.user, setSession]);
 
   const value = useMemo<AuthSessionValue>(
     () => ({

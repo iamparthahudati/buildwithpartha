@@ -40,6 +40,6 @@ export function mapTaskRecordToProjectOverviewTask(
     status: TASK_STATUS_TO_OVERVIEW[task.status],
     priority: task.priority,
     ...(task.dueAt ? { dueDate: dueAtToLocalDate(task.dueAt, timeZone) } : {}),
-    href: task.href,
+    ...(task.href ? { href: task.href } : {}),
   };
 }

@@ -72,7 +72,7 @@ function renderScreen(props: OnboardingScreenProps = {}, user: AuthUser = mockAu
   });
   return renderWithUser(
     <QueryClientProvider client={queryClient}>
-      <AuthSessionProvider>
+      <AuthSessionProvider restoreSession={false}>
         <SessionSeeder user={user}>
           <OnboardingScreen {...props} />
         </SessionSeeder>

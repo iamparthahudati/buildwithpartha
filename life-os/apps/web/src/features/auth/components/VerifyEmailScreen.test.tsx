@@ -37,7 +37,7 @@ function renderScreen(props: VerifyEmailScreenProps = {}) {
   });
   return renderWithUser(
     <QueryClientProvider client={queryClient}>
-      <AuthSessionProvider>
+      <AuthSessionProvider restoreSession={false}>
         <VerifyEmailScreen {...props} />
       </AuthSessionProvider>
     </QueryClientProvider>,

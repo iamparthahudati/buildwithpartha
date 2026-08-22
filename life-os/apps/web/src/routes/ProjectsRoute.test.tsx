@@ -39,6 +39,7 @@ const MOCK_USER = {
 const MOCK_AUTH_STATE: AuthSessionValue = {
   user: MOCK_USER,
   csrfToken: "mock-csrf-token",
+  isBootstrapping: false,
   setSession: vi.fn(),
   clearSession: vi.fn(),
 };

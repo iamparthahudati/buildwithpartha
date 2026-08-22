@@ -84,18 +84,19 @@ export function ProjectDetailsRoute() {
 
   const totalTasksCount = projectTasksQuery.data?.page.totalItems ?? 0;
   const completedTasksCount = completedProjectTasksQuery.data?.page.totalItems ?? 0;
+  const project = data?.project;
 
   const projectWithTaskCounts = useMemo((): Project | undefined => {
-    if (!data?.project) {
+    if (!project) {
       return undefined;
     }
 
     return {
-      ...data.project,
+      ...project,
       totalTasksCount,
       completedTasksCount,
     };
-  }, [completedTasksCount, data?.project, totalTasksCount]);
+  }, [completedTasksCount, project, totalTasksCount]);
 
   const createMilestoneMutation = useCreateMilestone();
   const updateMilestoneMutation = useUpdateMilestone();

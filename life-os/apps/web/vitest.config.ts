@@ -18,7 +18,10 @@ export default defineConfig((configEnvironment) =>
             "src/**/*.test.{ts,tsx}",
             "src/**/index.ts",
             "src/main.tsx",
-            "src/catalog/main.tsx",
+            // The development-only catalog is never part of a production build.
+            // Its registry, rendering and accessibility still run as tests, but
+            // sample-only event callbacks are not production coverage targets.
+            "src/catalog/**",
             "src/test/**",
           ],
           reporter: ["text", "html", "json-summary", "lcov"],

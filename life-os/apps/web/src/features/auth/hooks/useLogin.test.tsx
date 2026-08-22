@@ -21,7 +21,7 @@ function wrapper({ children }: { readonly children: ReactNode }) {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthSessionProvider>{children}</AuthSessionProvider>
+      <AuthSessionProvider restoreSession={false}>{children}</AuthSessionProvider>
     </QueryClientProvider>
   );
 }

@@ -37,7 +37,7 @@ function renderGuarded(navigate: (url: string) => void) {
   const queryClient = new QueryClient();
   return renderWithUser(
     <QueryClientProvider client={queryClient}>
-      <AuthSessionProvider navigate={navigate}>
+      <AuthSessionProvider navigate={navigate} restoreSession={false}>
         <SessionControls />
         <RequireAuth navigate={navigate}>
           <p>Protected content</p>

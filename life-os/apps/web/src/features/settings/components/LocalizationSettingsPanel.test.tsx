@@ -49,7 +49,7 @@ function createWrapper(queryClient: QueryClient) {
   return function Wrapper({ children }: { readonly children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AuthSessionProvider>
+        <AuthSessionProvider restoreSession={false}>
           <SessionSeeder>{children}</SessionSeeder>
         </AuthSessionProvider>
       </QueryClientProvider>

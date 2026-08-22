@@ -94,6 +94,7 @@ const MOCK_USER = {
 const MOCK_AUTH_STATE: AuthSessionValue = {
   user: MOCK_USER,
   csrfToken: "mock-csrf-token",
+  isBootstrapping: false,
   setSession: vi.fn(),
   clearSession: vi.fn(),
 };
@@ -141,7 +142,7 @@ const DONE_TASKS_QUERY = {
 
 function mockProjectTasksQueries() {
   mockUseTasks.mockImplementation((params) => {
-    if (params.status?.includes("DONE")) {
+    if (params?.status?.includes("DONE")) {
       return DONE_TASKS_QUERY as unknown as ReturnType<typeof tasksFeature.useTasks>;
     }
     return EMPTY_TASKS_QUERY as unknown as ReturnType<typeof tasksFeature.useTasks>;
@@ -341,7 +342,7 @@ describe("ProjectDetailsRoute", () => {
 
   it("loads project-scoped tasks and passes them to the details screen", () => {
     mockUseTasks.mockImplementation((params) => {
-      if (params.status?.includes("DONE")) {
+      if (params?.status?.includes("DONE")) {
         return {
           ...DONE_TASKS_QUERY,
           data: {

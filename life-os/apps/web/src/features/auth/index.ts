@@ -27,6 +27,7 @@ export { useChangePassword } from "./hooks/useChangePassword";
 export { useUserSessions, SESSIONS_QUERY_KEY } from "./hooks/useUserSessions";
 export { useRevokeSession } from "./hooks/useRevokeSession";
 export { useRevokeAllOtherSessions } from "./hooks/useRevokeAllOtherSessions";
+export { getSession } from "./api/authApi";
 export {
   validateChangePasswordForm,
   hasChangePasswordErrors,
