@@ -22,6 +22,7 @@ import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
+import tech.buildwithpartha.lifeos.common.error.TimeBlockOverlapConflictException;
 import tech.buildwithpartha.lifeos.common.error.TokenAlreadyUsedException;
 import tech.buildwithpartha.lifeos.common.error.TokenExpiredException;
 import tech.buildwithpartha.lifeos.common.error.TokenInvalidException;
@@ -131,6 +132,18 @@ public final class ApiExceptionHandler {
             StandardErrorCodes.CONCURRENCY_CONFLICT,
             "Conflict",
             "The resource was updated by another request."));
+  }
+
+  @ExceptionHandler(TimeBlockOverlapConflictException.class)
+  ResponseEntity<ApiProblem> handleTimeBlockOverlapConflict(
+      TimeBlockOverlapConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Schedule Conflict",
+            exception.getMessage()));
   }
 
   @ExceptionHandler(CsrfTokenInvalidException.class)

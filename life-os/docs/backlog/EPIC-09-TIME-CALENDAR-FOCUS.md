@@ -3,7 +3,7 @@
 | ID | Ticket | Description and acceptance contract | Depends on | Estimate | Status |
 | --- | --- | --- | --- | --- | --- |
 | LOS-0901 | Model time blocks | Schema for block/category/status/link/start/end/source timezone/version with indexes and constraints. DST/overnight/ownership policies are encoded/tested where possible. | LOS-0216, LOS-0801 | M | Done |
-| LOS-0902 | Implement time-block CRUD/conflict API | Day/week queries and create/update/resize/move/complete/delete/duplicate with overlap detection, explicit override, versioning, audit and cross-user tests. | LOS-0901 | M | Backlog |
+| LOS-0902 | Implement time-block CRUD/conflict API | Day/week queries and create/update/resize/move/complete/delete/duplicate with overlap detection, explicit override, versioning, audit and cross-user tests. | LOS-0901 | M | Done |
 | LOS-0903 | Build TimeBlockRow | Category color/icon, title/link, local times/duration/status/conflict/current/actions with mobile and accessibility states. | LOS-0434 | S | In Review |
 | LOS-0904 | Build TimeBlockForm | Title/category/task/project/date/start/end/timezone/repeat note with DST/overlap validation, conflict resolution and edit/create modes. | LOS-0405, LOS-0425 | M | Backlog |
 | LOS-0905 | Build day timeline grid | Time scale, blocks, now line, gaps, keyboard create/move alternative, drag/resize enhancement, collision, zoom/density and small-screen list fallback. | LOS-0903, LOS-0904 | M | Backlog |

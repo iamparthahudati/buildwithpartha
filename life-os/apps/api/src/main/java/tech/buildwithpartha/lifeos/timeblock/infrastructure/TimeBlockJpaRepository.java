@@ -26,5 +26,21 @@ interface TimeBlockJpaRepository extends JpaRepository<TimeBlockEntity, UUID> {
 
   List<TimeBlockEntity> findByTaskIdOrderByStartAtAsc(UUID taskId);
 
+  List<TimeBlockEntity> findByUserIdAndProjectIdOrderByStartAtAsc(UUID userId, UUID projectId);
+
+  List<TimeBlockEntity> findByUserIdAndTaskIdOrderByStartAtAsc(UUID userId, UUID taskId);
+
+  @Query(
+      "SELECT t FROM TimeBlockEntity t WHERE t.userId = :userId"
+          + " AND t.status <>"
+          + " tech.buildwithpartha.lifeos.timeblock.domain.TimeBlockStatus.CANCELLED"
+          + " AND t.startAt < :rangeEnd AND t.endAt > :rangeStart"
+          + " AND (:excludeId IS NULL OR t.id <> :excludeId) ORDER BY t.startAt ASC")
+  List<TimeBlockEntity> findOverlappingByUserId(
+      @Param("userId") UUID userId,
+      @Param("rangeStart") Instant rangeStart,
+      @Param("rangeEnd") Instant rangeEnd,
+      @Param("excludeId") UUID excludeId);
+
   long countByTaskIdAndUserId(UUID taskId, UUID userId);
 }

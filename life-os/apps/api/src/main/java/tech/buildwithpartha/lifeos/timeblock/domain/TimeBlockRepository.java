@@ -22,6 +22,13 @@ public interface TimeBlockRepository {
 
   List<TimeBlock> findByTaskId(UUID taskId);
 
+  List<TimeBlock> findByUserIdAndProjectId(UUID userId, UUID projectId);
+
+  List<TimeBlock> findByUserIdAndTaskId(UUID userId, UUID taskId);
+
+  List<TimeBlock> findOverlappingByUserId(
+      UUID userId, Instant rangeStart, Instant rangeEnd, UUID excludeId);
+
   long countByTaskIdAndUserId(UUID taskId, UUID userId);
 
   void deleteById(UUID id);

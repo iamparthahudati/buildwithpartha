@@ -169,5 +169,7 @@ Last updated: 2026-08-23
 | LOS-1404 | Done          | `feature/LOS-1404-product-activity-audit`       | Typed content-free Product Activity and Security Audit event ports, user-scoped Activity reads, restricted audit access, correlation capture, V12 persistence, and daily R6 expiry cleanup. See `docs/handoffs/LOS-1404.md`. |
 | LOS-1405 | Done          | `develop`                                       | Private generated-file lifecycle (V6 migration, ExportFile domain aggregate, ExportFilePort in common.export, local private storage, secure download tokens, and daily cleanup). |
 | LOS-1002 | Done          | `feature/LOS-1002-build-sprint-components`      | Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, catalog specimens, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`. |
+| LOS-0901 | Done          | `feature/LOS-0901-model-time-blocks`            | Modeled TimeBlock domain aggregate, Flyway migration V15, H2 test schema, policy helpers, and JPA repository adapter. See `docs/handoffs/LOS-0901.md`. |
+| LOS-0902 | Done          | `feature/LOS-0902-implement-time-block-crud-conflict-api` | Implemented Time Block CRUD, day/week query, move, resize, complete, duplicate, overlap detection with explicit override, versioning, audit, and cross-user tests. See `docs/handoffs/LOS-0902.md`. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
