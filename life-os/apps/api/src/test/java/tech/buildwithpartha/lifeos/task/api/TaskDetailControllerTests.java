@@ -192,7 +192,10 @@ class TaskDetailControllerTests {
         .andExpect(jsonPath("$.dependencies.dependents.length()").value(12));
     long denseDetailStatements = statistics.getPrepareStatementCount();
 
-    assertThat(denseDetailStatements).isEqualTo(emptyDetailStatements).isLessThanOrEqualTo(8);
+    // LOS-0821/LOS-1404 replace two placeholder zeros with fixed Comment and Activity count
+    // queries. The statement count may increase by those two canonical stores, but must remain
+    // constant as dependency edges grow.
+    assertThat(denseDetailStatements).isEqualTo(emptyDetailStatements).isLessThanOrEqualTo(10);
   }
 
   private UUID createUser(String prefix) {

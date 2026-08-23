@@ -278,3 +278,17 @@ CREATE TABLE IF NOT EXISTS security_audit_events (
     occurred_at     TIMESTAMP WITH TIME ZONE NOT NULL,
     expires_at      TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+-- Added by LOS-0821: personal Task/Project Comments.
+CREATE TABLE IF NOT EXISTS comments (
+    id         UUID                     NOT NULL PRIMARY KEY,
+    user_id    UUID                     NOT NULL,
+    task_id    UUID,
+    project_id UUID,
+    body       TEXT                     NOT NULL,
+    format     VARCHAR(16)              NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    edited_at  TIMESTAMP WITH TIME ZONE,
+    version    BIGINT                   NOT NULL
+);

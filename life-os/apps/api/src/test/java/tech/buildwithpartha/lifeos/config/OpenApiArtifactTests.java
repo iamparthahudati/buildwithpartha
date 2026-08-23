@@ -174,6 +174,64 @@ class OpenApiArtifactTests {
                             "commentCount",
                             "attachmentCount",
                             "activityEventCount")))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/comments'].get.operationId")
+                    .value("listTaskComments"))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/comments'].post.operationId")
+                    .value("createTaskComment"))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/comments'].post.security[0].sessionCookie")
+                    .isArray())
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/comments'].post.security[0].csrfToken")
+                    .isArray())
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/comments/{commentId}'].get.operationId")
+                    .value("getTaskComment"))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/comments/{commentId}'].put.operationId")
+                    .value("updateTaskComment"))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/comments/{commentId}'].delete.operationId")
+                    .value("deleteTaskComment"))
+            .andExpect(
+                jsonPath("$.paths['/projects/{projectId}/comments'].get.operationId")
+                    .value("listProjectComments"))
+            .andExpect(
+                jsonPath("$.paths['/projects/{projectId}/comments'].post.operationId")
+                    .value("createProjectComment"))
+            .andExpect(
+                jsonPath("$.paths['/projects/{projectId}/comments/{commentId}'].put.operationId")
+                    .value("updateProjectComment"))
+            .andExpect(
+                jsonPath("$.paths['/projects/{projectId}/comments/{commentId}'].delete.operationId")
+                    .value("deleteProjectComment"))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/comments'].post.responses['400'].$ref")
+                    .value("#/components/responses/BadRequest"))
+            .andExpect(
+                jsonPath(
+                        "$.paths['/tasks/{taskId}/comments/{commentId}'].put.responses['409'].$ref")
+                    .value("#/components/responses/Conflict"))
+            .andExpect(jsonPath("$.components.schemas.CreateCommentRequest").exists())
+            .andExpect(jsonPath("$.components.schemas.UpdateCommentRequest").exists())
+            .andExpect(jsonPath("$.components.schemas.CommentResponse").exists())
+            .andExpect(
+                jsonPath("$.components.schemas.CommentResponse.required")
+                    .value(
+                        hasItems(
+                            "id",
+                            "authorId",
+                            "parentType",
+                            "parentId",
+                            "body",
+                            "format",
+                            "createdAt",
+                            "updatedAt",
+                            "version",
+                            "canEdit",
+                            "canDelete")))
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))

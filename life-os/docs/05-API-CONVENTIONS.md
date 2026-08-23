@@ -49,6 +49,16 @@ Bulk actions are retry-safe: already-applied item states are no-ops and retain t
 
 The response counts linked Time Blocks, Focus Sessions, Comments, Attachments, and Activity Events without embedding those independently paginated resources. Counts are zero while their canonical persistence capability is unavailable. Missing, deleted, and cross-user Task IDs are indistinguishable as `404 RESOURCE_NOT_FOUND`. Dependency projection queries remain fixed in number as edge counts grow, and every relationship projection is scoped to the authenticated user.
 
+### Task and Project comments
+
+Comments are strongly parent-owned resources at `/tasks/{taskId}/comments` and `/projects/{projectId}/comments`. Each collection supports bounded newest-first `GET` pagination (`page` defaults to 0; `size` defaults to 20 and is limited to 1–100) and authenticated, CSRF-protected `POST`. Individual nested resources support `GET`, optimistic `PUT` with a required `version` body field, and optimistic `DELETE` with the current non-negative version in `If-Match` (plain or quoted integer). Create returns `201` plus the canonical resource and a `/life-os/api/v1/...` `Location`; successful delete returns `204`.
+
+Comments are private to the owning Account. Task/Project ownership and Comment ownership are independently checked on every operation; missing and cross-user parent/comment IDs are indistinguishable `404 RESOURCE_NOT_FOUND`. An archived parent remains readable and its Comments may still be deleted, but creating or editing returns `400 VALIDATION_FAILED` with the parent ID field marked `READ_ONLY`. This preserves private-content deletion while preventing history changes on archived work. A stale edit/delete version returns `409 CONCURRENCY_CONFLICT`.
+
+`format` is `PLAIN_TEXT` (the create default) or `MARKDOWN`. Input is non-blank and limited to 4,000 UTF-16 code units after normal request decoding. Plain text is normalized for line endings and must be rendered as text. The safe Markdown subset preserves normal Markdown text plus inline `http`/`https` links without userinfo; raw HTML/entities are escaped, inline/reference/shortcut images are flattened, reference/shortcut links are neutralized, and non-HTTP(S), malformed, or userinfo links are flattened to their label. NUL and other control characters except newline/tab are rejected. Clients must still use a Markdown renderer configured with raw HTML disabled and no unapproved extensions.
+
+Comment deletion immediately purges the body and is intentionally irreversible; a body-free `COMMENT_DELETED` Activity Event remains. Create/edit/delete emit `COMMENT_CREATED`, `COMMENT_UPDATED`, or `COMMENT_DELETED` transactionally against the owning Task/Project subject. Event metadata never contains the Comment body. Task Detail `commentCount` and `activityEventCount` are now backed by fixed user-scoped count queries rather than placeholder zeros.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:

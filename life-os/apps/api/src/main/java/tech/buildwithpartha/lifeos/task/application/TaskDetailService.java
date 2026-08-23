@@ -4,6 +4,10 @@ import java.util.Objects;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.buildwithpartha.lifeos.common.activity.ActivitySubjectType;
+import tech.buildwithpartha.lifeos.common.activity.ProductActivityPort;
+import tech.buildwithpartha.lifeos.common.comment.CommentCountPort;
+import tech.buildwithpartha.lifeos.common.comment.CommentParentType;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.task.domain.Task;
 import tech.buildwithpartha.lifeos.task.domain.TaskDetailDependencies;
@@ -17,11 +21,18 @@ public class TaskDetailService {
 
   private final TaskRepository taskRepository;
   private final TaskDetailQueryRepository taskDetailQueryRepository;
+  private final CommentCountPort commentCountPort;
+  private final ProductActivityPort activityPort;
 
   public TaskDetailService(
-      TaskRepository taskRepository, TaskDetailQueryRepository taskDetailQueryRepository) {
+      TaskRepository taskRepository,
+      TaskDetailQueryRepository taskDetailQueryRepository,
+      CommentCountPort commentCountPort,
+      ProductActivityPort activityPort) {
     this.taskRepository = taskRepository;
     this.taskDetailQueryRepository = taskDetailQueryRepository;
+    this.commentCountPort = commentCountPort;
+    this.activityPort = activityPort;
   }
 
   public TaskDetailResult getTaskDetail(UUID userId, UUID taskId) {
@@ -36,8 +47,10 @@ public class TaskDetailService {
     TaskDetailDependencies dependencies =
         taskDetailQueryRepository.findDependencies(userId, taskId);
 
-    // These canonical stores are introduced by later tickets. The v1 response keeps their
-    // contract stable and truthful until those providers can replace the zero counts.
-    return new TaskDetailResult(task, dependencies, TaskDetailCounts.empty());
+    long commentCount = commentCountPort.count(userId, CommentParentType.TASK, taskId);
+    long activityCount = activityPort.countBySubject(userId, ActivitySubjectType.TASK, taskId);
+    // Time Block, Focus Session and Attachment stores remain owned by later providers.
+    TaskDetailCounts counts = new TaskDetailCounts(0, 0, commentCount, 0, activityCount);
+    return new TaskDetailResult(task, dependencies, counts);
   }
 }

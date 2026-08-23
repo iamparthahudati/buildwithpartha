@@ -135,6 +135,12 @@ LOS-1404 limits Product Activity Events to event type, owning Account UUID, acto
 
 Security Audit rows use the accepted R6 maximum of 365 days and a daily idempotent expiry cleanup. They deliberately do not foreign-key opaque Account UUID evidence to the live Account row, so an Account purge cannot silently erase still-required minimal security evidence; normal product access cannot query this table. Product Activity follows the owning record/Account lifecycle and is not copied into operational logs.
 
+### Comment implementation
+
+LOS-0821 stores Comment UUID, owning Account UUID, exactly one Task/Project parent UUID, body, `PLAIN_TEXT`/`MARKDOWN` format, UTC create/update/edit instants and an optimistic version. Composite parent/Account foreign keys prevent a Comment from referencing another Account's Task or Project even if an application authorization check regresses. Comment bodies are P2 Private content: they are excluded from logs, metrics, Security Audit metadata and Product Activity metadata. Plain text is never interpreted as markup. Markdown raw HTML/entities, images, reference links and unsafe destinations are neutralized before persistence; API tests cover script/entity, `javascript:`/`data:` link and remote-image attempts.
+
+An explicit Comment delete immediately hard-deletes the body rather than promising a recovery window; this shorter entity-specific rule overrides R3 and is disclosed by the `204` operation description. Parent or Account deletion cascades the Comment row. The remaining `COMMENT_DELETED` Product Activity Event contains only typed event/subject UUID metadata and no body snapshot; it cascades with the Account. Comments remain included in Account export while present.
+
 ## Data not collected in v1
 
 - Date of birth, government identity, postal address, phone number or payment data.
