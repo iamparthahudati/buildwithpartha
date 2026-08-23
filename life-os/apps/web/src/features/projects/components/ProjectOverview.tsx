@@ -214,19 +214,30 @@ export function ProjectOverview({
     project.deadlineDate != null &&
     compareLocalDates(project.deadlineDate, todayStr) < 0;
 
-  const defaultStatusBreakdown: readonly ChartDatum[] =
-    statusBreakdown.length > 0
-      ? statusBreakdown
-      : (
-          [
-            { id: "status-completed", label: "Completed", value: completedTasks },
-            {
-              id: "status-in-progress",
-              label: "In progress",
-              value: Math.max(0, totalTasks - completedTasks),
-            },
-          ] as readonly ChartDatum[]
-        ).filter((d) => d.value > 0);
+  const defaultStatusBreakdown: readonly ChartDatum[] = (() => {
+    if (statusBreakdown.length > 0) return statusBreakdown;
+    if (topTasks.length > 0) {
+      const counts: Record<string, number> = {};
+      for (const t of topTasks) {
+        counts[t.status] = (counts[t.status] ?? 0) + 1;
+      }
+      return Object.entries(counts).map(([statusKey, count]) => ({
+        id: `status-${statusKey}`,
+        label: TASK_STATUS_LABELS[statusKey] ?? statusKey,
+        value: count,
+      }));
+    }
+    return (
+      [
+        { id: "status-completed", label: "Completed", value: completedTasks },
+        {
+          id: "status-in-progress",
+          label: "In progress",
+          value: Math.max(0, totalTasks - completedTasks),
+        },
+      ] as readonly ChartDatum[]
+    ).filter((d) => d.value > 0);
+  })();
 
   const defaultPriorityBreakdown: readonly ChartDatum[] = priorityBreakdown;
 

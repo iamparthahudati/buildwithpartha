@@ -7,7 +7,7 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from "react";
-import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from "lucide-react";
+import { GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { ConfirmDialog, ErrorState, InlineMessage } from "@components/feedback";
 import {
@@ -120,6 +120,8 @@ export function SubtaskChecklist({
   const [internalPendingKeys, setInternalPendingKeys] = useState<readonly string[]>([]);
   const [internalErrors, setInternalErrors] = useState<readonly InternalOperationError[]>([]);
   const [announcement, setAnnouncement] = useState("");
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   const orderedSubtasks = useMemo(
     () =>
@@ -286,6 +288,62 @@ export function SubtaskChecklist({
     moveSubtask(subtask, event.key === "ArrowUp" ? -1 : 1);
   }
 
+  function handleDragStart(event: React.DragEvent<HTMLLIElement>, subtask: SubtaskChecklistItem) {
+    event.dataTransfer.setData("text/plain", subtask.id);
+    event.dataTransfer.effectAllowed = "move";
+    setDraggedId(subtask.id);
+  }
+
+  function handleDragOver(event: React.DragEvent<HTMLLIElement>, subtask: SubtaskChecklistItem) {
+    if (!draggedId || draggedId === subtask.id) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }
+
+  function handleDragEnter(event: React.DragEvent<HTMLLIElement>, subtask: SubtaskChecklistItem) {
+    if (!draggedId || draggedId === subtask.id) return;
+    event.preventDefault();
+    setDragOverId(subtask.id);
+  }
+
+  function handleDragLeave(_event: React.DragEvent<HTMLLIElement>, subtask: SubtaskChecklistItem) {
+    if (dragOverId === subtask.id) {
+      setDragOverId(null);
+    }
+  }
+
+  function handleDrop(
+    event: React.DragEvent<HTMLLIElement>,
+    targetSubtask: SubtaskChecklistItem,
+  ) {
+    event.preventDefault();
+    setDragOverId(null);
+    if (!draggedId || draggedId === targetSubtask.id || !onReorder) return;
+
+    const fromIndex = orderedSubtasks.findIndex((item) => item.id === draggedId);
+    const toIndex = orderedSubtasks.findIndex((item) => item.id === targetSubtask.id);
+    if (fromIndex < 0 || toIndex < 0) return;
+
+    const nextOrder = [...orderedSubtasks.map((item) => item.id)];
+    const [movedId] = nextOrder.splice(fromIndex, 1);
+    if (!movedId) return;
+    nextOrder.splice(toIndex, 0, movedId);
+
+    const draggedSubtask = orderedSubtasks.find((item) => item.id === draggedId);
+    void runOperation(
+      "reorder",
+      draggedId,
+      () => onReorder(nextOrder),
+      `${draggedSubtask?.title ?? "Subtask"} moved.`,
+    );
+    setDraggedId(null);
+  }
+
+  function handleDragEnd() {
+    setDraggedId(null);
+    setDragOverId(null);
+  }
+
   async function handleDelete() {
     if (!deletingSubtask || !onDelete) return;
     const deleted = await runOperation(
@@ -361,14 +419,14 @@ export function SubtaskChecklist({
         <>
           {onReorder && !readOnly ? (
             <Text id={instructionsId} tone="muted" size="xs">
-              Move Subtasks with the arrow buttons, or press Alt+Up/Down Arrow from a Subtask row.
+              Drag Subtasks to reorder, or press Alt+Up/Down Arrow on the drag handle.
             </Text>
           ) : null}
           <ol
             className="lifeos-subtask-checklist__list"
             {...(onReorder && !readOnly ? { "aria-describedby": instructionsId } : {})}
           >
-            {orderedSubtasks.map((subtask, index) => {
+            {orderedSubtasks.map((subtask) => {
               const toggling = isPending("toggle", subtask.id);
               const editing = editingId === subtask.id;
               const editingPending = isPending("edit", subtask.id);
@@ -382,10 +440,19 @@ export function SubtaskChecklist({
               return (
                 <li
                   key={subtask.id}
+                  draggable={!readOnly && Boolean(onReorder) && !itemPending && !editing}
+                  onDragStart={(event) => handleDragStart(event, subtask)}
+                  onDragOver={(event) => handleDragOver(event, subtask)}
+                  onDragEnter={(event) => handleDragEnter(event, subtask)}
+                  onDragLeave={(event) => handleDragLeave(event, subtask)}
+                  onDrop={(event) => handleDrop(event, subtask)}
+                  onDragEnd={handleDragEnd}
                   className={[
                     "lifeos-subtask-checklist__item",
                     subtask.completed && "is-completed",
                     itemPending && "is-pending",
+                    draggedId === subtask.id && "is-dragging",
+                    dragOverId === subtask.id && "is-drag-over",
                   ]
                     .filter(Boolean)
                     .join(" ")}
@@ -473,26 +540,16 @@ export function SubtaskChecklist({
                             />
                           ) : null}
                           {onReorder ? (
-                            <>
-                              <IconButton
-                                icon={ArrowUp}
-                                label={`Move ${subtask.title} up`}
-                                size="sm"
-                                onClick={() => moveSubtask(subtask, -1)}
-                                disabled={readOnly || itemPending || index === 0}
-                                aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"
-                                onKeyDown={(event) => handleReorderKeyDown(event, subtask)}
-                              />
-                              <IconButton
-                                icon={ArrowDown}
-                                label={`Move ${subtask.title} down`}
-                                size="sm"
-                                onClick={() => moveSubtask(subtask, 1)}
-                                disabled={readOnly || itemPending || index === totalCount - 1}
-                                aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"
-                                onKeyDown={(event) => handleReorderKeyDown(event, subtask)}
-                              />
-                            </>
+                            <IconButton
+                              icon={GripVertical}
+                              label={`Drag to reorder ${subtask.title}`}
+                              size="sm"
+                              variant="ghost"
+                              className="lifeos-subtask-checklist__drag-handle"
+                              disabled={readOnly || itemPending}
+                              aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"
+                              onKeyDown={(event) => handleReorderKeyDown(event, subtask)}
+                            />
                           ) : null}
                           {onDelete ? (
                             <IconButton

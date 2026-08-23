@@ -1,9 +1,6 @@
-import { MessageSquare } from "lucide-react";
-
 import {
   Badge,
   Checkbox,
-  Icon,
   Link,
   ProgressBar,
   Skeleton,
@@ -81,7 +78,6 @@ export function TaskRow({
   const isBlocked = task.status === "BLOCKED";
   const taskHref = href ?? task.href ?? `/life-os/app/tasks/${task.id}`;
   const progress = readTaskProgress(task.progress);
-  const commentLabel = `${task.commentCount} ${task.commentCount === 1 ? "comment" : "comments"}`;
 
   return (
     <Surface
@@ -162,12 +158,6 @@ export function TaskRow({
             "No due date"
           )}
         </Text>
-        <span className="lifeos-task-row__comments" aria-label={commentLabel}>
-          <Icon icon={MessageSquare} decorative size="sm" />
-          <Text inline size="xs" tone="secondary">
-            {task.commentCount}
-          </Text>
-        </span>
       </div>
 
       <div className="lifeos-task-row__actions">

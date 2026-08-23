@@ -11,7 +11,7 @@ export interface TaskDetailsSheetProps extends TaskDetailsScreenProps {
 /**
  * Responsive list-context presentation for Task Details (LOS-0818).
  *
- * `Drawer` is a trailing 380–480px-class sheet on wider layouts and a full-screen
+ * `Drawer` is a trailing sheet (up to 672px / 42rem) on wider layouts and a full-screen
  * sheet below 768px. Keeping the list mounted preserves its query, page, scroll,
  * and selection; Drawer restores focus to the exact trigger that opened it.
  */

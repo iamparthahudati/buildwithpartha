@@ -33,10 +33,11 @@ import {
 import { useTaskDetail } from "../hooks/useTaskDetail";
 import { useTaskDetailMutations } from "../hooks/useTaskDetailMutations";
 import { useTaskLabels, useTasks } from "../hooks/useTasks";
-import type { TaskProjectContext } from "../model/task";
+import type { TaskProjectContext, TaskRecord } from "../model/task";
 
 export interface IntegratedTaskDetailsProps {
   readonly taskId: string;
+  readonly initialTask?: TaskRecord | undefined;
   readonly presentation?: "page" | "sheet";
   readonly open?: boolean;
   readonly onClose?: () => void;
@@ -101,6 +102,7 @@ function toUpdateRequest(data: TaskFormData, version: number) {
  */
 export function IntegratedTaskDetails({
   taskId,
+  initialTask,
   presentation = "page",
   open = true,
   onClose,
@@ -205,7 +207,7 @@ export function IntegratedTaskDetails({
 
   const detail = detailQuery.data;
   const detailError = detailQuery.error;
-  const canonicalTask = detail?.task;
+  const canonicalTask = detail?.task ?? initialTask;
   const resolvedProject = canonicalTask?.project?.id
     ? (projectById.get(canonicalTask.project.id) ?? canonicalTask.project)
     : null;
@@ -217,7 +219,10 @@ export function IntegratedTaskDetails({
     ? {
         ...canonicalTask,
         project: resolvedProject,
-        labels: canonicalTask.labelIds.map((id) => ({ id, name: labelsById.get(id) ?? "Label" })),
+        labels: canonicalTask.labelIds.map((id: string) => ({
+          id,
+          name: labelsById.get(id) ?? "Label",
+        })),
       }
     : undefined;
   const commentRecords = commentsQuery.data?.items ?? [];
@@ -293,10 +298,10 @@ export function IntegratedTaskDetails({
   const deleteCommentError = commentMutationError("delete", commentMutations.remove.error);
   const screenProps: TaskDetailsScreenProps = {
     ...(headerTask ? { task: headerTask } : {}),
-    loading: detailQuery.isPending,
-    unavailable: detailQuery.isError && isApiStatus(detailQuery.error, 404),
+    loading: detailQuery.isPending && !canonicalTask,
+    unavailable: detailQuery.isError && isApiStatus(detailQuery.error, 404) && !canonicalTask,
     error:
-      detailQuery.isError && !isApiStatus(detailQuery.error, 404)
+      detailQuery.isError && !isApiStatus(detailQuery.error, 404) && !canonicalTask
         ? "LifeOS couldn't load this Task right now. Confirm your connection and try again."
         : null,
     ...(correlationId ? { correlationId } : {}),

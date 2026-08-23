@@ -91,7 +91,7 @@ describe("ProjectsRoute", () => {
         page: {
           items: [],
           page: 0,
-          size: 6,
+          size: 10,
           totalItems: 1,
           totalPages: 1,
           first: true,
@@ -142,7 +142,7 @@ describe("ProjectsRoute", () => {
         sortBy: "name",
         sortDirection: "ASC",
         page: 1,
-        size: 6,
+        size: 10,
       }),
       true,
     );

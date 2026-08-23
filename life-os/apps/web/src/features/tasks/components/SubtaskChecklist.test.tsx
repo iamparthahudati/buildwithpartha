@@ -145,14 +145,24 @@ describe("SubtaskChecklist", () => {
     expect(screen.queryByRole("button", { name: /mark task done/i })).not.toBeInTheDocument();
   });
 
-  it("reorders through both named buttons and Alt+Arrow keyboard controls", async () => {
+  it("reorders through both drag handle drag events and Alt+Arrow keyboard controls", async () => {
     const onReorder = vi.fn();
     const { user } = renderWithUser(
       <SubtaskChecklist subtasks={SUBTASKS} onReorder={onReorder} onToggle={vi.fn()} />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Move Build the component up" }));
-    expect(onReorder).toHaveBeenLastCalledWith(["subtask-build", "subtask-plan", "subtask-check"]);
+    const dragHandle = screen.getByRole("button", { name: "Drag to reorder Build the component" });
+    expect(dragHandle).toBeInTheDocument();
+    expect(dragHandle).toHaveAttribute("aria-keyshortcuts", "Alt+ArrowUp Alt+ArrowDown");
+
+    const itemBuild = screen.getByText("Build the component").closest("li")!;
+    const itemPlan = screen.getByText("Outline the implementation").closest("li")!;
+
+    await user.pointer([
+      { target: itemBuild, keys: "[MouseLeft>]" },
+      { target: itemPlan },
+      { keys: "[/MouseLeft]" },
+    ]);
 
     const checkbox = screen.getByRole("checkbox", { name: "Verify keyboard access" });
     checkbox.focus();

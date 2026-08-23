@@ -389,6 +389,7 @@ export function TasksRoute() {
       {selectedTaskId ? (
         <IntegratedTaskDetails
           taskId={selectedTaskId}
+          initialTask={tasksList.find((task) => task.id === selectedTaskId)}
           presentation="sheet"
           open
           onClose={() => {

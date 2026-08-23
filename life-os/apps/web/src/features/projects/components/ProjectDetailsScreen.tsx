@@ -8,6 +8,7 @@ import {
   SkeletonCard,
   Surface,
   Text,
+  Link,
   PRIORITY_TONE,
   TASK_STATUS_TONE,
 } from "@components/ui";
@@ -279,11 +280,14 @@ export function ProjectDetailsScreen({
     {
       key: "title",
       header: "Task",
-      render: (task) => (
-        <Text weight="medium" size="sm">
-          {task.title}
-        </Text>
-      ),
+      render: (task) =>
+        task.href ? (
+          <Link href={task.href}>{task.title}</Link>
+        ) : (
+          <Text weight="medium" size="sm">
+            {task.title}
+          </Text>
+        ),
     },
     {
       key: "status",

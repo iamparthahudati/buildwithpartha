@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { MessageSquare, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import {
   DataTable,
@@ -12,16 +12,7 @@ import {
 } from "@components/navigation";
 import { SearchField, DateTimeField, type DateTimeValue } from "@components/forms";
 import { Alert, ConfirmDialog, DetailPanel, Dialog } from "@components/feedback";
-import {
-  Badge,
-  Button,
-  Icon,
-  Link,
-  ProgressBar,
-  Select,
-  Text,
-  VisuallyHidden,
-} from "@components/ui";
+import { Badge, Button, Link, ProgressBar, Select, Text, VisuallyHidden } from "@components/ui";
 import { resolveLocalDateTime, todayLocalDate } from "@lib/localDateTime";
 
 import { TaskBulkActions } from "./TaskBulkActions";
@@ -455,21 +446,13 @@ export function TasksScreen({
           >
             {task.title}
           </Button>
-          <div className="lifeos-tasks-screen__title-meta">
-            {task.isMit ? (
+          {task.isMit ? (
+            <div className="lifeos-tasks-screen__title-meta">
               <Badge tone="accent">
                 MIT<VisuallyHidden> — Most Important Task</VisuallyHidden>
               </Badge>
-            ) : null}
-            <span
-              aria-label={`${task.commentCount} ${task.commentCount === 1 ? "comment" : "comments"}`}
-            >
-              <Icon icon={MessageSquare} decorative size="sm" />
-              <Text inline size="xs" tone="secondary">
-                {task.commentCount}
-              </Text>
-            </span>
-          </div>
+            </div>
+          ) : null}
         </div>
       ),
     },
@@ -507,7 +490,11 @@ export function TasksScreen({
       key: "dueAt",
       header: "Due",
       render: (task) => (
-        <Text size="sm" tone={task.overdue ? "danger" : "secondary"}>
+        <Text
+          size="sm"
+          tone={task.overdue ? "danger" : "secondary"}
+          className="lifeos-tasks-screen__due-cell"
+        >
           {task.dueAt ? (
             <time dateTime={task.dueAt}>{formatTaskDueAt(task.dueAt, locale, timeZone)}</time>
           ) : (

@@ -1,6 +1,13 @@
+import { useMemo } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { IntegratedTaskDetails, type TaskDetailsTabId } from "@features/tasks";
+import {
+  IntegratedTaskDetails,
+  tasksQueryKeys,
+  type TaskDetailsTabId,
+  type TaskQueryResult,
+} from "@features/tasks";
 import { isSafeReturnPath } from "@lib/returnPath";
 import { useAuthSession } from "@state/authSession";
 import { useToast } from "@state/toastQueue";
@@ -32,6 +39,20 @@ export function TaskDetailsRoute() {
   const navigate = useNavigate();
   const { user } = useAuthSession();
   const toast = useToast();
+  const queryClient = useQueryClient();
+
+  const initialTask = useMemo(() => {
+    const cachedLists = queryClient.getQueriesData<TaskQueryResult>({
+      queryKey: tasksQueryKeys.lists(),
+    });
+    for (const [, data] of cachedLists) {
+      if (data?.items) {
+        const found = data.items.find((item) => item.id === taskId);
+        if (found) return found;
+      }
+    }
+    return undefined;
+  }, [queryClient, taskId]);
 
   if (user === null) return null;
 
@@ -41,6 +62,7 @@ export function TaskDetailsRoute() {
   return (
     <IntegratedTaskDetails
       taskId={taskId}
+      initialTask={initialTask}
       selectedTab={selectedTab}
       onTabChange={(tab) => {
         setSearchParams(

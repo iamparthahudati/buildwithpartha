@@ -72,6 +72,12 @@
   margin-top: var(--lifeos-space-1);
 }
 
+.lifeos-tasks-screen__due-cell {
+  display: inline-block;
+  white-space: nowrap;
+  min-width: 8rem;
+}
+
 .lifeos-tasks-screen__results--grid .lifeos-data-table__table-view,
 .lifeos-tasks-screen__results--list .lifeos-data-table__table-view {
   display: none;

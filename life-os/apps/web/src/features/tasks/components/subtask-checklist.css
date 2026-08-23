@@ -36,6 +36,24 @@
   background: var(--lifeos-color-surface-muted);
 }
 
+.lifeos-subtask-checklist__item.is-dragging {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.lifeos-subtask-checklist__item.is-drag-over {
+  border-color: var(--lifeos-color-primary);
+  box-shadow: 0 0 0 2px var(--lifeos-color-primary-focus-ring);
+}
+
+.lifeos-subtask-checklist__drag-handle {
+  cursor: grab;
+}
+
+.lifeos-subtask-checklist__drag-handle:active {
+  cursor: grabbing;
+}
+
 .lifeos-subtask-checklist__checkbox {
   min-width: 0;
   align-self: center;

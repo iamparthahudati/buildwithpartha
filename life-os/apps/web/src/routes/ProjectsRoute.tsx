@@ -52,7 +52,7 @@ export function ProjectsRoute() {
       ...(healthArray ? { health: healthArray } : {}),
       archived: isArchivedTab ? true : false,
       page: currentPage - 1,
-      size: 6,
+      size: 10,
       sortBy,
       sortDirection: sortDirection.toUpperCase() as "ASC" | "DESC",
     };
