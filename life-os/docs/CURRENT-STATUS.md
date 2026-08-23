@@ -1,18 +1,12 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0824 Task/Project Activity integration)
+Last updated: 2026-08-23 (LOS-0825 Tasks phase gate)
 
 ## Phase
 
-Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details) completed.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details) and Phase 8 (Epic 08 — Tasks and task details) completed.
 
 ## In review
-
-- LOS-0802 — Authenticated, validated Task CRUD REST API with optimistic concurrency (`version`), soft deletion, duplication, and cross-user security isolation. See `docs/handoffs/LOS-0802.md`.
-- LOS-0803 — User-scoped task list query REST API (`GET /tasks`) with text search, filtering, stable sorting, bounded pagination, and summary counts (`GET /tasks/summary-counts`). See `docs/handoffs/LOS-0803.md`.
-- LOS-0804 — Ordered subtask REST API (`/tasks/{taskId}/subtasks`) with position tracking, completion toggling, reordering, and transactional task progress percentage recalculation. See `docs/handoffs/LOS-0804.md`.
-- LOS-0805 — Most Important Task (MIT) REST API (`/tasks/{id}/mit`, `/tasks/mit`) with single active MIT per user/local date invariant and atomic replacement. See `docs/handoffs/LOS-0805.md`.
-- LOS-0806 — User-defined classification labels REST API (`/labels`) and task-label attachment capabilities (`task_labels` schema, label ownership validation, and task query label filtering). See `docs/handoffs/LOS-0806.md`.
 
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 - LOS-0701 — Projects, milestones, and labels schema/domain/persistence modeling. See `docs/handoffs/LOS-0701.md`.
@@ -31,6 +25,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0825 — Passed the Tasks phase gate across lifecycle, list, details, Subtasks, Labels, dependencies, bulk actions, Comments, Activity, MIT, ownership, optimistic concurrency, accessibility, and large-data behavior. Backend JDK 21 checks and all frontend quality, test, coverage, build, accessibility, and gateway checks pass. See `docs/gates/TASKS-PHASE-GATE.md` and `docs/handoffs/LOS-0825.md`.
 - LOS-0824 — Connected the shared ActivityFeed to Task Details and Project Details/overview through one bounded frontend Activity query boundary. Closed Activity Event types map to current Account actor naming, calm action copy, decorative icons, owner-scoped current object links, and safe deleted-object fallbacks. Both detail surfaces expose accessible type filters and one-based pagination; relative timestamps retain full localized absolute labels/titles. Successful Task, Project, Subtask, dependency, bulk, MIT, and Comment mutations invalidate Activity so previously loaded feeds refresh. Focused integration/accessibility coverage, the full frontend gate, and live 320px/tablet/desktop keyboard/focus/console checks pass. See `docs/handoffs/LOS-0824.md`.
 - LOS-0823 — Implemented authenticated Task/Project Activity reads with bounded newest-first pagination, typed actor/action/object/time projections, current owner-scoped object labels/links, safe null-object fallbacks after deletion, and historical subject authorization without cross-user disclosure. Relevant Project, Task, bulk, MIT, dependency, Subtask, auto-unblock, duplication, and existing Comment changes emit transactional content-free events; Project feeds receive linked Task changes. Flyway V14 adds typed object UUID references without content snapshots. OpenAPI, PostgreSQL migration, lifecycle emission, auth, cross-user, pagination, and deleted-object tests pass. See `docs/handoffs/LOS-0823.md`.
 - LOS-0822 — Integrated the shared Comment composer/list with Task Details (direct and list-sheet) and Project Details through one bounded frontend Comments API/query boundary. Both surfaces support an announced optimistic posting row, safe draft-preserving failures, retryable pagination, versioned edit/delete, inert text-only rendering, current Account identity, archived lifecycle controls, and corrected inline-edit focus. Focused integration/sanitization coverage, the full frontend gate, and live 320px/tablet/desktop keyboard/console checks pass. See `docs/handoffs/LOS-0822.md`.
@@ -49,6 +44,12 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0810 — Built TaskForm as a responsive create/edit FormDialog with a compact Quick Add presentation, canonical Project/status/priority fields, timezone-safe due instant conversion, Estimate, progress, Labels, dated MIT selection, dirty protection, pending/error states, and version-conflict reload handling. Validation is linked through a focusable error summary; catalog specimens and live 320px/desktop verification cover both presentations. See `docs/handoffs/LOS-0810.md`.
 - LOS-0809 — Built responsive TaskRow and TaskCard components over one typed list projection. Both render controlled selection, Task and Project links, canonical status/priority labels, timezone-aware due instants, progress, comment counts, MIT designation, blocked/overdue/done/archived states, loading skeletons, and lifecycle-valid action menus. Catalog specimens cover every required state, 15 focused behavior/accessibility tests pass, and live 320px/desktop checks have no overflow or console errors. See `docs/handoffs/LOS-0809.md`.
 - LOS-0808 — Implemented `POST /tasks/bulk-actions` for bounded status, priority, Project, Label, due-date scheduling, clear-schedule, and archive mutations. Each selected Task is authorized and committed independently, responses preserve ordered partial outcomes, concurrent conflicts stay item-scoped, and retries are no-ops for already-applied state. See `docs/handoffs/LOS-0808.md`.
+- LOS-0807 — Implemented Task dependencies with user-scoped blocker/dependent reads, self/cycle prevention, transactional relationship changes, derived blocked information, and safe automatic unblocking. See `docs/handoffs/LOS-0807.md`.
+- LOS-0806 — Implemented user-owned Label CRUD and Task-Label assignment/filtering with normalized uniqueness, replacement, optimistic concurrency, and cross-user rejection. See `docs/handoffs/LOS-0806.md`.
+- LOS-0805 — Implemented MIT set, clear, and read APIs with one active Task per user-local date, atomic replacement, terminal-state rules, and cross-user isolation. See `docs/handoffs/LOS-0805.md`.
+- LOS-0804 — Implemented ordered Subtask create, edit, toggle, delete, and reorder APIs with transactional Task progress recalculation and cross-user isolation. See `docs/handoffs/LOS-0804.md`.
+- LOS-0803 — Implemented user-scoped Task list search, filters, stable sorting, bounded pagination, and summary counts. See `docs/handoffs/LOS-0803.md`.
+- LOS-0802 — Implemented authenticated Task lifecycle APIs with validation, optimistic concurrency, soft deletion, duplication, and cross-user isolation. See `docs/handoffs/LOS-0802.md`.
 - LOS-1002 — Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, zero-denominator / over-capacity states, catalog coverage, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`.
 - LOS-0801 — Modeled core Task and Subtask domain aggregates, persistence entities, repositories, validation invariants, Flyway V9 schema (`V9__tasks_and_subtasks_schema.sql`), and contract reconciliation with calculation-facing `ProjectTask`. Verified via 100% clean `./gradlew check`. See `docs/handoffs/LOS-0801.md`.
 
@@ -275,7 +276,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0824 (`docs/backlog/EPIC-08-TASKS.md`) — integrate Task/Project Activity feeds with typed event mapping, filters, mutation refresh, pagination, and accessible timestamps.
+LOS-0901 (`docs/backlog/EPIC-09-TIME-CALENDAR-FOCUS.md`) — model Time Blocks with ownership, timezone, DST, lifecycle, version, index, and constraint coverage.
 
 ## Known decisions requiring implementation-time values
 
