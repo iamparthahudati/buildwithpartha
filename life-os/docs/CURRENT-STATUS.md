@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0817 SchedulingPanel handoff)
+Last updated: 2026-08-23 (LOS-0818 Task Details composition handoff)
 
 ## Phase
 
@@ -31,6 +31,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0818 — Composed responsive Task Details from the completed header, scheduling, subtask, dependency, comment, attachment, and activity contracts. Six controlled tabs, exact list-context return, a trailing desktop/full-screen mobile sheet, optional attachment gating, and complete loading/empty/partial/offline/lifecycle/error states have focused accessibility coverage; the full frontend gate and live 320px/tablet/desktop verification pass. See `docs/handoffs/LOS-0818.md`.
 - LOS-0817 — Built the responsive SchedulingPanel with confirmed Focus Session time, linked shared TimeBlockRows, Schedule and Task/Time Block Start focus actions, explicit overlap resolution, and shared active-session protection. Loading, empty, error/retry, permission, disabled, lifecycle, conflict, pending, and partial-failure states have focused accessibility coverage; the full frontend gate and live 320px/tablet/desktop verification pass. See `docs/handoffs/LOS-0817.md`.
 - LOS-0816 — Built the responsive DependencyEditor with shared-Combobox blocker search/selection, independent blocker/dependent lists, unresolved/resolved state and completion navigation, self/cycle/conflict explanations, preserved failed selection, item-scoped pending/retry behavior, permission/loading/empty/error/disabled states, and a full-screen mobile dialog. Focused accessibility coverage, the full frontend gate, and live 320px/tablet/desktop verification pass. See `docs/handoffs/LOS-0816.md`.
 - LOS-0815 — Built the responsive SubtaskChecklist with ordered add/edit/toggle/delete actions, named button and Alt+Arrow keyboard reordering, exact completed/total progress, preserved drafts, isolated pending/partial failures, permission/loading/empty/error/destructive states, and an explicit guarantee that 100% checklist progress does not complete the parent Task. See `docs/handoffs/LOS-0815.md`.
@@ -267,7 +268,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0818 (`docs/backlog/EPIC-08-TASKS.md`) — compose Task Details with mocks.
+LOS-0819 (`docs/backlog/EPIC-08-TASKS.md`) — implement the Task detail aggregate API.
 
 ## Known decisions requiring implementation-time values
 

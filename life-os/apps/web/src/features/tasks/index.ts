@@ -29,6 +29,20 @@ export {
   type SchedulingPanelTask,
 } from "./components/SchedulingPanel";
 export {
+  TaskDetailsScreen,
+  type TaskDetailsActivityConfig,
+  type TaskDetailsAttachmentsConfig,
+  type TaskDetailsAttachmentsStatus,
+  type TaskDetailsCommentsConfig,
+  type TaskDetailsDependenciesConfig,
+  type TaskDetailsHeaderConfig,
+  type TaskDetailsSchedulingConfig,
+  type TaskDetailsScreenProps,
+  type TaskDetailsSubtasksConfig,
+  type TaskDetailsTabId,
+} from "./components/TaskDetailsScreen";
+export { TaskDetailsSheet, type TaskDetailsSheetProps } from "./components/TaskDetailsSheet";
+export {
   dependencyEditorErrorMessage,
   type DependencyEditorErrorReason,
 } from "./model/dependencyEditorErrors";

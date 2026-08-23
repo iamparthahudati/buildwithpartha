@@ -1,0 +1,21 @@
+/* Responsive list-context sheet (LOS-0818). */
+
+.lifeos-task-details-sheet {
+  max-width: 30rem;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin-block: 0;
+  margin-inline: auto 0;
+  padding: var(--lifeos-space-4);
+}
+
+.lifeos-task-details-sheet .lifeos-task-details-header {
+  padding: var(--lifeos-space-4);
+}
+
+@media (width < 768px) {
+  .lifeos-task-details-sheet {
+    max-width: none;
+    padding: var(--lifeos-space-4);
+  }
+}

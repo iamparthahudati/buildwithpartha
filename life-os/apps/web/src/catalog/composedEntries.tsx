@@ -41,6 +41,7 @@ import {
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
 import { TasksScreenDemo } from "./TasksScreenDemos";
+import { TaskDetailsScreenDemo, TaskDetailsSheetDemo } from "./TaskDetailsDemos";
 import type { CatalogEntry } from "./registry";
 
 /* Composed-component entries (LOS-0401 onward). */
@@ -522,6 +523,29 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Tasks screen with populated, first-use, loading, error, and partial bulk-failure specimens.",
         render: () => <TasksScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "task-details-screen",
+    name: "TaskDetailsScreen",
+    group: "Composed",
+    summary:
+      "Task Details composition with responsive tabs and list-context sheet presentation, reusing the completed header, Subtask checklist, dependency editor, scheduling, comments, attachments, and activity components.",
+    states: [
+      {
+        id: "task-details-screen-states",
+        name: "Tabs and UX states",
+        description:
+          "Switch among populated, empty, partial, refreshing, offline, archived, deleted, loading, unavailable, and service-error states, then exercise every enabled tab.",
+        render: () => <TaskDetailsScreenDemo />,
+      },
+      {
+        id: "task-details-screen-sheet",
+        name: "List-context sheet",
+        description:
+          "A trailing desktop sheet that becomes full-screen on mobile and restores focus to the originating Task control when closed.",
+        render: () => <TaskDetailsSheetDemo />,
       },
     ],
   },

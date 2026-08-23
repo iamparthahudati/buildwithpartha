@@ -1,0 +1,27 @@
+/* Task Details composition (LOS-0818). */
+
+.lifeos-task-details-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-5);
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+  contain: inline-size paint;
+}
+
+.lifeos-task-details-screen__tab-surface {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-5);
+}
+
+@media (width < 768px) {
+  .lifeos-task-details-screen {
+    gap: var(--lifeos-space-4);
+  }
+
+  .lifeos-task-details-screen__tab-surface {
+    gap: var(--lifeos-space-4);
+  }
+}
