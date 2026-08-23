@@ -149,6 +149,31 @@ class OpenApiArtifactTests {
             .andExpect(jsonPath("$.components.schemas.TodayResponse").exists())
             .andExpect(jsonPath("$.components.schemas.MitWidget").exists())
             .andExpect(jsonPath("$.components.schemas.TasksWidget").exists())
+            .andExpect(
+                jsonPath("$.paths['/tasks/{id}/detail'].get.operationId").value("getTaskDetail"))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{id}/detail'].get.responses['401'].$ref")
+                    .value("#/components/responses/Unauthorized"))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{id}/detail'].get.responses['404'].$ref")
+                    .value("#/components/responses/NotFound"))
+            .andExpect(jsonPath("$.components.schemas.TaskDetailResponse").exists())
+            .andExpect(
+                jsonPath("$.components.schemas.TaskDetailResponse.properties.version.format")
+                    .value("int64"))
+            .andExpect(
+                jsonPath("$.components.schemas.TaskDetailResponse.required")
+                    .value(hasItems("task", "dependencies", "counts", "version")))
+            .andExpect(jsonPath("$.components.schemas.TaskDetailCountsResponse").exists())
+            .andExpect(
+                jsonPath("$.components.schemas.TaskDetailCountsResponse.required")
+                    .value(
+                        hasItems(
+                            "linkedTimeBlockCount",
+                            "focusSessionCount",
+                            "commentCount",
+                            "attachmentCount",
+                            "activityEventCount")))
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))

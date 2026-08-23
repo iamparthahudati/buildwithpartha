@@ -33,6 +33,8 @@ import tech.buildwithpartha.lifeos.task.application.BulkTaskActionResult;
 import tech.buildwithpartha.lifeos.task.application.BulkTaskActionType;
 import tech.buildwithpartha.lifeos.task.application.BulkTaskService;
 import tech.buildwithpartha.lifeos.task.application.CreateTaskCommand;
+import tech.buildwithpartha.lifeos.task.application.TaskDetailResult;
+import tech.buildwithpartha.lifeos.task.application.TaskDetailService;
 import tech.buildwithpartha.lifeos.task.application.TaskService;
 import tech.buildwithpartha.lifeos.task.application.UpdateTaskCommand;
 import tech.buildwithpartha.lifeos.task.domain.Task;
@@ -54,10 +56,15 @@ public class TaskController {
 
   private final TaskService taskService;
   private final BulkTaskService bulkTaskService;
+  private final TaskDetailService taskDetailService;
 
-  public TaskController(TaskService taskService, BulkTaskService bulkTaskService) {
+  public TaskController(
+      TaskService taskService,
+      BulkTaskService bulkTaskService,
+      TaskDetailService taskDetailService) {
     this.taskService = taskService;
     this.bulkTaskService = bulkTaskService;
+    this.taskDetailService = taskDetailService;
   }
 
   @Operation(
@@ -210,6 +217,22 @@ public class TaskController {
   public TaskResponse getTask(@AuthenticationPrincipal UUID userId, @PathVariable("id") UUID id) {
     Task task = taskService.getTask(userId, id);
     return TaskResponse.fromDomain(task);
+  }
+
+  @Operation(
+      summary = "Get Task detail aggregate",
+      description =
+          "Retrieves user-scoped Task metadata, ordered Subtasks, dependency projections, "
+              + "related section counts, and the Task mutation version in bounded queries.")
+  @ApiResponse(responseCode = "200", description = "Versioned Task detail aggregate.")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping("/{id}/detail")
+  public TaskDetailResponse getTaskDetail(
+      @AuthenticationPrincipal UUID userId, @PathVariable("id") UUID id) {
+    TaskDetailResult result = taskDetailService.getTaskDetail(userId, id);
+    return TaskDetailResponse.fromApplication(result);
   }
 
   @Operation(
