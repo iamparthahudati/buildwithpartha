@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0825 Tasks phase gate)
+Last updated: 2026-08-24 (LOS-0901 Model time blocks)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-0901 — Modeled core Time Block domain aggregate, persistence entity, domain repository interface, JPA adapter, Flyway migration V15, H2 test schema, and policy helper methods (duration, overnight, DST, overlaps, ownership). All backend JDK 21 checks pass. See `docs/handoffs/LOS-0901.md`.
 
 - LOS-0825 — Passed the Tasks phase gate across lifecycle, list, details, Subtasks, Labels, dependencies, bulk actions, Comments, Activity, MIT, ownership, optimistic concurrency, accessibility, and large-data behavior. Backend JDK 21 checks and all frontend quality, test, coverage, build, accessibility, and gateway checks pass. See `docs/gates/TASKS-PHASE-GATE.md` and `docs/handoffs/LOS-0825.md`.
 - LOS-0824 — Connected the shared ActivityFeed to Task Details and Project Details/overview through one bounded frontend Activity query boundary. Closed Activity Event types map to current Account actor naming, calm action copy, decorative icons, owner-scoped current object links, and safe deleted-object fallbacks. Both detail surfaces expose accessible type filters and one-based pagination; relative timestamps retain full localized absolute labels/titles. Successful Task, Project, Subtask, dependency, bulk, MIT, and Comment mutations invalidate Activity so previously loaded feeds refresh. Focused integration/accessibility coverage, the full frontend gate, and live 320px/tablet/desktop keyboard/focus/console checks pass. See `docs/handoffs/LOS-0824.md`.
@@ -276,7 +278,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0901 (`docs/backlog/EPIC-09-TIME-CALENDAR-FOCUS.md`) — model Time Blocks with ownership, timezone, DST, lifecycle, version, index, and constraint coverage.
+LOS-0902 (`docs/backlog/EPIC-09-TIME-CALENDAR-FOCUS.md`) — Implement time-block CRUD/conflict API.
 
 ## Known decisions requiring implementation-time values
 
