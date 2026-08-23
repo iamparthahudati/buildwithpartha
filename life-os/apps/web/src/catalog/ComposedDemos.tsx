@@ -19,6 +19,7 @@ import {
   TASK_FILTER_PRESETS,
   TaskCard,
   DependencyEditor,
+  SchedulingPanel,
   TaskDetailsHeader,
   TaskForm,
   TaskRow,
@@ -26,6 +27,7 @@ import {
   TaskSummaryMetrics,
   type SubtaskChecklistItem,
   type DependencyEditorTask,
+  type SchedulingPanelTask,
   type TaskDetailsHeaderTask,
   type TaskFilterPresetId,
   type TaskListItem,
@@ -973,6 +975,117 @@ export function DependencyEditorDemo({
         }
       }}
     />
+  );
+}
+
+const MOCK_SCHEDULING_TASK: SchedulingPanelTask = {
+  id: "task-weekly-review",
+  title: "Prepare weekly review",
+  status: "IN_PROGRESS",
+};
+
+const MOCK_SCHEDULING_BLOCKS: readonly TimeBlock[] = [
+  {
+    id: "time-block-weekly-planning",
+    title: "Weekly planning",
+    category: "Deep work",
+    categoryColor: "blue",
+    categoryIcon: "brain",
+    date: "2026-08-24",
+    startTime: "09:00",
+    endTime: "10:00",
+    status: "SCHEDULED",
+    taskId: MOCK_SCHEDULING_TASK.id,
+    taskTitle: MOCK_SCHEDULING_TASK.title,
+  },
+  {
+    id: "time-block-reading",
+    title: "Reading",
+    category: "Learning",
+    categoryColor: "green",
+    categoryIcon: "book-open",
+    date: "2026-08-24",
+    startTime: "15:00",
+    endTime: "15:30",
+    status: "SCHEDULED",
+    taskId: MOCK_SCHEDULING_TASK.id,
+    taskTitle: MOCK_SCHEDULING_TASK.title,
+  },
+];
+
+export function SchedulingPanelDemo({
+  state = "ready",
+}: {
+  readonly state?: "ready" | "conflict" | "active" | "empty" | "read-only" | "error" | "loading";
+}) {
+  const [lastAction, setLastAction] = useState("No action yet");
+
+  if (state === "loading") {
+    return <SchedulingPanel task={MOCK_SCHEDULING_TASK} loading />;
+  }
+  if (state === "error") {
+    return (
+      <SchedulingPanel
+        task={MOCK_SCHEDULING_TASK}
+        error="Task details are still available."
+        onRetry={() => setLastAction("Retried scheduling details")}
+      />
+    );
+  }
+
+  const timeBlocks =
+    state === "empty"
+      ? []
+      : state === "conflict"
+        ? [
+            {
+              ...MOCK_SCHEDULING_BLOCKS[0]!,
+              hasConflict: true,
+              conflictDescriptions: ["Overlaps with Reading (09:30 – 10:15)"],
+            },
+          ]
+        : MOCK_SCHEDULING_BLOCKS;
+
+  return (
+    <div className="specimen-stack" style={{ width: "100%" }}>
+      <Text tone="secondary" size="xs">
+        {lastAction}
+      </Text>
+      <SchedulingPanel
+        task={MOCK_SCHEDULING_TASK}
+        timeBlocks={timeBlocks}
+        spentMinutes={95}
+        locale="en-IN"
+        timeZone="Asia/Kolkata"
+        now={new Date("2026-08-23T12:00:00Z")}
+        readOnly={state === "read-only"}
+        {...(state === "read-only"
+          ? {
+              readOnlyReason:
+                "You can view this schedule, but you don't have permission to change it.",
+            }
+          : {})}
+        {...(state === "active"
+          ? {
+              activeFocusSession: {
+                id: "focus-weekly-review",
+                taskId: MOCK_SCHEDULING_TASK.id,
+                timeBlockId: "time-block-weekly-planning",
+                status: "running" as const,
+                taskTitle: MOCK_SCHEDULING_TASK.title,
+              },
+              onOpenActiveFocus: () => setLastAction("Opened active focus"),
+            }
+          : {})}
+        onSchedule={() => setLastAction("Opened scheduling")}
+        onResolveScheduleConflict={() => setLastAction("Opened conflict resolution")}
+        onStartFocus={(timeBlockId) =>
+          setLastAction(
+            timeBlockId ? `Started focus from ${timeBlockId}` : "Started focus from this Task",
+          )
+        }
+      />
+    </div>
   );
 }
 

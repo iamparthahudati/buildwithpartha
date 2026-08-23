@@ -22,6 +22,7 @@ import {
   TaskDetailsHeaderDemo,
   SubtaskChecklistDemo,
   DependencyEditorDemo,
+  SchedulingPanelDemo,
   TaskFormDemo,
   TaskSummaryMetricsDemo,
   ProjectDetailsHeaderDemo,
@@ -414,6 +415,62 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Loading",
         description: "The editor reserves its relationship headings and rows while loading.",
         render: () => <DependencyEditorDemo state="loading" />,
+      },
+    ],
+  },
+  {
+    id: "scheduling-panel",
+    name: "SchedulingPanel",
+    group: "Composed",
+    summary:
+      "A controlled Task scheduling and focus panel that reuses linked TimeBlockRows, shows confirmed Focus Session time, delegates schedule and Start focus actions, and prevents duplicate active sessions.",
+    states: [
+      {
+        id: "scheduling-panel-ready",
+        name: "Linked schedule and focus",
+        description:
+          "Confirmed time, linked Time Blocks, Schedule, and Task/Time Block Start focus actions remain in one responsive region.",
+        render: () => <SchedulingPanelDemo />,
+      },
+      {
+        id: "scheduling-panel-conflict",
+        name: "Schedule conflict",
+        description:
+          "The shared Time Block conflict detail stays visible with an explicit path to the scheduling service's resolution flow.",
+        render: () => <SchedulingPanelDemo state="conflict" />,
+      },
+      {
+        id: "scheduling-panel-active-focus",
+        name: "Active Focus Session",
+        description:
+          "An existing shared Focus Session replaces every duplicate Start focus action with one Open focus path.",
+        render: () => <SchedulingPanelDemo state="active" />,
+      },
+      {
+        id: "scheduling-panel-empty",
+        name: "No linked Time Blocks",
+        description: "The first schedule action is available from the truthful first-use state.",
+        render: () => <SchedulingPanelDemo state="empty" />,
+      },
+      {
+        id: "scheduling-panel-read-only",
+        name: "Permission read-only",
+        description:
+          "Confirmed schedule and time remain visible while every mutation is unavailable.",
+        render: () => <SchedulingPanelDemo state="read-only" />,
+      },
+      {
+        id: "scheduling-panel-error",
+        name: "Load error",
+        description:
+          "The failed region names that the rest of the Task remains available and offers retry.",
+        render: () => <SchedulingPanelDemo state="error" />,
+      },
+      {
+        id: "scheduling-panel-loading",
+        name: "Loading",
+        description: "The panel reserves its summary and linked-Time-Block layout while loading.",
+        render: () => <SchedulingPanelDemo state="loading" />,
       },
     ],
   },

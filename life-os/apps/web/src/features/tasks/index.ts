@@ -23,6 +23,12 @@ export {
   type DependencyRelationship,
 } from "./components/DependencyEditor";
 export {
+  SchedulingPanel,
+  type SchedulingPanelActiveFocusSession,
+  type SchedulingPanelProps,
+  type SchedulingPanelTask,
+} from "./components/SchedulingPanel";
+export {
   dependencyEditorErrorMessage,
   type DependencyEditorErrorReason,
 } from "./model/dependencyEditorErrors";
