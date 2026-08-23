@@ -1,0 +1,10 @@
+.lifeos-activity-type-filter {
+  max-width: 16rem;
+  margin-block-end: var(--space-4);
+}
+
+@media (max-width: 30rem) {
+  .lifeos-activity-type-filter {
+    max-width: none;
+  }
+}

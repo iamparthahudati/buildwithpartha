@@ -20,7 +20,14 @@ const mocks = vi.hoisted(() => ({
   editComment: vi.fn(),
   deleteComment: vi.fn(),
   refetchComments: vi.fn(),
+  useActivity: vi.fn(),
+  refetchActivity: vi.fn(),
 }));
+
+vi.mock("@features/activity", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@features/activity")>();
+  return { ...actual, useActivity: mocks.useActivity };
+});
 
 vi.mock("@features/comments", () => ({
   useComments: mocks.useComments,
@@ -148,6 +155,43 @@ describe("IntegratedTaskDetails", () => {
     mocks.addComment.mockResolvedValue({});
     mocks.editComment.mockResolvedValue({});
     mocks.deleteComment.mockResolvedValue(undefined);
+    mocks.useActivity.mockReturnValue({
+      data: {
+        items: [
+          {
+            id: "activity-task",
+            actorUserId: "user-1",
+            eventType: "TASK_UPDATED",
+            object: {
+              type: "TASK",
+              id: "task-1",
+              label: "Prepare weekly review",
+              href: "/life-os/app/tasks/task-1",
+            },
+            occurredAt: "2026-08-23T08:00:00Z",
+          },
+          {
+            id: "activity-comment",
+            actorUserId: "user-1",
+            eventType: "COMMENT_CREATED",
+            object: {
+              type: "TASK",
+              id: "task-1",
+              label: "Prepare weekly review",
+              href: "/life-os/app/tasks/task-1",
+            },
+            occurredAt: "2026-08-23T07:00:00Z",
+          },
+        ],
+        page: 0,
+        size: 20,
+        totalItems: 22,
+        totalPages: 2,
+      },
+      isPending: false,
+      isError: false,
+      refetch: mocks.refetchActivity,
+    });
   });
 
   it("renders the aggregate, exact return context, counts, and optional Files gate accessibly", async () => {
@@ -177,6 +221,27 @@ describe("IntegratedTaskDetails", () => {
 
     await waitFor(() => expect(mocks.addSubtask).toHaveBeenCalledWith("task-1", "Draft decisions"));
     await waitFor(() => expect(mocks.getTaskDetail).toHaveBeenCalledTimes(2));
+  });
+
+  it("renders, filters, paginates, and fully labels Task Activity timestamps", async () => {
+    const { user } = renderIntegrated({ selectedTab: "activity" });
+
+    expect(await screen.findByRole("list", { name: "Task activity" })).toHaveTextContent(
+      "Test User updated Prepare weekly review",
+    );
+    expect(screen.getByRole("time", { name: "Aug 23, 2026, 8:00 AM" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("navigation", { name: "Task activity pagination" }),
+    ).toBeInTheDocument();
+
+    await user.selectOptions(screen.getByRole("combobox", { name: "Activity type" }), "COMMENT");
+    expect(screen.getByRole("list", { name: "Task activity" })).toHaveTextContent(
+      "Test User commented on Prepare weekly review",
+    );
+    expect(screen.queryByText(/updated Prepare weekly review/)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Next page" }));
+    expect(mocks.useActivity).toHaveBeenLastCalledWith("TASK", "task-1", 1, 20, true);
   });
 
   it("wires edit with the aggregate version and routes Schedule and Focus actions", async () => {

@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0823 Task/Project Activity API)
+Last updated: 2026-08-23 (LOS-0824 Task/Project Activity integration)
 
 ## Phase
 
@@ -31,6 +31,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0824 — Connected the shared ActivityFeed to Task Details and Project Details/overview through one bounded frontend Activity query boundary. Closed Activity Event types map to current Account actor naming, calm action copy, decorative icons, owner-scoped current object links, and safe deleted-object fallbacks. Both detail surfaces expose accessible type filters and one-based pagination; relative timestamps retain full localized absolute labels/titles. Successful Task, Project, Subtask, dependency, bulk, MIT, and Comment mutations invalidate Activity so previously loaded feeds refresh. Focused integration/accessibility coverage, the full frontend gate, and live 320px/tablet/desktop keyboard/focus/console checks pass. See `docs/handoffs/LOS-0824.md`.
 - LOS-0823 — Implemented authenticated Task/Project Activity reads with bounded newest-first pagination, typed actor/action/object/time projections, current owner-scoped object labels/links, safe null-object fallbacks after deletion, and historical subject authorization without cross-user disclosure. Relevant Project, Task, bulk, MIT, dependency, Subtask, auto-unblock, duplication, and existing Comment changes emit transactional content-free events; Project feeds receive linked Task changes. Flyway V14 adds typed object UUID references without content snapshots. OpenAPI, PostgreSQL migration, lifecycle emission, auth, cross-user, pagination, and deleted-object tests pass. See `docs/handoffs/LOS-0823.md`.
 - LOS-0822 — Integrated the shared Comment composer/list with Task Details (direct and list-sheet) and Project Details through one bounded frontend Comments API/query boundary. Both surfaces support an announced optimistic posting row, safe draft-preserving failures, retryable pagination, versioned edit/delete, inert text-only rendering, current Account identity, archived lifecycle controls, and corrected inline-edit focus. Focused integration/sanitization coverage, the full frontend gate, and live 320px/tablet/desktop keyboard/console checks pass. See `docs/handoffs/LOS-0822.md`.
 - LOS-0821 — Implemented authenticated Task/Project Comment CRUD with owner-only nested access, bounded pagination, optimistic edit/delete versions, active-parent write policy, immediate body deletion, safe plain-text/Markdown storage, CSRF and validation enforcement, transactional body-free Activity Events, and live Task Detail Comment/Activity counts. Flyway V13, OpenAPI contract coverage, PostgreSQL ownership/cascade constraints, and cross-user/sanitization tests pass. See `docs/handoffs/LOS-0821.md`.

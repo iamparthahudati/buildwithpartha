@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { ACTIVITY_QUERY_KEY } from "@features/activity";
 
 import { createComment, deleteComment, queryComments, updateComment } from "../api/commentsApi";
 import { commentsQueryKeys, useCommentMutations, useComments } from "../hooks/useComments";
@@ -73,9 +74,10 @@ describe("comment hooks", () => {
     expect(createComment).toHaveBeenCalledWith("TASK", "task-1", "First comment");
     expect(updateComment).toHaveBeenCalledWith("TASK", "task-1", "comment-1", "Revised", 3);
     expect(deleteComment).toHaveBeenCalledWith("TASK", "task-1", "comment-1", 4);
-    expect(invalidate).toHaveBeenCalledTimes(3);
-    expect(invalidate).toHaveBeenLastCalledWith({
+    expect(invalidate).toHaveBeenCalledTimes(6);
+    expect(invalidate).toHaveBeenCalledWith({
       queryKey: commentsQueryKeys.parent("TASK", "task-1"),
     });
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ACTIVITY_QUERY_KEY });
   });
 });

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { invalidateActivityQueries } from "@features/activity";
 
 import {
   addSubtask,
@@ -13,8 +14,10 @@ import { TASKS_QUERY_KEY } from "./useTasks";
 
 export function useTaskDetailMutations(taskId: string) {
   const queryClient = useQueryClient();
-  const refreshCanonicalTaskState = () =>
-    queryClient.invalidateQueries({ queryKey: TASKS_QUERY_KEY });
+  const refreshCanonicalTaskState = () => {
+    void queryClient.invalidateQueries({ queryKey: TASKS_QUERY_KEY });
+    void invalidateActivityQueries(queryClient);
+  };
 
   const addSubtaskMutation = useMutation({
     mutationFn: (title: string) => addSubtask(taskId, title),

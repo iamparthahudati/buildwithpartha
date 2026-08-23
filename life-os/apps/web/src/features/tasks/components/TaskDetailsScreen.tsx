@@ -18,6 +18,7 @@ import {
   type TabItem,
 } from "@components/navigation";
 import { CountBadge, Link, SkeletonCard, Surface } from "@components/ui";
+import { ActivityTypeFilterControl, type ActivityTypeFilter } from "@features/activity";
 
 import { DependencyEditor, type DependencyEditorProps } from "./DependencyEditor";
 import { SchedulingPanel, type SchedulingPanelProps } from "./SchedulingPanel";
@@ -104,6 +105,9 @@ export interface TaskDetailsActivityConfig {
   readonly pageSize?: number;
   readonly total?: number;
   readonly onPageChange?: (page: number) => void;
+  readonly filter?: ActivityTypeFilter;
+  readonly onFilterChange?: (filter: ActivityTypeFilter) => void;
+  readonly emptyTitle?: string;
 }
 
 export interface TaskDetailsScreenProps {
@@ -495,17 +499,27 @@ export function TaskDetailsScreen({
           titleLevel={2}
           className="lifeos-task-details-screen__tab-surface"
         >
+          {activity.onFilterChange ? (
+            <ActivityTypeFilterControl
+              value={activity.filter ?? "ALL"}
+              onChange={activity.onFilterChange}
+            />
+          ) : null}
           <ActivityFeed
             label="Task activity"
             events={activityEvents}
             locale={locale}
             timeZone={timeZone}
             status={activity.status ?? { type: "ready" }}
-            emptyTitle="No activity yet"
+            emptyTitle={activity.emptyTitle ?? "No activity yet"}
             emptyDescription="Changes to this Task will appear here."
             groupHeadingLevel={3}
             now={now}
-            {...(activity.onPageChange && activity.page && activity.pageSize && activity.total
+            {...(activity.onPageChange &&
+            activity.page !== undefined &&
+            activity.pageSize !== undefined &&
+            activity.total !== undefined &&
+            activity.total > activity.pageSize
               ? {
                   pagination: {
                     page: activity.page,

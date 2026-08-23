@@ -26,6 +26,7 @@ import {
   TaskFormDemo,
   TaskSummaryMetricsDemo,
   ProjectDetailsHeaderDemo,
+  ProjectDetailsScreenDemo,
   ProjectOverviewDemo,
   ProjectTimelineDemo,
   ProjectFormDemo,
@@ -561,6 +562,21 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Renders project details header in active, archived, and loading states.",
         render: () => <ProjectDetailsHeaderDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-details-screen",
+    name: "ProjectDetailsScreen",
+    group: "Composed",
+    summary:
+      "Project Details composition with responsive tabs, Activity filtering, pagination, and accessible timestamps.",
+    states: [
+      {
+        id: "project-details-screen-default",
+        name: "Default",
+        description: "Interactive Project Details tabs plus loading and unavailable states.",
+        render: () => <ProjectDetailsScreenDemo />,
       },
     ],
   },

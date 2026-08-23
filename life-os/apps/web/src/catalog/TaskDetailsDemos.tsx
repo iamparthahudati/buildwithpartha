@@ -10,6 +10,7 @@ import {
 } from "@features/tasks";
 import type { TimeBlock } from "@features/time-blocks";
 import type { Attachment, Comment } from "@components/navigation";
+import type { ActivityTypeFilter } from "@features/activity";
 
 const NOW = new Date("2026-08-23T10:00:00Z");
 
@@ -62,6 +63,7 @@ export function TaskDetailsScreenDemo() {
   const [demoState, setDemoState] = useState<DemoState>("ready");
   const [selectedTab, setSelectedTab] = useState<TaskDetailsTabId>("details");
   const [result, setResult] = useState("Ready for interaction.");
+  const [activityFilter, setActivityFilter] = useState<ActivityTypeFilter>("ALL");
   const [subtasks, setSubtasks] = useState<readonly SubtaskChecklistItem[]>([
     { id: "subtask-notes", title: "Collect notes", completed: true, position: 0 },
     { id: "subtask-decisions", title: "List open decisions", completed: false, position: 1 },
@@ -93,6 +95,24 @@ export function TaskDetailsScreenDemo() {
   const partial = demoState === "partial";
   const archivedTask =
     demoState === "archived" ? { ...TASK, archivedAt: "2026-08-22T10:00:00Z" } : TASK;
+  const activityEvents = [
+    {
+      id: "activity-created",
+      type: "TASK" as const,
+      actorName: "You",
+      action: "created",
+      object: { label: TASK.title, href: `/life-os/app/tasks/${TASK.id}` },
+      createdAt: "2026-08-23T07:00:00Z",
+    },
+    {
+      id: "activity-commented",
+      type: "COMMENT" as const,
+      actorName: "You",
+      action: "commented on",
+      object: { label: TASK.title, href: `/life-os/app/tasks/${TASK.id}` },
+      createdAt: "2026-08-23T08:00:00Z",
+    },
+  ].filter((event) => activityFilter === "ALL" || event.type === activityFilter);
 
   return (
     <div className="specimen-stack" style={{ width: "100%" }}>
@@ -271,17 +291,18 @@ export function TaskDetailsScreenDemo() {
             setAttachments((current) => current.filter((attachment) => attachment.id !== id)),
         }}
         activity={{
-          events: empty
-            ? []
-            : [
-                {
-                  id: "activity-created",
-                  actorName: "You",
-                  action: "created",
-                  object: { label: TASK.title, href: `/life-os/app/tasks/${TASK.id}` },
-                  createdAt: "2026-08-23T07:00:00Z",
-                },
-              ],
+          events: empty ? [] : activityEvents,
+          count: empty ? 0 : 22,
+          filter: activityFilter,
+          onFilterChange: setActivityFilter,
+          page: 1,
+          pageSize: 20,
+          total: empty ? 0 : 22,
+          onPageChange: (page) => setResult(`Activity page ${page} requested.`),
+          emptyTitle:
+            activityFilter === "ALL"
+              ? "No activity yet"
+              : `No ${activityFilter.toLowerCase()} changes on this page`,
           ...(partial
             ? { status: { type: "error" as const, message: "Task details are still available." } }
             : {}),

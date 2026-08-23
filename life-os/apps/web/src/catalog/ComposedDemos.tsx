@@ -34,6 +34,7 @@ import {
   type TaskSummaryMetricsStatus,
 } from "@features/tasks";
 import { TimeBlockRow, type TimeBlock } from "@features/time-blocks";
+import type { ActivityTypeFilter } from "@features/activity";
 import {
   buildCommonDateRangePresets,
   ColorIconPicker,
@@ -1460,6 +1461,7 @@ export function ProjectTimelineDemo() {
 
 export function ProjectDetailsScreenDemo() {
   const [selectedTab, setSelectedTab] = useState("overview");
+  const [activityFilter, setActivityFilter] = useState<ActivityTypeFilter>("ALL");
 
   const sampleMilestones: readonly Milestone[] = [
     {
@@ -1502,6 +1504,27 @@ export function ProjectDetailsScreenDemo() {
     updatedAt: "2026-08-20T10:00:00Z",
     version: 2,
   };
+  const activityEvents = [
+    {
+      id: "project-activity-updated",
+      type: "PROJECT" as const,
+      actorName: "You",
+      action: "updated",
+      object: { label: sampleProject.name, href: `/life-os/app/projects/${sampleProject.id}` },
+      createdAt: "2026-08-20T10:00:00Z",
+    },
+    {
+      id: "project-activity-task",
+      type: "TASK" as const,
+      actorName: "You",
+      action: "created",
+      object: { label: "Prepare weekly review", href: "/life-os/app/tasks/task-weekly-review" },
+      createdAt: "2026-08-20T09:00:00Z",
+    },
+  ];
+  const filteredActivityEvents = activityEvents.filter(
+    (event) => activityFilter === "ALL" || event.type === activityFilter,
+  );
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-6)" }}>
@@ -1520,6 +1543,20 @@ export function ProjectDetailsScreenDemo() {
           estimatedHours={40}
           actualHours={18}
           labels={["Design", "Frontend", "Q3-Goal"]}
+          activityEvents={activityEvents}
+          activityTabEvents={filteredActivityEvents}
+          activityCount={22}
+          activityPage={1}
+          activityPageSize={20}
+          activityTotal={22}
+          onActivityPageChange={() => undefined}
+          activityFilter={activityFilter}
+          onActivityFilterChange={setActivityFilter}
+          activityEmptyTitle={
+            activityFilter === "ALL"
+              ? "No activity recorded"
+              : `No ${activityFilter.toLowerCase()} changes on this page`
+          }
           now={new Date("2026-08-20T12:00:00Z")}
         />
       </div>

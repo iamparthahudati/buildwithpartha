@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { invalidateActivityQueries } from "@features/activity";
 
 import {
   createComment,
@@ -35,8 +36,12 @@ export function useComments(
 
 export function useCommentMutations(parentType: CommentParentType, parentId: string) {
   const queryClient = useQueryClient();
-  const refreshComments = () =>
-    queryClient.invalidateQueries({ queryKey: commentsQueryKeys.parent(parentType, parentId) });
+  const refreshComments = () => {
+    void queryClient.invalidateQueries({
+      queryKey: commentsQueryKeys.parent(parentType, parentId),
+    });
+    void invalidateActivityQueries(queryClient);
+  };
 
   const add = useMutation({
     mutationFn: (body: string) => createComment(parentType, parentId, body),

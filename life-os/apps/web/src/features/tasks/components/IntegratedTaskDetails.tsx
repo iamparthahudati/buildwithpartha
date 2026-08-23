@@ -1,6 +1,13 @@
 import { useMemo, useState } from "react";
 
 import { ConfirmDialog } from "@components/feedback";
+import {
+  activityFilterEmptyTitle,
+  activityMatchesFilter,
+  mapActivityEvent,
+  useActivity,
+  type ActivityTypeFilter,
+} from "@features/activity";
 import { useCommentMutations, useComments } from "@features/comments";
 import { useProjects } from "@features/projects";
 import { ApiError } from "@lib/apiClient";
@@ -51,6 +58,7 @@ type DestructiveAction = "archive" | "delete" | null;
 const SAFE_MUTATION_ERROR =
   "We couldn't save this change. Confirmed Task details are still shown. Try again.";
 const COMMENT_PAGE_SIZE = 20;
+const ACTIVITY_PAGE_SIZE = 20;
 
 function commentMutationError(action: "add" | "edit" | "delete", error: unknown) {
   if (!error) return undefined;
@@ -113,6 +121,11 @@ export function IntegratedTaskDetails({
   const [actionError, setActionError] = useState<string | null>(null);
   const [blockerQuery, setBlockerQuery] = useState("");
   const [commentPagination, setCommentPagination] = useState({ parentId: taskId, page: 1 });
+  const [activityPagination, setActivityPagination] = useState({ parentId: taskId, page: 1 });
+  const [activityFilterState, setActivityFilterState] = useState<{
+    readonly parentId: string;
+    readonly filter: ActivityTypeFilter;
+  }>({ parentId: taskId, filter: "ALL" });
   const [pendingComment, setPendingComment] = useState<{
     readonly body: string;
     readonly createdAt: string;
@@ -120,6 +133,14 @@ export function IntegratedTaskDetails({
 
   const commentPage = commentPagination.parentId === taskId ? commentPagination.page : 1;
   const setCommentPage = (page: number) => setCommentPagination({ parentId: taskId, page });
+  const activityPage = activityPagination.parentId === taskId ? activityPagination.page : 1;
+  const activityFilter =
+    activityFilterState.parentId === taskId ? activityFilterState.filter : "ALL";
+  const setActivityPage = (page: number) => setActivityPagination({ parentId: taskId, page });
+  const setActivityFilter = (filter: ActivityTypeFilter) => {
+    setActivityFilterState({ parentId: taskId, filter });
+    setActivityPage(1);
+  };
 
   const projectsQuery = useProjects({ size: 100, archived: false }, Boolean(taskId));
   const projectById = useMemo(() => {
@@ -166,6 +187,13 @@ export function IntegratedTaskDetails({
     Boolean(taskId) && selectedTab === "comments",
   );
   const commentMutations = useCommentMutations("TASK", taskId);
+  const activityQuery = useActivity(
+    "TASK",
+    taskId,
+    activityPage - 1,
+    ACTIVITY_PAGE_SIZE,
+    Boolean(taskId) && selectedTab === "activity",
+  );
   const updateMutation = useUpdateTask();
   const completeMutation = useCompleteTask();
   const changeStatusMutation = useChangeTaskStatus();
@@ -214,6 +242,13 @@ export function IntegratedTaskDetails({
           ...comments,
         ]
       : comments;
+  const activityEvents = useMemo(
+    () =>
+      (activityQuery.data?.items ?? [])
+        .filter((event) => activityMatchesFilter(event, activityFilter))
+        .map((event) => mapActivityEvent(event, authorName)),
+    [activityFilter, activityQuery.data?.items, authorName],
+  );
 
   const blockerOptions = (candidateQuery.data?.items ?? []).map((task) => ({
     id: task.id,
@@ -410,8 +445,24 @@ export function IntegratedTaskDetails({
       count: detail?.counts.attachmentCount ?? 0,
     },
     activity: {
-      events: [],
+      events: activityEvents,
       count: detail?.counts.activityEventCount ?? 0,
+      status: activityQuery.isError
+        ? {
+            type: "error",
+            message: "Task activity couldn't load. Task details are still available.",
+            onRetry: () => void activityQuery.refetch(),
+          }
+        : activityQuery.isPending
+          ? { type: "loading" }
+          : { type: "ready" },
+      page: (activityQuery.data?.page ?? activityPage - 1) + 1,
+      pageSize: activityQuery.data?.size ?? ACTIVITY_PAGE_SIZE,
+      total: activityQuery.data?.totalItems ?? 0,
+      onPageChange: setActivityPage,
+      filter: activityFilter,
+      onFilterChange: setActivityFilter,
+      emptyTitle: activityFilterEmptyTitle(activityFilter),
     },
   };
 

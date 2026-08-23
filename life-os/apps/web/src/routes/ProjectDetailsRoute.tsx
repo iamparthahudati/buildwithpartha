@@ -2,6 +2,13 @@ import { useCallback, useMemo, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useCommentMutations, useComments } from "@features/comments";
 import {
+  activityFilterEmptyTitle,
+  activityMatchesFilter,
+  mapActivityEvent,
+  useActivity,
+  type ActivityTypeFilter,
+} from "@features/activity";
+import {
   ProjectDetailsScreen,
   useProjectDetail,
   useCreateMilestone,
@@ -22,6 +29,7 @@ import { mapTaskRecordToProjectOverviewTask } from "./projectTaskMapping";
 
 const PROJECT_TASKS_PAGE_SIZE = 100;
 const COMMENTS_PAGE_SIZE = 20;
+const ACTIVITY_PAGE_SIZE = 20;
 
 function safeCommentMutationError(action: "add" | "edit" | "delete", error: unknown) {
   if (!error) return undefined;
@@ -40,6 +48,11 @@ export function ProjectDetailsRoute() {
   const navigate = useNavigate();
   const { user } = useAuthSession();
   const [commentPagination, setCommentPagination] = useState({ parentId: projectId, page: 1 });
+  const [activityPagination, setActivityPagination] = useState({ parentId: projectId, page: 1 });
+  const [activityFilterState, setActivityFilterState] = useState<{
+    readonly parentId: string;
+    readonly filter: ActivityTypeFilter;
+  }>({ parentId: projectId, filter: "ALL" });
   const [pendingComment, setPendingComment] = useState<{
     readonly body: string;
     readonly createdAt: string;
@@ -48,6 +61,14 @@ export function ProjectDetailsRoute() {
   const currentTab = searchParams.get("tab") ?? "overview";
   const commentsPage = commentPagination.parentId === projectId ? commentPagination.page : 1;
   const setCommentsPage = (page: number) => setCommentPagination({ parentId: projectId, page });
+  const activityPage = activityPagination.parentId === projectId ? activityPagination.page : 1;
+  const activityFilter =
+    activityFilterState.parentId === projectId ? activityFilterState.filter : "ALL";
+  const setActivityPage = (page: number) => setActivityPagination({ parentId: projectId, page });
+  const setActivityFilter = (filter: ActivityTypeFilter) => {
+    setActivityFilterState({ parentId: projectId, filter });
+    setActivityPage(1);
+  };
 
   const handleTabChange = useCallback(
     (newTab: string) => {
@@ -79,6 +100,13 @@ export function ProjectDetailsRoute() {
     user !== null && projectId !== "",
   );
   const commentMutations = useCommentMutations("PROJECT", projectId);
+  const activityQuery = useActivity(
+    "PROJECT",
+    projectId,
+    activityPage - 1,
+    ACTIVITY_PAGE_SIZE,
+    user !== null && projectId !== "" && (currentTab === "overview" || currentTab === "activity"),
+  );
 
   const projectTasksQuery = useTasks(
     {
@@ -136,6 +164,20 @@ export function ProjectDetailsRoute() {
           ...comments,
         ]
       : comments;
+  const allActivityEvents = useMemo(
+    () =>
+      (activityQuery.data?.items ?? []).map((event) =>
+        mapActivityEvent(event, user?.displayName ?? "You"),
+      ),
+    [activityQuery.data?.items, user?.displayName],
+  );
+  const filteredActivityEvents = useMemo(
+    () =>
+      (activityQuery.data?.items ?? [])
+        .filter((event) => activityMatchesFilter(event, activityFilter))
+        .map((event) => mapActivityEvent(event, user?.displayName ?? "You")),
+    [activityFilter, activityQuery.data?.items, user?.displayName],
+  );
 
   const projectWithTaskCounts = useMemo((): Project | undefined => {
     if (!project) {
@@ -266,6 +308,27 @@ export function ProjectDetailsRoute() {
       {...(projectWithTaskCounts ? { project: projectWithTaskCounts } : {})}
       milestones={data?.milestones ?? []}
       topTasks={topTasks}
+      activityEvents={allActivityEvents}
+      activityTabEvents={filteredActivityEvents}
+      activityCount={activityQuery.data?.totalItems ?? 0}
+      activityStatus={
+        activityQuery.isError
+          ? {
+              type: "error",
+              message: "Project activity couldn't load. Project details are still available.",
+              onRetry: () => void activityQuery.refetch(),
+            }
+          : activityQuery.isPending
+            ? { type: "loading" }
+            : { type: "ready" }
+      }
+      activityPage={(activityQuery.data?.page ?? activityPage - 1) + 1}
+      activityPageSize={activityQuery.data?.size ?? ACTIVITY_PAGE_SIZE}
+      activityTotal={activityQuery.data?.totalItems ?? 0}
+      onActivityPageChange={setActivityPage}
+      activityFilter={activityFilter}
+      onActivityFilterChange={setActivityFilter}
+      activityEmptyTitle={activityFilterEmptyTitle(activityFilter)}
       tasksTotalCount={totalTasksCount}
       tasksLoading={projectTasksQuery.isPending}
       ownerName={user?.displayName ?? "You"}

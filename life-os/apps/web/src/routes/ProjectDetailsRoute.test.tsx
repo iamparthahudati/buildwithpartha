@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -16,6 +16,16 @@ const commentMocks = vi.hoisted(() => ({
   remove: vi.fn(),
   refetch: vi.fn(),
 }));
+
+const activityMocks = vi.hoisted(() => ({
+  useActivity: vi.fn(),
+  refetch: vi.fn(),
+}));
+
+vi.mock("@features/activity", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@features/activity")>();
+  return { ...actual, useActivity: activityMocks.useActivity };
+});
 
 vi.mock("@features/comments", () => ({
   useComments: commentMocks.useComments,
@@ -203,6 +213,18 @@ describe("ProjectDetailsRoute", () => {
     commentMocks.add.mockResolvedValue({});
     commentMocks.edit.mockResolvedValue({});
     commentMocks.remove.mockResolvedValue(undefined);
+    activityMocks.useActivity.mockReturnValue({
+      data: {
+        items: [],
+        page: 0,
+        size: 20,
+        totalItems: 0,
+        totalPages: 0,
+      },
+      isPending: false,
+      isError: false,
+      refetch: activityMocks.refetch,
+    });
 
     mockUseCreateMilestone.mockReturnValue({
       mutateAsync: vi.fn(),
@@ -507,5 +529,53 @@ describe("ProjectDetailsRoute", () => {
       });
       expect(commentMocks.remove).toHaveBeenCalledWith({ id: "comment-1", version: 4 });
     });
+  });
+
+  it("maps Project Activity, exposes filtering, and converts pagination to one-based UI state", () => {
+    activityMocks.useActivity.mockReturnValue({
+      data: {
+        items: [
+          {
+            id: "activity-1",
+            actorUserId: "user-1",
+            eventType: "TASK_UPDATED",
+            object: {
+              type: "TASK",
+              id: "task-1",
+              label: "Draft outline",
+              href: "/life-os/app/tasks/task-1",
+            },
+            occurredAt: "2026-08-23T08:00:00Z",
+          },
+        ],
+        page: 1,
+        size: 20,
+        totalItems: 21,
+        totalPages: 2,
+      },
+      isPending: false,
+      isError: false,
+      refetch: activityMocks.refetch,
+    });
+    mockUseProjectDetail.mockReturnValue({
+      data: { project: MOCK_PROJECT, milestones: [] },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof projectsFeature.useProjectDetail>);
+
+    renderRoute("/life-os/app/projects/proj-123?tab=activity");
+    const props = (globalThis as Record<string, any>).__lastDetailsProps;
+
+    expect(activityMocks.useActivity).toHaveBeenCalledWith("PROJECT", "proj-123", 0, 20, true);
+    expect(props.activityEvents).toEqual([
+      expect.objectContaining({ actorName: "Test User", action: "updated" }),
+    ]);
+    expect(props.activityPage).toBe(2);
+    expect(props.activityTotal).toBe(21);
+
+    act(() => props.onActivityFilterChange("COMMENT"));
+    expect((globalThis as Record<string, any>).__lastDetailsProps.activityFilter).toBe("COMMENT");
   });
 });

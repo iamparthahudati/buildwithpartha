@@ -27,10 +27,12 @@ import {
   type Comment,
   type CommentListStatus,
   type ActivityEvent,
+  type ActivityFeedStatus,
   type BreadcrumbItem,
   type MenuItemDescriptor,
   type ChartDatum,
 } from "@components/navigation";
+import { ActivityTypeFilterControl, type ActivityTypeFilter } from "@features/activity";
 import { formatLocalDate } from "@lib/localDateTime";
 
 import type { Project } from "../model/project";
@@ -52,6 +54,16 @@ export interface ProjectDetailsScreenProps {
   readonly tasksTotalCount?: number;
   readonly tasksLoading?: boolean;
   readonly activityEvents?: readonly ActivityEvent[];
+  readonly activityTabEvents?: readonly ActivityEvent[];
+  readonly activityStatus?: ActivityFeedStatus;
+  readonly activityCount?: number;
+  readonly activityPage?: number;
+  readonly activityPageSize?: number;
+  readonly activityTotal?: number;
+  readonly onActivityPageChange?: (page: number) => void;
+  readonly activityFilter?: ActivityTypeFilter;
+  readonly onActivityFilterChange?: (filter: ActivityTypeFilter) => void;
+  readonly activityEmptyTitle?: string;
   readonly statusBreakdown?: readonly ChartDatum[];
   readonly priorityBreakdown?: readonly ChartDatum[];
   readonly attachments?: readonly Attachment[];
@@ -127,6 +139,16 @@ export function ProjectDetailsScreen({
   tasksTotalCount,
   tasksLoading = false,
   activityEvents = [],
+  activityTabEvents,
+  activityStatus = { type: "ready" },
+  activityCount,
+  activityPage = 1,
+  activityPageSize = 20,
+  activityTotal,
+  onActivityPageChange,
+  activityFilter = "ALL",
+  onActivityFilterChange,
+  activityEmptyTitle = "No activity recorded",
   statusBreakdown = [],
   priorityBreakdown = [],
   attachments = [],
@@ -316,6 +338,7 @@ export function ProjectDetailsScreen({
           labels={labels}
           topTasks={topTasks}
           activityEvents={activityEvents}
+          activityStatus={activityStatus}
           statusBreakdown={statusBreakdown}
           priorityBreakdown={priorityBreakdown}
           now={now}
@@ -489,6 +512,10 @@ export function ProjectDetailsScreen({
     {
       id: "activity",
       label: "Activity",
+      badge:
+        (activityCount ?? activityEvents.length) > 0 ? (
+          <Badge tone="neutral">{activityCount ?? activityEvents.length}</Badge>
+        ) : undefined,
       panel: (
         <Surface
           as="section"
@@ -498,13 +525,29 @@ export function ProjectDetailsScreen({
           <Heading level={2} size="md">
             Recent Activity
           </Heading>
+          {onActivityFilterChange ? (
+            <ActivityTypeFilterControl value={activityFilter} onChange={onActivityFilterChange} />
+          ) : null}
           <ActivityFeed
-            events={activityEvents}
+            events={activityTabEvents ?? activityEvents}
             label="Project event history"
-            emptyTitle="No activity recorded"
+            status={activityStatus}
+            emptyTitle={activityEmptyTitle}
             now={now}
             locale={locale}
             timeZone={timeZone}
+            {...(onActivityPageChange &&
+            activityTotal !== undefined &&
+            activityTotal > activityPageSize
+              ? {
+                  pagination: {
+                    page: activityPage,
+                    pageSize: activityPageSize,
+                    total: activityTotal,
+                    onPageChange: onActivityPageChange,
+                  },
+                }
+              : {})}
           />
         </Surface>
       ),
