@@ -253,3 +253,28 @@ CREATE TABLE IF NOT EXISTS task_dependencies (
     created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
     PRIMARY KEY (blocking_task_id, blocked_task_id)
 );
+
+-- Added by LOS-1404: product Activity Events and restricted Security Audit Events.
+CREATE TABLE IF NOT EXISTS product_activity_events (
+    id             UUID                     NOT NULL PRIMARY KEY,
+    user_id        UUID                     NOT NULL,
+    actor_user_id  UUID                     NOT NULL,
+    event_type     VARCHAR(64)              NOT NULL,
+    subject_type   VARCHAR(32)              NOT NULL,
+    subject_id     UUID                     NOT NULL,
+    correlation_id VARCHAR(64)              NOT NULL,
+    occurred_at    TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS security_audit_events (
+    id              UUID                     NOT NULL PRIMARY KEY,
+    event_type      VARCHAR(64)              NOT NULL,
+    outcome         VARCHAR(16)              NOT NULL,
+    actor_user_id   UUID,
+    subject_user_id UUID,
+    target_type     VARCHAR(32),
+    target_id       UUID,
+    correlation_id  VARCHAR(64)              NOT NULL,
+    occurred_at     TIMESTAMP WITH TIME ZONE NOT NULL,
+    expires_at      TIMESTAMP WITH TIME ZONE NOT NULL
+);

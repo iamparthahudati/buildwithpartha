@@ -1,0 +1,23 @@
+package tech.buildwithpartha.lifeos.common.activity;
+
+/** Stable, content-free product Activity Event types. */
+public enum ActivityEventType {
+  PROJECT_CREATED,
+  PROJECT_UPDATED,
+  PROJECT_ARCHIVED,
+  PROJECT_RESTORED,
+  PROJECT_DELETED,
+  TASK_CREATED,
+  TASK_UPDATED,
+  TASK_STATUS_CHANGED,
+  TASK_ARCHIVED,
+  TASK_RESTORED,
+  TASK_DELETED,
+  SUBTASK_CREATED,
+  SUBTASK_UPDATED,
+  SUBTASK_COMPLETED,
+  SUBTASK_DELETED,
+  COMMENT_CREATED,
+  COMMENT_UPDATED,
+  COMMENT_DELETED
+}

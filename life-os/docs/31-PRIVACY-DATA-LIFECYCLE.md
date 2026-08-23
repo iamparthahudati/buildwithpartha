@@ -129,6 +129,12 @@ Cloudflare, VPS, database, mail, monitoring and backup records for LifeOS must r
 | Attachment content/metadata (optional) | User-requested file support | User | Private object store + metadata/scanner | Requested service/explicit feature notice | Yes, original or safe package | Parent/delete lifecycle + quarantine cleanup + backup expiry |
 | AI prompt/context/output (future) | Only an explicitly requested, approved AI feature | User/system | Provider only under future contract | Separate informed opt-in/basis review | Yes | Provider/app deletion and zero/short retention contract required |
 
+### Activity and audit event implementation
+
+LOS-1404 limits Product Activity Events to event type, owning Account UUID, actor Account UUID, canonical subject type/UUID, allowlisted correlation ID and UTC occurrence instant. Reads require the owning Account UUID plus subject type/UUID and are bounded; Activity rows cascade with Account deletion. Security Audit Events are not exposed through a user-facing read port and contain only event type, outcome, optional opaque Account UUIDs, optional typed target/UUID, allowlisted correlation ID, UTC occurrence instant and expiry instant. Neither typed write contract accepts strings, bytes, collections or maps, so titles, bodies, comment text, credentials, tokens, cookies, headers and arbitrary metadata cannot enter either event store.
+
+Security Audit rows use the accepted R6 maximum of 365 days and a daily idempotent expiry cleanup. They deliberately do not foreign-key opaque Account UUID evidence to the live Account row, so an Account purge cannot silently erase still-required minimal security evidence; normal product access cannot query this table. Product Activity follows the owning record/Account lifecycle and is not copied into operational logs.
+
 ## Data not collected in v1
 
 - Date of birth, government identity, postal address, phone number or payment data.

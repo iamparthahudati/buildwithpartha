@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0820 integrated Task Details handoff)
+Last updated: 2026-08-23 (LOS-1404 product activity and security audit services)
 
 ## Phase
 
@@ -31,6 +31,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-1404 — Added typed, content-free product Activity and restricted Security Audit event services. Product Activity reads are bounded and user/subject-scoped; Security Audit is write-only outside the audit domain, captures only allowlisted correlation IDs, and expires under a daily 365-day R6 cleanup. Flyway V12 adds indexed tables with enum, ownership, correlation, target-pair, and expiry constraints. See `docs/handoffs/LOS-1404.md`.
 - LOS-0820 — Integrated Task Details with the LOS-0819 aggregate as the sole client-side domain source for direct routes and list-context sheets. Versioned Task edits/lifecycle actions, full Subtask and dependency mutations, canonical Schedule/Focus handoffs, aggregate related-section counts, URL-backed tabs, deep-link refresh, exact list return, and deletion return are wired without duplicate domain state. Focused integration coverage, the full frontend gate, and live 320px/tablet/desktop keyboard and console verification pass. See `docs/handoffs/LOS-0820.md`.
 - LOS-0819 — Implemented authenticated `GET /tasks/{id}/detail` with canonical Task metadata and ordered Subtasks, bounded user-scoped blocker/dependent projections, stable related-section counts, and an explicit optimistic-concurrency version contract. Missing/deleted/cross-user Tasks share `404 RESOURCE_NOT_FOUND`; fixed-query, invalid cross-user edge, OpenAPI, and full backend gate coverage pass on JDK 21. See `docs/handoffs/LOS-0819.md`.
 - LOS-0818 — Composed responsive Task Details from the completed header, scheduling, subtask, dependency, comment, attachment, and activity contracts. Six controlled tabs, exact list-context return, a trailing desktop/full-screen mobile sheet, optional attachment gating, and complete loading/empty/partial/offline/lifecycle/error states have focused accessibility coverage; the full frontend gate and live 320px/tablet/desktop verification pass. See `docs/handoffs/LOS-0818.md`.
