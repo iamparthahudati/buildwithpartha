@@ -262,6 +262,8 @@ CREATE TABLE IF NOT EXISTS product_activity_events (
     event_type     VARCHAR(64)              NOT NULL,
     subject_type   VARCHAR(32)              NOT NULL,
     subject_id     UUID                     NOT NULL,
+    object_type    VARCHAR(32)              NOT NULL,
+    object_id      UUID                     NOT NULL,
     correlation_id VARCHAR(64)              NOT NULL,
     occurred_at    TIMESTAMP WITH TIME ZONE NOT NULL
 );

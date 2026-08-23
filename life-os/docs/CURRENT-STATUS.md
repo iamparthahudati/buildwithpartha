@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0822 Task/Project Comment integration)
+Last updated: 2026-08-23 (LOS-0823 Task/Project Activity API)
 
 ## Phase
 
@@ -31,6 +31,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0823 — Implemented authenticated Task/Project Activity reads with bounded newest-first pagination, typed actor/action/object/time projections, current owner-scoped object labels/links, safe null-object fallbacks after deletion, and historical subject authorization without cross-user disclosure. Relevant Project, Task, bulk, MIT, dependency, Subtask, auto-unblock, duplication, and existing Comment changes emit transactional content-free events; Project feeds receive linked Task changes. Flyway V14 adds typed object UUID references without content snapshots. OpenAPI, PostgreSQL migration, lifecycle emission, auth, cross-user, pagination, and deleted-object tests pass. See `docs/handoffs/LOS-0823.md`.
 - LOS-0822 — Integrated the shared Comment composer/list with Task Details (direct and list-sheet) and Project Details through one bounded frontend Comments API/query boundary. Both surfaces support an announced optimistic posting row, safe draft-preserving failures, retryable pagination, versioned edit/delete, inert text-only rendering, current Account identity, archived lifecycle controls, and corrected inline-edit focus. Focused integration/sanitization coverage, the full frontend gate, and live 320px/tablet/desktop keyboard/console checks pass. See `docs/handoffs/LOS-0822.md`.
 - LOS-0821 — Implemented authenticated Task/Project Comment CRUD with owner-only nested access, bounded pagination, optimistic edit/delete versions, active-parent write policy, immediate body deletion, safe plain-text/Markdown storage, CSRF and validation enforcement, transactional body-free Activity Events, and live Task Detail Comment/Activity counts. Flyway V13, OpenAPI contract coverage, PostgreSQL ownership/cascade constraints, and cross-user/sanitization tests pass. See `docs/handoffs/LOS-0821.md`.
 - LOS-1404 — Added typed, content-free product Activity and restricted Security Audit event services. Product Activity reads are bounded and user/subject-scoped; Security Audit is write-only outside the audit domain, captures only allowlisted correlation IDs, and expires under a daily 365-day R6 cleanup. Flyway V12 adds indexed tables with enum, ownership, correlation, target-pair, and expiry constraints. See `docs/handoffs/LOS-1404.md`.
@@ -273,7 +274,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0823 (`docs/backlog/EPIC-08-TASKS.md`) — implement structured Task/Project Activity reads and relevant change emission with bounded pagination and deleted-object fallbacks.
+LOS-0824 (`docs/backlog/EPIC-08-TASKS.md`) — integrate Task/Project Activity feeds with typed event mapping, filters, mutation refresh, pagination, and accessible timestamps.
 
 ## Known decisions requiring implementation-time values
 

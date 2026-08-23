@@ -40,6 +40,8 @@ public class ProductActivityService implements ProductActivityPort {
             command.eventType(),
             command.subjectType(),
             command.subjectId(),
+            command.objectType(),
+            command.objectId(),
             EventCorrelationIds.current(),
             clock.instant());
     return repository.save(event).toRecord();

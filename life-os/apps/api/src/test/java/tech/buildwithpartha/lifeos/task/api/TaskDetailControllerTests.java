@@ -121,7 +121,7 @@ class TaskDetailControllerTests {
         .andExpect(jsonPath("$.counts.focusSessionCount").value(0))
         .andExpect(jsonPath("$.counts.commentCount").value(0))
         .andExpect(jsonPath("$.counts.attachmentCount").value(0))
-        .andExpect(jsonPath("$.counts.activityEventCount").value(0))
+        .andExpect(jsonPath("$.counts.activityEventCount").value(6))
         .andExpect(jsonPath("$.version").value(current.version()))
         .andExpect(jsonPath("$.task.version").value(current.version()));
   }

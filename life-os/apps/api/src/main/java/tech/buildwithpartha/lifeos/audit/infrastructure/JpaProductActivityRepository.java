@@ -44,6 +44,8 @@ class JpaProductActivityRepository implements ProductActivityRepository {
         event.eventType(),
         event.subjectType(),
         event.subjectId(),
+        event.objectType(),
+        event.objectId(),
         event.correlationId(),
         event.occurredAt());
   }
@@ -56,6 +58,8 @@ class JpaProductActivityRepository implements ProductActivityRepository {
         entity.getEventType(),
         entity.getSubjectType(),
         entity.getSubjectId(),
+        entity.getObjectType(),
+        entity.getObjectId(),
         entity.getCorrelationId(),
         entity.getOccurredAt());
   }

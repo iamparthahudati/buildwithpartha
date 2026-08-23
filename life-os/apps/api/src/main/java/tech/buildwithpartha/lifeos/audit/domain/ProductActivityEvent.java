@@ -16,8 +16,32 @@ public record ProductActivityEvent(
     ActivityEventType eventType,
     ActivitySubjectType subjectType,
     UUID subjectId,
+    ActivitySubjectType objectType,
+    UUID objectId,
     String correlationId,
     Instant occurredAt) {
+
+  public ProductActivityEvent(
+      UUID id,
+      UUID userId,
+      UUID actorUserId,
+      ActivityEventType eventType,
+      ActivitySubjectType subjectType,
+      UUID subjectId,
+      String correlationId,
+      Instant occurredAt) {
+    this(
+        id,
+        userId,
+        actorUserId,
+        eventType,
+        subjectType,
+        subjectId,
+        subjectType,
+        subjectId,
+        correlationId,
+        occurredAt);
+  }
 
   private static final Pattern SAFE_CORRELATION_ID =
       Pattern.compile("[A-Za-z0-9][A-Za-z0-9._-]{0,63}");
@@ -29,6 +53,8 @@ public record ProductActivityEvent(
     Objects.requireNonNull(eventType, "eventType must not be null");
     Objects.requireNonNull(subjectType, "subjectType must not be null");
     Objects.requireNonNull(subjectId, "subjectId must not be null");
+    Objects.requireNonNull(objectType, "objectType must not be null");
+    Objects.requireNonNull(objectId, "objectId must not be null");
     Objects.requireNonNull(correlationId, "correlationId must not be null");
     Objects.requireNonNull(occurredAt, "occurredAt must not be null");
     if (!userId.equals(actorUserId)) {
@@ -41,6 +67,15 @@ public record ProductActivityEvent(
 
   public ProductActivityRecord toRecord() {
     return new ProductActivityRecord(
-        id, userId, actorUserId, eventType, subjectType, subjectId, correlationId, occurredAt);
+        id,
+        userId,
+        actorUserId,
+        eventType,
+        subjectType,
+        subjectId,
+        objectType,
+        objectId,
+        correlationId,
+        occurredAt);
   }
 }

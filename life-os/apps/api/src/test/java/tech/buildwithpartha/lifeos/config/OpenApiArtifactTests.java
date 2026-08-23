@@ -232,6 +232,25 @@ class OpenApiArtifactTests {
                             "version",
                             "canEdit",
                             "canDelete")))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/activity'].get.operationId")
+                    .value("listTaskActivity"))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/activity'].get.responses['400'].$ref")
+                    .value("#/components/responses/BadRequest"))
+            .andExpect(
+                jsonPath("$.paths['/tasks/{taskId}/activity'].get.responses['404'].$ref")
+                    .value("#/components/responses/NotFound"))
+            .andExpect(
+                jsonPath("$.paths['/projects/{projectId}/activity'].get.operationId")
+                    .value("listProjectActivity"))
+            .andExpect(jsonPath("$.components.schemas.ActivityEventResponse").exists())
+            .andExpect(jsonPath("$.components.schemas.ActivityObjectResponse").exists())
+            .andExpect(
+                jsonPath("$.components.schemas.ActivityEventResponse.required")
+                    .value(hasItems("id", "actorUserId", "eventType", "occurredAt")))
+            .andExpect(
+                jsonPath("$.components.schemas.ActivityEventResponse.properties.object").exists())
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))

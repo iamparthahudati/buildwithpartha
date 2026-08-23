@@ -59,6 +59,14 @@ Comments are private to the owning Account. Task/Project ownership and Comment o
 
 Comment deletion immediately purges the body and is intentionally irreversible; a body-free `COMMENT_DELETED` Activity Event remains. Create/edit/delete emit `COMMENT_CREATED`, `COMMENT_UPDATED`, or `COMMENT_DELETED` transactionally against the owning Task/Project subject. Event metadata never contains the Comment body. Task Detail `commentCount` and `activityEventCount` are now backed by fixed user-scoped count queries rather than placeholder zeros.
 
+### Task and Project activity
+
+Activity is a strongly parent-scoped, read-only resource at `GET /tasks/{taskId}/activity` and `GET /projects/{projectId}/activity`. Both endpoints return bounded newest-first `PageResponse` values; `page` defaults to 0, `size` defaults to 20, and `size` is limited to 1–100. Missing and cross-user subjects are indistinguishable `404 RESOURCE_NOT_FOUND`. A deleted subject remains readable only when the authenticated Account owns historical Activity for that exact typed subject UUID.
+
+Each item contains only `id`, `actorUserId`, a closed `eventType`, an optional current `object`, and `occurredAt`. A current object contains canonical `type`, UUID, owner-scoped current `label`, and a LifeOS `href`. The object is `null` after deletion or when current owner-scoped resolution fails, allowing the client to render a safe non-linked fallback. Labels are resolved at read time and are never persisted as Activity snapshots. Correlation IDs, titles/descriptions as event metadata, Comment/Subtask bodies, request bodies, arbitrary maps, credentials, and whole-record before/after snapshots are not exposed.
+
+Project lifecycle changes are recorded against the Project feed. Task creation, updates, status/lifecycle changes, duplication, bulk changes, MIT/dependency changes, and Subtask lifecycle changes are recorded against the Task feed; when the Task is linked to a Project, the same typed change is also recorded against that Project feed with the Task as its object. A Task moved between Projects records the change in both affected Project feeds. Idempotent lifecycle/bulk no-ops do not add duplicate Activity Events. Existing Comment create/edit/delete behavior remains transactional and content-free.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:

@@ -58,6 +58,29 @@ class ProductActivityServiceTests {
   }
 
   @Test
+  void keepsFeedSubjectSeparateFromTheCurrentObjectReference() {
+    UUID userId = UUID.randomUUID();
+    UUID projectId = UUID.randomUUID();
+    UUID taskId = UUID.randomUUID();
+
+    var result =
+        service.record(
+            new ProductActivityCommand(
+                userId,
+                userId,
+                ActivityEventType.TASK_UPDATED,
+                ActivitySubjectType.PROJECT,
+                projectId,
+                ActivitySubjectType.TASK,
+                taskId));
+
+    assertThat(result.subjectType()).isEqualTo(ActivitySubjectType.PROJECT);
+    assertThat(result.subjectId()).isEqualTo(projectId);
+    assertThat(result.objectType()).isEqualTo(ActivitySubjectType.TASK);
+    assertThat(result.objectId()).isEqualTo(taskId);
+  }
+
+  @Test
   void subjectQueryIsUserScopedStableAndBounded() {
     UUID owner = UUID.randomUUID();
     UUID otherUser = UUID.randomUUID();

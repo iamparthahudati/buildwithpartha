@@ -37,6 +37,13 @@ class ProductActivityEventEntity {
   @Column(name = "subject_id", nullable = false, updatable = false)
   private UUID subjectId;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "object_type", nullable = false, updatable = false)
+  private ActivitySubjectType objectType;
+
+  @Column(name = "object_id", nullable = false, updatable = false)
+  private UUID objectId;
+
   @Column(name = "correlation_id", nullable = false, updatable = false, length = 64)
   private String correlationId;
 
@@ -52,6 +59,8 @@ class ProductActivityEventEntity {
       ActivityEventType eventType,
       ActivitySubjectType subjectType,
       UUID subjectId,
+      ActivitySubjectType objectType,
+      UUID objectId,
       String correlationId,
       Instant occurredAt) {
     this.id = id;
@@ -60,6 +69,8 @@ class ProductActivityEventEntity {
     this.eventType = eventType;
     this.subjectType = subjectType;
     this.subjectId = subjectId;
+    this.objectType = objectType;
+    this.objectId = objectId;
     this.correlationId = correlationId;
     this.occurredAt = occurredAt;
   }
@@ -86,6 +97,14 @@ class ProductActivityEventEntity {
 
   UUID getSubjectId() {
     return subjectId;
+  }
+
+  ActivitySubjectType getObjectType() {
+    return objectType;
+  }
+
+  UUID getObjectId() {
+    return objectId;
   }
 
   String getCorrelationId() {
