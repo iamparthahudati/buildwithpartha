@@ -38,6 +38,7 @@ import {
   SprintFormDialogDemo,
   SprintRetrospectiveDialogDemo,
   TimeBlockRowDemo,
+  TimeBlockFormDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -716,6 +717,21 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "TimeBlockRow in scheduled, active current, completed, conflict warning, and loading skeleton states.",
         render: () => <TimeBlockRowDemo />,
+      },
+    ],
+  },
+  {
+    id: "time-block-form",
+    name: "TimeBlockForm",
+    group: "Composed",
+    summary:
+      "Form dialog for creating and editing Time Blocks with title, category, linked task/project, date/time range, timezone, notes, DST validation, and conflict resolution override.",
+    states: [
+      {
+        id: "time-block-form-default",
+        name: "Default",
+        description: "Interactive specimens for Create and Edit TimeBlockForm dialogs.",
+        render: () => <TimeBlockFormDemo />,
       },
     ],
   },

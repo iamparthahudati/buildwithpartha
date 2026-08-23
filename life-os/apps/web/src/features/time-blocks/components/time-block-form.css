@@ -1,0 +1,30 @@
+/* TimeBlockForm (LOS-0904) */
+.time-block-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.time-block-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--lifeos-space-4);
+}
+
+@media (max-width: 640px) {
+  .time-block-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.time-block-form-conflict-list {
+  margin-top: var(--lifeos-space-2);
+  margin-bottom: var(--lifeos-space-2);
+  padding-left: var(--lifeos-space-4);
+}
+
+.time-block-form-overlap-toggle {
+  margin-top: var(--lifeos-space-3);
+  padding-top: var(--lifeos-space-2);
+  border-top: 1px solid var(--lifeos-color-border-subtle);
+}

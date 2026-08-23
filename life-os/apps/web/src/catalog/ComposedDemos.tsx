@@ -33,7 +33,7 @@ import {
   type TaskListItem,
   type TaskSummaryMetricsStatus,
 } from "@features/tasks";
-import { TimeBlockRow, type TimeBlock } from "@features/time-blocks";
+import { TimeBlockRow, TimeBlockForm, type TimeBlock } from "@features/time-blocks";
 import type { ActivityTypeFilter } from "@features/activity";
 import {
   buildCommonDateRangePresets,
@@ -1708,6 +1708,41 @@ export function TimeBlockRowDemo() {
         </div>
         <TimeBlockRow loading />
       </div>
+    </div>
+  );
+}
+
+export function TimeBlockFormDemo() {
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+
+  return (
+    <div className="specimen-stack" style={{ display: "flex", gap: "var(--lifeos-space-4)" }}>
+      <Button onClick={() => setOpenCreate(true)}>Open Create TimeBlockForm</Button>
+      <Button variant="secondary" onClick={() => setOpenEdit(true)}>
+        Open Edit TimeBlockForm
+      </Button>
+
+      <TimeBlockForm
+        open={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSubmit={(data) => {
+          alert(`Submitted time block: ${data.title}`);
+          setOpenCreate(false);
+        }}
+        mode="create"
+      />
+
+      <TimeBlockForm
+        open={openEdit}
+        onClose={() => setOpenEdit(false)}
+        onSubmit={(data) => {
+          alert(`Saved changes for: ${data.title}`);
+          setOpenEdit(false);
+        }}
+        mode="edit"
+        initialValues={MOCK_TIME_BLOCK_SCHEDULED}
+      />
     </div>
   );
 }
