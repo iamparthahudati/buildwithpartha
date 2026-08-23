@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from "react";
+import type { KeyboardEvent, Ref } from "react";
 
 import { InlineMessage } from "@components/feedback";
 import { Button, Textarea } from "@components/ui";
@@ -41,6 +41,7 @@ export interface CommentComposerProps {
   readonly error?: string;
   readonly placeholder?: string;
   readonly disabled?: boolean;
+  readonly textareaRef?: Ref<HTMLTextAreaElement>;
   readonly className?: string;
 }
 
@@ -55,6 +56,7 @@ export function CommentComposer({
   error,
   placeholder,
   disabled = false,
+  textareaRef,
   className,
 }: CommentComposerProps) {
   const canSubmit = !pending && !disabled && value.trim().length > 0;
@@ -75,6 +77,7 @@ export function CommentComposer({
     <div className={["lifeos-comment-composer", className].filter(Boolean).join(" ")}>
       <Textarea
         label={label}
+        ref={textareaRef}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={handleKeyDown}

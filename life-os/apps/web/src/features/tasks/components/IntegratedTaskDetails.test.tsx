@@ -14,6 +14,17 @@ const mocks = vi.hoisted(() => ({
   listLabels: vi.fn(),
   addSubtask: vi.fn(),
   updateTask: vi.fn(),
+  useComments: vi.fn(),
+  useCommentMutations: vi.fn(),
+  addComment: vi.fn(),
+  editComment: vi.fn(),
+  deleteComment: vi.fn(),
+  refetchComments: vi.fn(),
+}));
+
+vi.mock("@features/comments", () => ({
+  useComments: mocks.useComments,
+  useCommentMutations: mocks.useCommentMutations,
 }));
 
 vi.mock("@features/projects", () => ({
@@ -99,6 +110,8 @@ function renderIntegrated(props: Partial<ComponentProps<typeof IntegratedTaskDet
       backHref="/life-os/app/tasks?status=IN_PROGRESS&page=2"
       locale="en-US"
       timeZone="UTC"
+      authorId="user-1"
+      authorName="Test User"
       onNavigate={vi.fn()}
       {...props}
     />,
@@ -118,6 +131,23 @@ describe("IntegratedTaskDetails", () => {
     mocks.listLabels.mockResolvedValue([{ id: "label-1", name: "Learning" }]);
     mocks.addSubtask.mockResolvedValue({});
     mocks.updateTask.mockResolvedValue(DETAIL.task);
+    mocks.useComments.mockImplementation(
+      (_parentType, _parentId, _page, _pageSize, enabled: boolean) => ({
+        data: enabled ? { items: [], page: 1, pageSize: 20, total: 0, totalPages: 0 } : undefined,
+        isPending: enabled,
+        isError: false,
+        error: null,
+        refetch: mocks.refetchComments,
+      }),
+    );
+    mocks.useCommentMutations.mockReturnValue({
+      add: { mutateAsync: mocks.addComment, isPending: false, error: null },
+      edit: { mutateAsync: mocks.editComment, isPending: false, error: null },
+      remove: { mutateAsync: mocks.deleteComment, isPending: false, error: null },
+    });
+    mocks.addComment.mockResolvedValue({});
+    mocks.editComment.mockResolvedValue({});
+    mocks.deleteComment.mockResolvedValue(undefined);
   });
 
   it("renders the aggregate, exact return context, counts, and optional Files gate accessibly", async () => {
@@ -173,5 +203,77 @@ describe("IntegratedTaskDetails", () => {
 
     await user.click(screen.getByRole("button", { name: "Start focus" }));
     expect(onNavigate).toHaveBeenCalledWith("/life-os/app/focus?taskId=task-1");
+  });
+
+  it("renders paginated Task comments as text and sends the current edit version", async () => {
+    const unsafeBody = '<img src=x onerror="alert(1)">';
+    mocks.useComments.mockReturnValue({
+      data: {
+        items: [
+          {
+            id: "comment-1",
+            authorId: "user-1",
+            parentType: "TASK",
+            parentId: "task-1",
+            body: unsafeBody,
+            format: "PLAIN_TEXT",
+            createdAt: "2026-08-23T08:00:00Z",
+            updatedAt: "2026-08-23T08:00:00Z",
+            editedAt: null,
+            version: 5,
+            canEdit: true,
+            canDelete: true,
+          },
+        ],
+        page: 1,
+        pageSize: 20,
+        total: 21,
+        totalPages: 2,
+      },
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: mocks.refetchComments,
+    });
+    const { user, container } = renderIntegrated({ selectedTab: "comments" });
+
+    expect(await screen.findByText(unsafeBody)).toBeInTheDocument();
+    expect(container.querySelector("img")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("navigation", { name: "Task comments pagination" }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Edit comment by Test User" }));
+    const editor = screen.getByRole("textbox", { name: "Edit comment" });
+    await user.clear(editor);
+    await user.type(editor, "Revised decision");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(mocks.editComment).toHaveBeenCalledWith({
+      id: "comment-1",
+      body: "Revised decision",
+      version: 5,
+    });
+  });
+
+  it("shows an optimistic pending row while a new Task comment is unconfirmed", async () => {
+    let resolveAdd: (() => void) | undefined;
+    mocks.addComment.mockReturnValue(
+      new Promise((resolve) => {
+        resolveAdd = () => resolve({});
+      }),
+    );
+    const { user } = renderIntegrated({ selectedTab: "comments" });
+    await screen.findByRole("heading", { level: 2, name: "Comments" });
+
+    await user.type(screen.getByRole("textbox", { name: "Add a comment" }), "Pending decision");
+    await user.click(screen.getByRole("button", { name: "Add comment" }));
+
+    expect(await screen.findByRole("list", { name: "Task comments" })).toHaveTextContent(
+      "Pending decision",
+    );
+    expect(screen.getByText("(Posting…)")).toBeInTheDocument();
+    resolveAdd?.();
+    await waitFor(() => expect(screen.queryByText("(Posting…)")).not.toBeInTheDocument());
   });
 });

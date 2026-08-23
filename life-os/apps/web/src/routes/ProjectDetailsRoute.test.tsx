@@ -8,6 +8,20 @@ import * as projectsFeature from "@features/projects";
 import * as tasksFeature from "@features/tasks";
 import { AuthSessionContext, type AuthSessionValue } from "@state/authSession";
 
+const commentMocks = vi.hoisted(() => ({
+  useComments: vi.fn(),
+  useCommentMutations: vi.fn(),
+  add: vi.fn(),
+  edit: vi.fn(),
+  remove: vi.fn(),
+  refetch: vi.fn(),
+}));
+
+vi.mock("@features/comments", () => ({
+  useComments: commentMocks.useComments,
+  useCommentMutations: commentMocks.useCommentMutations,
+}));
+
 vi.mock("@features/projects", async () => {
   const actual = await vi.importActual<typeof projectsFeature>("@features/projects");
   return {
@@ -174,6 +188,21 @@ describe("ProjectDetailsRoute", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockProjectTasksQueries();
+    commentMocks.useComments.mockReturnValue({
+      data: { items: [], page: 1, pageSize: 20, total: 0, totalPages: 0 },
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: commentMocks.refetch,
+    });
+    commentMocks.useCommentMutations.mockReturnValue({
+      add: { mutateAsync: commentMocks.add, isPending: false, error: null },
+      edit: { mutateAsync: commentMocks.edit, isPending: false, error: null },
+      remove: { mutateAsync: commentMocks.remove, isPending: false, error: null },
+    });
+    commentMocks.add.mockResolvedValue({});
+    commentMocks.edit.mockResolvedValue({});
+    commentMocks.remove.mockResolvedValue(undefined);
 
     mockUseCreateMilestone.mockReturnValue({
       mutateAsync: vi.fn(),
@@ -291,11 +320,15 @@ describe("ProjectDetailsRoute", () => {
 
     rerender(
       <AuthSessionContext.Provider value={MOCK_AUTH_STATE}>
-        <MemoryRouter initialEntries={["/life-os/app/projects/proj-123"]}>
-          <Routes>
-            <Route path="/life-os/app/projects/:projectId" element={<ProjectDetailsRoute />} />
-          </Routes>
-        </MemoryRouter>
+        <QueryClientProvider
+          client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
+        >
+          <MemoryRouter initialEntries={["/life-os/app/projects/proj-123"]}>
+            <Routes>
+              <Route path="/life-os/app/projects/:projectId" element={<ProjectDetailsRoute />} />
+            </Routes>
+          </MemoryRouter>
+        </QueryClientProvider>
       </AuthSessionContext.Provider>,
     );
 
@@ -412,5 +445,67 @@ describe("ProjectDetailsRoute", () => {
     ]);
     expect(props.tasksTotalCount).toBe(1);
     expect(props.project.totalTasksCount).toBe(1);
+  });
+
+  it("maps the paginated Comment API and forwards versioned edit/delete writes", async () => {
+    commentMocks.useComments.mockReturnValue({
+      data: {
+        items: [
+          {
+            id: "comment-1",
+            authorId: "user-1",
+            parentType: "PROJECT",
+            parentId: "proj-123",
+            body: '<script>alert("unsafe")</script>',
+            format: "PLAIN_TEXT",
+            createdAt: "2026-08-23T08:00:00Z",
+            updatedAt: "2026-08-23T08:00:00Z",
+            editedAt: null,
+            version: 4,
+            canEdit: true,
+            canDelete: true,
+          },
+        ],
+        page: 2,
+        pageSize: 20,
+        total: 21,
+        totalPages: 2,
+      },
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: commentMocks.refetch,
+    });
+    mockUseProjectDetail.mockReturnValue({
+      data: { project: MOCK_PROJECT, milestones: [] },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof projectsFeature.useProjectDetail>);
+
+    renderRoute("/life-os/app/projects/proj-123?tab=notes");
+    const props = (globalThis as Record<string, any>).__lastDetailsProps;
+
+    expect(props.comments).toEqual([
+      expect.objectContaining({
+        id: "comment-1",
+        authorName: "Test User",
+        body: '<script>alert("unsafe")</script>',
+      }),
+    ]);
+    expect(props.commentsTotal).toBe(21);
+    expect(props.commentsPage).toBe(2);
+
+    props.onEditComment("comment-1", "Revised");
+    props.onDeleteComment("comment-1");
+    await vi.waitFor(() => {
+      expect(commentMocks.edit).toHaveBeenCalledWith({
+        id: "comment-1",
+        body: "Revised",
+        version: 4,
+      });
+      expect(commentMocks.remove).toHaveBeenCalledWith({ id: "comment-1", version: 4 });
+    });
   });
 });

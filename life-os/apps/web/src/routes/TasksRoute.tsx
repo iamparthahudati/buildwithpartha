@@ -407,6 +407,8 @@ export function TasksRoute() {
           backHref={listContextHref}
           locale={user.locale}
           timeZone={user.timeZone}
+          authorId={user.id}
+          authorName={user.displayName}
           onNavigate={(href) => navigate(href)}
           onDeleted={() => {
             updateUrlParams((params) => {

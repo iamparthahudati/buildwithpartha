@@ -224,4 +224,35 @@ describe("ProjectDetailsScreen", () => {
 
     expect(screen.getByRole("heading", { level: 2, name: "Recent Activity" })).toBeInTheDocument();
   });
+
+  it("renders optimistic Comment state and paginates the shared list", async () => {
+    const onCommentsPageChange = vi.fn();
+    const { user } = renderWithUser(
+      <ProjectDetailsScreen
+        project={MOCK_PROJECT}
+        selectedTab="notes"
+        comments={[
+          {
+            id: "pending-project-1",
+            authorName: "Partha",
+            body: "Confirm the final decision.",
+            createdAt: "2026-08-20T11:00:00Z",
+            pendingLabel: "Posting…",
+          },
+        ]}
+        commentsCount={22}
+        commentsPage={1}
+        commentsPageSize={20}
+        commentsTotal={21}
+        onCommentsPageChange={onCommentsPageChange}
+        addCommentPending
+        now={NOW}
+      />,
+    );
+
+    expect(screen.getByRole("status")).toHaveTextContent("Posting…");
+    expect(screen.getByRole("tab", { name: /Notes.*22/ })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Next page" }));
+    expect(onCommentsPageChange).toHaveBeenCalledWith(2);
+  });
 });

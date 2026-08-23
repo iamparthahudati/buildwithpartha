@@ -7,6 +7,7 @@ import {
   AttachmentUploader,
   CommentComposer,
   CommentList,
+  Pagination,
   Tabs,
   type ActivityEvent,
   type ActivityFeedStatus,
@@ -66,6 +67,10 @@ export interface TaskDetailsCommentsConfig {
   readonly onDelete?: (id: string) => void;
   readonly deletePending?: boolean;
   readonly deleteError?: string;
+  readonly page?: number;
+  readonly pageSize?: number;
+  readonly total?: number;
+  readonly onPageChange?: (page: number) => void;
 }
 
 export type TaskDetailsAttachmentsStatus =
@@ -197,8 +202,12 @@ export function TaskDetailsScreen({
   async function addComment() {
     const body = commentDraft.trim();
     if (!body || !comments.onAdd) return;
-    await comments.onAdd(body);
-    setCommentDraft("");
+    try {
+      await comments.onAdd(body);
+      setCommentDraft("");
+    } catch {
+      // The caller owns a safe, UI-authored error; preserve the draft for retry.
+    }
   }
 
   if (loading) {
@@ -297,6 +306,12 @@ export function TaskDetailsScreen({
   const dependencyCount =
     (dependencies.blockers?.length ?? 0) + (dependencies.dependents?.length ?? 0);
   const canWriteComments = !mutationsLocked && Boolean(comments.onAdd);
+  const canDeleteComments =
+    Boolean(comments.onDelete) && !offline && !taskIsDeleted && (!readOnly || taskIsArchived);
+  const commentReadOnlyReason =
+    taskIsArchived && canDeleteComments
+      ? "This Task is archived. Restore it to add or edit comments. You can still delete a comment permanently."
+      : resolvedReadOnlyReason;
   const attachmentsStatus = attachments.status ?? { type: "ready" };
   const subtaskReadOnlyReason = mutationsLocked
     ? resolvedReadOnlyReason
@@ -361,7 +376,7 @@ export function TaskDetailsScreen({
           className="lifeos-task-details-screen__tab-surface"
         >
           {mutationsLocked ? (
-            <InlineMessage tone="info">{resolvedReadOnlyReason}</InlineMessage>
+            <InlineMessage tone="info">{commentReadOnlyReason}</InlineMessage>
           ) : null}
           {canWriteComments ? (
             <CommentComposer
@@ -385,12 +400,21 @@ export function TaskDetailsScreen({
             {...(!mutationsLocked && comments.onEdit ? { onEdit: comments.onEdit } : {})}
             {...(comments.editPending !== undefined ? { editPending: comments.editPending } : {})}
             {...(comments.editError ? { editError: comments.editError } : {})}
-            {...(!mutationsLocked && comments.onDelete ? { onDelete: comments.onDelete } : {})}
+            {...(canDeleteComments && comments.onDelete ? { onDelete: comments.onDelete } : {})}
             {...(comments.deletePending !== undefined
               ? { deletePending: comments.deletePending }
               : {})}
             {...(comments.deleteError ? { deleteError: comments.deleteError } : {})}
           />
+          {comments.onPageChange && (comments.total ?? 0) > (comments.pageSize ?? 20) ? (
+            <Pagination
+              page={comments.page ?? 1}
+              pageSize={comments.pageSize ?? 20}
+              total={comments.total ?? 0}
+              onPageChange={comments.onPageChange}
+              label="Task comments pagination"
+            />
+          ) : null}
         </Surface>
       ),
     },

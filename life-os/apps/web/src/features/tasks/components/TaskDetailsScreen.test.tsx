@@ -297,6 +297,25 @@ describe("TaskDetailsScreen", () => {
         .some((message) => !message.closest("[hidden]")),
     ).toBe(true);
 
+    rerender(
+      <TaskDetailsScreen
+        task={{ ...TASK, archivedAt: "2026-08-22T10:00:00Z" }}
+        selectedTab="comments"
+        comments={{
+          comments: READY_CONFIG.comments.comments,
+          onAdd: vi.fn(),
+          onEdit: vi.fn(),
+          onDelete: vi.fn(),
+        }}
+      />,
+    );
+    expect(screen.queryByRole("textbox", { name: "Add a comment" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Edit comment/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Delete comment/ })).toBeInTheDocument();
+    expect(
+      screen.getByText(/Restore it to add or edit comments.*still delete a comment permanently/),
+    ).toBeInTheDocument();
+
     rerender(<TaskDetailsScreen task={TASK} selectedTab="comments" />);
     expect(screen.getByText("No comments yet")).toBeInTheDocument();
     expect(screen.queryByRole("tab", { name: "Attachments" })).not.toBeInTheDocument();

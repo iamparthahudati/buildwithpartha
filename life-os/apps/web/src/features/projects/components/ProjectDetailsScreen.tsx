@@ -19,11 +19,13 @@ import {
   AttachmentList,
   CommentComposer,
   CommentList,
+  Pagination,
   ActivityFeed,
   type TabItem,
   type DataTableColumn,
   type Attachment,
   type Comment,
+  type CommentListStatus,
   type ActivityEvent,
   type BreadcrumbItem,
   type MenuItemDescriptor,
@@ -54,6 +56,12 @@ export interface ProjectDetailsScreenProps {
   readonly priorityBreakdown?: readonly ChartDatum[];
   readonly attachments?: readonly Attachment[];
   readonly comments?: readonly Comment[];
+  readonly commentsStatus?: CommentListStatus;
+  readonly commentsCount?: number;
+  readonly commentsPage?: number;
+  readonly commentsPageSize?: number;
+  readonly commentsTotal?: number;
+  readonly onCommentsPageChange?: (page: number) => void;
   readonly selectedTab?: string;
   readonly onTabChange?: (tab: string) => void;
   readonly loading?: boolean;
@@ -90,7 +98,14 @@ export interface ProjectDetailsScreenProps {
   readonly onDeleteAttachment?: (attachmentId: string) => Promise<void> | void;
   readonly onDownloadAttachment?: (attachmentId: string) => void;
   readonly onAddComment?: (content: string) => Promise<void> | void;
+  readonly addCommentPending?: boolean;
+  readonly addCommentError?: string;
+  readonly onEditComment?: (commentId: string, body: string) => Promise<void> | void;
+  readonly editCommentPending?: boolean;
+  readonly editCommentError?: string;
   readonly onDeleteComment?: (commentId: string) => Promise<void> | void;
+  readonly deleteCommentPending?: boolean;
+  readonly deleteCommentError?: string;
   readonly className?: string;
 }
 
@@ -116,6 +131,12 @@ export function ProjectDetailsScreen({
   priorityBreakdown = [],
   attachments = [],
   comments = [],
+  commentsStatus = { type: "ready" },
+  commentsCount,
+  commentsPage = 1,
+  commentsPageSize = 20,
+  commentsTotal,
+  onCommentsPageChange,
   selectedTab: controlledTab,
   onTabChange,
   loading = false,
@@ -146,7 +167,14 @@ export function ProjectDetailsScreen({
   onDeleteAttachment,
   onDownloadAttachment,
   onAddComment,
+  addCommentPending = false,
+  addCommentError,
+  onEditComment,
+  editCommentPending = false,
+  editCommentError,
   onDeleteComment,
+  deleteCommentPending = false,
+  deleteCommentError,
   className,
 }: ProjectDetailsScreenProps) {
   const [internalTab, setInternalTab] = useState("overview");
@@ -164,8 +192,12 @@ export function ProjectDetailsScreen({
 
   const handleCommentSubmit = async () => {
     if (!newCommentText.trim() || !onAddComment) return;
-    await onAddComment(newCommentText.trim());
-    setNewCommentText("");
+    try {
+      await onAddComment(newCommentText.trim());
+      setNewCommentText("");
+    } catch {
+      // The route supplies safe error copy; keep the draft available for retry.
+    }
   };
 
   if (loading) {
@@ -404,7 +436,10 @@ export function ProjectDetailsScreen({
     {
       id: "notes",
       label: "Notes",
-      badge: comments.length > 0 ? <Badge tone="neutral">{comments.length}</Badge> : undefined,
+      badge:
+        (commentsCount ?? comments.length) > 0 ? (
+          <Badge tone="neutral">{commentsCount ?? comments.length}</Badge>
+        ) : undefined,
       panel: (
         <Surface
           as="section"
@@ -420,6 +455,8 @@ export function ProjectDetailsScreen({
               value={newCommentText}
               onChange={setNewCommentText}
               onSubmit={() => void handleCommentSubmit()}
+              pending={addCommentPending}
+              {...(addCommentError ? { error: addCommentError } : {})}
             />
           ) : null}
           <CommentList
@@ -429,8 +466,23 @@ export function ProjectDetailsScreen({
             emptyDescription="Record notes, design decisions, or team discussion for this project."
             locale={locale}
             timeZone={timeZone}
+            status={commentsStatus}
+            {...(!isArchived && onEditComment ? { onEdit: onEditComment } : {})}
+            editPending={editCommentPending}
+            {...(editCommentError ? { editError: editCommentError } : {})}
             {...(onDeleteComment ? { onDelete: onDeleteComment } : {})}
+            deletePending={deleteCommentPending}
+            {...(deleteCommentError ? { deleteError: deleteCommentError } : {})}
           />
+          {onCommentsPageChange && (commentsTotal ?? 0) > commentsPageSize ? (
+            <Pagination
+              page={commentsPage}
+              pageSize={commentsPageSize}
+              total={commentsTotal ?? 0}
+              onPageChange={onCommentsPageChange}
+              label="Project comments pagination"
+            />
+          ) : null}
         </Surface>
       ),
     },

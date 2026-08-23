@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0821 Task/Project comment API)
+Last updated: 2026-08-23 (LOS-0822 Task/Project Comment integration)
 
 ## Phase
 
@@ -31,6 +31,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0822 — Integrated the shared Comment composer/list with Task Details (direct and list-sheet) and Project Details through one bounded frontend Comments API/query boundary. Both surfaces support an announced optimistic posting row, safe draft-preserving failures, retryable pagination, versioned edit/delete, inert text-only rendering, current Account identity, archived lifecycle controls, and corrected inline-edit focus. Focused integration/sanitization coverage, the full frontend gate, and live 320px/tablet/desktop keyboard/console checks pass. See `docs/handoffs/LOS-0822.md`.
 - LOS-0821 — Implemented authenticated Task/Project Comment CRUD with owner-only nested access, bounded pagination, optimistic edit/delete versions, active-parent write policy, immediate body deletion, safe plain-text/Markdown storage, CSRF and validation enforcement, transactional body-free Activity Events, and live Task Detail Comment/Activity counts. Flyway V13, OpenAPI contract coverage, PostgreSQL ownership/cascade constraints, and cross-user/sanitization tests pass. See `docs/handoffs/LOS-0821.md`.
 - LOS-1404 — Added typed, content-free product Activity and restricted Security Audit event services. Product Activity reads are bounded and user/subject-scoped; Security Audit is write-only outside the audit domain, captures only allowlisted correlation IDs, and expires under a daily 365-day R6 cleanup. Flyway V12 adds indexed tables with enum, ownership, correlation, target-pair, and expiry constraints. See `docs/handoffs/LOS-1404.md`.
 - LOS-0820 — Integrated Task Details with the LOS-0819 aggregate as the sole client-side domain source for direct routes and list-context sheets. Versioned Task edits/lifecycle actions, full Subtask and dependency mutations, canonical Schedule/Focus handoffs, aggregate related-section counts, URL-backed tabs, deep-link refresh, exact list return, and deletion return are wired without duplicate domain state. Focused integration coverage, the full frontend gate, and live 320px/tablet/desktop keyboard and console verification pass. See `docs/handoffs/LOS-0820.md`.
@@ -272,7 +273,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0822 (`docs/backlog/EPIC-08-TASKS.md`) — integrate the shared Comment composer/list with Task and Project details.
+LOS-0823 (`docs/backlog/EPIC-08-TASKS.md`) — implement structured Task/Project Activity reads and relevant change emission with bounded pagination and deleted-object fallbacks.
 
 ## Known decisions requiring implementation-time values
 

@@ -56,6 +56,8 @@ export function TaskDetailsRoute() {
       backHref={backHref}
       locale={user.locale}
       timeZone={user.timeZone}
+      authorId={user.id}
+      authorName={user.displayName}
       onNavigate={(href) => navigate(href)}
       onDeleted={() => navigate(backHref)}
       onMutationSuccess={(message) => toast.push({ tone: "success", message })}

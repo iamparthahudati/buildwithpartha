@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { ConfirmDialog } from "@components/feedback";
+import { useCommentMutations, useComments } from "@features/comments";
 import { useProjects } from "@features/projects";
 import { ApiError } from "@lib/apiClient";
 import { todayLocalDate } from "@lib/localDateTime";
@@ -38,6 +39,8 @@ export interface IntegratedTaskDetailsProps {
   readonly backLabel?: string;
   readonly locale: string;
   readonly timeZone: string;
+  readonly authorId: string;
+  readonly authorName: string;
   readonly onNavigate: (href: string) => void;
   readonly onDeleted?: () => void;
   readonly onMutationSuccess?: (message: string) => void;
@@ -47,6 +50,21 @@ type DestructiveAction = "archive" | "delete" | null;
 
 const SAFE_MUTATION_ERROR =
   "We couldn't save this change. Confirmed Task details are still shown. Try again.";
+const COMMENT_PAGE_SIZE = 20;
+
+function commentMutationError(action: "add" | "edit" | "delete", error: unknown) {
+  if (!error) return undefined;
+  if (isApiStatus(error, 409)) {
+    return "This comment changed elsewhere. Load the latest comments and try again.";
+  }
+  if (action === "add") {
+    return "We couldn't add this comment. Your text is still here. Try again.";
+  }
+  if (action === "edit") {
+    return "We couldn't save this comment. Your changes are still here. Try again.";
+  }
+  return "We couldn't delete this comment. It remains available. Try again.";
+}
 
 function isApiStatus(error: unknown, status: number): boolean {
   return error instanceof ApiError && error.status === status;
@@ -84,6 +102,8 @@ export function IntegratedTaskDetails({
   backLabel = "Tasks",
   locale,
   timeZone,
+  authorId,
+  authorName,
   onNavigate,
   onDeleted,
   onMutationSuccess,
@@ -92,6 +112,14 @@ export function IntegratedTaskDetails({
   const [destructiveAction, setDestructiveAction] = useState<DestructiveAction>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [blockerQuery, setBlockerQuery] = useState("");
+  const [commentPagination, setCommentPagination] = useState({ parentId: taskId, page: 1 });
+  const [pendingComment, setPendingComment] = useState<{
+    readonly body: string;
+    readonly createdAt: string;
+  } | null>(null);
+
+  const commentPage = commentPagination.parentId === taskId ? commentPagination.page : 1;
+  const setCommentPage = (page: number) => setCommentPagination({ parentId: taskId, page });
 
   const projectsQuery = useProjects({ size: 100, archived: false }, Boolean(taskId));
   const projectById = useMemo(() => {
@@ -130,6 +158,14 @@ export function IntegratedTaskDetails({
   );
 
   const detailMutations = useTaskDetailMutations(taskId);
+  const commentsQuery = useComments(
+    "TASK",
+    taskId,
+    commentPage,
+    COMMENT_PAGE_SIZE,
+    Boolean(taskId) && selectedTab === "comments",
+  );
+  const commentMutations = useCommentMutations("TASK", taskId);
   const updateMutation = useUpdateTask();
   const completeMutation = useCompleteTask();
   const changeStatusMutation = useChangeTaskStatus();
@@ -156,6 +192,28 @@ export function IntegratedTaskDetails({
         labels: canonicalTask.labelIds.map((id) => ({ id, name: labelsById.get(id) ?? "Label" })),
       }
     : undefined;
+  const commentRecords = commentsQuery.data?.items ?? [];
+  const commentById = new Map(commentRecords.map((comment) => [comment.id, comment]));
+  const comments = commentRecords.map((comment) => ({
+    id: comment.id,
+    authorName: comment.authorId === authorId ? authorName : "You",
+    body: comment.body,
+    createdAt: comment.createdAt,
+    ...(comment.editedAt ? { editedAt: comment.editedAt } : {}),
+  }));
+  const visibleComments =
+    pendingComment && commentPage === 1
+      ? [
+          {
+            id: `pending-${taskId}`,
+            authorName,
+            body: pendingComment.body,
+            createdAt: pendingComment.createdAt,
+            pendingLabel: "Posting…",
+          },
+          ...comments,
+        ]
+      : comments;
 
   const blockerOptions = (candidateQuery.data?.items ?? []).map((task) => ({
     id: task.id,
@@ -195,6 +253,9 @@ export function IntegratedTaskDetails({
 
   const correlationId =
     detailError instanceof ApiError ? detailError.problem?.correlationId : undefined;
+  const addCommentError = commentMutationError("add", commentMutations.add.error);
+  const editCommentError = commentMutationError("edit", commentMutations.edit.error);
+  const deleteCommentError = commentMutationError("delete", commentMutations.remove.error);
   const screenProps: TaskDetailsScreenProps = {
     ...(headerTask ? { task: headerTask } : {}),
     loading: detailQuery.isPending,
@@ -298,8 +359,51 @@ export function IntegratedTaskDetails({
       onStartFocus: () => onNavigate(`/life-os/app/focus?taskId=${encodeURIComponent(taskId)}`),
     },
     comments: {
-      comments: [],
-      count: detail?.counts.commentCount ?? 0,
+      comments: visibleComments,
+      count:
+        (commentsQuery.data?.total ?? detail?.counts.commentCount ?? 0) + (pendingComment ? 1 : 0),
+      status: commentsQuery.isError
+        ? {
+            type: "error",
+            message: "Task comments couldn't load. Task details are still available.",
+            onRetry: () => void commentsQuery.refetch(),
+          }
+        : commentsQuery.isPending && pendingComment === null
+          ? { type: "loading" }
+          : { type: "ready" },
+      addPending: commentMutations.add.isPending,
+      ...(addCommentError ? { addError: addCommentError } : {}),
+      onAdd: async (body) => {
+        setCommentPage(1);
+        setPendingComment({ body, createdAt: new Date().toISOString() });
+        try {
+          await commentMutations.add.mutateAsync(body);
+        } finally {
+          setPendingComment(null);
+        }
+      },
+      onEdit: (id, body) => {
+        const current = commentById.get(id);
+        if (!current?.canEdit) return;
+        void commentMutations.edit
+          .mutateAsync({ id, body, version: current.version })
+          .catch(() => undefined);
+      },
+      editPending: commentMutations.edit.isPending,
+      ...(editCommentError ? { editError: editCommentError } : {}),
+      onDelete: (id) => {
+        const current = commentById.get(id);
+        if (!current?.canDelete) return;
+        void commentMutations.remove
+          .mutateAsync({ id, version: current.version })
+          .catch(() => undefined);
+      },
+      deletePending: commentMutations.remove.isPending,
+      ...(deleteCommentError ? { deleteError: deleteCommentError } : {}),
+      page: commentsQuery.data?.page ?? commentPage,
+      pageSize: commentsQuery.data?.pageSize ?? COMMENT_PAGE_SIZE,
+      total: commentsQuery.data?.total ?? 0,
+      onPageChange: setCommentPage,
     },
     attachments: {
       enabled: false,

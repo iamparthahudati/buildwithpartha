@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useCommentMutations, useComments } from "@features/comments";
 import {
   ProjectDetailsScreen,
   useProjectDetail,
@@ -20,14 +21,33 @@ import { useAuthSession } from "@state/authSession";
 import { mapTaskRecordToProjectOverviewTask } from "./projectTaskMapping";
 
 const PROJECT_TASKS_PAGE_SIZE = 100;
+const COMMENTS_PAGE_SIZE = 20;
+
+function safeCommentMutationError(action: "add" | "edit" | "delete", error: unknown) {
+  if (!error) return undefined;
+  if (action === "add") {
+    return "We couldn't add this comment. Your text is still here. Try again.";
+  }
+  if (action === "edit") {
+    return "We couldn't save this comment. Your changes are still here. Try again.";
+  }
+  return "We couldn't delete this comment. It remains available. Try again.";
+}
 
 export function ProjectDetailsRoute() {
   const { projectId = "" } = useParams<{ projectId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = useAuthSession();
+  const [commentPagination, setCommentPagination] = useState({ parentId: projectId, page: 1 });
+  const [pendingComment, setPendingComment] = useState<{
+    readonly body: string;
+    readonly createdAt: string;
+  } | null>(null);
 
   const currentTab = searchParams.get("tab") ?? "overview";
+  const commentsPage = commentPagination.parentId === projectId ? commentPagination.page : 1;
+  const setCommentsPage = (page: number) => setCommentPagination({ parentId: projectId, page });
 
   const handleTabChange = useCallback(
     (newTab: string) => {
@@ -50,6 +70,15 @@ export function ProjectDetailsRoute() {
   const { data, isLoading, isError, error, refetch } = useProjectDetail(projectId);
   const tasksEnabled = user !== null && projectId !== "";
   const timeZone = user?.timeZone ?? "UTC";
+  const locale = user?.locale ?? "en-US";
+  const commentsQuery = useComments(
+    "PROJECT",
+    projectId,
+    commentsPage,
+    COMMENTS_PAGE_SIZE,
+    user !== null && projectId !== "",
+  );
+  const commentMutations = useCommentMutations("PROJECT", projectId);
 
   const projectTasksQuery = useTasks(
     {
@@ -85,6 +114,28 @@ export function ProjectDetailsRoute() {
   const totalTasksCount = projectTasksQuery.data?.page.totalItems ?? 0;
   const completedTasksCount = completedProjectTasksQuery.data?.page.totalItems ?? 0;
   const project = data?.project;
+  const commentRecords = commentsQuery.data?.items ?? [];
+  const commentById = new Map(commentRecords.map((comment) => [comment.id, comment]));
+  const comments = commentRecords.map((comment) => ({
+    id: comment.id,
+    authorName: comment.authorId === user?.id ? (user?.displayName ?? "You") : "You",
+    body: comment.body,
+    createdAt: comment.createdAt,
+    ...(comment.editedAt ? { editedAt: comment.editedAt } : {}),
+  }));
+  const visibleComments =
+    pendingComment && commentsPage === 1
+      ? [
+          {
+            id: `pending-${projectId}`,
+            authorName: user?.displayName ?? "You",
+            body: pendingComment.body,
+            createdAt: pendingComment.createdAt,
+            pendingLabel: "Posting…",
+          },
+          ...comments,
+        ]
+      : comments;
 
   const projectWithTaskCounts = useMemo((): Project | undefined => {
     if (!project) {
@@ -206,6 +257,10 @@ export function ProjectDetailsRoute() {
     void completedProjectTasksQuery.refetch();
   }, [completedProjectTasksQuery, projectTasksQuery, refetch]);
 
+  const addCommentError = safeCommentMutationError("add", commentMutations.add.error);
+  const editCommentError = safeCommentMutationError("edit", commentMutations.edit.error);
+  const deleteCommentError = safeCommentMutationError("delete", commentMutations.remove.error);
+
   return (
     <ProjectDetailsScreen
       {...(projectWithTaskCounts ? { project: projectWithTaskCounts } : {})}
@@ -214,6 +269,54 @@ export function ProjectDetailsRoute() {
       tasksTotalCount={totalTasksCount}
       tasksLoading={projectTasksQuery.isPending}
       ownerName={user?.displayName ?? "You"}
+      locale={locale}
+      timeZone={timeZone}
+      comments={visibleComments}
+      commentsCount={(commentsQuery.data?.total ?? 0) + (pendingComment ? 1 : 0)}
+      commentsStatus={
+        commentsQuery.isError
+          ? {
+              type: "error",
+              message: "Project comments couldn't load. Project details are still available.",
+              onRetry: () => void commentsQuery.refetch(),
+            }
+          : commentsQuery.isPending && pendingComment === null
+            ? { type: "loading" }
+            : { type: "ready" }
+      }
+      commentsPage={commentsQuery.data?.page ?? commentsPage}
+      commentsPageSize={commentsQuery.data?.pageSize ?? COMMENTS_PAGE_SIZE}
+      commentsTotal={commentsQuery.data?.total ?? 0}
+      onCommentsPageChange={setCommentsPage}
+      addCommentPending={commentMutations.add.isPending}
+      {...(addCommentError ? { addCommentError } : {})}
+      onAddComment={async (body) => {
+        setCommentsPage(1);
+        setPendingComment({ body, createdAt: new Date().toISOString() });
+        try {
+          await commentMutations.add.mutateAsync(body);
+        } finally {
+          setPendingComment(null);
+        }
+      }}
+      editCommentPending={commentMutations.edit.isPending}
+      {...(editCommentError ? { editCommentError } : {})}
+      onEditComment={(id, body) => {
+        const current = commentById.get(id);
+        if (!current?.canEdit) return;
+        void commentMutations.edit
+          .mutateAsync({ id, body, version: current.version })
+          .catch(() => undefined);
+      }}
+      deleteCommentPending={commentMutations.remove.isPending}
+      {...(deleteCommentError ? { deleteCommentError } : {})}
+      onDeleteComment={(id) => {
+        const current = commentById.get(id);
+        if (!current?.canDelete) return;
+        void commentMutations.remove
+          .mutateAsync({ id, version: current.version })
+          .catch(() => undefined);
+      }}
       selectedTab={currentTab}
       onTabChange={handleTabChange}
       loading={isLoading}
