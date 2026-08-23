@@ -16,6 +16,7 @@ export const tasksQueryKeys = {
   all: TASKS_QUERY_KEY,
   lists: () => [...TASKS_QUERY_KEY, "list"] as const,
   list: (params: TaskQueryParams) => [...TASKS_QUERY_KEY, "list", params] as const,
+  detail: (id: string) => [...TASKS_QUERY_KEY, "detail", id] as const,
   labels: () => LABELS_QUERY_KEY,
 };
 

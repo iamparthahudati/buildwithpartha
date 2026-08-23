@@ -43,6 +43,10 @@ export {
 } from "./components/TaskDetailsScreen";
 export { TaskDetailsSheet, type TaskDetailsSheetProps } from "./components/TaskDetailsSheet";
 export {
+  IntegratedTaskDetails,
+  type IntegratedTaskDetailsProps,
+} from "./components/IntegratedTaskDetails";
+export {
   dependencyEditorErrorMessage,
   type DependencyEditorErrorReason,
 } from "./model/dependencyEditorErrors";
@@ -92,17 +96,34 @@ export {
 
 export {
   queryTasks,
+  getTaskDetail,
+  addSubtask,
+  updateSubtask,
+  toggleSubtask,
+  reorderSubtasks,
+  deleteSubtask,
+  addTaskDependency,
+  removeTaskDependency,
   mapTaskResponse,
+  mapTaskDetailResponse,
   mapTaskSummary,
   mapBulkOutcome,
   toBulkRequest,
   type TaskQueryParams,
   type TaskQueryResult,
   type TaskResponseDto,
+  type TaskDetail,
+  type TaskDetailResponseDto,
+  type TaskDetailCountsDto,
+  type SubtaskResponseDto,
+  type TaskDependenciesSummaryDto,
   type TaskSummaryCountsDto,
   type CreateTaskRequestDto,
   type UpdateTaskRequestDto,
 } from "./api/tasksApi";
+
+export { useTaskDetail } from "./hooks/useTaskDetail";
+export { useTaskDetailMutations } from "./hooks/useTaskDetailMutations";
 
 export {
   TASKS_QUERY_KEY,

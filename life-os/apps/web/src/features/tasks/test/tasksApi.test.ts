@@ -3,10 +3,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { apiRequest } from "@lib/apiClient";
 
 import {
+  addSubtask,
+  addTaskDependency,
+  deleteSubtask,
+  getTaskDetail,
   mapBulkOutcome,
+  mapTaskDetailResponse,
   mapTaskResponse,
   queryTasks,
+  removeTaskDependency,
+  reorderSubtasks,
   toBulkRequest,
+  toggleSubtask,
+  updateSubtask,
+  type TaskDetailResponseDto,
   type TaskQueryResponseDto,
   type TaskResponseDto,
 } from "../api/tasksApi";
@@ -36,6 +46,47 @@ const MOCK_DTO: TaskResponseDto = {
   updatedAt: "2026-08-21T08:00:00Z",
   labelIds: ["label-planning"],
   version: 3,
+};
+
+const DETAIL_DTO: TaskDetailResponseDto = {
+  task: {
+    ...MOCK_DTO,
+    spentMinutes: 35,
+    subtasks: [
+      {
+        id: "subtask-1",
+        taskId: "task-1",
+        title: "Review open Tasks",
+        completed: true,
+        position: 0,
+        createdAt: "2026-08-20T09:00:00Z",
+        updatedAt: "2026-08-21T09:00:00Z",
+        version: 2,
+      },
+    ],
+  },
+  dependencies: {
+    blockers: [
+      {
+        id: "task-blocker",
+        title: "Confirm review inputs",
+        status: "TO_DO",
+        priority: "P2",
+        dueAt: null,
+      },
+    ],
+    dependents: [],
+    isBlocked: true,
+    unresolvedBlockerCount: 1,
+  },
+  counts: {
+    linkedTimeBlockCount: 0,
+    focusSessionCount: 2,
+    commentCount: 3,
+    attachmentCount: 0,
+    activityEventCount: 4,
+  },
+  version: 7,
 };
 
 describe("tasksApi", () => {
@@ -106,6 +157,70 @@ describe("tasksApi", () => {
       blocked: 0,
       overdue: 1,
     });
+  });
+
+  it("maps the canonical detail aggregate without creating a second Task copy", async () => {
+    const mapped = mapTaskDetailResponse(
+      DETAIL_DTO,
+      new Map([
+        [
+          "project-life-os",
+          { id: "project-life-os", name: "LifeOS", href: "/life-os/app/projects/project-life-os" },
+        ],
+      ]),
+    );
+
+    expect(mapped.task).toEqual(
+      expect.objectContaining({
+        id: "task-1",
+        project: expect.objectContaining({ name: "LifeOS" }),
+        spentMinutes: 35,
+        commentCount: 3,
+        blockerCount: 1,
+        version: 7,
+      }),
+    );
+    expect(mapped.subtasks).toEqual([
+      expect.objectContaining({ id: "subtask-1", completed: true, version: 2 }),
+    ]);
+    expect(mapped.blockers[0]).toEqual(
+      expect.objectContaining({
+        id: "task-blocker",
+        href: "/life-os/app/tasks/task-blocker",
+      }),
+    );
+
+    mockApiRequest.mockResolvedValueOnce(DETAIL_DTO);
+    await expect(getTaskDetail("task-1")).resolves.toEqual(expect.objectContaining({ version: 7 }));
+    expect(mockApiRequest).toHaveBeenCalledWith("/tasks/task-1/detail", { method: "GET" });
+  });
+
+  it("uses the Task Subtask and dependency mutation contracts exactly", async () => {
+    mockApiRequest.mockResolvedValue(MOCK_DTO);
+
+    await addSubtask("task-1", "Draft decisions");
+    await updateSubtask("task-1", "subtask-1", { title: "Review decisions" });
+    await toggleSubtask("task-1", "subtask-1");
+    await reorderSubtasks("task-1", ["subtask-2", "subtask-1"]);
+    await deleteSubtask("task-1", "subtask-1");
+    await addTaskDependency("task-1", "task-blocker", "BLOCKER");
+    await removeTaskDependency("task-1", "task-blocker", "DEPENDENT");
+
+    expect(mockApiRequest.mock.calls).toEqual([
+      ["/tasks/task-1/subtasks", { method: "POST", body: { title: "Draft decisions" } }],
+      ["/tasks/task-1/subtasks/subtask-1", { method: "PUT", body: { title: "Review decisions" } }],
+      ["/tasks/task-1/subtasks/subtask-1/toggle", { method: "PATCH" }],
+      [
+        "/tasks/task-1/subtasks/reorder",
+        { method: "PUT", body: { subtaskIds: ["subtask-2", "subtask-1"] } },
+      ],
+      ["/tasks/task-1/subtasks/subtask-1", { method: "DELETE" }],
+      [
+        "/tasks/task-1/dependencies",
+        { method: "POST", body: { targetTaskId: "task-blocker", type: "BLOCKER" } },
+      ],
+      ["/tasks/task-1/dependencies/task-blocker?type=DEPENDENT", { method: "DELETE" }],
+    ]);
   });
 
   it("maps bulk requests and failed item titles", () => {

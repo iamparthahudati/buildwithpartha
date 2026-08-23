@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0819 Task detail aggregation API handoff)
+Last updated: 2026-08-23 (LOS-0820 integrated Task Details handoff)
 
 ## Phase
 
@@ -31,6 +31,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0820 — Integrated Task Details with the LOS-0819 aggregate as the sole client-side domain source for direct routes and list-context sheets. Versioned Task edits/lifecycle actions, full Subtask and dependency mutations, canonical Schedule/Focus handoffs, aggregate related-section counts, URL-backed tabs, deep-link refresh, exact list return, and deletion return are wired without duplicate domain state. Focused integration coverage, the full frontend gate, and live 320px/tablet/desktop keyboard and console verification pass. See `docs/handoffs/LOS-0820.md`.
 - LOS-0819 — Implemented authenticated `GET /tasks/{id}/detail` with canonical Task metadata and ordered Subtasks, bounded user-scoped blocker/dependent projections, stable related-section counts, and an explicit optimistic-concurrency version contract. Missing/deleted/cross-user Tasks share `404 RESOURCE_NOT_FOUND`; fixed-query, invalid cross-user edge, OpenAPI, and full backend gate coverage pass on JDK 21. See `docs/handoffs/LOS-0819.md`.
 - LOS-0818 — Composed responsive Task Details from the completed header, scheduling, subtask, dependency, comment, attachment, and activity contracts. Six controlled tabs, exact list-context return, a trailing desktop/full-screen mobile sheet, optional attachment gating, and complete loading/empty/partial/offline/lifecycle/error states have focused accessibility coverage; the full frontend gate and live 320px/tablet/desktop verification pass. See `docs/handoffs/LOS-0818.md`.
 - LOS-0817 — Built the responsive SchedulingPanel with confirmed Focus Session time, linked shared TimeBlockRows, Schedule and Task/Time Block Start focus actions, explicit overlap resolution, and shared active-session protection. Loading, empty, error/retry, permission, disabled, lifecycle, conflict, pending, and partial-failure states have focused accessibility coverage; the full frontend gate and live 320px/tablet/desktop verification pass. See `docs/handoffs/LOS-0817.md`.
@@ -269,7 +270,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0820 (`docs/backlog/EPIC-08-TASKS.md`) — integrate Task Details.
+LOS-0821 (`docs/backlog/EPIC-08-TASKS.md`) — implement task comments.
 
 ## Known decisions requiring implementation-time values
 

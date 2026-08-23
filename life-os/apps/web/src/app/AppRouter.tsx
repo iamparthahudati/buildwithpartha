@@ -19,6 +19,7 @@ import {
   SignupRoute,
   TodayRoute,
   TasksRoute,
+  TaskDetailsRoute,
   UnavailableRoute,
   VerifyEmailRoute,
 } from "@routes/index";
@@ -124,7 +125,7 @@ export function AppRoutes() {
           <Route index element={<Navigate to="today" replace />} />
           <Route path="today" element={<TodayRoute />} />
           <Route path="tasks" element={<TasksRoute />} />
-          <Route path="tasks/:taskId" element={<ComingSoonRoute />} />
+          <Route path="tasks/:taskId" element={<TaskDetailsRoute />} />
           <Route path="time-blocks" element={<ComingSoonRoute />} />
           <Route path="calendar" element={<ComingSoonRoute />} />
           <Route path="focus" element={<ComingSoonRoute />} />

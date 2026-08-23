@@ -54,6 +54,8 @@ export type TaskDetailsSchedulingConfig = Omit<
 
 export interface TaskDetailsCommentsConfig {
   readonly comments?: readonly Comment[];
+  /** Aggregate count remains accurate when the section collection is loaded independently. */
+  readonly count?: number;
   readonly status?: CommentListStatus;
   readonly addPending?: boolean;
   readonly addError?: string;
@@ -75,6 +77,8 @@ export interface TaskDetailsAttachmentsConfig {
   /** The optional Files gate. When false, the tab is absent rather than advertising an off feature. */
   readonly enabled: boolean;
   readonly attachments?: readonly Attachment[];
+  /** Aggregate count remains accurate when the optional collection is loaded independently. */
+  readonly count?: number;
   readonly status?: TaskDetailsAttachmentsStatus;
   readonly uploading?: boolean;
   readonly onUpload?: (files: readonly File[]) => void | Promise<void>;
@@ -88,6 +92,8 @@ export interface TaskDetailsAttachmentsConfig {
 
 export interface TaskDetailsActivityConfig {
   readonly events?: readonly ActivityEvent[];
+  /** Aggregate count remains accurate when the feed is loaded independently. */
+  readonly count?: number;
   readonly status?: ActivityFeedStatus;
   readonly page?: number;
   readonly pageSize?: number;
@@ -110,6 +116,9 @@ export interface TaskDetailsScreenProps {
   readonly selectedTab?: TaskDetailsTabId;
   readonly onTabChange?: (tab: TaskDetailsTabId) => void;
   readonly backgroundRefreshing?: boolean;
+  /** Safe, UI-owned failure for a lifecycle mutation that leaves confirmed details visible. */
+  readonly mutationError?: string | null;
+  readonly onDismissMutationError?: () => void;
   readonly offline?: boolean;
   readonly lastUpdatedLabel?: string;
   readonly readOnly?: boolean;
@@ -150,6 +159,8 @@ export function TaskDetailsScreen({
   selectedTab: controlledTab,
   onTabChange,
   backgroundRefreshing = false,
+  mutationError = null,
+  onDismissMutationError,
   offline = false,
   lastUpdatedLabel,
   readOnly = false,
@@ -341,7 +352,7 @@ export function TaskDetailsScreen({
     {
       id: "comments",
       label: "Comments",
-      badge: countBadge(commentsList.length, "comments"),
+      badge: countBadge(comments.count ?? commentsList.length, "comments"),
       panel: (
         <Surface
           as="section"
@@ -388,7 +399,7 @@ export function TaskDetailsScreen({
           {
             id: "attachments",
             label: "Attachments",
-            badge: countBadge(attachmentList.length, "attachments"),
+            badge: countBadge(attachments.count ?? attachmentList.length, "attachments"),
             panel: (
               <Surface
                 as="section"
@@ -452,7 +463,7 @@ export function TaskDetailsScreen({
     {
       id: "activity",
       label: "Activity",
-      badge: countBadge(activityEvents.length, "activity events"),
+      badge: countBadge(activity.count ?? activityEvents.length, "activity events"),
       panel: (
         <Surface
           as="section"
@@ -498,6 +509,16 @@ export function TaskDetailsScreen({
         <InlineMessage tone="info" announce="status">
           Updating Task details. Confirmed data remains visible.
         </InlineMessage>
+      ) : null}
+      {mutationError ? (
+        <Alert
+          tone="danger"
+          heading="Task couldn't be changed"
+          announce="alert"
+          {...(onDismissMutationError ? { onDismiss: onDismissMutationError } : {})}
+        >
+          {mutationError}
+        </Alert>
       ) : null}
 
       <TaskDetailsHeader

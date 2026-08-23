@@ -8,6 +8,7 @@ export { OnboardingRoute } from "./OnboardingRoute";
 export { SettingsRoute } from "./SettingsRoute";
 export { TodayRoute } from "./TodayRoute";
 export { TasksRoute } from "./TasksRoute";
+export { TaskDetailsRoute } from "./TaskDetailsRoute";
 export { ProjectsRoute } from "./ProjectsRoute";
 export { ProjectDetailsRoute } from "./ProjectDetailsRoute";
 export { ComingSoonRoute } from "./ComingSoonRoute";
