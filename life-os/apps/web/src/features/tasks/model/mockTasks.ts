@@ -10,6 +10,7 @@ export const MOCK_TASK_PROJECTS: readonly TaskProjectOption[] = [
   { id: "project-life-os", name: "LifeOS" },
   { id: "project-home", name: "Home admin" },
   { id: "project-learning", name: "Learning" },
+  { id: "project-vaxpaw", name: "VaxPaw: Pet Vaccine & Health Log" },
 ];
 
 export const MOCK_TASK_LABELS: readonly MockTaskLabelOption[] = [
