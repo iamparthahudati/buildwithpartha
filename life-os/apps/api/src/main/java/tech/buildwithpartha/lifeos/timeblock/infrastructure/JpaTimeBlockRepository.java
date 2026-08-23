@@ -64,6 +64,28 @@ class JpaTimeBlockRepository implements TimeBlockRepository {
   }
 
   @Override
+  public List<TimeBlock> findByUserIdAndProjectId(UUID userId, UUID projectId) {
+    return jpaRepository.findByUserIdAndProjectIdOrderByStartAtAsc(userId, projectId).stream()
+        .map(TimeBlockEntity::toDomain)
+        .toList();
+  }
+
+  @Override
+  public List<TimeBlock> findByUserIdAndTaskId(UUID userId, UUID taskId) {
+    return jpaRepository.findByUserIdAndTaskIdOrderByStartAtAsc(userId, taskId).stream()
+        .map(TimeBlockEntity::toDomain)
+        .toList();
+  }
+
+  @Override
+  public List<TimeBlock> findOverlappingByUserId(
+      UUID userId, Instant rangeStart, Instant rangeEnd, UUID excludeId) {
+    return jpaRepository.findOverlappingByUserId(userId, rangeStart, rangeEnd, excludeId).stream()
+        .map(TimeBlockEntity::toDomain)
+        .toList();
+  }
+
+  @Override
   public long countByTaskIdAndUserId(UUID taskId, UUID userId) {
     return jpaRepository.countByTaskIdAndUserId(taskId, userId);
   }

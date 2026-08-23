@@ -312,10 +312,7 @@ export function SubtaskChecklist({
     }
   }
 
-  function handleDrop(
-    event: React.DragEvent<HTMLLIElement>,
-    targetSubtask: SubtaskChecklistItem,
-  ) {
+  function handleDrop(event: React.DragEvent<HTMLLIElement>, targetSubtask: SubtaskChecklistItem) {
     event.preventDefault();
     setDragOverId(null);
     if (!draggedId || draggedId === targetSubtask.id || !onReorder) return;
