@@ -171,5 +171,6 @@ Last updated: 2026-08-23
 | LOS-1002 | Done          | `feature/LOS-1002-build-sprint-components`      | Built Sprint components (SprintCard, SprintProgressCapacity, SprintTaskCommitmentList, SprintScopeChangeHistory, SprintFormDialog, SprintRetrospectiveDialog, catalog specimens, and 100% axe accessibility tests). See `docs/handoffs/LOS-1002.md`. |
 | LOS-0901 | Done          | `feature/LOS-0901-model-time-blocks`            | Modeled TimeBlock domain aggregate, Flyway migration V15, H2 test schema, policy helpers, and JPA repository adapter. See `docs/handoffs/LOS-0901.md`. |
 | LOS-0902 | Done          | `feature/LOS-0902-implement-time-block-crud-conflict-api` | Implemented Time Block CRUD, day/week query, move, resize, complete, duplicate, overlap detection with explicit override, versioning, audit, and cross-user tests. See `docs/handoffs/LOS-0902.md`. |
+| LOS-0903 | Done          | `feature/LOS-0903-build-time-block-row`         | Built responsive, accessible TimeBlockRow component with category swatch/icon resolution, local wall-clock range/duration, status/conflict badges, action menu, catalog specimens, and axe tests. See `docs/handoffs/LOS-0903.md`. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
