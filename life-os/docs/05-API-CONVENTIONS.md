@@ -43,6 +43,12 @@ The request is rejected as a normal `400` Problem when the selection or action p
 
 Bulk actions are retry-safe: already-applied item states are no-ops and retain their version, while failed IDs can be resubmitted without duplicating successful mutations. Concurrent writes still use the Task entity version and surface `CONCURRENCY_CONFLICT` for the affected item rather than rolling back unrelated successes.
 
+### Task detail aggregate
+
+`GET /tasks/{id}/detail` bootstraps Task Details with the canonical Task metadata and ordered Subtasks, bounded blocker/dependent projections, related-section counts, and a top-level `version`. The top-level version is the same optimistic-concurrency value as `task.version` and must be sent in later Task mutations; clients must replace the aggregate after a successful mutation instead of merging a second copy of Task state.
+
+The response counts linked Time Blocks, Focus Sessions, Comments, Attachments, and Activity Events without embedding those independently paginated resources. Counts are zero while their canonical persistence capability is unavailable. Missing, deleted, and cross-user Task IDs are indistinguishable as `404 RESOURCE_NOT_FOUND`. Dependency projection queries remain fixed in number as edge counts grow, and every relationship projection is scoped to the authenticated user.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:
