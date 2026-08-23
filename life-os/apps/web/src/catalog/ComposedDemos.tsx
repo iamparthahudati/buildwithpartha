@@ -18,12 +18,14 @@ import {
 import {
   TASK_FILTER_PRESETS,
   TaskCard,
+  DependencyEditor,
   TaskDetailsHeader,
   TaskForm,
   TaskRow,
   SubtaskChecklist,
   TaskSummaryMetrics,
   type SubtaskChecklistItem,
+  type DependencyEditorTask,
   type TaskDetailsHeaderTask,
   type TaskFilterPresetId,
   type TaskListItem,
@@ -837,6 +839,139 @@ export function SubtaskChecklistDemo({
             .map((subtask, position) => ({ ...subtask, position })),
         )
       }
+    />
+  );
+}
+
+const MOCK_DEPENDENCY_TASK: DependencyEditorTask = {
+  id: "task-weekly-review",
+  title: "Prepare weekly review",
+  status: "BLOCKED",
+  priority: "P1",
+  href: "/life-os/app/tasks/task-weekly-review",
+};
+
+const MOCK_BLOCKERS: readonly DependencyEditorTask[] = [
+  {
+    id: "task-hosting-options",
+    title: "Compare hosting options",
+    status: "IN_PROGRESS",
+    priority: "P2",
+    href: "/life-os/app/tasks/task-hosting-options",
+  },
+  {
+    id: "task-organize-records",
+    title: "Organize tax documents",
+    status: "DONE",
+    priority: "P3",
+    href: "/life-os/app/tasks/task-organize-records",
+  },
+];
+
+const MOCK_DEPENDENTS: readonly DependencyEditorTask[] = [
+  {
+    id: "task-accessibility-course",
+    title: "Complete the accessibility course",
+    status: "TO_DO",
+    priority: "P2",
+    href: "/life-os/app/tasks/task-accessibility-course",
+  },
+];
+
+const MOCK_BLOCKER_OPTIONS: readonly DependencyEditorTask[] = [
+  MOCK_DEPENDENCY_TASK,
+  ...MOCK_BLOCKERS,
+  {
+    id: "task-home-records",
+    title: "Review home records",
+    status: "TO_DO",
+    priority: "P3",
+    href: "/life-os/app/tasks/task-home-records",
+  },
+  {
+    id: "task-learning-plan",
+    title: "Update learning plan",
+    status: "IN_PROGRESS",
+    priority: "P2",
+    href: "/life-os/app/tasks/task-learning-plan",
+  },
+];
+
+export function DependencyEditorDemo({
+  state = "ready",
+}: {
+  readonly state?: "ready" | "loading" | "empty" | "error" | "read-only" | "partial" | "cycle";
+}) {
+  const [blockers, setBlockers] = useState(MOCK_BLOCKERS);
+  const [dependents, setDependents] = useState(MOCK_DEPENDENTS);
+
+  if (state === "loading") {
+    return <DependencyEditor task={MOCK_DEPENDENCY_TASK} loading />;
+  }
+  if (state === "error") {
+    return (
+      <DependencyEditor
+        task={MOCK_DEPENDENCY_TASK}
+        error="Task details are still available."
+        onRetry={handleTaskDemoAction}
+      />
+    );
+  }
+
+  const displayedBlockers = state === "empty" ? [] : blockers;
+  const displayedDependents = state === "empty" ? [] : dependents;
+  const readOnly = state === "read-only";
+
+  return (
+    <DependencyEditor
+      task={MOCK_DEPENDENCY_TASK}
+      blockers={displayedBlockers}
+      dependents={displayedDependents}
+      blockerOptions={MOCK_BLOCKER_OPTIONS}
+      readOnly={readOnly}
+      {...(readOnly
+        ? {
+            readOnlyReason:
+              "You can view these dependencies, but you don't have permission to change them.",
+          }
+        : {})}
+      {...(state === "partial"
+        ? {
+            pendingRemovals: [{ taskId: "task-hosting-options", relationship: "BLOCKER" as const }],
+            operationErrors: [
+              {
+                operation: "remove" as const,
+                relationship: "BLOCKER" as const,
+                taskId: "task-organize-records",
+                reason: "conflict" as const,
+                onRetry: handleTaskDemoAction,
+              },
+            ],
+          }
+        : {})}
+      {...(state === "cycle"
+        ? {
+            operationErrors: [
+              {
+                operation: "add" as const,
+                relationship: "BLOCKER" as const,
+                taskId: "task-learning-plan",
+                reason: "cycle" as const,
+              },
+            ],
+          }
+        : {})}
+      onAddBlocker={(taskId) => {
+        const blocker = MOCK_BLOCKER_OPTIONS.find((candidate) => candidate.id === taskId);
+        if (blocker) setBlockers((current) => [...current, blocker]);
+      }}
+      onRemoveDependency={(taskId, relationship) => {
+        if (relationship === "BLOCKER") {
+          setBlockers((current) => current.filter((blocker) => blocker.id !== taskId));
+        } else {
+          setDependents((current) => current.filter((dependent) => dependent.id !== taskId));
+        }
+      }}
     />
   );
 }

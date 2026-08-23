@@ -21,6 +21,7 @@ import {
   TaskCardDemo,
   TaskDetailsHeaderDemo,
   SubtaskChecklistDemo,
+  DependencyEditorDemo,
   TaskFormDemo,
   TaskSummaryMetricsDemo,
   ProjectDetailsHeaderDemo,
@@ -358,6 +359,61 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Loading",
         description: "The checklist reserves its header, progress, and row layout while loading.",
         render: () => <SubtaskChecklistDemo state="loading" />,
+      },
+    ],
+  },
+  {
+    id: "dependency-editor",
+    name: "DependencyEditor",
+    group: "Composed",
+    summary:
+      "A directional Task dependency editor with blocker search and selection, blocker/dependent lists, direct completion navigation, cycle/self explanations, isolated mutation recovery, and a full-screen mobile add dialog.",
+    states: [
+      {
+        id: "dependency-editor-ready",
+        name: "Interactive dependencies",
+        description:
+          "Search for blockers, navigate to unresolved Tasks, and unlink either relationship direction.",
+        render: () => <DependencyEditorDemo />,
+      },
+      {
+        id: "dependency-editor-cycle",
+        name: "Cycle explanation",
+        description:
+          "Open Add blocker and select Update learning plan to see the dependency-loop explanation.",
+        render: () => <DependencyEditorDemo state="cycle" />,
+      },
+      {
+        id: "dependency-editor-pending-partial",
+        name: "Pending and partial failure",
+        description:
+          "One unlink is pending while a conflict stays isolated to a different relationship.",
+        render: () => <DependencyEditorDemo state="partial" />,
+      },
+      {
+        id: "dependency-editor-empty",
+        name: "First-use empty",
+        description: "Both relationship directions explain their independent empty state.",
+        render: () => <DependencyEditorDemo state="empty" />,
+      },
+      {
+        id: "dependency-editor-read-only",
+        name: "Permission read-only",
+        description: "Confirmed relationships stay visible while every mutation is unavailable.",
+        render: () => <DependencyEditorDemo state="read-only" />,
+      },
+      {
+        id: "dependency-editor-error",
+        name: "Load error",
+        description:
+          "A failed dependency region is isolated while the surrounding Task remains available.",
+        render: () => <DependencyEditorDemo state="error" />,
+      },
+      {
+        id: "dependency-editor-loading",
+        name: "Loading",
+        description: "The editor reserves its relationship headings and rows while loading.",
+        render: () => <DependencyEditorDemo state="loading" />,
       },
     ],
   },

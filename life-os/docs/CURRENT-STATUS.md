@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-23 (LOS-0815 Subtask checklist handoff)
+Last updated: 2026-08-23 (LOS-0816 DependencyEditor handoff)
 
 ## Phase
 
@@ -31,6 +31,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0816 — Built the responsive DependencyEditor with shared-Combobox blocker search/selection, independent blocker/dependent lists, unresolved/resolved state and completion navigation, self/cycle/conflict explanations, preserved failed selection, item-scoped pending/retry behavior, permission/loading/empty/error/disabled states, and a full-screen mobile dialog. Focused accessibility coverage, the full frontend gate, and live 320px/tablet/desktop verification pass. See `docs/handoffs/LOS-0816.md`.
 - LOS-0815 — Built the responsive SubtaskChecklist with ordered add/edit/toggle/delete actions, named button and Alt+Arrow keyboard reordering, exact completed/total progress, preserved drafts, isolated pending/partial failures, permission/loading/empty/error/destructive states, and an explicit guarantee that 100% checklist progress does not complete the parent Task. See `docs/handoffs/LOS-0815.md`.
 - LOS-0814 — Built the responsive TaskDetailsHeader with deep-link breadcrumbs, title and description, canonical lifecycle badges, Project/due/estimate/time-spent facts, progress, labels, and the shared lifecycle-valid action menu. Loading, archived, deleted, overdue, blocked, and optimistic-conflict states have focused accessibility coverage and live 320px/tablet/desktop verification. See `docs/handoffs/LOS-0814.md`.
 - LOS-0813 — Integrated the Tasks screen with list/summary query, CRUD/status/MIT/bulk mutations, URL state, safe optimistic updates, partial bulk failures, and preserved failed selection. See `docs/handoffs/LOS-0813.md`.
@@ -265,7 +266,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0816 (`docs/backlog/EPIC-08-TASKS.md`) — build DependencyEditor after LOS-0807 is confirmed Done.
+LOS-0817 (`docs/backlog/EPIC-08-TASKS.md`) — build the task scheduling and focus panel.
 
 ## Known decisions requiring implementation-time values
 

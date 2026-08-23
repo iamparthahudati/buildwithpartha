@@ -15,6 +15,18 @@ export {
   type SubtaskChecklistProps,
 } from "./components/SubtaskChecklist";
 export {
+  DependencyEditor,
+  type DependencyEditorOperation,
+  type DependencyEditorOperationError,
+  type DependencyEditorProps,
+  type DependencyEditorTask,
+  type DependencyRelationship,
+} from "./components/DependencyEditor";
+export {
+  dependencyEditorErrorMessage,
+  type DependencyEditorErrorReason,
+} from "./model/dependencyEditorErrors";
+export {
   TaskForm,
   type TaskFormData,
   type TaskFormLabelOption,
