@@ -11,6 +11,7 @@ export const MOCK_TASK_PROJECTS: readonly TaskProjectOption[] = [
   { id: "project-home", name: "Home admin" },
   { id: "project-learning", name: "Learning" },
   { id: "project-vaxpaw", name: "VaxPaw: Pet Vaccine & Health Log" },
+  { id: "project-cardwise", name: "CardWise" },
 ];
 
 export const MOCK_TASK_LABELS: readonly MockTaskLabelOption[] = [

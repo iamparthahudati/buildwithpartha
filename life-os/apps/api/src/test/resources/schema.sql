@@ -294,3 +294,22 @@ CREATE TABLE IF NOT EXISTS comments (
     edited_at  TIMESTAMP WITH TIME ZONE,
     version    BIGINT                   NOT NULL
 );
+
+-- Added by LOS-0901: Time blocks.
+CREATE TABLE IF NOT EXISTS time_blocks (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    user_id          UUID                     NOT NULL,
+    project_id       UUID,
+    task_id          UUID,
+    title            TEXT                     NOT NULL,
+    category         VARCHAR(64)              NOT NULL,
+    status           VARCHAR(32)              NOT NULL,
+    start_at         TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_at           TIMESTAMP WITH TIME ZONE NOT NULL,
+    source_time_zone TEXT                     NOT NULL,
+    notes            TEXT,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    version          BIGINT                   NOT NULL
+);
+
