@@ -19,4 +19,4 @@
 | LOS-0915 | Integrate focus mini-player and full mode | Restore active session after refresh/tab, calculate elapsed correctly after sleep/background, sync transitions, handle offline/server conflict and avoid duplicate completion. | LOS-0605, LOS-0913, LOS-0914 | M | Done |
 | LOS-0916 | Add focus preferences | API/settings for focus/break/long-break cycles, auto-start choices and sound/browser notification preferences with safe defaults. | LOS-0515, LOS-0913 | S | Done |
 | LOS-0917 | Implement time goal and planned-vs-actual | Daily focus target and aggregation with timezone/date handling, Today/time-block/report contracts and zero-data behavior. | LOS-0913 | S | Done |
-| LOS-0918 | Run scheduling/focus gate | Schedule task, detect/override conflict, focus through refresh, complete, calendar/Today/report updates; DST, two tabs, ownership, a11y/responsive tests pass. | LOS-0901–LOS-0917 | S | Backlog |
+| LOS-0918 | Run scheduling/focus gate | Schedule task, detect/override conflict, focus through refresh, complete, calendar/Today/report updates; DST, two tabs, ownership, a11y/responsive tests pass. | LOS-0901–LOS-0917 | S | Done |

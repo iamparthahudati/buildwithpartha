@@ -51,19 +51,29 @@ export interface TimeBlocksScreenProps {
   readonly initialViewMode?: TimeBlocksViewMode;
   readonly initialDate?: LocalDate;
   readonly initialSelectedBlockId?: string;
+  readonly initialCreateTaskId?: string;
   readonly tasks?: readonly TimeBlockTaskOption[];
   readonly projects?: readonly TimeBlockProjectOption[];
   readonly categories?: readonly TimeBlockCategoryOption[];
   readonly timeSummary?: DailyTimeSummaryDto;
   readonly timeSummaryLoading?: boolean;
   readonly timeSummaryError?: string | null;
+  readonly formPending?: boolean;
+  readonly formError?: string | null;
+  readonly formConflictDescriptions?: readonly string[];
   readonly onTimeSummaryRetry?: () => void;
   readonly onEditFocusTarget?: () => void;
+  readonly onResolveFormConflict?: () => void;
+  readonly onFormReset?: () => void;
   readonly onRetry?: () => void;
   readonly onDateChange?: (date: LocalDate) => void;
   readonly onViewModeChange?: (viewMode: TimeBlocksViewMode) => void;
-  readonly onCreateBlockSubmit?: (data: TimeBlockFormData) => Promise<void> | void;
-  readonly onEditBlockSubmit?: (data: TimeBlockFormData) => Promise<void> | void;
+  readonly onCreateBlockSubmit?: (
+    data: TimeBlockFormData,
+  ) => Promise<boolean | void> | boolean | void;
+  readonly onEditBlockSubmit?: (
+    data: TimeBlockFormData,
+  ) => Promise<boolean | void> | boolean | void;
   readonly onMoveBlock?: (
     blockId: string,
     newStart: LocalTime,
@@ -90,14 +100,20 @@ export function TimeBlocksScreen({
   initialViewMode = "day",
   initialDate,
   initialSelectedBlockId,
+  initialCreateTaskId,
   tasks = MOCK_TIME_BLOCK_TASKS,
   projects = MOCK_TIME_BLOCK_PROJECTS,
   categories = MOCK_TIME_BLOCK_CATEGORIES,
   timeSummary,
   timeSummaryLoading = false,
   timeSummaryError = null,
+  formPending = false,
+  formError = null,
+  formConflictDescriptions = [],
   onTimeSummaryRetry,
   onEditFocusTarget,
+  onResolveFormConflict,
+  onFormReset,
   onRetry,
   onDateChange,
   onViewModeChange,
@@ -182,6 +198,7 @@ export function TimeBlocksScreen({
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
   const [blockToDelete, setBlockToDelete] = useState<TimeBlock | null>(null);
   const [handledSelectedBlockId, setHandledSelectedBlockId] = useState<string | null>(null);
+  const [handledCreateTaskId, setHandledCreateTaskId] = useState<string | null>(null);
 
   const linkedSelectedBlock = initialSelectedBlockId
     ? activeBlocks.find((block) => block.id === initialSelectedBlockId)
@@ -193,6 +210,25 @@ export function TimeBlocksScreen({
     setFormOpen(true);
   } else if (!linkedSelectedBlock && handledSelectedBlockId !== null) {
     setHandledSelectedBlockId(null);
+  } else if (
+    initialCreateTaskId &&
+    tasks.some((task) => task.id === initialCreateTaskId) &&
+    handledCreateTaskId !== initialCreateTaskId
+  ) {
+    setHandledCreateTaskId(initialCreateTaskId);
+    setFormMode("create");
+    setFormInitialValues({
+      date: currentDate,
+      startTime: "09:00",
+      endTime: "10:00",
+      timeZone,
+      category: "Focus",
+      status: "SCHEDULED",
+      taskId: initialCreateTaskId,
+    });
+    setFormOpen(true);
+  } else if (!initialCreateTaskId && handledCreateTaskId !== null) {
+    setHandledCreateTaskId(null);
   }
 
   // Date Navigation handlers
@@ -222,6 +258,7 @@ export function TimeBlocksScreen({
 
   // Block CRUD handlers
   const handleOpenCreateForm = (startTime: LocalTime = "09:00", endTime: LocalTime = "10:00") => {
+    onFormReset?.();
     setFormMode("create");
     setFormInitialValues({
       date: currentDate,
@@ -235,6 +272,7 @@ export function TimeBlocksScreen({
   };
 
   const handleOpenEditForm = (block: TimeBlock) => {
+    onFormReset?.();
     setFormMode("edit");
     setFormInitialValues(block);
     setFormOpen(true);
@@ -243,7 +281,8 @@ export function TimeBlocksScreen({
   const handleFormSubmit = async (formData: TimeBlockFormData) => {
     if (formMode === "create") {
       if (onCreateBlockSubmit) {
-        await onCreateBlockSubmit(formData);
+        const completed = await onCreateBlockSubmit(formData);
+        if (completed === false) return;
       } else {
         const newBlock: TimeBlock = {
           id: `tb-created-${Date.now()}`,
@@ -264,7 +303,8 @@ export function TimeBlocksScreen({
       }
     } else {
       if (onEditBlockSubmit) {
-        await onEditBlockSubmit(formData);
+        const completed = await onEditBlockSubmit(formData);
+        if (completed === false) return;
       } else {
         setInternalBlocks((prev) =>
           prev.map((b) =>
@@ -672,10 +712,18 @@ export function TimeBlocksScreen({
       {/* TimeBlockForm Dialog (Create / Edit) */}
       <TimeBlockForm
         open={formOpen}
-        onClose={() => setFormOpen(false)}
+        onClose={() => {
+          setFormOpen(false);
+          onFormReset?.();
+        }}
         onSubmit={handleFormSubmit}
         initialValues={formInitialValues}
         mode={formMode}
+        isPending={formPending}
+        {...(formError ? { error: formError } : {})}
+        hasConflict={formConflictDescriptions.length > 0}
+        conflictDescriptions={formConflictDescriptions}
+        {...(onResolveFormConflict ? { onResolveConflict: onResolveFormConflict } : {})}
         tasks={tasks}
         projects={projects}
         categories={categories}
