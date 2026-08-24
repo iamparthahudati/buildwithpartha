@@ -9,16 +9,17 @@ import { resetApiClientConfiguration } from "@lib/apiClient";
 
 import { FocusMiniPlayer } from "./FocusMiniPlayer";
 
-const LOCAL_STORAGE_KEY = "lifeos-active-focus-session";
-const BASE_NOW = 1774180800000; // Fixed timestamp: 2026-03-20T12:00:00.000Z
+const BASE_NOW = Date.parse("2026-03-20T12:00:00.000Z");
 
-function jsonResponse(status: number, body: unknown): Response {
-  const responseBody = status === 204 || body === undefined ? null : JSON.stringify(body);
-  const init: ResponseInit = { status };
-  if (status !== 204) {
-    init.headers = { "Content-Type": "application/json" };
-  }
-  return new Response(responseBody, init);
+function jsonResponse(status: number, body?: unknown): Response {
+  return new Response(status === 204 ? null : JSON.stringify(body), {
+    status,
+    ...(status === 204 ? {} : { headers: { "Content-Type": "application/json" } }),
+  });
+}
+
+function requestUrl(input: string | URL | Request): string {
+  return typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
 }
 
 const PREFS_BODY = {
@@ -38,46 +39,61 @@ const PREFS_BODY = {
   },
 };
 
-function createTestQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-      },
-    },
-  });
+function session(overrides: Partial<Record<string, unknown>> = {}): Record<string, unknown> {
+  const now = new Date(BASE_NOW).toISOString();
+  return {
+    id: "session-123",
+    taskId: null,
+    timeBlockId: null,
+    status: "RUNNING",
+    phase: "FOCUS",
+    plannedFocusDurationSeconds: 1500,
+    plannedBreakDurationSeconds: 300,
+    actualFocusDurationSeconds: 0,
+    actualBreakDurationSeconds: 0,
+    startedAt: now,
+    phaseStartedAt: now,
+    pausedAt: null,
+    endedAt: null,
+    createdAt: now,
+    updatedAt: now,
+    serverNow: now,
+    version: 1,
+    interruptions: [],
+    ...overrides,
+  };
 }
 
-function renderPlayer(ui: React.ReactElement) {
-  const queryClient = createTestQueryClient();
-  return {
-    ...renderWithUser(
-      <QueryClientProvider client={queryClient}>
-        <AuthSessionProvider restoreSession={false}>{ui}</AuthSessionProvider>
-      </QueryClientProvider>,
-    ),
-    queryClient,
-  };
+function renderPlayer() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+  });
+  return renderWithUser(
+    <QueryClientProvider client={queryClient}>
+      <AuthSessionProvider restoreSession={false}>
+        <FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />
+      </AuthSessionProvider>
+    </QueryClientProvider>,
+  );
+}
+
+function installFetch(active: Record<string, unknown> | null = null) {
+  vi.mocked(fetch).mockImplementation((url) => {
+    const path = requestUrl(url);
+    if (path.endsWith("/user/preferences")) return Promise.resolve(jsonResponse(200, PREFS_BODY));
+    if (path.endsWith("/focus-sessions/active")) {
+      return Promise.resolve(active ? jsonResponse(200, active) : jsonResponse(204));
+    }
+    return Promise.resolve(jsonResponse(404, {}));
+  });
 }
 
 describe("FocusMiniPlayer", () => {
   beforeEach(() => {
     vi.stubGlobal("fetch", vi.fn());
-    localStorage.clear();
     vi.setSystemTime(BASE_NOW);
-
-    // Default mock for preferences
-    vi.mocked(fetch).mockImplementation((url) => {
-      const path = typeof url === "string" ? url : (url as Request).url;
-      if (path.endsWith("/user/preferences")) {
-        return Promise.resolve(jsonResponse(200, PREFS_BODY));
-      }
-      if (path.endsWith("/focus-sessions/active")) {
-        return Promise.resolve(jsonResponse(204, undefined));
-      }
-      return Promise.resolve(jsonResponse(404, undefined));
-    });
+    localStorage.clear();
+    installFetch();
   });
 
   afterEach(() => {
@@ -86,298 +102,128 @@ describe("FocusMiniPlayer", () => {
     vi.useRealTimers();
   });
 
-  it("renders in idle state with a clock trigger button", async () => {
-    renderPlayer(<FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />);
-
-    const startButton = await screen.findByRole("button", { name: "Start focus" });
-    expect(startButton).toBeInTheDocument();
-    expect(screen.queryByText(/remaining/i)).not.toBeInTheDocument();
-  });
-
-  it("opens start form and allows typing or choosing preset to start", async () => {
-    const { user, container } = renderPlayer(
-      <FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />,
-    );
-
-    const trigger = await screen.findByRole("button", { name: "Start focus" });
-    await user.click(trigger);
-
-    const desktopContainer = container.querySelector(
-      ".lifeos-focus-mini-player__desktop-only",
-    ) as HTMLElement;
-    expect(within(desktopContainer!).getByText("Start Focus Session")).toBeInTheDocument();
-    const input = within(desktopContainer!).getByLabelText("Duration in minutes");
-    expect(input).toHaveValue(25);
-
-    // Mock start endpoint
+  it("starts with the LOS-0913 body and an idempotency key", async () => {
     vi.mocked(fetch).mockImplementation((url, init) => {
-      const path = typeof url === "string" ? url : (url as Request).url;
+      const path = requestUrl(url);
+      if (path.endsWith("/user/preferences")) return Promise.resolve(jsonResponse(200, PREFS_BODY));
+      if (path.endsWith("/focus-sessions/active")) return Promise.resolve(jsonResponse(204));
       if (path.endsWith("/focus-sessions") && init?.method === "POST") {
-        return Promise.resolve(
-          jsonResponse(200, {
-            id: "session-123",
-            taskId: null,
-            timeBlockId: null,
-            totalSeconds: 1500,
-            remainingSeconds: 1500,
-            status: "running",
-            phase: "focus",
-            startedAt: new Date(BASE_NOW).toISOString(),
-            pausedAt: null,
-            lastStateUpdatedAt: new Date(BASE_NOW).toISOString(),
-          }),
-        );
+        const headers = new Headers(init.headers);
+        expect(headers.get("Idempotency-Key")).toMatch(/^[A-Za-z0-9._-]{8,64}$/);
+        expect(JSON.parse(String(init.body))).toEqual({
+          plannedFocusDurationSeconds: 1500,
+          plannedBreakDurationSeconds: 300,
+        });
+        return Promise.resolve(jsonResponse(201, session()));
       }
-      if (path.endsWith("/user/preferences")) {
-        return Promise.resolve(jsonResponse(200, PREFS_BODY));
-      }
-      return Promise.resolve(jsonResponse(404, undefined));
+      return Promise.resolve(jsonResponse(404, {}));
     });
 
-    const startButton = within(desktopContainer!).getByRole("button", { name: "Start" });
-    await user.click(startButton);
-
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Focus session:/ })).toBeInTheDocument();
-    });
+    const { user, container } = renderPlayer();
+    await user.click(await screen.findByRole("button", { name: "Start focus" }));
+    const desktop = container.querySelector<HTMLElement>(
+      ".lifeos-focus-mini-player__desktop-only",
+    )!;
+    await user.click(within(desktop).getByRole("button", { name: "Start" }));
+    await screen.findByRole("button", { name: /Focus session: 25:00 remaining/ });
   });
 
-  it("restores active session from server and updates monotonic timer", async () => {
-    const lastUpdate = new Date(BASE_NOW - 30 * 1000).toISOString(); // 30s ago
-    vi.mocked(fetch).mockImplementation((url) => {
-      const path = typeof url === "string" ? url : (url as Request).url;
-      if (path.endsWith("/user/preferences")) {
-        return Promise.resolve(jsonResponse(200, PREFS_BODY));
-      }
-      if (path.endsWith("/focus-sessions/active")) {
-        return Promise.resolve(
-          jsonResponse(200, {
-            id: "session-123",
-            taskId: null,
-            timeBlockId: null,
-            totalSeconds: 1500,
-            remainingSeconds: 1500,
-            status: "running",
-            phase: "focus",
-            startedAt: lastUpdate,
-            pausedAt: null,
-            lastStateUpdatedAt: lastUpdate,
-          }),
-        );
-      }
-      return Promise.resolve(jsonResponse(404, undefined));
-    });
-
-    renderPlayer(<FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />);
-
-    // Since 30 seconds have elapsed, remaining time should be 1470s (24:30)
+  it("restores server state and derives elapsed time after background sleep", async () => {
+    installFetch(session({ actualFocusDurationSeconds: 30 }));
+    renderPlayer();
     await screen.findByRole("button", { name: /Focus session: 24:30 remaining/ });
 
-    // Advance the mock system clock by 5 seconds
-    vi.setSystemTime(BASE_NOW + 5000);
-
-    // Wait for the real-time interval tick to update the DOM
+    vi.setSystemTime(BASE_NOW + 5_000);
     await screen.findByRole("button", { name: /Focus session: 24:25 remaining/ });
   });
 
-  it("pauses and resumes session correctly via actions inside popover", async () => {
-    const sessionTime = new Date(BASE_NOW).toISOString();
+  it("sends versioned pause and resume transitions for the canonical session id", async () => {
+    installFetch(session());
     vi.mocked(fetch).mockImplementation((url, init) => {
-      const path = typeof url === "string" ? url : (url as Request).url;
-      if (path.endsWith("/user/preferences")) {
-        return Promise.resolve(jsonResponse(200, PREFS_BODY));
-      }
-      if (path.endsWith("/focus-sessions/active")) {
+      const path = requestUrl(url);
+      if (path.endsWith("/user/preferences")) return Promise.resolve(jsonResponse(200, PREFS_BODY));
+      if (path.endsWith("/focus-sessions/active"))
+        return Promise.resolve(jsonResponse(200, session()));
+      if (path.endsWith("/focus-sessions/session-123/pause")) {
+        expect(JSON.parse(String(init?.body))).toEqual({ version: 1 });
         return Promise.resolve(
-          jsonResponse(200, {
-            id: "session-123",
-            taskId: null,
-            timeBlockId: null,
-            totalSeconds: 1500,
-            remainingSeconds: 1500,
-            status: "running",
-            phase: "focus",
-            startedAt: sessionTime,
-            pausedAt: null,
-            lastStateUpdatedAt: sessionTime,
-          }),
+          jsonResponse(
+            200,
+            session({ status: "PAUSED", pausedAt: new Date(BASE_NOW).toISOString(), version: 2 }),
+          ),
         );
       }
-      if (path.endsWith("/focus-sessions/active/pause") && init?.method === "POST") {
-        return Promise.resolve(
-          jsonResponse(200, {
-            id: "session-123",
-            taskId: null,
-            timeBlockId: null,
-            totalSeconds: 1500,
-            remainingSeconds: 1495,
-            status: "paused",
-            phase: "focus",
-            startedAt: sessionTime,
-            pausedAt: new Date(BASE_NOW).toISOString(),
-            lastStateUpdatedAt: new Date(BASE_NOW).toISOString(),
-          }),
-        );
+      if (path.endsWith("/focus-sessions/session-123/resume")) {
+        expect(JSON.parse(String(init?.body))).toEqual({ version: 2 });
+        return Promise.resolve(jsonResponse(200, session({ version: 3 })));
       }
-      if (path.endsWith("/focus-sessions/active/resume") && init?.method === "POST") {
-        return Promise.resolve(
-          jsonResponse(200, {
-            id: "session-123",
-            taskId: null,
-            timeBlockId: null,
-            totalSeconds: 1500,
-            remainingSeconds: 1495,
-            status: "running",
-            phase: "focus",
-            startedAt: sessionTime,
-            pausedAt: null,
-            lastStateUpdatedAt: new Date(BASE_NOW).toISOString(),
-          }),
-        );
-      }
-      return Promise.resolve(jsonResponse(404, undefined));
+      return Promise.resolve(jsonResponse(404, {}));
     });
 
-    const { user, container } = renderPlayer(
-      <FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />,
-    );
-
+    const { user, container } = renderPlayer();
     const trigger = await screen.findByRole("button", { name: /Focus session:/ });
     await user.click(trigger);
-
-    const desktopContainer = container.querySelector(
+    const desktop = container.querySelector<HTMLElement>(
       ".lifeos-focus-mini-player__desktop-only",
-    ) as HTMLElement;
-
-    // Click pause
-    const pauseButton = within(desktopContainer!).getByRole("button", { name: "Pause" });
-    await user.click(pauseButton);
-
-    await within(desktopContainer!).findByText("Paused");
-
-    // Click resume
-    const resumeButton = within(desktopContainer!).getByRole("button", { name: "Resume" });
-    await user.click(resumeButton);
-
-    await within(desktopContainer!).findByText("Running");
+    )!;
+    await user.click(within(desktop).getByRole("button", { name: "Pause" }));
+    await user.click(await within(desktop).findByRole("button", { name: "Resume" }));
+    await within(desktop).findByRole("button", { name: "Pause" });
   });
 
-  it("sends complete request when timer reaches 0", async () => {
-    const sessionTime = new Date(BASE_NOW).toISOString();
-    let completeCalled = false;
-
-    vi.mocked(fetch).mockImplementation((url, init) => {
-      const path = typeof url === "string" ? url : (url as Request).url;
-      if (path.endsWith("/user/preferences")) {
-        return Promise.resolve(jsonResponse(200, PREFS_BODY));
-      }
-      if (path.endsWith("/focus-sessions/active")) {
-        return Promise.resolve(
-          jsonResponse(200, {
-            id: "session-123",
-            taskId: null,
-            timeBlockId: null,
-            totalSeconds: 10,
-            remainingSeconds: 10,
-            status: "running",
-            phase: "focus",
-            startedAt: sessionTime,
-            pausedAt: null,
-            lastStateUpdatedAt: sessionTime,
-          }),
-        );
-      }
-      if (path.endsWith("/focus-sessions/active/complete") && init?.method === "POST") {
-        completeCalled = true;
-        return Promise.resolve(
-          jsonResponse(200, {
-            id: "session-123",
-            taskId: null,
-            timeBlockId: null,
-            totalSeconds: 10,
-            remainingSeconds: 0,
-            status: "completed",
-            phase: "focus",
-            startedAt: sessionTime,
-            pausedAt: null,
-            lastStateUpdatedAt: new Date(BASE_NOW + 10000).toISOString(),
-          }),
-        );
-      }
-      return Promise.resolve(jsonResponse(404, undefined));
-    });
-
-    renderPlayer(<FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />);
-
-    await screen.findByRole("button", { name: /Focus session: 0:10 remaining/ });
-
-    // Advance the mock system clock to expiration
-    vi.setSystemTime(BASE_NOW + 11000);
-
-    await waitFor(() => {
-      expect(completeCalled).toBe(true);
-    });
-  });
-
-  it("uses localStorage fallback when server is unavailable", async () => {
-    // Fail active query with 404
+  it("moves an expired focus phase to break only once", async () => {
+    let startBreakCalls = 0;
     vi.mocked(fetch).mockImplementation((url) => {
-      const path = typeof url === "string" ? url : (url as Request).url;
-      if (path.endsWith("/user/preferences")) {
-        return Promise.resolve(jsonResponse(200, PREFS_BODY));
+      const path = requestUrl(url);
+      if (path.endsWith("/user/preferences")) return Promise.resolve(jsonResponse(200, PREFS_BODY));
+      if (path.endsWith("/focus-sessions/active")) {
+        return Promise.resolve(jsonResponse(200, session({ plannedFocusDurationSeconds: 1 })));
       }
-      return Promise.resolve(jsonResponse(404, undefined));
+      if (path.endsWith("/focus-sessions/session-123/start-break")) {
+        startBreakCalls += 1;
+        return Promise.resolve(
+          jsonResponse(200, session({ phase: "BREAK", actualFocusDurationSeconds: 1, version: 2 })),
+        );
+      }
+      return Promise.resolve(jsonResponse(404, {}));
     });
 
-    const { user, container } = renderPlayer(
-      <FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />,
-    );
-
-    const trigger = await screen.findByRole("button", { name: "Start focus" });
-    await user.click(trigger);
-
-    const desktopContainer = container.querySelector(
-      ".lifeos-focus-mini-player__desktop-only",
-    ) as HTMLElement;
-    const startButton = within(desktopContainer!).getByRole("button", { name: "Start" });
-    await user.click(startButton);
-
-    // Should create a session in localStorage and transition UI
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /Focus session:/ })).toBeInTheDocument();
-    });
-
-    const localSession = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || "{}");
-    expect(localSession.status).toBe("running");
-    expect(localSession.totalSeconds).toBe(1500);
+    renderPlayer();
+    await screen.findByRole("button", { name: /Focus session: 0:01 remaining/ });
+    vi.setSystemTime(BASE_NOW + 2_000);
+    await waitFor(() => expect(startBreakCalls).toBe(1));
+    await screen.findByRole("button", { name: /Focus session: 5:00 remaining/ });
+    expect(startBreakCalls).toBe(1);
   });
 
-  it("closes popover on escape key or outside click", async () => {
-    const { user, container } = renderPlayer(
-      <FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />,
-    );
+  it("does not persist or fabricate a Focus Session when a write is unavailable", async () => {
+    vi.mocked(fetch).mockImplementation((url) => {
+      const path = requestUrl(url);
+      if (path.endsWith("/user/preferences")) return Promise.resolve(jsonResponse(200, PREFS_BODY));
+      if (path.endsWith("/focus-sessions/active")) return Promise.resolve(jsonResponse(204));
+      return Promise.reject(new TypeError("offline"));
+    });
 
-    const trigger = await screen.findByRole("button", { name: "Start focus" });
-    await user.click(trigger);
-
-    const desktopContainer = container.querySelector(
+    const { user, container } = renderPlayer();
+    await user.click(await screen.findByRole("button", { name: "Start focus" }));
+    const desktop = container.querySelector<HTMLElement>(
       ".lifeos-focus-mini-player__desktop-only",
-    ) as HTMLElement;
-    expect(within(desktopContainer!).getByText("Start Focus Session")).toBeInTheDocument();
+    )!;
+    await user.click(within(desktop).getByRole("button", { name: "Start" }));
+    await screen.findByText(/no change was confirmed/i);
+    expect(localStorage.length).toBe(0);
+    expect(screen.getByRole("button", { name: "Start focus" })).toBeInTheDocument();
+  });
 
-    // Escape closes popover
+  it("closes with Escape and passes an accessibility sweep", async () => {
+    const { user, container } = renderPlayer();
+    await expectNoAccessibilityViolations(container);
+    await user.click(await screen.findByRole("button", { name: "Start focus" }));
+    await expectNoAccessibilityViolations(container);
     fireEvent.keyDown(document, { key: "Escape" });
-    expect(within(desktopContainer!).queryByText("Start Focus Session")).not.toBeInTheDocument();
-  });
-
-  it("passes accessibility axe sweep", async () => {
-    const { container, user } = renderPlayer(
-      <FocusMiniPlayer timeZone="Asia/Kolkata" locale="en-US" />,
-    );
-    await expectNoAccessibilityViolations(container);
-
-    const trigger = await screen.findByRole("button", { name: "Start focus" });
-    await user.click(trigger);
-    await expectNoAccessibilityViolations(container);
+    const desktop = container.querySelector<HTMLElement>(
+      ".lifeos-focus-mini-player__desktop-only",
+    )!;
+    expect(within(desktop).queryByText("Start Focus Session")).not.toBeInTheDocument();
   });
 });

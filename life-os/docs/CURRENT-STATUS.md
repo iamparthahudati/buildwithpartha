@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0914 Build Focus Mode surface)
+Last updated: 2026-08-24 (LOS-0915 Integrate focus mini-player and full mode)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-0915 — Integrated the global focus mini-player and protected Focus Mode route with the LOS-0913 server-authoritative API. Active sessions recover after refresh and across tabs; countdowns derive from canonical duration snapshots plus a browser receipt anchor so throttling, backgrounding, and sleep do not accumulate interval drift. Every write carries an idempotency key and optimistic version, stale multi-tab actions reload canonical state, focus expiry enters the planned break (or completes when no break exists), and break expiry completes exactly once through server conflict/idempotency protection. Offline state stays visibly read-only without fabricating or persisting private Focus Session content. Successful transitions invalidate only affected Today, Task, Time Block, and Calendar projections. Task, Time Block, and Today actions now deep-link into the full mode with canonical context. See `docs/handoffs/LOS-0915.md`.
 
 - LOS-0914 — Built a controlled, distraction-reduced Focus Mode surface from reusable FocusControls, SessionContext, InterruptionCapture, and session-settings components. It composes TimerRing with Task/Time Block context; start, pause, resume, complete, cancel, and skip-break actions; exact terminal confirmations and summaries; bounded 25/5-style duration settings without presenting them as universal targets; private 2,000-character distraction capture; explicit browser-notification consent states; and loading, recovery, disabled, pending, focus, break, completed, and cancelled states. The component responds to its own container at mobile/tablet/desktop widths, inherits reduced-motion behavior from TimerRing/ProgressRing, and has focused behavior, axe, catalog, keyboard, overflow, and console verification. See `docs/handoffs/LOS-0914.md`.
 

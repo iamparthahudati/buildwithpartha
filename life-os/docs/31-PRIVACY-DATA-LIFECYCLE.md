@@ -149,6 +149,8 @@ LOS-0913 exposes Focus Sessions only through authenticated, ownership-scoped rea
 
 V17 adds `focus_session_operations` for retry safety. Each row contains only an opaque UUID, owning Account UUID, a validated 8–64 character idempotency key, closed operation type, Focus Session UUID, optional interruption UUID, and UTC creation instant. It contains no title, note, request/response body, duration, Task content, Time Block content, credential, cookie, or arbitrary metadata. Rows are Account/session-owned by database foreign keys and a daily cleanup deletes keys older than seven days under R1.
 
+LOS-0915 keeps active Focus Session snapshots only in the authenticated tab's in-memory TanStack Query cache. It removes the provisional `localStorage` Focus Session fallback: refresh recovery always reads the canonical server record, and an offline refresh cannot fabricate or restore a device-only session. Cross-tab `BroadcastChannel` messages contain only a fixed change signal and prompt an ownership-scoped API recovery; they contain no session UUID, Task/Time Block identifier, duration, title, note, response body, or Account data. The cache and channel lifetime end with the page/tab process, and the existing sign-out query-cache clear remains the Account-switch boundary.
+
 ## Data not collected in v1
 
 - Date of birth, government identity, postal address, phone number or payment data.

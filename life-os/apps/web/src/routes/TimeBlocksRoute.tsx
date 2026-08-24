@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { useProjects } from "@features/projects";
 import { useTasks } from "@features/tasks";
@@ -39,6 +39,7 @@ const DEFAULT_CATEGORIES: readonly TimeBlockCategoryOption[] = [
 export function TimeBlocksRoute() {
   const { user } = useAuthSession();
   const toast = useToast();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const timeZone = user?.timeZone ?? "UTC";
@@ -235,9 +236,9 @@ export function TimeBlocksRoute() {
       onCompleteBlock={handleCompleteBlock}
       onDuplicateBlock={handleDuplicateBlock}
       onDeleteBlockConfirm={handleDeleteConfirm}
-      onStartFocus={() => {
-        toast.push({ tone: "info", message: "Focus session started." });
-      }}
+      onStartFocus={(block) =>
+        navigate(`/life-os/app/focus?timeBlockId=${encodeURIComponent(block.id)}`)
+      }
     />
   );
 }
