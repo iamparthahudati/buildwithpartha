@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-1005 Build week strip and capacity components)
+Last updated: 2026-08-24 (LOS-0909 Implement Calendar aggregation API)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-0909 — Implemented authenticated `GET /calendar/events` aggregation with canonical Time Block, due Task, and Milestone projections; stable source IDs; source filters; inclusive local-date ranges interpreted in an IANA timezone; deterministic ordering; owner-scoped bounded database reads; a 62-day range cap; and explicit 500-event truncation metadata. The contract reserves Habit and Review sources without inventing records before LOS-1208/LOS-1009. Full backend checks pass. See `docs/handoffs/LOS-0909.md`.
 
 - LOS-1005 — Built Week Planner week strip and capacity components (WeekStrip, WeekCapacitySummary, WeekDayCapacityDialog, catalog specimens, and 100% axe accessibility tests). See `docs/handoffs/LOS-1005.md`.
 
