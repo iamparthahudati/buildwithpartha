@@ -67,6 +67,14 @@ Each item contains only `id`, `actorUserId`, a closed `eventType`, an optional c
 
 Project lifecycle changes are recorded against the Project feed. Task creation, updates, status/lifecycle changes, duplication, bulk changes, MIT/dependency changes, and Subtask lifecycle changes are recorded against the Task feed; when the Task is linked to a Project, the same typed change is also recorded against that Project feed with the Task as its object. A Task moved between Projects records the change in both affected Project feeds. Idempotent lifecycle/bulk no-ops do not add duplicate Activity Events. Existing Comment create/edit/delete behavior remains transactional and content-free.
 
+### Calendar aggregation
+
+`GET /calendar/events` is an authenticated read-only projection over canonical LifeOS records. `startDate` and `endDate` are required inclusive local dates, `timeZone` is a required IANA timezone, `source` is an optional repeatable filter, and `limit` defaults to and cannot exceed 500. A request spans at most 62 local dates. The server converts the local-date edges to instants in the supplied timezone, so DST-short and DST-long days retain their true duration.
+
+Supported source values are `TIME_BLOCK`, `TASK_DUE`, `MILESTONE`, `HABIT`, and `REVIEW`. LOS-0909 supplies bounded owner-scoped adapters for the canonical record types that currently exist: Time Blocks overlapping the range, non-deleted/non-archived Tasks whose due instant is in the range, and dated Milestones beneath non-archived Projects. `HABIT` and `REVIEW` are stable reserved contract values and return no invented events until their canonical persistence models land in LOS-1208 and LOS-1009.
+
+Every event has a deterministic `id`, UUID `sourceId`, `sourceType`, title, source status, and optional Project/Task context. Timed events use canonical UTC `startAt`/`endAt`; all-day events use `localDate` and `allDay: true`. Results are sorted by effective start, all-day precedence, source type, and event ID. When more than `limit` events exist, the response returns the first deterministic page with `truncated: true`; Calendar remains a projection and never creates or stores a duplicate source record.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:

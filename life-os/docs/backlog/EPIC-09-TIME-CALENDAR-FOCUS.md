@@ -10,7 +10,7 @@
 | LOS-0906 | Build time summary components | Focus/break/personal/unscheduled metrics, accessible donut/text summary, goal progress, upcoming blocks and quick actions. | LOS-0419, LOS-0429 | S | Done |
 | LOS-0907 | Compose Time Blocks screen with mocks | Day/week switch, date nav, focus toggle, timeline, summaries, goals/upcoming/actions and all states including DST/conflict/offline. | LOS-0905, LOS-0906 | L | Done |
 | LOS-0908 | Integrate Time Blocks screen | Wire query/CRUD/drag-resize/duplicate/complete/conflict/version; invalidate Today/calendar precisely and test touch/keyboard alternatives. | LOS-0902, LOS-0907 | L | Done |
-| LOS-0909 | Implement Calendar aggregation API | Merge blocks, due dates, milestones, habit/review events for range/filter with stable source IDs, ownership, timezone and bounded result policy. | LOS-0902, LOS-0704, LOS-0803 | M | Backlog |
+| LOS-0909 | Implement Calendar aggregation API | Merge blocks, due dates, milestones, habit/review events for range/filter with stable source IDs, ownership, timezone and bounded result policy. | LOS-0902, LOS-0704, LOS-0803 | M | Done |
 | LOS-0910 | Build calendar primitives | Day/week/month grids, header/date nav, all-day lane, event chips, overflow list, filter legend, keyboard/touch navigation and list alternative. | LOS-0434 | M | Backlog |
 | LOS-0911 | Compose and integrate Calendar | Mock all states then connect aggregate API; source click opens true record, filters/URL persist, dense days/DST/month boundaries pass. | LOS-0909, LOS-0910 | L | Backlog |
 | LOS-0912 | Model focus sessions | Schema/state machine for planned/actual duration, attached task/block, start/pause/resume/complete/cancel, breaks, interruptions and version. Only one active session per user. | LOS-0801, LOS-0901 | M | Backlog |
@@ -20,4 +20,3 @@
 | LOS-0916 | Add focus preferences | API/settings for focus/break/long-break cycles, auto-start choices and sound/browser notification preferences with safe defaults. | LOS-0515, LOS-0913 | S | Backlog |
 | LOS-0917 | Implement time goal and planned-vs-actual | Daily focus target and aggregation with timezone/date handling, Today/time-block/report contracts and zero-data behavior. | LOS-0913 | S | Backlog |
 | LOS-0918 | Run scheduling/focus gate | Schedule task, detect/override conflict, focus through refresh, complete, calendar/Today/report updates; DST, two tabs, ownership, a11y/responsive tests pass. | LOS-0901–LOS-0917 | S | Backlog |
-
