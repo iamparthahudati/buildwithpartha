@@ -23,6 +23,7 @@ public final class StandardErrorCodes {
   public static final ErrorCode FOCUS_SESSION_STATE_CONFLICT =
       ErrorCode.of("FOCUS_SESSION_STATE_CONFLICT");
   public static final ErrorCode IDEMPOTENCY_KEY_REUSED = ErrorCode.of("IDEMPOTENCY_KEY_REUSED");
+  public static final ErrorCode SPRINT_STATE_CONFLICT = ErrorCode.of("SPRINT_STATE_CONFLICT");
 
   private StandardErrorCodes() {}
 }

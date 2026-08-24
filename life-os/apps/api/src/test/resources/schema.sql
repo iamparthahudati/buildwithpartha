@@ -361,3 +361,34 @@ CREATE TABLE IF NOT EXISTS focus_session_operations (
     created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
     CONSTRAINT uq_focus_session_operations_user_key UNIQUE (user_id, idempotency_key)
 );
+
+-- Added by LOS-1001: Sprints, commitments, retrospective metrics, and immutable events.
+CREATE TABLE IF NOT EXISTS sprints (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, name TEXT NOT NULL, goal TEXT,
+    start_date DATE NOT NULL, end_date DATE NOT NULL, status VARCHAR(32) NOT NULL,
+    target_capacity_points INT NOT NULL, retrospective_notes TEXT, what_went_well TEXT,
+    what_could_be_improved TEXT, committed_task_count INT NOT NULL,
+    completed_task_count INT NOT NULL, added_task_count INT NOT NULL,
+    removed_task_count INT NOT NULL, carried_over_task_count INT NOT NULL,
+    total_story_points INT NOT NULL, completed_story_points INT NOT NULL,
+    completed_at TIMESTAMP WITH TIME ZONE, created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL, version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS sprint_action_items (
+    sprint_id UUID NOT NULL, position INT NOT NULL, body TEXT NOT NULL,
+    PRIMARY KEY (sprint_id, position)
+);
+
+CREATE TABLE IF NOT EXISTS sprint_tasks (
+    id UUID NOT NULL PRIMARY KEY, sprint_id UUID NOT NULL, task_id UUID NOT NULL,
+    story_points INT NOT NULL, position INT NOT NULL, added_after_start BOOLEAN NOT NULL,
+    committed_at TIMESTAMP WITH TIME ZONE NOT NULL, removed_at TIMESTAMP WITH TIME ZONE,
+    carried_over_to_sprint_id UUID
+);
+
+CREATE TABLE IF NOT EXISTS sprint_events (
+    id UUID NOT NULL PRIMARY KEY, sprint_id UUID NOT NULL, event_type VARCHAR(32) NOT NULL,
+    task_id UUID, points_delta INT, reason TEXT,
+    occurred_at TIMESTAMP WITH TIME ZONE NOT NULL
+);

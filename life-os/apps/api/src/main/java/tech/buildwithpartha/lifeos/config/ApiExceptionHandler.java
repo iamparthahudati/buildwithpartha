@@ -22,6 +22,7 @@ import tech.buildwithpartha.lifeos.common.error.FocusSessionConflictException;
 import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
+import tech.buildwithpartha.lifeos.common.error.SprintStateConflictException;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
 import tech.buildwithpartha.lifeos.common.error.TimeBlockOverlapConflictException;
 import tech.buildwithpartha.lifeos.common.error.TokenAlreadyUsedException;
@@ -169,6 +170,18 @@ public final class ApiExceptionHandler {
             exception.code(),
             "CSRF token invalid",
             "Refresh and try again."));
+  }
+
+  @ExceptionHandler(SprintStateConflictException.class)
+  ResponseEntity<ApiProblem> handleSprintStateConflict(
+      SprintStateConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Sprint conflict",
+            "Refresh the Sprint and try again."));
   }
 
   @ExceptionHandler(CodedException.class)

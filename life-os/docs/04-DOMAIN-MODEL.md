@@ -26,8 +26,9 @@ Canonical entity names, statuses, priorities, UI labels, API resources and Postg
 - `TimeBlock`: title, category, optional task/project, start/end instants, timezone, status, color, notes.
 - `FocusSession`: optional task/Time Block, planned/actual duration, started/paused/completed timestamps, interruptions, status and focus/break phase.
 - `DailyTimeSummary`: read-only, non-persisted projection of completed Focus Session time, local-day-clipped Time Block allocation, optional daily target and labelled planned-versus-actual denominator.
-- `Sprint`: name, goal, start/end dates, status.
-- `SprintTask`: sprint, task, ordering, committed flag.
+- `Sprint`: name, optional goal, inclusive start/end local dates, status, target capacity points, immutable completion counts/points, retrospective fields, completion timestamp and optimistic version.
+- `SprintTask`: Sprint, owned Task, story points, ordering, commitment timestamp, after-start flag, optional removal timestamp and optional carry-over destination. Removal preserves history rather than deleting the commitment.
+- `SprintEvent`: immutable Sprint lifecycle, goal, capacity and scope history with optional Task, points delta, reason and UTC occurrence timestamp.
 - `WeeklyPlan`: week start, target focus minutes, status and finalized snapshot/revision identity.
 - `WeeklyPlanItem`: plan, optional task/goal, type, target, ordering.
 - `Review`: period type/key, status, answers, decisions, metric snapshot, finalized/skipped timestamps.
@@ -52,6 +53,8 @@ Canonical entity names, statuses, priorities, UI labels, API resources and Postg
 ## Invariants
 
 - A user cannot reference another user's project, task, goal, label, or schedule item.
+- Non-cancelled Sprints for one Account cannot overlap on inclusive local dates, and an Account has at most one Active Sprint. Account-row locking serializes overlap and active-state decisions; optimistic versions reject stale mutations.
+- Completed and Cancelled Sprints are terminal. Completion snapshots active commitment, completion, added, removed, carry-over and story-point metrics before optional transactional carry-over to an owned Planned Sprint.
 - End time is after start time; invalid or overlapping Time Blocks are rejected or explicitly overridden according to policy.
 - One Task can be the MIT for a given local date; changing it atomically clears the prior MIT.
 - Completed subtasks and task progress remain consistent under the defined progress mode.

@@ -1,10 +1,10 @@
 # Current status
 
-Last updated: 2026-08-25 (LOS-0918 scheduling and focus phase gate)
+Last updated: 2026-08-25 (LOS-1001 Sprints API)
 
 ## Phase
 
-Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), and Epic 09 (Time Blocks, Calendar, and Focus) completed.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), and Epic 09 (Time Blocks, Calendar, and Focus) completed. Epic 10 planning and review implementation is in progress.
 
 ## In review
 
@@ -25,6 +25,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-1001 — Implemented the authenticated, CSRF-protected Sprints API and V19 persistence model for bounded date windows, capacity, Task commitments, optimistic versions, retrospective snapshots, completion metrics, and immutable lifecycle/goal/capacity/scope events. Account-row serialization and database constraints enforce non-overlapping writes and one active Sprint; Task ownership and availability are rechecked through a Task-owned port. Planned/Active scope changes preserve removed commitments, completion freezes committed/completed/added/removed/point counts, and open work can move transactionally to a versioned planned Sprint or return to the backlog. See `docs/handoffs/LOS-1001.md`.
 - LOS-0918 — Passed the Scheduling and Focus phase gate across Task-to-Time-Block scheduling, conflict detection and explicit override, Focus Session refresh/two-tab recovery and exactly-once completion, Calendar/Today/daily-report refresh, DST/local-date handling, ownership, accessibility, and responsive behavior. The gate closed the ignored Task scheduling deep link, wired conflict preflight into the real create/edit route, prevented catalog fixtures from appearing behind API failures, and made the Time Summary/Upcoming sidebar respond to its container width. Full backend/frontend gates and rendered minimum/large layout checks pass. See `docs/gates/SCHEDULING-FOCUS-PHASE-GATE.md` and `docs/handoffs/LOS-0918.md`.
 - LOS-0917 — Implemented one owner-scoped daily time aggregation used by `GET /reports/time`, Today, and the Time Blocks summary. The selected IANA timezone defines exact local-day instant boundaries, including 23/25-hour DST days; non-cancelled Focus Time Blocks are clipped to those boundaries; and completed Focus Sessions are attributed to the local date on which they started. Explicit planned Focus Time Blocks are the comparison denominator when present, otherwise the optional daily focus target is used, and every response labels that source and preserves null denominator/percentage zero-data behavior. Time Blocks now shows canonical focus/break/personal/unscheduled/category totals instead of fixed demo values, Focus/Time Block mutations refresh the projection, and Settings can set or clear the optional target. See `docs/handoffs/LOS-0917.md`.
 - LOS-0916 — Added server-persisted Focus Mode preferences to the Account's existing user-preferences aggregate and `GET`/`PUT /user/preferences` contract: focus, short-break and long-break durations; Focus Sessions per cycle; auto-start break/focus choices; sound; and browser notifications. Safe defaults are 25/5/15 minutes, four Focus Sessions, and every automatic/device capability off. A new responsive Focus settings section validates the same bounds, preserves unrelated planning defaults, asks for browser permission only after an explicit enable action, updates the shared query cache, and states that active sessions are unchanged. The preferences remain exportable and V18 upgrades existing Accounts without changing their current focus/break values. See `docs/handoffs/LOS-0916.md`.
