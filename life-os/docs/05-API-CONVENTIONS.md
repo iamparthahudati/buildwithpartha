@@ -97,6 +97,14 @@ New Accounts and existing rows upgraded by V18 receive conservative defaults: 25
 
 The supplied IANA timezone converts the inclusive local date into start-inclusive/end-exclusive instants, retaining the true length of DST-short and DST-long days. Time Blocks overlapping the day are clipped to those instants. A completed Focus Session is attributed to the local date containing its `startedAt`; Cancelled sessions do not contribute to reported actual time, and durations use confirmed whole minutes. When planned Focus Time Blocks exist they are the denominator; otherwise the optional daily target is used. With neither, `comparisonMinutes` and `progressPercentage` are null rather than a misleading `0%`. Percentages may exceed 100 because actual time is not capped.
 
+### Sprints
+
+`/sprints` is an authenticated, CSRF-protected, owner-scoped lifecycle resource. `GET /sprints` accepts an optional comma-separated `status` filter; `POST /sprints`, `GET /sprints/{id}`, `PUT /sprints/{id}`, and planned-only `DELETE /sprints/{id}?version=...` provide CRUD. Lifecycle commands are `POST /sprints/{id}/start`, `/complete`, and `/cancel`. Scope commands add a Task, update its points/order, or mark the commitment removed while preserving history.
+
+Sprint start/end are inclusive local dates without an implicit timezone. Non-cancelled windows for one Account may not overlap, and only one Sprint may be Active. Every write carries the current non-negative Sprint `version`; Account-row locking serializes overlap, one-active, completion and carry-over decisions, while stale versions return `409 CONCURRENCY_CONFLICT`. Missing and cross-user Sprint/Task IDs are indistinguishable. A Task must be owned, non-deleted, non-archived and non-terminal when committed.
+
+Starting changes Planned to Active. Goal, capacity, Task add/remove and point changes append immutable events; removals retain the original commitment row. Completing an Active Sprint stores retrospective text/action items and stable committed/completed/added/removed/carry-over and story-point metrics. `BACKLOG` leaves open Tasks uncommitted after the completed source; `NEXT_SPRINT` requires an owned Planned target plus its current version and transactionally copies open, non-duplicate Task commitments. Completed and Cancelled Sprint scope is immutable.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:
