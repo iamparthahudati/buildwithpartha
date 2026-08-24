@@ -94,6 +94,19 @@ export function calendarMonthDates(date: LocalDate, weekStartsOn: 0 | 1 = 1): re
   return Array.from({ length: 42 }, (_, index) => addLocalDays(firstVisible, index));
 }
 
+export function calendarRangeForView(
+  date: LocalDate,
+  view: CalendarView,
+  weekStartsOn: 0 | 1 = 1,
+): { readonly startDate: LocalDate; readonly endDate: LocalDate } {
+  if (view === "day") return { startDate: date, endDate: date };
+  const dates =
+    view === "week"
+      ? calendarWeekDates(date, weekStartsOn)
+      : calendarMonthDates(date, weekStartsOn);
+  return { startDate: dates[0]!, endDate: dates.at(-1)! };
+}
+
 export function isSameCalendarMonth(left: LocalDate, right: LocalDate): boolean {
   return left.slice(0, 7) === right.slice(0, 7);
 }

@@ -7,6 +7,7 @@ import { RequireAuth, useLogout } from "@features/auth";
 import { useAuthSession } from "@state/authSession";
 import {
   CancelDeletionRoute,
+  CalendarRoute,
   ComingSoonRoute,
   ForgotPasswordRoute,
   LoginRoute,
@@ -128,7 +129,7 @@ export function AppRoutes() {
           <Route path="tasks" element={<TasksRoute />} />
           <Route path="tasks/:taskId" element={<TaskDetailsRoute />} />
           <Route path="time-blocks" element={<TimeBlocksRoute />} />
-          <Route path="calendar" element={<ComingSoonRoute />} />
+          <Route path="calendar" element={<CalendarRoute />} />
           <Route path="focus" element={<ComingSoonRoute />} />
           <Route path="projects" element={<ProjectsRoute />} />
           <Route path="projects/:projectId" element={<ProjectDetailsRoute />} />

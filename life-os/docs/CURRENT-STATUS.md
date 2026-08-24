@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0910 Build Calendar primitives)
+Last updated: 2026-08-24 (LOS-0911 Compose and integrate Calendar)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-0911 — Composed and integrated the authenticated Calendar route over the LOS-0909 aggregate and LOS-0910 primitives. Day, Week, and six-week Month ranges are queried as inclusive account-local dates; date/view/source filters persist in the URL; cached data remains visible through refresh/offline failure; empty, loading, error, no-source, and 500-item truncation states are explicit. Calendar items open their canonical Time Block, Task, Project milestone, Habit, or Review source, with linked Time Blocks opening in edit mode and linked milestones focused in the Project timeline. Dense-day, DST, month-boundary, accessibility, mobile/tablet/desktop, route, API, and full frontend gates pass. See `docs/handoffs/LOS-0911.md`.
 
 - LOS-0910 — Built reusable Calendar primitives over the LOS-0909 event projection: local-date-safe header and Day/Week/Month navigation; controlled source filter legend; source/status/time-aware EventChip; distinct all-day lane; responsive Day, Week, and six-week Month grids; keyboard/touch date selection; accessible dense-day overflow with Escape/focus return; and semantic list alternatives for small screens and nonvisual use. Catalog specimens and focused axe coverage pass. See `docs/handoffs/LOS-0910.md`.
 

@@ -216,6 +216,9 @@ export function TimeBlocksRoute() {
           : null
       }
       initialDate={currentDate}
+      {...(searchParams.get("selected")
+        ? { initialSelectedBlockId: searchParams.get("selected")! }
+        : {})}
       initialViewMode={viewMode}
       timeZone={timeZone}
       locale={locale}

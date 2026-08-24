@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   calendarMonthDates,
+  calendarRangeForView,
   calendarWeekDates,
   eventLocalDate,
   formatCalendarPeriod,
@@ -41,6 +42,21 @@ describe("Calendar date model", () => {
   it("shifts months without rolling a late date into the following month", () => {
     expect(shiftCalendarPeriod("2026-01-31", "month", 1)).toBe("2026-02-28");
     expect(shiftCalendarPeriod("2028-01-31", "month", 1)).toBe("2028-02-29");
+  });
+
+  it("builds exact API ranges for day, week, and six-week month views", () => {
+    expect(calendarRangeForView("2026-08-24", "day")).toEqual({
+      startDate: "2026-08-24",
+      endDate: "2026-08-24",
+    });
+    expect(calendarRangeForView("2026-08-01", "week")).toEqual({
+      startDate: "2026-07-27",
+      endDate: "2026-08-02",
+    });
+    expect(calendarRangeForView("2026-08-24", "month")).toEqual({
+      startDate: "2026-07-27",
+      endDate: "2026-09-06",
+    });
   });
 
   it("derives timed-event dates and labels in the supplied IANA timezone", () => {
