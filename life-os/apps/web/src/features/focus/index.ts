@@ -1,5 +1,9 @@
 export { FocusMiniPlayer } from "./components/FocusMiniPlayer";
 export {
+  IntegratedFocusMode,
+  type IntegratedFocusModeProps,
+} from "./components/IntegratedFocusMode";
+export {
   FocusModeSurface,
   type BrowserNotificationPermission,
   type FocusModeSurfaceProps,
@@ -26,4 +30,10 @@ export {
   type FocusSettingsDialogProps,
 } from "./components/FocusSettingsDialog";
 export { useFocusSession } from "./hooks/useFocusSession";
-export type { FocusSession, FocusSessionStatus } from "./api/focusApi";
+export { FOCUS_SESSION_QUERY_KEY, type FocusSessionAction } from "./hooks/useFocusSession";
+export type {
+  FocusSession,
+  FocusSessionApiStatus,
+  FocusSessionPhase as FocusSessionApiPhase,
+  FocusSessionStatus,
+} from "./api/focusApi";

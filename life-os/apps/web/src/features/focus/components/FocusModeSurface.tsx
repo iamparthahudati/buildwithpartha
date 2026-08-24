@@ -30,6 +30,7 @@ export interface FocusModeSurfaceProps {
   readonly notificationPermission?: BrowserNotificationPermission;
   readonly pendingAction?: FocusModePendingAction;
   readonly error?: string;
+  readonly syncMessage?: string;
   readonly disabledReason?: string;
   readonly loading?: boolean;
   readonly loadError?: string;
@@ -59,6 +60,7 @@ export function FocusModeSurface({
   notificationPermission = "unsupported",
   pendingAction,
   error,
+  syncMessage,
   disabledReason,
   loading = false,
   loadError,
@@ -143,6 +145,7 @@ export function FocusModeSurface({
           Focus Session action failed. {error} The current session state is unchanged.
         </InlineMessage>
       ) : null}
+      {syncMessage ? <InlineMessage tone="warning">{syncMessage}</InlineMessage> : null}
       {disabledReason ? <InlineMessage tone="warning">{disabledReason}</InlineMessage> : null}
 
       <div className="lifeos-focus-mode__layout">

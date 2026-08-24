@@ -168,6 +168,7 @@ export const DEFAULT_NAV_GROUPS: readonly NavGroup[] = Object.freeze([
  */
 const EXTRA_ROUTE_DESTINATIONS: readonly Pick<NavDestination, "href" | "label">[] = Object.freeze([
   { href: "/life-os/app/onboarding", label: "Onboarding" },
+  { href: "/life-os/app/focus", label: "Focus Mode" },
   { href: "/life-os/app/settings", label: "Settings" },
   { href: "/life-os/app/search", label: "Search" },
   { href: "/life-os/app/notifications", label: "Notifications" },

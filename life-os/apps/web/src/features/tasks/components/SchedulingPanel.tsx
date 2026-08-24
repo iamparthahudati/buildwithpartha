@@ -3,7 +3,7 @@ import { CalendarPlus, Clock3, Play } from "lucide-react";
 
 import { Alert, EmptyState, ErrorState, InlineMessage } from "@components/feedback";
 import { Badge, Button, Skeleton, Surface, Text, VisuallyHidden } from "@components/ui";
-import type { FocusSession } from "@features/focus";
+import type { FocusSessionStatus } from "@features/focus";
 import { TimeBlockRow, type TimeBlock } from "@features/time-blocks";
 import { formatDurationMinutes } from "@lib/duration";
 
@@ -18,11 +18,11 @@ export interface SchedulingPanelTask {
   readonly deletedAt?: string | null;
 }
 
-export interface SchedulingPanelActiveFocusSession extends Pick<
-  FocusSession,
-  "id" | "taskId" | "timeBlockId"
-> {
-  readonly status: Exclude<FocusSession["status"], "completed">;
+export interface SchedulingPanelActiveFocusSession {
+  readonly id: string;
+  readonly taskId: string | null;
+  readonly timeBlockId: string | null;
+  readonly status: Exclude<FocusSessionStatus, "completed">;
   /** Safe display context supplied by the shared focus-session projection. */
   readonly taskTitle?: string | null;
 }

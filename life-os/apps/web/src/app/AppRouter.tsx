@@ -10,6 +10,7 @@ import {
   CalendarRoute,
   ComingSoonRoute,
   ForgotPasswordRoute,
+  FocusRoute,
   LoginRoute,
   NotFoundRoute,
   OnboardingRoute,
@@ -130,7 +131,7 @@ export function AppRoutes() {
           <Route path="tasks/:taskId" element={<TaskDetailsRoute />} />
           <Route path="time-blocks" element={<TimeBlocksRoute />} />
           <Route path="calendar" element={<CalendarRoute />} />
-          <Route path="focus" element={<ComingSoonRoute />} />
+          <Route path="focus" element={<FocusRoute />} />
           <Route path="projects" element={<ProjectsRoute />} />
           <Route path="projects/:projectId" element={<ProjectDetailsRoute />} />
           <Route path="sprints" element={<ComingSoonRoute />} />
