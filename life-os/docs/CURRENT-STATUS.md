@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0907 Compose Time Blocks screen with mocks)
+Last updated: 2026-08-24 (LOS-1005 Build week strip and capacity components)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1005 — Built Week Planner week strip and capacity components (WeekStrip, WeekCapacitySummary, WeekDayCapacityDialog, catalog specimens, and 100% axe accessibility tests). See `docs/handoffs/LOS-1005.md`.
 
 - LOS-0907 — Composed responsive TimeBlocksScreen with Day/Week view switch, date navigation, focus toggle, DayTimeline grid, TimeSummary overview, TimeBlockForm dialog, delete confirmation dialog, mock UX states (populated, week view, conflict, DST transition, offline, loading, empty, error), and 100% axe accessibility tests. See `docs/handoffs/LOS-0907.md`.
 
