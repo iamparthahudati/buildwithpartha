@@ -39,6 +39,7 @@ import {
   SprintRetrospectiveDialogDemo,
   TimeBlockRowDemo,
   TimeBlockFormDemo,
+  DayTimelineDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -732,6 +733,22 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Interactive specimens for Create and Edit TimeBlockForm dialogs.",
         render: () => <TimeBlockFormDemo />,
+      },
+    ],
+  },
+  {
+    id: "day-timeline",
+    name: "DayTimeline",
+    group: "Composed",
+    summary:
+      "24-hour visual time scale grid for scheduling time blocks with current time now line, gap slots, collision layout, density toggle, drag/resize handles, keyboard navigation, and small-screen list fallback.",
+    states: [
+      {
+        id: "day-timeline-default",
+        name: "Default",
+        description:
+          "DayTimeline showing visual grid, time blocks, now line, density toggle, list fallback mode, and interactive callbacks.",
+        render: () => <DayTimelineDemo />,
       },
     ],
   },

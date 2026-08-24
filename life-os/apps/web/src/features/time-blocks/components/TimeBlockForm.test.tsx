@@ -98,12 +98,7 @@ describe("TimeBlockForm", () => {
     const handleSubmit = vi.fn();
 
     const { user } = renderWithUser(
-      <TimeBlockForm
-        open={true}
-        onClose={vi.fn()}
-        onSubmit={handleSubmit}
-        mode="create"
-      />,
+      <TimeBlockForm open={true} onClose={vi.fn()} onSubmit={handleSubmit} mode="create" />,
     );
 
     const titleInput = screen.getByLabelText(/^Title$/i);
@@ -244,10 +239,7 @@ describe("TimeBlockForm", () => {
     await user.selectOptions(screen.getByLabelText(/^Category$/i), "Meeting");
     await user.selectOptions(screen.getByLabelText(/Linked Project/i), "proj-1");
     await user.selectOptions(screen.getByLabelText(/Linked Task/i), "task-1");
-    await user.type(
-      screen.getByLabelText(/Notes/i),
-      "Review system architecture specs.",
-    );
+    await user.type(screen.getByLabelText(/Notes/i), "Review system architecture specs.");
 
     await user.click(screen.getByRole("button", { name: "Create time block" }));
 

@@ -33,7 +33,7 @@ import {
   type TaskListItem,
   type TaskSummaryMetricsStatus,
 } from "@features/tasks";
-import { TimeBlockRow, TimeBlockForm, type TimeBlock } from "@features/time-blocks";
+import { TimeBlockRow, TimeBlockForm, DayTimeline, type TimeBlock } from "@features/time-blocks";
 import type { ActivityTypeFilter } from "@features/activity";
 import {
   buildCommonDateRangePresets,
@@ -1742,6 +1742,41 @@ export function TimeBlockFormDemo() {
         }}
         mode="edit"
         initialValues={MOCK_TIME_BLOCK_SCHEDULED}
+      />
+    </div>
+  );
+}
+
+export function DayTimelineDemo() {
+  const [density, setDensity] = useState<"compact" | "comfortable" | "spacious">("comfortable");
+  const [viewMode, setViewMode] = useState<"auto" | "grid" | "list">("auto");
+  const fixedNow = new Date("2026-08-21T11:15:00Z");
+
+  const mockBlocks: TimeBlock[] = [
+    MOCK_TIME_BLOCK_COMPLETED,
+    MOCK_TIME_BLOCK_SCHEDULED,
+    MOCK_TIME_BLOCK_CURRENT,
+    MOCK_TIME_BLOCK_CONFLICT,
+  ];
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <DayTimeline
+        blocks={mockBlocks}
+        date="2026-08-21"
+        now={fixedNow}
+        timeZone="UTC"
+        density={density}
+        onDensityChange={setDensity}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        onCreateBlock={(start, end) => alert(`Create block from ${start} to ${end}`)}
+        onSelectBlock={(b) => alert(`Selected block: ${b.title}`)}
+        onMoveBlock={(id, start, end) => alert(`Moved block ${id} to ${start}–${end}`)}
+        onResizeBlock={(id, end) => alert(`Resized block ${id} end to ${end}`)}
       />
     </div>
   );
