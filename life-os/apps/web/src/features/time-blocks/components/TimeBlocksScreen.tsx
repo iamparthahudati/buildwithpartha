@@ -54,8 +54,18 @@ export interface TimeBlocksScreenProps {
   readonly projects?: readonly TimeBlockProjectOption[];
   readonly categories?: readonly TimeBlockCategoryOption[];
   readonly onRetry?: () => void;
+  readonly onDateChange?: (date: LocalDate) => void;
+  readonly onViewModeChange?: (viewMode: TimeBlocksViewMode) => void;
   readonly onCreateBlockSubmit?: (data: TimeBlockFormData) => Promise<void> | void;
   readonly onEditBlockSubmit?: (data: TimeBlockFormData) => Promise<void> | void;
+  readonly onMoveBlock?: (
+    blockId: string,
+    newStart: LocalTime,
+    newEnd: LocalTime,
+  ) => Promise<void> | void;
+  readonly onResizeBlock?: (blockId: string, newEnd: LocalTime) => Promise<void> | void;
+  readonly onCompleteBlock?: (block: TimeBlock) => Promise<void> | void;
+  readonly onDuplicateBlock?: (block: TimeBlock) => Promise<void> | void;
   readonly onDeleteBlockConfirm?: (block: TimeBlock) => Promise<void> | void;
   readonly onStartFocus?: (block: TimeBlock) => void;
   readonly className?: string;
@@ -77,8 +87,14 @@ export function TimeBlocksScreen({
   projects = MOCK_TIME_BLOCK_PROJECTS,
   categories = MOCK_TIME_BLOCK_CATEGORIES,
   onRetry,
+  onDateChange,
+  onViewModeChange,
   onCreateBlockSubmit,
   onEditBlockSubmit,
+  onMoveBlock,
+  onResizeBlock,
+  onCompleteBlock,
+  onDuplicateBlock,
   onDeleteBlockConfirm,
   onStartFocus,
   className,
@@ -90,6 +106,19 @@ export function TimeBlocksScreen({
   const [focusModeOnly, setFocusModeOnly] = useState<boolean>(false);
   const [timelineDensity, setTimelineDensity] = useState<DayTimelineDensity>("comfortable");
   const [timelineViewMode, setTimelineViewMode] = useState<DayTimelineViewMode>("auto");
+
+  const [prevInitialDate, setPrevInitialDate] = useState(initialDate);
+  const [prevInitialViewMode, setPrevInitialViewMode] = useState(initialViewMode);
+
+  if (initialDate !== undefined && initialDate !== prevInitialDate) {
+    setPrevInitialDate(initialDate);
+    setCurrentDate(initialDate);
+  }
+
+  if (initialViewMode !== undefined && initialViewMode !== prevInitialViewMode) {
+    setPrevInitialViewMode(initialViewMode);
+    setViewMode(initialViewMode);
+  }
 
   // Local blocks state (fallback when controlledBlocks is omitted)
   const [internalBlocks, setInternalBlocks] = useState<readonly TimeBlock[]>(
@@ -108,18 +137,28 @@ export function TimeBlocksScreen({
   const [blockToDelete, setBlockToDelete] = useState<TimeBlock | null>(null);
 
   // Date Navigation handlers
+  const handleUpdateDate = (nextDate: LocalDate) => {
+    setCurrentDate(nextDate);
+    onDateChange?.(nextDate);
+  };
+
+  const handleUpdateViewMode = (nextMode: TimeBlocksViewMode) => {
+    setViewMode(nextMode);
+    onViewModeChange?.(nextMode);
+  };
+
   const handlePrevDate = () => {
     const delta = viewMode === "week" ? -7 : -1;
-    setCurrentDate((prev) => addLocalDays(prev, delta));
+    handleUpdateDate(addLocalDays(currentDate, delta));
   };
 
   const handleNextDate = () => {
     const delta = viewMode === "week" ? 7 : 1;
-    setCurrentDate((prev) => addLocalDays(prev, delta));
+    handleUpdateDate(addLocalDays(currentDate, delta));
   };
 
   const handleTodayClick = () => {
-    setCurrentDate(today);
+    handleUpdateDate(today);
   };
 
   // Block CRUD handlers
@@ -192,21 +231,29 @@ export function TimeBlocksScreen({
     setFormOpen(false);
   };
 
-  const handleCompleteBlock = (block: TimeBlock) => {
-    setInternalBlocks((prev) =>
-      prev.map((b) => (b.id === block.id ? { ...b, status: "COMPLETED", completed: true } : b)),
-    );
+  const handleCompleteBlock = async (block: TimeBlock) => {
+    if (onCompleteBlock) {
+      await onCompleteBlock(block);
+    } else {
+      setInternalBlocks((prev) =>
+        prev.map((b) => (b.id === block.id ? { ...b, status: "COMPLETED", completed: true } : b)),
+      );
+    }
   };
 
-  const handleDuplicateBlock = (block: TimeBlock) => {
-    const duplicated: TimeBlock = {
-      ...block,
-      id: `tb-dup-${Date.now()}`,
-      title: `${block.title} (Copy)`,
-      status: "SCHEDULED",
-      completed: false,
-    };
-    setInternalBlocks((prev) => [...prev, duplicated]);
+  const handleDuplicateBlock = async (block: TimeBlock) => {
+    if (onDuplicateBlock) {
+      await onDuplicateBlock(block);
+    } else {
+      const duplicated: TimeBlock = {
+        ...block,
+        id: `tb-dup-${Date.now()}`,
+        title: `${block.title} (Copy)`,
+        status: "SCHEDULED",
+        completed: false,
+      };
+      setInternalBlocks((prev) => [...prev, duplicated]);
+    }
   };
 
   const handleOpenDeleteConfirm = (block: TimeBlock) => {
@@ -225,16 +272,24 @@ export function TimeBlocksScreen({
     setBlockToDelete(null);
   };
 
-  const handleMoveBlock = (blockId: string, newStart: LocalTime, newEnd: LocalTime) => {
-    setInternalBlocks((prev) =>
-      prev.map((b) => (b.id === blockId ? { ...b, startTime: newStart, endTime: newEnd } : b)),
-    );
+  const handleMoveBlock = async (blockId: string, newStart: LocalTime, newEnd: LocalTime) => {
+    if (onMoveBlock) {
+      await onMoveBlock(blockId, newStart, newEnd);
+    } else {
+      setInternalBlocks((prev) =>
+        prev.map((b) => (b.id === blockId ? { ...b, startTime: newStart, endTime: newEnd } : b)),
+      );
+    }
   };
 
-  const handleResizeBlock = (blockId: string, newEnd: LocalTime) => {
-    setInternalBlocks((prev) =>
-      prev.map((b) => (b.id === blockId ? { ...b, endTime: newEnd } : b)),
-    );
+  const handleResizeBlock = async (blockId: string, newEnd: LocalTime) => {
+    if (onResizeBlock) {
+      await onResizeBlock(blockId, newEnd);
+    } else {
+      setInternalBlocks((prev) =>
+        prev.map((b) => (b.id === blockId ? { ...b, endTime: newEnd } : b)),
+      );
+    }
   };
 
   // Filter blocks for active view
@@ -330,14 +385,14 @@ export function TimeBlocksScreen({
             <Button
               variant={viewMode === "day" ? "secondary" : "ghost"}
               size="sm"
-              onClick={() => setViewMode("day")}
+              onClick={() => handleUpdateViewMode("day")}
             >
               Day
             </Button>
             <Button
               variant={viewMode === "week" ? "secondary" : "ghost"}
               size="sm"
-              onClick={() => setViewMode("week")}
+              onClick={() => handleUpdateViewMode("week")}
             >
               Week
             </Button>

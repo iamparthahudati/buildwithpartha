@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -8,6 +8,7 @@ import * as timeBlocksFeature from "@features/time-blocks";
 import * as projectsFeature from "@features/projects";
 import * as tasksFeature from "@features/tasks";
 import { AuthSessionContext, type AuthSessionValue } from "@state/authSession";
+import { ToastProvider } from "@state/ToastProvider";
 
 vi.mock("@features/time-blocks", async () => {
   const actual = await vi.importActual<typeof timeBlocksFeature>("@features/time-blocks");
@@ -79,8 +80,6 @@ const MOCK_BLOCK: timeBlocksFeature.TimeBlock = {
   timeZone: "UTC",
   version: 1,
 };
-
-import { ToastProvider } from "@state/ToastProvider";
 
 function renderTimeBlocksRoute(initialEntries = ["/life-os/app/time-blocks?date=2026-08-24"]) {
   const queryClient = new QueryClient({
@@ -155,6 +154,40 @@ describe("TimeBlocksRoute", () => {
       }),
       true,
     );
+  });
+
+  it("updates URL and triggers queries when Next Day button is clicked", async () => {
+    const user = userEvent.setup();
+    renderTimeBlocksRoute(["/life-os/app/time-blocks?date=2026-08-24"]);
+
+    const nextBtn = screen.getByRole("button", { name: "Next day" });
+    await user.click(nextBtn);
+
+    await waitFor(() => {
+      expect(mockUseTimeBlocks).toHaveBeenCalledWith(
+        expect.objectContaining({
+          date: "2026-08-25",
+          timeZone: "UTC",
+        }),
+        true,
+      );
+    });
+  });
+
+  it("triggers complete mutation when block completion action is clicked", async () => {
+    const user = userEvent.setup();
+    renderTimeBlocksRoute();
+
+    const menuTriggers = screen.getAllByRole("button", { name: "Block menu" });
+    await user.click(menuTriggers[0]!);
+
+    const completeMenuItem = screen.getByRole("menuitem", { name: "Complete" });
+    await user.click(completeMenuItem);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "tb-101",
+      version: 1,
+    });
   });
 
   it("renders error state when query fails and allows retry", async () => {

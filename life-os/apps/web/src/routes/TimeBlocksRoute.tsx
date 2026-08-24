@@ -22,7 +22,7 @@ import {
   type TimeBlockTaskOption,
   type TimeBlocksViewMode,
 } from "@features/time-blocks";
-import { todayLocalDate, type LocalDate } from "@lib/localDateTime";
+import { todayLocalDate, type LocalDate, type LocalTime } from "@lib/localDateTime";
 import { useAuthSession } from "@state/authSession";
 import { useToast } from "@state/toastQueue";
 
@@ -39,7 +39,7 @@ const DEFAULT_CATEGORIES: readonly TimeBlockCategoryOption[] = [
 export function TimeBlocksRoute() {
   const { user } = useAuthSession();
   const toast = useToast();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const timeZone = user?.timeZone ?? "UTC";
   const locale = user?.locale ?? "en-US";
@@ -93,6 +93,22 @@ export function TimeBlocksRoute() {
     return null;
   }
 
+  const handleDateChange = (newDate: LocalDate) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("date", newDate);
+      return next;
+    });
+  };
+
+  const handleViewModeChange = (newView: TimeBlocksViewMode) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("view", newView);
+      return next;
+    });
+  };
+
   const handleCreateSubmit = async (formData: TimeBlockFormData) => {
     const startAt = localDateTimeToInstantIso(formData.date, formData.startTime, formData.timeZone);
     const endAt = localDateTimeToInstantIso(formData.date, formData.endTime, formData.timeZone);
@@ -136,16 +152,57 @@ export function TimeBlocksRoute() {
     toast.push({ tone: "success", message: "Time block saved." });
   };
 
+  const handleMoveBlock = async (blockId: string, newStart: LocalTime, newEnd: LocalTime) => {
+    const targetBlock = timeBlocksQuery.data?.items.find((b) => b.id === blockId);
+    const date = targetBlock?.date ?? currentDate;
+    const startAt = localDateTimeToInstantIso(date, newStart, timeZone);
+    const endAt = localDateTimeToInstantIso(date, newEnd, timeZone);
+
+    await moveMutation.mutateAsync({
+      id: blockId,
+      request: {
+        startAt,
+        endAt,
+        version: targetBlock?.version ?? 1,
+      },
+    });
+    toast.push({ tone: "success", message: "Time block moved." });
+  };
+
+  const handleResizeBlock = async (blockId: string, newEnd: LocalTime) => {
+    const targetBlock = timeBlocksQuery.data?.items.find((b) => b.id === blockId);
+    const date = targetBlock?.date ?? currentDate;
+    const startAt = localDateTimeToInstantIso(date, targetBlock?.startTime ?? "09:00", timeZone);
+    const endAt = localDateTimeToInstantIso(date, newEnd, timeZone);
+
+    await resizeMutation.mutateAsync({
+      id: blockId,
+      request: {
+        startAt,
+        endAt,
+        version: targetBlock?.version ?? 1,
+      },
+    });
+    toast.push({ tone: "success", message: "Time block resized." });
+  };
+
+  const handleCompleteBlock = async (block: TimeBlock) => {
+    await completeMutation.mutateAsync({
+      id: block.id,
+      version: block.version ?? 1,
+    });
+    toast.push({ tone: "success", message: "Time block completed." });
+  };
+
+  const handleDuplicateBlock = async (block: TimeBlock) => {
+    await duplicateMutation.mutateAsync({ id: block.id });
+    toast.push({ tone: "success", message: "Time block duplicated." });
+  };
+
   const handleDeleteConfirm = async (block: TimeBlock) => {
     await deleteMutation.mutateAsync(block.id);
     toast.push({ tone: "success", message: "Time block deleted." });
   };
-
-  // Helper trigger callbacks to silence unused mutation warnings and support future interaction hooks
-  void moveMutation;
-  void resizeMutation;
-  void completeMutation;
-  void duplicateMutation;
 
   const blocksList = timeBlocksQuery.data?.items;
 
@@ -166,8 +223,14 @@ export function TimeBlocksRoute() {
       tasks={taskOptions}
       categories={DEFAULT_CATEGORIES}
       onRetry={() => void timeBlocksQuery.refetch()}
+      onDateChange={handleDateChange}
+      onViewModeChange={handleViewModeChange}
       onCreateBlockSubmit={handleCreateSubmit}
       onEditBlockSubmit={handleEditSubmit}
+      onMoveBlock={handleMoveBlock}
+      onResizeBlock={handleResizeBlock}
+      onCompleteBlock={handleCompleteBlock}
+      onDuplicateBlock={handleDuplicateBlock}
       onDeleteBlockConfirm={handleDeleteConfirm}
       onStartFocus={() => {
         toast.push({ tone: "info", message: "Focus session started." });
