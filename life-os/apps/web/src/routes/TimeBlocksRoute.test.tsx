@@ -23,6 +23,7 @@ vi.mock("@features/time-blocks", async () => {
     useCompleteTimeBlock: vi.fn(),
     useDuplicateTimeBlock: vi.fn(),
     useDeleteTimeBlock: vi.fn(),
+    useCheckTimeBlockOverlap: vi.fn(),
   };
 });
 
@@ -39,6 +40,7 @@ vi.mock("@features/tasks", async () => {
   return {
     ...actual,
     useTasks: vi.fn(),
+    useTaskDetail: vi.fn(),
   };
 });
 
@@ -51,8 +53,10 @@ const mockUseResizeTimeBlock = vi.mocked(timeBlocksFeature.useResizeTimeBlock);
 const mockUseCompleteTimeBlock = vi.mocked(timeBlocksFeature.useCompleteTimeBlock);
 const mockUseDuplicateTimeBlock = vi.mocked(timeBlocksFeature.useDuplicateTimeBlock);
 const mockUseDeleteTimeBlock = vi.mocked(timeBlocksFeature.useDeleteTimeBlock);
+const mockUseCheckTimeBlockOverlap = vi.mocked(timeBlocksFeature.useCheckTimeBlockOverlap);
 const mockUseProjects = vi.mocked(projectsFeature.useProjects);
 const mockUseTasks = vi.mocked(tasksFeature.useTasks);
+const mockUseTaskDetail = vi.mocked(tasksFeature.useTaskDetail);
 
 const MOCK_USER = {
   id: "user-1",
@@ -81,6 +85,11 @@ const MOCK_BLOCK: timeBlocksFeature.TimeBlock = {
   endTime: "11:00",
   timeZone: "UTC",
   version: 1,
+};
+
+const MOCK_TASK = {
+  id: "task-1",
+  title: "Schedule the gate walkthrough",
 };
 
 const MOCK_SUMMARY: timeBlocksFeature.DailyTimeSummaryDto = {
@@ -153,9 +162,11 @@ describe("TimeBlocksRoute", () => {
     } as any);
 
     mockUseTasks.mockReturnValue({
-      data: { items: [], summary: { total: 0 } },
+      data: { items: [MOCK_TASK], summary: { total: 1 } },
       isPending: false,
     } as any);
+
+    mockUseTaskDetail.mockReturnValue({ data: undefined, isPending: false } as any);
 
     mockUseCreateTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
     mockUseUpdateTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
@@ -164,6 +175,10 @@ describe("TimeBlocksRoute", () => {
     mockUseCompleteTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
     mockUseDuplicateTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
     mockUseDeleteTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
+    mockUseCheckTimeBlockOverlap.mockReturnValue({
+      mutateAsync: vi.fn().mockResolvedValue({ hasConflict: false, conflictingBlocks: [] }),
+      isPending: false,
+    } as any);
   });
 
   it("renders Time Blocks screen with header and fetched blocks", () => {
@@ -198,6 +213,57 @@ describe("TimeBlocksRoute", () => {
 
     expect(await screen.findByRole("heading", { name: "Edit time block" })).toBeInTheDocument();
     expect(screen.getByDisplayValue("Integrated Time Block")).toBeInTheDocument();
+  });
+
+  it("opens a Task scheduling deep link with the canonical Task selected", async () => {
+    renderTimeBlocksRoute(["/life-os/app/time-blocks?date=2026-08-24&taskId=task-1"]);
+
+    expect(await screen.findByRole("heading", { name: "Create time block" })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: /Linked Task/ })).toHaveValue("task-1");
+  });
+
+  it("fetches a deep-linked Task that is outside the loaded Tasks page", async () => {
+    mockUseTasks.mockReturnValue({
+      data: { items: [], summary: { total: 101 } },
+      isPending: false,
+    } as any);
+    mockUseTaskDetail.mockReturnValue({
+      data: { task: MOCK_TASK },
+      isPending: false,
+    } as any);
+
+    renderTimeBlocksRoute(["/life-os/app/time-blocks?date=2026-08-24&taskId=task-1"]);
+
+    expect(mockUseTaskDetail).toHaveBeenCalledWith("task-1", true);
+    expect(await screen.findByRole("heading", { name: "Create time block" })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: /Linked Task/ })).toHaveValue("task-1");
+  });
+
+  it("detects a conflict before create and permits an explicit override", async () => {
+    const overlap = vi
+      .fn()
+      .mockResolvedValueOnce({
+        hasConflict: true,
+        conflictingBlocks: [{ title: "Existing focus block" }],
+      })
+      .mockResolvedValue({ hasConflict: false, conflictingBlocks: [] });
+    mockUseCheckTimeBlockOverlap.mockReturnValue({ mutateAsync: overlap, isPending: false } as any);
+
+    const user = userEvent.setup();
+    renderTimeBlocksRoute();
+    await user.click(screen.getAllByRole("button", { name: "Add block" })[0]!);
+    await user.type(screen.getByRole("textbox", { name: /title/i }), "Gate walkthrough");
+    await user.click(screen.getByRole("button", { name: "Create time block" }));
+
+    expect(await screen.findByText("Overlaps with Existing focus block.")).toBeInTheDocument();
+    expect(mockMutateAsync).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("checkbox", { name: "Allow scheduling despite conflict" }));
+    await user.click(screen.getByRole("button", { name: "Create time block" }));
+
+    expect(mockMutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "Gate walkthrough", allowOverlap: true }),
+    );
   });
 
   it("updates URL and triggers queries when Next Day button is clicked", async () => {
@@ -249,6 +315,7 @@ describe("TimeBlocksRoute", () => {
 
     expect(screen.getByText("Failed to load time blocks")).toBeInTheDocument();
     expect(screen.getByText("Network error loading time blocks")).toBeInTheDocument();
+    expect(screen.queryByText("Morning Review & Daily Plan")).not.toBeInTheDocument();
 
     const retryBtn = screen.getByRole("button", { name: "Retry" });
     await user.click(retryBtn);

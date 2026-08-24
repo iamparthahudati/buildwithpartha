@@ -8,13 +8,13 @@
   gap: var(--space-3);
 }
 
-@media (min-width: 640px) {
+@container (min-width: 40rem) {
   .time-summary-metrics__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 1024px) {
+@container (min-width: 64rem) {
   .time-summary-metrics__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }

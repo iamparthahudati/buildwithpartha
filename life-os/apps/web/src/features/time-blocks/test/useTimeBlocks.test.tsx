@@ -147,7 +147,8 @@ describe("useTimeBlocks and mutations", () => {
     it("calls createTimeBlock and invalidates caches", async () => {
       mockCreateTimeBlock.mockResolvedValueOnce(MOCK_BLOCK);
 
-      const { Wrapper } = createWrapper();
+      const { queryClient, Wrapper } = createWrapper();
+      const invalidate = vi.spyOn(queryClient, "invalidateQueries");
       const { result } = renderHook(() => useCreateTimeBlock(), { wrapper: Wrapper });
 
       result.current.mutate({
@@ -160,6 +161,9 @@ describe("useTimeBlocks and mutations", () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
       expect(mockCreateTimeBlock).toHaveBeenCalled();
+      for (const queryKey of [["time-blocks"], ["today"], ["calendar"], ["reports", "time"]]) {
+        expect(invalidate).toHaveBeenCalledWith({ queryKey });
+      }
     });
   });
 

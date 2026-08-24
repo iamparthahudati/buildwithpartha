@@ -140,7 +140,13 @@ describe("useFocusSession", () => {
 
     expect(result.current.session).toBeNull();
     expect(result.current.terminalSession?.status).toBe("COMPLETED");
-    for (const queryKey of [["today"], ["tasks"], ["time-blocks"], ["calendar"]]) {
+    for (const queryKey of [
+      ["today"],
+      ["tasks"],
+      ["time-blocks"],
+      ["calendar"],
+      ["reports", "time"],
+    ]) {
       expect(invalidate).toHaveBeenCalledWith({ queryKey });
     }
   });
@@ -169,7 +175,7 @@ describe("useFocusSession", () => {
     await act(async () => void (await result.current.skipBreak()));
     expect(paths.some((path) => path.endsWith("/focus-1/interruptions"))).toBe(true);
     expect(paths.some((path) => path.endsWith("/focus-1/resume-focus"))).toBe(true);
-    expect(result.current.session?.phase).toBe("FOCUS");
+    await waitFor(() => expect(result.current.session?.phase).toBe("FOCUS"));
   });
 
   it("does not query or invent state while initially offline", () => {
