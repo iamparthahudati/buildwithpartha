@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, MoreHorizontal, Flag } from "lucide-react";
 
 import {
@@ -39,6 +39,7 @@ export interface ProjectTimelineProps {
   readonly readOnly?: boolean;
   readonly projectStartDate?: string | null;
   readonly projectDeadlineDate?: string | null;
+  readonly selectedMilestoneId?: string;
   readonly onAddMilestone?: (data: MilestoneFormData) => Promise<void> | void;
   readonly onUpdateMilestone?: (
     milestoneId: string,
@@ -73,6 +74,7 @@ export function ProjectTimeline({
   readOnly = false,
   projectStartDate,
   projectDeadlineDate,
+  selectedMilestoneId,
   onAddMilestone,
   onUpdateMilestone,
   onStatusChange,
@@ -86,8 +88,14 @@ export function ProjectTimeline({
 
   const [deletingMilestone, setDeletingMilestone] = useState<Milestone | null>(null);
   const [deletePending, setDeletePending] = useState(false);
+  const milestoneRefs = useRef(new Map<string, HTMLDivElement>());
 
   const today = useMemo(() => todayLocalDate(timeZone, now), [timeZone, now]);
+
+  useEffect(() => {
+    if (!selectedMilestoneId) return;
+    milestoneRefs.current.get(selectedMilestoneId)?.focus();
+  }, [milestones, selectedMilestoneId]);
 
   // Sort milestones deterministically by ordering and then creation time
   const sortedMilestones = useMemo(() => {
@@ -328,7 +336,20 @@ export function ProjectTimeline({
             }
 
             return (
-              <div key={milestone.id} className="lifeos-project-timeline__item-card">
+              <div
+                key={milestone.id}
+                ref={(node) => {
+                  if (node) milestoneRefs.current.set(milestone.id, node);
+                  else milestoneRefs.current.delete(milestone.id);
+                }}
+                tabIndex={milestone.id === selectedMilestoneId ? -1 : undefined}
+                className={[
+                  "lifeos-project-timeline__item-card",
+                  milestone.id === selectedMilestoneId && "is-selected",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
                 <div className="lifeos-project-timeline__item-main">
                   <div className="lifeos-project-timeline__item-header">
                     <Icon icon={Flag} decorative size="sm" />

@@ -50,6 +50,7 @@ export interface TimeBlocksScreenProps {
   readonly dstNotice?: string | null;
   readonly initialViewMode?: TimeBlocksViewMode;
   readonly initialDate?: LocalDate;
+  readonly initialSelectedBlockId?: string;
   readonly tasks?: readonly TimeBlockTaskOption[];
   readonly projects?: readonly TimeBlockProjectOption[];
   readonly categories?: readonly TimeBlockCategoryOption[];
@@ -83,6 +84,7 @@ export function TimeBlocksScreen({
   dstNotice = null,
   initialViewMode = "day",
   initialDate,
+  initialSelectedBlockId,
   tasks = MOCK_TIME_BLOCK_TASKS,
   projects = MOCK_TIME_BLOCK_PROJECTS,
   categories = MOCK_TIME_BLOCK_CATEGORIES,
@@ -135,6 +137,19 @@ export function TimeBlocksScreen({
 
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
   const [blockToDelete, setBlockToDelete] = useState<TimeBlock | null>(null);
+  const [handledSelectedBlockId, setHandledSelectedBlockId] = useState<string | null>(null);
+
+  const linkedSelectedBlock = initialSelectedBlockId
+    ? activeBlocks.find((block) => block.id === initialSelectedBlockId)
+    : undefined;
+  if (linkedSelectedBlock && handledSelectedBlockId !== initialSelectedBlockId) {
+    setHandledSelectedBlockId(linkedSelectedBlock.id);
+    setFormMode("edit");
+    setFormInitialValues(linkedSelectedBlock);
+    setFormOpen(true);
+  } else if (!linkedSelectedBlock && handledSelectedBlockId !== null) {
+    setHandledSelectedBlockId(null);
+  }
 
   // Date Navigation handlers
   const handleUpdateDate = (nextDate: LocalDate) => {

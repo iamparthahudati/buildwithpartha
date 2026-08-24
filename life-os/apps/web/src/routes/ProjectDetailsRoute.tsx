@@ -381,6 +381,9 @@ export function ProjectDetailsRoute() {
           .catch(() => undefined);
       }}
       selectedTab={currentTab}
+      {...(searchParams.get("milestone")
+        ? { selectedMilestoneId: searchParams.get("milestone")! }
+        : {})}
       onTabChange={handleTabChange}
       loading={isLoading}
       notFound={isError && error?.message?.includes("404")}

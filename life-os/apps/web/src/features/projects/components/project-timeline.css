@@ -55,6 +55,11 @@
   background-color: var(--lifeos-color-bg-surface);
 }
 
+.lifeos-project-timeline__item-card.is-selected {
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: var(--lifeos-focus-ring-offset);
+}
+
 .lifeos-project-timeline__item-main {
   display: flex;
   flex-direction: column;

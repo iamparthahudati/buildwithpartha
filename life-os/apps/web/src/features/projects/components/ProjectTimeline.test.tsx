@@ -80,6 +80,16 @@ describe("ProjectTimeline", () => {
     await expectNoAccessibilityViolations(container);
   });
 
+  it("focuses the exact milestone selected from Calendar", async () => {
+    renderWithUser(<ProjectTimeline milestones={MOCK_MILESTONES} selectedMilestoneId="m2" />);
+
+    const heading = screen.getAllByRole("heading", {
+      level: 3,
+      name: "Overdue Review Checkpoint",
+    })[0]!;
+    expect(heading.closest(".lifeos-project-timeline__item-card")).toHaveFocus();
+  });
+
   it("renders empty state when no milestones exist", async () => {
     const onAddMilestone = vi.fn();
     const { container } = renderWithUser(

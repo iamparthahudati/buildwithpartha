@@ -58,6 +58,7 @@ import {
   CalendarGridsDemo,
   CalendarHeaderDemo,
 } from "./CalendarDemos";
+import { CalendarScreenDemo } from "./CalendarScreenDemos";
 import type { CatalogEntry } from "./registry";
 
 /* Composed-component entries (LOS-0401 onward). */
@@ -854,6 +855,22 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Ready",
         description: "Populated day, week and month views followed by the same records as a list.",
         render: () => <CalendarGridsDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-screen",
+    name: "CalendarScreen",
+    group: "Composed",
+    summary:
+      "Complete responsive Calendar composition with URL-owned date, Day/Week/Month view and source filters; loading, empty, offline, error, truncation, dense-day, DST, and month-boundary states; and canonical source selection.",
+    states: [
+      {
+        id: "calendar-screen-scenarios",
+        name: "Integrated states",
+        description:
+          "Interactive mock scenarios for every Calendar view and network/data boundary before route integration.",
+        render: () => <CalendarScreenDemo />,
       },
     ],
   },

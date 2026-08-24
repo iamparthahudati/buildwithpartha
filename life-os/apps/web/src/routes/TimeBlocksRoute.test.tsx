@@ -156,6 +156,13 @@ describe("TimeBlocksRoute", () => {
     );
   });
 
+  it("opens a Calendar-linked Time Block as the true editable record", async () => {
+    renderTimeBlocksRoute(["/life-os/app/time-blocks?date=2026-08-24&selected=tb-101"]);
+
+    expect(await screen.findByRole("heading", { name: "Edit time block" })).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Integrated Time Block")).toBeInTheDocument();
+  });
+
   it("updates URL and triggers queries when Next Day button is clicked", async () => {
     const user = userEvent.setup();
     renderTimeBlocksRoute(["/life-os/app/time-blocks?date=2026-08-24"]);

@@ -76,6 +76,7 @@ export interface ProjectDetailsScreenProps {
   readonly commentsTotal?: number;
   readonly onCommentsPageChange?: (page: number) => void;
   readonly selectedTab?: string;
+  readonly selectedMilestoneId?: string;
   readonly onTabChange?: (tab: string) => void;
   readonly loading?: boolean;
   readonly notFound?: boolean;
@@ -161,6 +162,7 @@ export function ProjectDetailsScreen({
   commentsTotal,
   onCommentsPageChange,
   selectedTab: controlledTab,
+  selectedMilestoneId,
   onTabChange,
   loading = false,
   notFound = false,
@@ -414,6 +416,7 @@ export function ProjectDetailsScreen({
           now={now}
           locale={locale}
           timeZone={timeZone}
+          {...(selectedMilestoneId ? { selectedMilestoneId } : {})}
           isArchived={isArchived}
           {...(project.startDate ? { projectStartDate: project.startDate } : {})}
           {...(project.deadlineDate ? { projectDeadlineDate: project.deadlineDate } : {})}
