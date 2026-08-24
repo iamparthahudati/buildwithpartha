@@ -13,6 +13,8 @@ export interface TimeSummaryProps {
   readonly goalStatus: TimeGoalProgressStatus;
   readonly targetMinutes?: number;
   readonly actualMinutes?: number;
+  readonly goalTitle?: string;
+  readonly comparisonLabel?: string;
   readonly upcomingStatus?: UpcomingBlocksStatus;
   readonly upcomingBlocks?: readonly TimeBlock[];
   readonly locale?: string;
@@ -36,6 +38,8 @@ export function TimeSummary({
   goalStatus,
   targetMinutes = 240,
   actualMinutes = 0,
+  goalTitle,
+  comparisonLabel,
   upcomingStatus = "ready",
   upcomingBlocks = [],
   locale = "en-US",
@@ -75,6 +79,8 @@ export function TimeSummary({
             status={goalStatus}
             targetMinutes={targetMinutes}
             actualMinutes={actualMinutes}
+            {...(goalTitle ? { title: goalTitle } : {})}
+            {...(comparisonLabel ? { comparisonLabel } : {})}
             locale={locale}
             {...(onRetry ? { onRetry } : {})}
             {...(onEditGoal ? { onEditGoal } : {})}

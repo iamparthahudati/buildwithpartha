@@ -115,6 +115,31 @@ export interface TimeBlockQueryParams {
   readonly taskId?: string;
 }
 
+export type FocusComparisonSource = "PLANNED_FOCUS_BLOCKS" | "DAILY_TARGET" | "NONE";
+
+/** Owner-scoped daily time projection shared by Time Blocks, Today, and Reports. */
+export interface DailyTimeSummaryDto {
+  readonly generatedAt: string;
+  readonly localDate: LocalDate;
+  readonly timeZone: string;
+  readonly actualFocusMinutes: number;
+  readonly actualBreakMinutes: number;
+  readonly unscheduledFocusMinutes: number;
+  readonly personalTimeBlockMinutes: number;
+  readonly plannedFocusMinutes: number;
+  readonly dailyFocusTargetMinutes: number | null;
+  readonly comparisonMinutes: number | null;
+  readonly comparisonSource: FocusComparisonSource;
+  readonly progressPercentage: number | null;
+  readonly sessionActive: boolean;
+  readonly activeSessionTimerSummary: string | null;
+  readonly categories: readonly {
+    readonly category: string;
+    readonly minutes: number;
+  }[];
+  readonly hasData: boolean;
+}
+
 /** Converts an ISO 8601 string to a LocalDate (YYYY-MM-DD) in a target timezone. */
 export function instantToLocalDate(instantIso: string, timeZone: string): LocalDate {
   return todayLocalDate(timeZone, new Date(instantIso));
@@ -206,6 +231,19 @@ export async function queryTimeBlocks(
     items: response.timeBlocks.map((b) => mapTimeBlockResponse(b, params.timeZone)),
     totalCount: response.totalCount,
   };
+}
+
+/** Loads an explainable daily planned-versus-actual time summary. */
+export async function getDailyTimeSummary(
+  date: LocalDate,
+  timeZone: string,
+  signal?: AbortSignal,
+): Promise<DailyTimeSummaryDto> {
+  const searchParams = new URLSearchParams({ date, timeZone });
+  return apiRequest<DailyTimeSummaryDto>(`/reports/time?${searchParams.toString()}`, {
+    method: "GET",
+    ...(signal ? { signal } : {}),
+  });
 }
 
 /** Fetches a single time block by ID. */

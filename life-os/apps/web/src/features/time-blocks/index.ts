@@ -70,6 +70,7 @@ export {
 
 export {
   queryTimeBlocks,
+  getDailyTimeSummary,
   getTimeBlock,
   createTimeBlock,
   updateTimeBlock,
@@ -95,10 +96,13 @@ export {
   type CheckOverlapRequestDto,
   type TimeBlockOverlapResponseDto,
   type TimeBlockQueryParams,
+  type DailyTimeSummaryDto,
+  type FocusComparisonSource,
 } from "./api/timeBlocksApi";
 
 export {
   useTimeBlocks,
+  useDailyTimeSummary,
   useTimeBlock,
   useCreateTimeBlock,
   useUpdateTimeBlock,
@@ -112,4 +116,5 @@ export {
   TIME_BLOCKS_QUERY_KEY,
   TODAY_QUERY_KEY,
   CALENDAR_QUERY_KEY,
+  DAILY_TIME_SUMMARY_QUERY_KEY,
 } from "./hooks/useTimeBlocks";

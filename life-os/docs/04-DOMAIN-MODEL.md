@@ -25,6 +25,7 @@ Canonical entity names, statuses, priorities, UI labels, API resources and Postg
 
 - `TimeBlock`: title, category, optional task/project, start/end instants, timezone, status, color, notes.
 - `FocusSession`: optional task/Time Block, planned/actual duration, started/paused/completed timestamps, interruptions, status and focus/break phase.
+- `DailyTimeSummary`: read-only, non-persisted projection of completed Focus Session time, local-day-clipped Time Block allocation, optional daily target and labelled planned-versus-actual denominator.
 - `Sprint`: name, goal, start/end dates, status.
 - `SprintTask`: sprint, task, ordering, committed flag.
 - `WeeklyPlan`: week start, target focus minutes, status and finalized snapshot/revision identity.

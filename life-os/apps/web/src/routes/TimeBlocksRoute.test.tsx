@@ -15,6 +15,7 @@ vi.mock("@features/time-blocks", async () => {
   return {
     ...actual,
     useTimeBlocks: vi.fn(),
+    useDailyTimeSummary: vi.fn(),
     useCreateTimeBlock: vi.fn(),
     useUpdateTimeBlock: vi.fn(),
     useMoveTimeBlock: vi.fn(),
@@ -42,6 +43,7 @@ vi.mock("@features/tasks", async () => {
 });
 
 const mockUseTimeBlocks = vi.mocked(timeBlocksFeature.useTimeBlocks);
+const mockUseDailyTimeSummary = vi.mocked(timeBlocksFeature.useDailyTimeSummary);
 const mockUseCreateTimeBlock = vi.mocked(timeBlocksFeature.useCreateTimeBlock);
 const mockUseUpdateTimeBlock = vi.mocked(timeBlocksFeature.useUpdateTimeBlock);
 const mockUseMoveTimeBlock = vi.mocked(timeBlocksFeature.useMoveTimeBlock);
@@ -81,6 +83,25 @@ const MOCK_BLOCK: timeBlocksFeature.TimeBlock = {
   version: 1,
 };
 
+const MOCK_SUMMARY: timeBlocksFeature.DailyTimeSummaryDto = {
+  generatedAt: "2026-08-24T12:00:00Z",
+  localDate: "2026-08-24",
+  timeZone: "UTC",
+  actualFocusMinutes: 45,
+  actualBreakMinutes: 5,
+  unscheduledFocusMinutes: 15,
+  personalTimeBlockMinutes: 30,
+  plannedFocusMinutes: 120,
+  dailyFocusTargetMinutes: 90,
+  comparisonMinutes: 120,
+  comparisonSource: "PLANNED_FOCUS_BLOCKS",
+  progressPercentage: 38,
+  sessionActive: false,
+  activeSessionTimerSummary: null,
+  categories: [{ category: "Focus", minutes: 120 }],
+  hasData: true,
+};
+
 function renderTimeBlocksRoute(initialEntries = ["/life-os/app/time-blocks?date=2026-08-24"]) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -112,6 +133,14 @@ describe("TimeBlocksRoute", () => {
         items: [MOCK_BLOCK],
         totalCount: 1,
       },
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    mockUseDailyTimeSummary.mockReturnValue({
+      data: MOCK_SUMMARY,
       isPending: false,
       isError: false,
       error: null,
@@ -154,6 +183,14 @@ describe("TimeBlocksRoute", () => {
       }),
       true,
     );
+    expect(mockUseDailyTimeSummary).toHaveBeenCalledWith("2026-08-25", "UTC", true);
+  });
+
+  it("renders the server time summary with its labelled denominator", () => {
+    renderTimeBlocksRoute();
+
+    expect(screen.getAllByText("45 min")).toHaveLength(2);
+    expect(screen.getByText("of 2 hr planned focus")).toBeInTheDocument();
   });
 
   it("opens a Calendar-linked Time Block as the true editable record", async () => {

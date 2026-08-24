@@ -91,6 +91,12 @@ Starting from a linked scheduled Time Block marks it In progress and infers its 
 
 New Accounts and existing rows upgraded by V18 receive conservative defaults: 25 minutes of focus, a 5-minute short break, a 15-minute long break after four completed Focus Sessions, and all automatic starts, sounds, and browser notifications disabled. LOS-0916 fields omitted by an older client retain their current values so a rolling frontend/backend deployment cannot reset them. A successful update affects future Focus Session starts only; it never mutates an active Focus Session's canonical planned durations or state.
 
+### Daily time report
+
+`GET /reports/time?date={localDate}&timeZone={ianaZone}` is an authenticated, private/no-store daily projection. It returns completed Focus Session focus/break minutes, unscheduled focus minutes, non-cancelled Time Block category allocation, planned Focus Time Block minutes, the optional daily focus target, active-session state, and an explicit `comparisonSource` of `PLANNED_FOCUS_BLOCKS`, `DAILY_TARGET`, or `NONE`.
+
+The supplied IANA timezone converts the inclusive local date into start-inclusive/end-exclusive instants, retaining the true length of DST-short and DST-long days. Time Blocks overlapping the day are clipped to those instants. A completed Focus Session is attributed to the local date containing its `startedAt`; Cancelled sessions do not contribute to reported actual time, and durations use confirmed whole minutes. When planned Focus Time Blocks exist they are the denominator; otherwise the optional daily target is used. With neither, `comparisonMinutes` and `progressPercentage` are null rather than a misleading `0%`. Percentages may exceed 100 because actual time is not capped.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:

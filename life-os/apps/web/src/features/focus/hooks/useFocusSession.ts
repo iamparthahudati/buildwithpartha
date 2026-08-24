@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { CALENDAR_QUERY_KEY } from "@features/calendar";
 import { TASKS_QUERY_KEY } from "@features/tasks";
-import { TIME_BLOCKS_QUERY_KEY } from "@features/time-blocks";
+import { DAILY_TIME_SUMMARY_QUERY_KEY, TIME_BLOCKS_QUERY_KEY } from "@features/time-blocks";
 import { TODAY_QUERY_KEY } from "@features/today";
 import { ApiError } from "@lib/apiClient";
 
@@ -193,6 +193,7 @@ export function useFocusSession() {
 
       if (command.action !== "save-note") {
         void queryClient.invalidateQueries({ queryKey: TODAY_QUERY_KEY });
+        void queryClient.invalidateQueries({ queryKey: DAILY_TIME_SUMMARY_QUERY_KEY });
       }
       if (next.timeBlockId && (command.action === "start" || terminal)) {
         void queryClient.invalidateQueries({ queryKey: TIME_BLOCKS_QUERY_KEY });

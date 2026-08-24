@@ -6,6 +6,7 @@ import {
   createTimeBlock,
   deleteTimeBlock,
   duplicateTimeBlock,
+  getDailyTimeSummary,
   getTimeBlock,
   moveTimeBlock,
   queryTimeBlocks,
@@ -15,21 +16,33 @@ import {
   type CheckOverlapRequestDto,
   type CreateTimeBlockRequestDto,
   type DuplicateTimeBlockRequestDto,
+  type DailyTimeSummaryDto,
   type MoveTimeBlockRequestDto,
   type ResizeTimeBlockRequestDto,
   type TimeBlockQueryParams,
   type UpdateTimeBlockRequestDto,
 } from "../api/timeBlocksApi";
+import type { LocalDate } from "@lib/localDateTime";
 
 export const TIME_BLOCKS_QUERY_KEY = ["time-blocks"] as const;
 export const TODAY_QUERY_KEY = ["today"] as const;
 export const CALENDAR_QUERY_KEY = ["calendar"] as const;
+export const DAILY_TIME_SUMMARY_QUERY_KEY = ["reports", "time"] as const;
 
 /** Query hook to fetch a list of time blocks. */
 export function useTimeBlocks(params: TimeBlockQueryParams = {}, enabled: boolean = true) {
   return useQuery({
     queryKey: [...TIME_BLOCKS_QUERY_KEY, params],
     queryFn: ({ signal }) => queryTimeBlocks(params, signal),
+    enabled,
+  });
+}
+
+/** Query hook for the selected Account-local day's time goal and allocation summary. */
+export function useDailyTimeSummary(date: LocalDate, timeZone: string, enabled: boolean = true) {
+  return useQuery<DailyTimeSummaryDto>({
+    queryKey: [...DAILY_TIME_SUMMARY_QUERY_KEY, date, timeZone],
+    queryFn: ({ signal }) => getDailyTimeSummary(date, timeZone, signal),
     enabled,
   });
 }
@@ -52,6 +65,7 @@ export function useCreateTimeBlock() {
       void queryClient.invalidateQueries({ queryKey: TIME_BLOCKS_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: TODAY_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: CALENDAR_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: DAILY_TIME_SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -66,6 +80,7 @@ export function useUpdateTimeBlock() {
       void queryClient.invalidateQueries({ queryKey: TIME_BLOCKS_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: TODAY_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: CALENDAR_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: DAILY_TIME_SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -80,6 +95,7 @@ export function useMoveTimeBlock() {
       void queryClient.invalidateQueries({ queryKey: TIME_BLOCKS_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: TODAY_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: CALENDAR_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: DAILY_TIME_SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -94,6 +110,7 @@ export function useResizeTimeBlock() {
       void queryClient.invalidateQueries({ queryKey: TIME_BLOCKS_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: TODAY_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: CALENDAR_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: DAILY_TIME_SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -108,6 +125,7 @@ export function useChangeTimeBlockStatus() {
       void queryClient.invalidateQueries({ queryKey: TIME_BLOCKS_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: TODAY_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: CALENDAR_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: DAILY_TIME_SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -122,6 +140,7 @@ export function useCompleteTimeBlock() {
       void queryClient.invalidateQueries({ queryKey: TIME_BLOCKS_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: TODAY_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: CALENDAR_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: DAILY_TIME_SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -136,6 +155,7 @@ export function useDuplicateTimeBlock() {
       void queryClient.invalidateQueries({ queryKey: TIME_BLOCKS_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: TODAY_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: CALENDAR_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: DAILY_TIME_SUMMARY_QUERY_KEY });
     },
   });
 }
@@ -149,6 +169,7 @@ export function useDeleteTimeBlock() {
       void queryClient.invalidateQueries({ queryKey: TIME_BLOCKS_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: TODAY_QUERY_KEY });
       void queryClient.invalidateQueries({ queryKey: CALENDAR_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: DAILY_TIME_SUMMARY_QUERY_KEY });
     },
   });
 }

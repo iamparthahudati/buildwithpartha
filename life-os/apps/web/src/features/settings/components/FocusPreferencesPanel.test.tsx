@@ -58,6 +58,7 @@ describe("FocusPreferencesPanel", () => {
     const { container } = render(<FocusPreferencesPanel />, { wrapper: Wrapper });
 
     await screen.findByTestId("focus-preferences-panel");
+    expect(screen.getByRole("spinbutton", { name: /Daily focus target/ })).toHaveValue(120);
     expect(screen.getByRole("spinbutton", { name: /Focus duration/ })).toHaveValue(25);
     expect(screen.getByRole("spinbutton", { name: /Long break duration/ })).toHaveValue(15);
     expect(screen.getByRole("checkbox", { name: /Start breaks automatically/ })).not.toBeChecked();
@@ -121,6 +122,7 @@ describe("FocusPreferencesPanel", () => {
 
     const [, init] = vi.mocked(fetch).mock.calls[1] as [string, RequestInit];
     expect(JSON.parse(String(init.body))).toMatchObject({
+      dailyFocusTargetMinutes: 120,
       focusDurationMinutes: 50,
       breakDurationMinutes: 5,
       longBreakDurationMinutes: 20,
@@ -129,6 +131,29 @@ describe("FocusPreferencesPanel", () => {
       autoStartFocusSessions: false,
       soundEnabled: true,
       browserNotificationsEnabled: true,
+    });
+  });
+
+  it("clears the optional daily target without changing unrelated defaults", async () => {
+    const user = userEvent.setup();
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(jsonResponse(200, PREFERENCES))
+      .mockResolvedValueOnce(
+        jsonResponse(200, {
+          planningDefaults: { ...PREFERENCES.planningDefaults, dailyFocusTargetMinutes: null },
+        }),
+      );
+    render(<FocusPreferencesPanel />, { wrapper: Wrapper });
+
+    const target = await screen.findByRole("spinbutton", { name: /Daily focus target/ });
+    await user.clear(target);
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    const [, init] = vi.mocked(fetch).mock.calls[1] as [string, RequestInit];
+    expect(JSON.parse(String(init.body))).toMatchObject({
+      dailyFocusTargetMinutes: null,
+      focusDurationMinutes: 25,
+      breakDurationMinutes: 5,
     });
   });
 

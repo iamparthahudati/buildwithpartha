@@ -124,6 +124,10 @@ class TodayControllerTests {
         .andExpect(jsonPath("$.focusSummary.data.plannedFocusMinutesToday").value(0))
         .andExpect(jsonPath("$.focusSummary.data.activeSessionTimerSummary").isEmpty())
         .andExpect(jsonPath("$.focusSummary.data.isSessionActive").value(false))
+        .andExpect(jsonPath("$.focusSummary.data.dailyFocusTargetMinutes").isEmpty())
+        .andExpect(jsonPath("$.focusSummary.data.comparisonMinutes").isEmpty())
+        .andExpect(jsonPath("$.focusSummary.data.comparisonSource").value("NONE"))
+        .andExpect(jsonPath("$.focusSummary.data.progressPercentage").isEmpty())
         .andExpect(jsonPath("$.focusSummary.error").isEmpty())
         // Sprint widget
         .andExpect(jsonPath("$.sprint.status").value("EMPTY"))

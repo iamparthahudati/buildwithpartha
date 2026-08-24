@@ -11,6 +11,7 @@ import {
 import type { PlanningDefaultsDto } from "@features/onboarding";
 
 interface FocusPreferenceErrors {
+  readonly dailyFocusTargetMinutes?: string;
   readonly focusDurationMinutes?: string;
   readonly breakDurationMinutes?: string;
   readonly longBreakDurationMinutes?: string;
@@ -18,6 +19,7 @@ interface FocusPreferenceErrors {
 }
 
 interface FocusPreferenceFormValues {
+  readonly dailyFocusTargetMinutes: string;
   readonly focusDurationMinutes: string;
   readonly breakDurationMinutes: string;
   readonly longBreakDurationMinutes: string;
@@ -30,6 +32,10 @@ interface FocusPreferenceFormValues {
 
 function initialValues(preferences: PlanningDefaultsDto): FocusPreferenceFormValues {
   return {
+    dailyFocusTargetMinutes:
+      preferences.dailyFocusTargetMinutes === null
+        ? ""
+        : String(preferences.dailyFocusTargetMinutes),
     focusDurationMinutes: String(preferences.focusDurationMinutes),
     breakDurationMinutes: String(preferences.breakDurationMinutes),
     longBreakDurationMinutes: String(preferences.longBreakDurationMinutes),
@@ -54,6 +60,15 @@ function parseBoundedInteger(
 }
 
 function validate(values: FocusPreferenceFormValues): FocusPreferenceErrors {
+  const target: { readonly value?: number; readonly error?: string } =
+    values.dailyFocusTargetMinutes === ""
+      ? {}
+      : parseBoundedInteger(
+          values.dailyFocusTargetMinutes,
+          1,
+          1440,
+          "Choose a daily focus target from 1 to 1,440 minutes, or leave it blank.",
+        );
   const focus = parseBoundedInteger(
     values.focusDurationMinutes,
     1,
@@ -80,6 +95,7 @@ function validate(values: FocusPreferenceFormValues): FocusPreferenceErrors {
   );
 
   return {
+    ...(target.error ? { dailyFocusTargetMinutes: target.error } : {}),
     ...(focus.error ? { focusDurationMinutes: focus.error } : {}),
     ...(shortBreak.error ? { breakDurationMinutes: shortBreak.error } : {}),
     ...(longBreak.error ? { longBreakDurationMinutes: longBreak.error } : {}),
@@ -183,7 +199,8 @@ function FocusPreferencesForm({ preferences }: { readonly preferences: PlanningD
       workStartTime: preferences.workStartTime,
       workEndTime: preferences.workEndTime,
       overnightSchedule: preferences.overnightSchedule,
-      dailyFocusTargetMinutes: preferences.dailyFocusTargetMinutes,
+      dailyFocusTargetMinutes:
+        values.dailyFocusTargetMinutes === "" ? null : Number(values.dailyFocusTargetMinutes),
       focusDurationMinutes: Number(values.focusDurationMinutes),
       breakDurationMinutes: Number(values.breakDurationMinutes),
       longBreakDurationMinutes: Number(values.longBreakDurationMinutes),
@@ -247,6 +264,23 @@ function FocusPreferencesForm({ preferences }: { readonly preferences: PlanningD
           <FormErrorSummary title="Check your focus preferences" />
 
           <div className="lifeos-focus-preferences-grid">
+            <FormField
+              name="dailyFocusTargetMinutes"
+              label="Daily focus target (optional)"
+              description="Used when the day has no planned Focus Time Blocks."
+              {...(errors.dailyFocusTargetMinutes ? { error: errors.dailyFocusTargetMinutes } : {})}
+            >
+              {(field) => (
+                <NumberInput
+                  {...field}
+                  value={values.dailyFocusTargetMinutes}
+                  min={1}
+                  max={1440}
+                  unit="minutes"
+                  onChange={setNumberValue("dailyFocusTargetMinutes")}
+                />
+              )}
+            </FormField>
             <FormField
               name="focusDurationMinutes"
               label="Focus duration"

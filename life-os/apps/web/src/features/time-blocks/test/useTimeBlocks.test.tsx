@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import {
   useTimeBlocks,
+  useDailyTimeSummary,
   useTimeBlock,
   useCreateTimeBlock,
   useUpdateTimeBlock,
@@ -18,6 +19,7 @@ import type { TimeBlock } from "../model/timeBlock";
 
 vi.mock("../api/timeBlocksApi", () => ({
   queryTimeBlocks: vi.fn(),
+  getDailyTimeSummary: vi.fn(),
   getTimeBlock: vi.fn(),
   createTimeBlock: vi.fn(),
   updateTimeBlock: vi.fn(),
@@ -35,6 +37,7 @@ vi.mock("../api/timeBlocksApi", () => ({
 }));
 
 const mockQueryTimeBlocks = vi.mocked(timeBlocksApi.queryTimeBlocks);
+const mockGetDailyTimeSummary = vi.mocked(timeBlocksApi.getDailyTimeSummary);
 const mockGetTimeBlock = vi.mocked(timeBlocksApi.getTimeBlock);
 const mockCreateTimeBlock = vi.mocked(timeBlocksApi.createTimeBlock);
 const mockUpdateTimeBlock = vi.mocked(timeBlocksApi.updateTimeBlock);
@@ -102,6 +105,41 @@ describe("useTimeBlocks and mutations", () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
       expect(result.current.data?.title).toBe("Hook Test Time Block");
+    });
+  });
+
+  describe("useDailyTimeSummary", () => {
+    it("fetches the selected local day summary", async () => {
+      mockGetDailyTimeSummary.mockResolvedValueOnce({
+        generatedAt: "2026-08-24T12:00:00Z",
+        localDate: "2026-08-24",
+        timeZone: "UTC",
+        actualFocusMinutes: 30,
+        actualBreakMinutes: 5,
+        unscheduledFocusMinutes: 30,
+        personalTimeBlockMinutes: 0,
+        plannedFocusMinutes: 0,
+        dailyFocusTargetMinutes: 60,
+        comparisonMinutes: 60,
+        comparisonSource: "DAILY_TARGET",
+        progressPercentage: 50,
+        sessionActive: false,
+        activeSessionTimerSummary: null,
+        categories: [],
+        hasData: true,
+      });
+
+      const { Wrapper } = createWrapper();
+      const { result } = renderHook(() => useDailyTimeSummary("2026-08-24", "UTC"), {
+        wrapper: Wrapper,
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(mockGetDailyTimeSummary).toHaveBeenCalledWith(
+        "2026-08-24",
+        "UTC",
+        expect.any(AbortSignal),
+      );
     });
   });
 
