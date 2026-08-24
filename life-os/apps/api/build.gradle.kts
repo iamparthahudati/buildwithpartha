@@ -4,9 +4,9 @@ plugins {
     java
     jacoco
     checkstyle
-    id("org.springframework.boot") version "4.1.0"
+    id("org.springframework.boot") version "4.1.1"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "8.9.0"
+    id("com.diffplug.spotless") version "8.10.0"
 }
 
 group = "tech.buildwithpartha"
@@ -56,12 +56,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.flywaydb:flyway-database-postgresql")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:3.0.3")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:3.1.0")
 
     // Argon2PasswordEncoder (LOS-0502) delegates to Bouncy Castle's Argon2 implementation;
     // spring-security-crypto declares it compileOnly, so the application must supply it at
     // runtime.
-    runtimeOnly("org.bouncycastle:bcprov-jdk18on:1.79")
+    runtimeOnly("org.bouncycastle:bcprov-jdk18on:1.85.2")
 
     runtimeOnly("org.postgresql:postgresql")
 
@@ -72,7 +72,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
-    testImplementation("com.tngtech.archunit:archunit:1.4.2")
+    testImplementation("com.tngtech.archunit:archunit:1.5.0")
     testImplementation("org.assertj:assertj-core")
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
