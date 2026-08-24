@@ -11,6 +11,7 @@ export interface TimeGoalProgressCardProps {
   readonly targetMinutes?: number;
   readonly actualMinutes?: number;
   readonly title?: string;
+  readonly comparisonLabel?: string;
   readonly locale?: string;
   readonly onRetry?: () => void;
   readonly onEditGoal?: () => void;
@@ -21,7 +22,8 @@ export function TimeGoalProgressCard({
   status,
   targetMinutes = 0,
   actualMinutes = 0,
-  title = "Daily focus goal",
+  title = "Daily focus target",
+  comparisonLabel = "daily target",
   locale = "en-US",
   onRetry,
   onEditGoal,
@@ -48,8 +50,8 @@ export function TimeGoalProgressCard({
     return (
       <Surface className={`time-goal-progress-card ${className}`.trim()}>
         <ErrorState
-          title="Unable to load goal progress"
-          description="There was a problem retrieving your focus goal."
+          title="Unable to load focus progress"
+          description="Focus progress couldn't load. Try again."
           {...(onRetry ? { onRetry } : {})}
           scope="region"
         />
@@ -63,12 +65,12 @@ export function TimeGoalProgressCard({
         <EmptyState
           variant="first-use"
           icon={Target}
-          title="No focus goal set"
-          description="Set a daily target to track your focus time commitment."
+          title="No daily focus target"
+          description="Set an optional target to compare with completed focus time."
           primaryAction={
             onEditGoal ? (
               <Button variant="secondary" size="sm" onClick={onEditGoal}>
-                Set focus goal
+                Set focus target
               </Button>
             ) : undefined
           }
@@ -86,8 +88,8 @@ export function TimeGoalProgressCard({
   const formattedRemaining = formatDurationMinutes(remainingMinutes, locale);
 
   const statusText = isGoalReached
-    ? "Goal reached!"
-    : `${formattedRemaining} remaining to reach daily goal`;
+    ? `${comparisonLabel.charAt(0).toUpperCase()}${comparisonLabel.slice(1)} met`
+    : `${formattedRemaining} remaining against ${comparisonLabel}`;
 
   const strokeDasharray = 220; // 2 * pi * r (r=35)
   const strokeDashoffset = strokeDasharray - (strokeDasharray * percentage) / 100;
@@ -110,10 +112,10 @@ export function TimeGoalProgressCard({
             variant="ghost"
             size="sm"
             onClick={onEditGoal}
-            aria-label="Edit focus goal target"
+            aria-label="Edit daily focus target"
           >
             <Icon icon={Edit2} decorative size="sm" />
-            <VisuallyHidden>Edit goal</VisuallyHidden>
+            <VisuallyHidden>Edit focus target</VisuallyHidden>
           </Button>
         )}
       </div>
@@ -142,7 +144,7 @@ export function TimeGoalProgressCard({
               {formattedActual}
             </Text>
             <Text size="sm" tone="muted">
-              of {formattedTarget} target
+              of {formattedTarget} {comparisonLabel}
             </Text>
           </div>
 

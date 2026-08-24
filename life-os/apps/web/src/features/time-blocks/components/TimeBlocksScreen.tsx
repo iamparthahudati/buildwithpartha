@@ -13,6 +13,7 @@ import {
 } from "@lib/localDateTime";
 
 import type { TimeBlock } from "../model/timeBlock";
+import type { DailyTimeSummaryDto } from "../api/timeBlocksApi";
 import { DayTimeline, type DayTimelineDensity, type DayTimelineViewMode } from "./DayTimeline";
 import { TimeSummary } from "./TimeSummary";
 import {
@@ -27,7 +28,6 @@ import {
   MOCK_TIME_BLOCK_CATEGORIES,
   MOCK_TIME_BLOCK_PROJECTS,
   MOCK_TIME_BLOCK_TASKS,
-  MOCK_TIME_SUMMARY_CATEGORIES,
 } from "../model/mockTimeBlocks";
 import {
   formatTimeBlocksDateLabel,
@@ -54,6 +54,11 @@ export interface TimeBlocksScreenProps {
   readonly tasks?: readonly TimeBlockTaskOption[];
   readonly projects?: readonly TimeBlockProjectOption[];
   readonly categories?: readonly TimeBlockCategoryOption[];
+  readonly timeSummary?: DailyTimeSummaryDto;
+  readonly timeSummaryLoading?: boolean;
+  readonly timeSummaryError?: string | null;
+  readonly onTimeSummaryRetry?: () => void;
+  readonly onEditFocusTarget?: () => void;
   readonly onRetry?: () => void;
   readonly onDateChange?: (date: LocalDate) => void;
   readonly onViewModeChange?: (viewMode: TimeBlocksViewMode) => void;
@@ -88,6 +93,11 @@ export function TimeBlocksScreen({
   tasks = MOCK_TIME_BLOCK_TASKS,
   projects = MOCK_TIME_BLOCK_PROJECTS,
   categories = MOCK_TIME_BLOCK_CATEGORIES,
+  timeSummary,
+  timeSummaryLoading = false,
+  timeSummaryError = null,
+  onTimeSummaryRetry,
+  onEditFocusTarget,
   onRetry,
   onDateChange,
   onViewModeChange,
@@ -127,6 +137,40 @@ export function TimeBlocksScreen({
     initialBlocks ?? MOCK_TIME_BLOCKS,
   );
   const activeBlocks = controlledBlocks ?? internalBlocks;
+
+  const summaryCategories =
+    timeSummary?.categories.map((category) => ({
+      id: category.category,
+      name: category.category,
+      minutes: category.minutes,
+    })) ?? [];
+  const summaryMetricsStatus = timeSummaryLoading
+    ? ({ type: "loading" } as const)
+    : timeSummaryError
+      ? ({
+          type: "error",
+          message: "Time summary couldn't load.",
+          ...(onTimeSummaryRetry ? { onRetry: onTimeSummaryRetry } : {}),
+        } as const)
+      : timeSummary
+        ? ({
+            type: "ready",
+            counts: {
+              focusMinutes: timeSummary.actualFocusMinutes,
+              breakMinutes: timeSummary.actualBreakMinutes,
+              personalMinutes: timeSummary.personalTimeBlockMinutes,
+              unscheduledMinutes: timeSummary.unscheduledFocusMinutes,
+            },
+          } as const)
+        : ({ type: "empty" } as const);
+  const goalStatus = timeSummaryLoading
+    ? "loading"
+    : timeSummaryError
+      ? "error"
+      : (timeSummary?.comparisonMinutes ?? 0) > 0
+        ? "ready"
+        : "empty";
+  const comparisonIsPlan = timeSummary?.comparisonSource === "PLANNED_FOCUS_BLOCKS";
 
   // Dialog States
   const [formOpen, setFormOpen] = useState<boolean>(false);
@@ -526,24 +570,22 @@ export function TimeBlocksScreen({
               aria-label="Time summary statistics"
             >
               <TimeSummary
-                metricsStatus={
-                  loading
-                    ? { type: "loading" }
-                    : {
-                        type: "ready",
-                        counts: {
-                          focusMinutes: 270,
-                          breakMinutes: 60,
-                          personalMinutes: 60,
-                          unscheduledMinutes: 60,
-                        },
-                      }
+                metricsStatus={summaryMetricsStatus}
+                breakdownStatus={
+                  timeSummaryLoading
+                    ? "loading"
+                    : timeSummaryError
+                      ? "error"
+                      : summaryCategories.length > 0
+                        ? "ready"
+                        : "empty"
                 }
-                breakdownStatus={loading ? "loading" : "ready"}
-                categories={MOCK_TIME_SUMMARY_CATEGORIES}
-                goalStatus={loading ? "loading" : "ready"}
-                targetMinutes={240}
-                actualMinutes={270}
+                categories={summaryCategories}
+                goalStatus={goalStatus}
+                targetMinutes={timeSummary?.comparisonMinutes ?? 0}
+                actualMinutes={timeSummary?.actualFocusMinutes ?? 0}
+                goalTitle={comparisonIsPlan ? "Planned focus" : "Daily focus target"}
+                comparisonLabel={comparisonIsPlan ? "planned focus" : "daily target"}
                 upcomingStatus={loading ? "loading" : "ready"}
                 upcomingBlocks={displayedBlocks.filter((b) => b.status === "SCHEDULED")}
                 locale={locale}
@@ -557,7 +599,8 @@ export function TimeBlocksScreen({
                 {...(onStartFocus
                   ? { onStartFocus: (b) => (b ? onStartFocus(b) : undefined) }
                   : {})}
-                {...(onRetry ? { onRetry } : {})}
+                {...(onTimeSummaryRetry ? { onRetry: onTimeSummaryRetry } : {})}
+                {...(onEditFocusTarget ? { onEditGoal: onEditFocusTarget } : {})}
               />
             </aside>
           ) : null}

@@ -4,6 +4,7 @@ import {
   mapTimeBlockResponse,
   queryTimeBlocks,
   getTimeBlock,
+  getDailyTimeSummary,
   createTimeBlock,
   updateTimeBlock,
   moveTimeBlock,
@@ -18,6 +19,7 @@ import {
   instantToLocalTime,
   type TimeBlockResponseDto,
   type TimeBlockQueryResponseDto,
+  type DailyTimeSummaryDto,
 } from "../api/timeBlocksApi";
 
 vi.mock("@lib/apiClient", () => ({
@@ -110,6 +112,36 @@ describe("timeBlocksApi", () => {
 
       expect(mockApiRequest).toHaveBeenCalledWith("/time-blocks/tb-100", { method: "GET" });
       expect(block.id).toBe("tb-100");
+    });
+  });
+
+  describe("getDailyTimeSummary", () => {
+    it("fetches the selected local date and timezone", async () => {
+      const response: DailyTimeSummaryDto = {
+        generatedAt: "2026-08-24T12:00:00Z",
+        localDate: "2026-08-24",
+        timeZone: "Asia/Kolkata",
+        actualFocusMinutes: 30,
+        actualBreakMinutes: 5,
+        unscheduledFocusMinutes: 30,
+        personalTimeBlockMinutes: 0,
+        plannedFocusMinutes: 0,
+        dailyFocusTargetMinutes: 60,
+        comparisonMinutes: 60,
+        comparisonSource: "DAILY_TARGET",
+        progressPercentage: 50,
+        sessionActive: false,
+        activeSessionTimerSummary: null,
+        categories: [],
+        hasData: true,
+      };
+      mockApiRequest.mockResolvedValueOnce(response);
+
+      await expect(getDailyTimeSummary("2026-08-24", "Asia/Kolkata")).resolves.toEqual(response);
+      expect(mockApiRequest).toHaveBeenCalledWith(
+        "/reports/time?date=2026-08-24&timeZone=Asia%2FKolkata",
+        { method: "GET" },
+      );
     });
   });
 

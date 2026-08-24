@@ -9,6 +9,7 @@ import {
   useCompleteTimeBlock,
   useCreateTimeBlock,
   useDeleteTimeBlock,
+  useDailyTimeSummary,
   useDuplicateTimeBlock,
   useMoveTimeBlock,
   useResizeTimeBlock,
@@ -61,6 +62,7 @@ export function TimeBlocksRoute() {
   );
 
   const timeBlocksQuery = useTimeBlocks(queryParams, user !== null);
+  const timeSummaryQuery = useDailyTimeSummary(currentDate, timeZone, user !== null);
   const projectsQuery = useProjects({ size: 100, archived: false }, user !== null);
   const tasksQuery = useTasks({ size: 100, archived: false }, user !== null);
 
@@ -226,6 +228,15 @@ export function TimeBlocksRoute() {
       projects={projectOptions}
       tasks={taskOptions}
       categories={DEFAULT_CATEGORIES}
+      {...(timeSummaryQuery.data ? { timeSummary: timeSummaryQuery.data } : {})}
+      timeSummaryLoading={timeSummaryQuery.isPending}
+      timeSummaryError={
+        timeSummaryQuery.isError
+          ? (timeSummaryQuery.error?.message ?? "Time summary couldn't load.")
+          : null
+      }
+      onTimeSummaryRetry={() => void timeSummaryQuery.refetch()}
+      onEditFocusTarget={() => navigate("/life-os/app/settings/focus")}
       onRetry={() => void timeBlocksQuery.refetch()}
       onDateChange={handleDateChange}
       onViewModeChange={handleViewModeChange}

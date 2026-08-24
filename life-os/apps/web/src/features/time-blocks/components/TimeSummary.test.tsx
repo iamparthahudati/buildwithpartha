@@ -128,17 +128,17 @@ describe("TimeSummary components", () => {
   describe("TimeGoalProgressCard", () => {
     it("renders focus goal progress with percentage and status", () => {
       render(<TimeGoalProgressCard status="ready" targetMinutes={240} actualMinutes={225} />);
-      expect(screen.getByText("Daily focus goal")).toBeInTheDocument();
+      expect(screen.getByText("Daily focus target")).toBeInTheDocument();
       expect(screen.getByText("94%")).toBeInTheDocument();
       expect(screen.getByText("3 hr 45 min")).toBeInTheDocument();
-      expect(screen.getByText("of 4 hr target")).toBeInTheDocument();
-      expect(screen.getByText("15 min remaining to reach daily goal")).toBeInTheDocument();
+      expect(screen.getByText("of 4 hr daily target")).toBeInTheDocument();
+      expect(screen.getByText("15 min remaining against daily target")).toBeInTheDocument();
     });
 
     it("renders goal reached state when actual meets target", () => {
       render(<TimeGoalProgressCard status="ready" targetMinutes={240} actualMinutes={300} />);
       expect(screen.getByText("100%")).toBeInTheDocument();
-      expect(screen.getByText("Goal reached!")).toBeInTheDocument();
+      expect(screen.getByText("Daily target met")).toBeInTheDocument();
     });
 
     it("triggers onEditGoal callback when edit button is clicked", async () => {
@@ -152,7 +152,7 @@ describe("TimeSummary components", () => {
           onEditGoal={handleEditGoal}
         />,
       );
-      const editBtn = screen.getByRole("button", { name: "Edit focus goal target" });
+      const editBtn = screen.getByRole("button", { name: "Edit daily focus target" });
       await user.click(editBtn);
       expect(handleEditGoal).toHaveBeenCalledTimes(1);
     });
@@ -244,7 +244,7 @@ describe("TimeSummary components", () => {
       expect(screen.getByRole("region", { name: "Time summary overview" })).toBeInTheDocument();
       expect(screen.getByText("Focus time")).toBeInTheDocument();
       expect(screen.getByText("Time allocation by category")).toBeInTheDocument();
-      expect(screen.getByText("Daily focus goal")).toBeInTheDocument();
+      expect(screen.getByText("Daily focus target")).toBeInTheDocument();
       expect(screen.getByText("Upcoming time blocks")).toBeInTheDocument();
     });
 

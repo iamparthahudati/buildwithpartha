@@ -465,7 +465,16 @@ function mapFocusMetric(response: TodayResponse, locale: string): MetricCardStat
     "focus-time",
     () => {
       const actual = Math.max(0, response.focusSummary.data?.actualFocusMinutesToday ?? 0);
-      const planned = Math.max(0, response.focusSummary.data?.plannedFocusMinutesToday ?? 0);
+      const planned = Math.max(
+        0,
+        response.focusSummary.data?.comparisonMinutes ??
+          response.focusSummary.data?.plannedFocusMinutesToday ??
+          0,
+      );
+      const denominatorLabel =
+        response.focusSummary.data?.comparisonSource === "DAILY_TARGET"
+          ? "daily target"
+          : "planned focus";
       if (actual === 0 && planned === 0) {
         return { type: "empty", message: "No focus time recorded today." };
       }
@@ -473,7 +482,7 @@ function mapFocusMetric(response: TodayResponse, locale: string): MetricCardStat
         type: "ready",
         value:
           planned > 0
-            ? `${formatDurationMinutes(actual, locale)} of ${formatDurationMinutes(planned, locale)}`
+            ? `${formatDurationMinutes(actual, locale)} of ${formatDurationMinutes(planned, locale)} ${denominatorLabel}`
             : formatDurationMinutes(actual, locale),
       };
     },

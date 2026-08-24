@@ -90,7 +90,7 @@ Every aggregate response supplies `generatedAt`, user timezone, local date and p
 - Today's task completion: completed eligible planned/today tasks divided by total eligible planned/today tasks. Cancelled items excluded; no denominator means “No tasks planned,” not 0%.
 - Current week completion: completed committed weekly items divided by committed items; uncommitted backlog excluded.
 - Project progress: uses the project-level calculation policy only; Today never recalculates it differently.
-- Focus planned versus actual: actual completed focus minutes compared with explicitly planned focus blocks or optional daily target, with the chosen denominator labelled.
+- Focus planned versus actual: confirmed whole focus minutes from Completed Focus Sessions are attributed to the Account-local date containing `startedAt`; Cancelled sessions are excluded. Non-cancelled Focus Time Blocks are clipped to the exact local-day instants and provide the denominator when any planned focus minutes exist; otherwise the optional daily target is used. The chosen denominator is labelled, an absent denominator stays null/absolute rather than `0%`, and actual time may truthfully exceed 100%.
 - Overall progress is not shown unless the metric dictionary defines one defensible formula. Prefer named progress domains over a vague global percentage.
 
 ## Responsive composition order
@@ -163,4 +163,3 @@ After onboarding Start empty:
 - Metric formulas cannot contradict canonical module/report calculations.
 - First-use, normal, overloaded, partial error, offline, local-midnight and timezone-change states are defined.
 - Responsive collapse order preserves execution actions and removes no keyboard/touch path.
-

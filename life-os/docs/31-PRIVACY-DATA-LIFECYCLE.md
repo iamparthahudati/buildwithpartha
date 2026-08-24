@@ -153,6 +153,8 @@ LOS-0915 keeps active Focus Session snapshots only in the authenticated tab's in
 
 LOS-0916 stores Focus Mode durations, cycle count, automatic-start choices, sound choice, and browser-notification choice in the existing Account-owned `user_preferences` row under R4. These settings contain no notification body, browser identifier, permission token, device fingerprint, Task/Time Block content, or Focus Session history. Browser permission remains device/browser-owned: LifeOS requests it only after the user explicitly enables browser notifications, stores only the resulting account preference boolean, and cannot override a browser denial. The fields are included in `preferences.json`, cascade with Account deletion, and are never written to browser storage or logs.
 
+LOS-0917 calculates the daily time report on demand from owner-scoped Focus Sessions, Time Blocks, and the existing optional preference target. The projection contains dates, timezone, aggregate minutes, category names, comparison source, percentage, and active-session state; it stores no report row, title, note, Task/Project content, browser identifier, or new personal-data field. Responses are authenticated and private/no-store, client caches remain in memory under the Account query boundary, and sign out/account switch clears them with the existing cache lifecycle.
+
 ## Data not collected in v1
 
 - Date of birth, government identity, postal address, phone number or payment data.

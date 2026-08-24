@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0915 Integrate focus mini-player and full mode)
+Last updated: 2026-08-25 (LOS-0917 time goal and planned-versus-actual)
 
 ## Phase
 
@@ -25,6 +25,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-0917 — Implemented one owner-scoped daily time aggregation used by `GET /reports/time`, Today, and the Time Blocks summary. The selected IANA timezone defines exact local-day instant boundaries, including 23/25-hour DST days; non-cancelled Focus Time Blocks are clipped to those boundaries; and completed Focus Sessions are attributed to the local date on which they started. Explicit planned Focus Time Blocks are the comparison denominator when present, otherwise the optional daily focus target is used, and every response labels that source and preserves null denominator/percentage zero-data behavior. Time Blocks now shows canonical focus/break/personal/unscheduled/category totals instead of fixed demo values, Focus/Time Block mutations refresh the projection, and Settings can set or clear the optional target. See `docs/handoffs/LOS-0917.md`.
 - LOS-0916 — Added server-persisted Focus Mode preferences to the Account's existing user-preferences aggregate and `GET`/`PUT /user/preferences` contract: focus, short-break and long-break durations; Focus Sessions per cycle; auto-start break/focus choices; sound; and browser notifications. Safe defaults are 25/5/15 minutes, four Focus Sessions, and every automatic/device capability off. A new responsive Focus settings section validates the same bounds, preserves unrelated planning defaults, asks for browser permission only after an explicit enable action, updates the shared query cache, and states that active sessions are unchanged. The preferences remain exportable and V18 upgrades existing Accounts without changing their current focus/break values. See `docs/handoffs/LOS-0916.md`.
 - LOS-0915 — Integrated the global focus mini-player and protected Focus Mode route with the LOS-0913 server-authoritative API. Active sessions recover after refresh and across tabs; countdowns derive from canonical duration snapshots plus a browser receipt anchor so throttling, backgrounding, and sleep do not accumulate interval drift. Every write carries an idempotency key and optimistic version, stale multi-tab actions reload canonical state, focus expiry enters the planned break (or completes when no break exists), and break expiry completes exactly once through server conflict/idempotency protection. Offline state stays visibly read-only without fabricating or persisting private Focus Session content. Successful transitions invalidate only affected Today, Task, Time Block, and Calendar projections. Task, Time Block, and Today actions now deep-link into the full mode with canonical context. See `docs/handoffs/LOS-0915.md`.
 

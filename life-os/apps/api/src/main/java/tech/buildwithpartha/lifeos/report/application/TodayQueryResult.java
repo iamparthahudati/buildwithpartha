@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
+import tech.buildwithpartha.lifeos.report.domain.FocusComparisonSource;
 import tech.buildwithpartha.lifeos.report.domain.WidgetStatus;
 
 /** Domain query result representing aggregated Today dashboard data (LOS-0607). */
@@ -154,7 +155,9 @@ public record TodayQueryResult(
   public record FocusSummaryWidget(WidgetStatus status, FocusSummaryData data, String error) {
     public static FocusSummaryWidget empty() {
       return new FocusSummaryWidget(
-          WidgetStatus.EMPTY, new FocusSummaryData(0, 0, null, false), null);
+          WidgetStatus.EMPTY,
+          new FocusSummaryData(0, 0, null, false, null, null, FocusComparisonSource.NONE, null),
+          null);
     }
 
     public static FocusSummaryWidget error(String message) {
@@ -170,7 +173,33 @@ public record TodayQueryResult(
       int actualFocusMinutesToday,
       int plannedFocusMinutesToday,
       String activeSessionTimerSummary,
-      boolean isSessionActive) {}
+      boolean isSessionActive,
+      Integer dailyFocusTargetMinutes,
+      Integer comparisonMinutes,
+      FocusComparisonSource comparisonSource,
+      Integer progressPercentage) {
+
+    public FocusSummaryData(
+        int actualFocusMinutesToday,
+        int plannedFocusMinutesToday,
+        String activeSessionTimerSummary,
+        boolean isSessionActive) {
+      this(
+          actualFocusMinutesToday,
+          plannedFocusMinutesToday,
+          activeSessionTimerSummary,
+          isSessionActive,
+          null,
+          plannedFocusMinutesToday > 0 ? plannedFocusMinutesToday : null,
+          plannedFocusMinutesToday > 0
+              ? FocusComparisonSource.PLANNED_FOCUS_BLOCKS
+              : FocusComparisonSource.NONE,
+          plannedFocusMinutesToday > 0
+              ? Math.toIntExact(
+                  Math.round((actualFocusMinutesToday * 100.0) / plannedFocusMinutesToday))
+              : null);
+    }
+  }
 
   // --- 7. Sprint ---
 
