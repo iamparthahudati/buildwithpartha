@@ -52,6 +52,12 @@ import {
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
 import { TasksScreenDemo } from "./TasksScreenDemos";
 import { TaskDetailsScreenDemo, TaskDetailsSheetDemo } from "./TaskDetailsDemos";
+import {
+  CalendarEventDemo,
+  CalendarFilterDemo,
+  CalendarGridsDemo,
+  CalendarHeaderDemo,
+} from "./CalendarDemos";
 import type { CatalogEntry } from "./registry";
 
 /* Composed-component entries (LOS-0401 onward). */
@@ -788,6 +794,66 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "TimeBlocksScreen overview demonstrating interactive specimens across Day view, Week view, Conflict, DST transition, Offline, Loading, Empty, and Error states.",
         render: () => <TimeBlocksScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-header",
+    name: "CalendarHeader",
+    group: "Composed",
+    summary:
+      "Date-aware Calendar navigation with previous/next period controls, Today return, Day/Week/Month view selection, and an optional Add Time Block action.",
+    states: [
+      {
+        id: "calendar-header-ready",
+        name: "Ready",
+        description: "Interactive month header with local-date navigation and view controls.",
+        render: () => <CalendarHeaderDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-events",
+    name: "EventChip and OverflowList",
+    group: "Composed",
+    summary:
+      "Source-labelled Calendar event projections and a keyboard/touch-operable dense-day disclosure that preserves canonical source selection.",
+    states: [
+      {
+        id: "calendar-events-ready",
+        name: "Sources and overflow",
+        description: "Timed and all-day source types plus the accessible overflow list.",
+        render: () => <CalendarEventDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-filter-legend",
+    name: "CalendarFilterLegend",
+    group: "Composed",
+    summary:
+      "A controlled, labelled source legend that combines accessible checkboxes with redundant source color markers and optional counts.",
+    states: [
+      {
+        id: "calendar-filter-ready",
+        name: "All sources",
+        description: "All canonical Calendar source types selected with current counts.",
+        render: () => <CalendarFilterDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-grids",
+    name: "Calendar grids and list alternative",
+    group: "Composed",
+    summary:
+      "Day, week and six-week month Calendar grids with a distinct all-day lane, keyboard/touch date selection, dense-day overflow, responsive agendas, and a semantic list alternative.",
+    states: [
+      {
+        id: "calendar-grids-ready",
+        name: "Ready",
+        description: "Populated day, week and month views followed by the same records as a list.",
+        render: () => <CalendarGridsDemo />,
       },
     ],
   },

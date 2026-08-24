@@ -1,0 +1,83 @@
+.lifeos-week-calendar-grid__scroll {
+  min-width: 48rem;
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  background: var(--lifeos-color-surface);
+  overflow: hidden;
+}
+
+.lifeos-week-calendar-grid__visual {
+  overflow-x: auto;
+}
+
+.lifeos-week-calendar-grid__date-headers,
+.lifeos-week-calendar-grid__columns {
+  display: grid;
+  grid-template-columns: 4.5rem repeat(7, minmax(0, 1fr));
+}
+
+.lifeos-week-calendar-grid__date-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lifeos-space-1);
+  min-height: 5rem;
+  padding: var(--lifeos-space-2);
+  color: inherit;
+  font: inherit;
+  border: 0;
+  border-left: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  background: var(--lifeos-color-surface);
+  cursor: pointer;
+}
+
+.lifeos-week-calendar-grid__date-button:hover,
+.lifeos-week-calendar-grid__date-button.is-selected {
+  background: var(--lifeos-color-primary-soft);
+}
+
+.lifeos-week-calendar-grid__date-button:focus-visible {
+  position: relative;
+  z-index: var(--lifeos-z-raised);
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: calc(-1 * var(--lifeos-border-width-focus));
+}
+
+.lifeos-week-calendar-grid__time-label {
+  padding: var(--lifeos-space-2);
+  border-right: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-week-calendar-grid__column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+  min-width: 0;
+  min-height: 20rem;
+  padding: var(--lifeos-space-1);
+  border-right: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-week-calendar-grid__column:last-child {
+  border-right: 0;
+}
+
+.lifeos-week-calendar-grid__empty {
+  padding: var(--lifeos-space-3) var(--lifeos-space-1);
+  text-align: center;
+}
+
+.lifeos-week-calendar-grid__mobile-list {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .lifeos-week-calendar-grid__visual {
+    display: none;
+  }
+
+  .lifeos-week-calendar-grid__mobile-list {
+    display: block;
+  }
+}

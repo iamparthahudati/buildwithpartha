@@ -1,0 +1,59 @@
+.lifeos-calendar-filter-legend {
+  min-width: 0;
+  margin: 0;
+  padding: var(--lifeos-space-3);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+}
+
+.lifeos-calendar-filter-legend legend {
+  padding-inline: var(--lifeos-space-1);
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-xs);
+  font-weight: var(--lifeos-font-weight-semibold);
+}
+
+.lifeos-calendar-filter-legend__options {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  flex-wrap: wrap;
+}
+
+.lifeos-calendar-filter-legend__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  min-height: var(--lifeos-space-10);
+}
+
+.lifeos-calendar-filter-legend__option .lifeos-choice__messages {
+  display: none;
+}
+
+.lifeos-calendar-filter-legend__swatch {
+  width: var(--lifeos-space-2);
+  height: var(--lifeos-space-2);
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-chart-1);
+}
+
+.lifeos-calendar-filter-legend__swatch--2 {
+  background: var(--lifeos-chart-2);
+}
+
+.lifeos-calendar-filter-legend__swatch--3 {
+  background: var(--lifeos-chart-3);
+}
+
+.lifeos-calendar-filter-legend__swatch--4 {
+  background: var(--lifeos-chart-4);
+}
+
+.lifeos-calendar-filter-legend__swatch--5 {
+  background: var(--lifeos-chart-5);
+}
+
+.lifeos-calendar-filter-legend:disabled .lifeos-calendar-filter-legend__option {
+  opacity: 0.65;
+}

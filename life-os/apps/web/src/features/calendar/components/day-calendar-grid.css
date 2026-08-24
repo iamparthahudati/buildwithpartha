@@ -1,0 +1,58 @@
+.lifeos-day-calendar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  min-width: 0;
+}
+
+.lifeos-day-calendar-grid__title {
+  margin: 0;
+}
+
+.lifeos-day-calendar-grid__hours {
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  background: var(--lifeos-color-surface);
+  overflow: hidden;
+}
+
+.lifeos-day-calendar-grid__hour {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  min-height: 3.5rem;
+  border-bottom: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-day-calendar-grid__hour:last-child {
+  border-bottom: 0;
+}
+
+.lifeos-day-calendar-grid__hour-label {
+  padding: var(--lifeos-space-2);
+  color: var(--lifeos-color-text-muted);
+  font-size: var(--lifeos-font-size-3xs);
+  font-variant-numeric: var(--lifeos-font-numeric);
+  border-right: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-day-calendar-grid__hour-events {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+  min-width: 0;
+  padding: var(--lifeos-space-1);
+}
+
+.lifeos-day-calendar-grid__gap {
+  min-height: 2.5rem;
+}
+
+.lifeos-day-calendar-grid__empty {
+  text-align: center;
+}
+
+@media (max-width: 639px) {
+  .lifeos-day-calendar-grid__hour {
+    grid-template-columns: 3.75rem minmax(0, 1fr);
+  }
+}
