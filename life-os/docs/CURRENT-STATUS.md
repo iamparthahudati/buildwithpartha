@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0906 Build time summary components)
+Last updated: 2026-08-24 (LOS-0908 Integrate Time Blocks screen)
 
 ## Phase
 

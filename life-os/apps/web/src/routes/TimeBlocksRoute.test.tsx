@@ -1,0 +1,181 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TimeBlocksRoute } from "./TimeBlocksRoute";
+import * as timeBlocksFeature from "@features/time-blocks";
+import * as projectsFeature from "@features/projects";
+import * as tasksFeature from "@features/tasks";
+import { AuthSessionContext, type AuthSessionValue } from "@state/authSession";
+
+vi.mock("@features/time-blocks", async () => {
+  const actual = await vi.importActual<typeof timeBlocksFeature>("@features/time-blocks");
+  return {
+    ...actual,
+    useTimeBlocks: vi.fn(),
+    useCreateTimeBlock: vi.fn(),
+    useUpdateTimeBlock: vi.fn(),
+    useMoveTimeBlock: vi.fn(),
+    useResizeTimeBlock: vi.fn(),
+    useCompleteTimeBlock: vi.fn(),
+    useDuplicateTimeBlock: vi.fn(),
+    useDeleteTimeBlock: vi.fn(),
+  };
+});
+
+vi.mock("@features/projects", async () => {
+  const actual = await vi.importActual<typeof projectsFeature>("@features/projects");
+  return {
+    ...actual,
+    useProjects: vi.fn(),
+  };
+});
+
+vi.mock("@features/tasks", async () => {
+  const actual = await vi.importActual<typeof tasksFeature>("@features/tasks");
+  return {
+    ...actual,
+    useTasks: vi.fn(),
+  };
+});
+
+const mockUseTimeBlocks = vi.mocked(timeBlocksFeature.useTimeBlocks);
+const mockUseCreateTimeBlock = vi.mocked(timeBlocksFeature.useCreateTimeBlock);
+const mockUseUpdateTimeBlock = vi.mocked(timeBlocksFeature.useUpdateTimeBlock);
+const mockUseMoveTimeBlock = vi.mocked(timeBlocksFeature.useMoveTimeBlock);
+const mockUseResizeTimeBlock = vi.mocked(timeBlocksFeature.useResizeTimeBlock);
+const mockUseCompleteTimeBlock = vi.mocked(timeBlocksFeature.useCompleteTimeBlock);
+const mockUseDuplicateTimeBlock = vi.mocked(timeBlocksFeature.useDuplicateTimeBlock);
+const mockUseDeleteTimeBlock = vi.mocked(timeBlocksFeature.useDeleteTimeBlock);
+const mockUseProjects = vi.mocked(projectsFeature.useProjects);
+const mockUseTasks = vi.mocked(tasksFeature.useTasks);
+
+const MOCK_USER = {
+  id: "user-1",
+  email: "test@example.com",
+  displayName: "Test User",
+  timeZone: "UTC",
+  locale: "en-US",
+  weekStart: 1,
+};
+
+const MOCK_AUTH_STATE: AuthSessionValue = {
+  user: MOCK_USER,
+  csrfToken: "mock-csrf-token",
+  isBootstrapping: false,
+  setSession: vi.fn(),
+  clearSession: vi.fn(),
+};
+
+const MOCK_BLOCK: timeBlocksFeature.TimeBlock = {
+  id: "tb-101",
+  title: "Integrated Time Block",
+  category: "Focus",
+  status: "SCHEDULED",
+  date: "2026-08-24",
+  startTime: "09:00",
+  endTime: "11:00",
+  timeZone: "UTC",
+  version: 1,
+};
+
+import { ToastProvider } from "@state/ToastProvider";
+
+function renderTimeBlocksRoute(initialEntries = ["/life-os/app/time-blocks?date=2026-08-24"]) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <AuthSessionContext.Provider value={MOCK_AUTH_STATE}>
+        <ToastProvider>
+          <MemoryRouter initialEntries={initialEntries}>
+            <Routes>
+              <Route path="/life-os/app/time-blocks" element={<TimeBlocksRoute />} />
+            </Routes>
+          </MemoryRouter>
+        </ToastProvider>
+      </AuthSessionContext.Provider>
+    </QueryClientProvider>,
+  );
+}
+
+describe("TimeBlocksRoute", () => {
+  const mockMutateAsync = vi.fn();
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+
+    mockUseTimeBlocks.mockReturnValue({
+      data: {
+        items: [MOCK_BLOCK],
+        totalCount: 1,
+      },
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    mockUseProjects.mockReturnValue({
+      data: { items: [], summary: { total: 0 } },
+      isPending: false,
+    } as any);
+
+    mockUseTasks.mockReturnValue({
+      data: { items: [], summary: { total: 0 } },
+      isPending: false,
+    } as any);
+
+    mockUseCreateTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
+    mockUseUpdateTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
+    mockUseMoveTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
+    mockUseResizeTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
+    mockUseCompleteTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
+    mockUseDuplicateTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
+    mockUseDeleteTimeBlock.mockReturnValue({ mutateAsync: mockMutateAsync } as any);
+  });
+
+  it("renders Time Blocks screen with header and fetched blocks", () => {
+    renderTimeBlocksRoute();
+
+    expect(screen.getByRole("heading", { name: "Time Blocks" })).toBeInTheDocument();
+    expect(screen.getAllByText("Integrated Time Block")[0]).toBeInTheDocument();
+  });
+
+  it("passes date parameter from URL to query hook", () => {
+    renderTimeBlocksRoute(["/life-os/app/time-blocks?date=2026-08-25"]);
+
+    expect(mockUseTimeBlocks).toHaveBeenCalledWith(
+      expect.objectContaining({
+        date: "2026-08-25",
+        timeZone: "UTC",
+      }),
+      true,
+    );
+  });
+
+  it("renders error state when query fails and allows retry", async () => {
+    const mockRefetch = vi.fn();
+    mockUseTimeBlocks.mockReturnValue({
+      data: undefined,
+      isPending: false,
+      isError: true,
+      error: new Error("Network error loading time blocks"),
+      refetch: mockRefetch,
+    } as any);
+
+    const user = userEvent.setup();
+    renderTimeBlocksRoute();
+
+    expect(screen.getByText("Failed to load time blocks")).toBeInTheDocument();
+    expect(screen.getByText("Network error loading time blocks")).toBeInTheDocument();
+
+    const retryBtn = screen.getByRole("button", { name: "Retry" });
+    await user.click(retryBtn);
+
+    expect(mockRefetch).toHaveBeenCalled();
+  });
+});

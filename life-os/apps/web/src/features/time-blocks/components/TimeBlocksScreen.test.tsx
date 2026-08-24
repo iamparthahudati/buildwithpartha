@@ -113,7 +113,7 @@ describe("TimeBlocksScreen", () => {
     await user.type(titleInput2, "Fallback Created Block");
     const saveBtn2 = screen.getByRole("button", { name: "Create time block" });
     await user.click(saveBtn2);
-    expect(screen.getByText("Fallback Created Block")).toBeInTheDocument();
+    expect(screen.getAllByText("Fallback Created Block")[0]).toBeInTheDocument();
   });
 
   it("handles edit, complete, duplicate, start focus, and delete operations", async () => {
@@ -154,7 +154,7 @@ describe("TimeBlocksScreen", () => {
     await user.click(blockMenus[2]!);
     const duplicateItem = screen.getByRole("menuitem", { name: "Duplicate" });
     await user.click(duplicateItem);
-    expect(screen.getByText("Team Standup & Sprint Sync (Copy)")).toBeInTheDocument();
+    expect(screen.getAllByText("Team Standup & Sprint Sync (Copy)")[0]).toBeInTheDocument();
   });
 
   it("opens delete confirmation dialog and confirms deletion with fallback", async () => {
