@@ -165,6 +165,12 @@ describe("user hooks", () => {
           dailyFocusTargetMinutes: 300,
           focusDurationMinutes: 50,
           breakDurationMinutes: 10,
+          longBreakDurationMinutes: 20,
+          focusSessionsBeforeLongBreak: 4,
+          autoStartBreaks: false,
+          autoStartFocusSessions: false,
+          soundEnabled: false,
+          browserNotificationsEnabled: false,
         },
       };
       vi.mocked(fetch).mockResolvedValueOnce(jsonResponse(200, updatedPreferences));
@@ -182,6 +188,12 @@ describe("user hooks", () => {
           dailyFocusTargetMinutes: 300,
           focusDurationMinutes: 50,
           breakDurationMinutes: 10,
+          longBreakDurationMinutes: 20,
+          focusSessionsBeforeLongBreak: 4,
+          autoStartBreaks: false,
+          autoStartFocusSessions: false,
+          soundEnabled: false,
+          browserNotificationsEnabled: false,
         });
       });
 

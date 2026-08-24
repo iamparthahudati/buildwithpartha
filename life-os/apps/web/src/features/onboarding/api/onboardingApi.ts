@@ -24,6 +24,12 @@ export interface PlanningDefaultsDto {
   readonly dailyFocusTargetMinutes: number | null;
   readonly focusDurationMinutes: number;
   readonly breakDurationMinutes: number;
+  readonly longBreakDurationMinutes: number;
+  readonly focusSessionsBeforeLongBreak: number;
+  readonly autoStartBreaks: boolean;
+  readonly autoStartFocusSessions: boolean;
+  readonly soundEnabled: boolean;
+  readonly browserNotificationsEnabled: boolean;
 }
 
 export interface OnboardingResponse {

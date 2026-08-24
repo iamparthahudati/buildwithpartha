@@ -39,6 +39,12 @@ class UserPreferencesExportContributorTests {
     assertThat(json)
         .contains("onboardingStatus")
         .contains("focusDurationMinutes")
+        .contains("longBreakDurationMinutes")
+        .contains("focusSessionsBeforeLongBreak")
+        .contains("autoStartBreaks")
+        .contains("autoStartFocusSessions")
+        .contains("soundEnabled")
+        .contains("browserNotificationsEnabled")
         .contains("workingDays");
   }
 }

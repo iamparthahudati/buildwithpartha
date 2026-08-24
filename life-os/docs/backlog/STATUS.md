@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-24
+Last updated: 2026-08-25
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -184,6 +184,7 @@ Last updated: 2026-08-24
 | LOS-0913 | Done          | `feature/LOS-0913-implement-focus-session-api`  | Implemented the authenticated Focus Session lifecycle/recovery API with server-clock snapshots, account-serialized and versioned transitions, seven-day idempotency replay, cross-user isolation, Task time reconciliation, and Time Block status reconciliation. See `docs/handoffs/LOS-0913.md`. |
 | LOS-0914 | Done          | `feature/LOS-0914-build-focus-mode-surface`     | Built the controlled, responsive Focus Mode surface with TimerRing, Task/Time Block context, focus/break lifecycle controls, exact completion/cancellation confirmations, bounded session settings, private distraction capture, deliberate browser-notification consent, recovery states, catalog specimens, and accessibility coverage. See `docs/handoffs/LOS-0914.md`. |
 | LOS-0915 | Done          | `feature/LOS-0915-integrate-focus-mode`         | Integrated the global mini-player and `/app/focus` route with the canonical Focus Session API, server-anchored refresh/sleep timing, idempotent versioned writes, automatic focus/break expiry, content-free cross-tab reconciliation, honest offline recovery, linked projection invalidation, and Task/Time Block/Today entry points. See `docs/handoffs/LOS-0915.md`. |
+| LOS-0916 | Done          | `feature/LOS-0916-add-focus-preferences`        | Added persisted account-level focus, short-break, long-break, cycle, auto-start, sound, and browser-notification preferences with safe defaults, bounded API validation, export coverage, explicit browser consent, and a responsive Focus settings panel. See `docs/handoffs/LOS-0916.md`. |
 | LOS-1005 | Done          | `feature/LOS-1005-week-strip-capacity`          | Built Week Planner week strip & capacity components (WeekStrip, WeekCapacitySummary, WeekDayCapacityDialog, catalog specimens, and 100% axe accessibility tests). See `docs/handoffs/LOS-1005.md`. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

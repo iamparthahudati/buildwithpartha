@@ -126,7 +126,13 @@ public class OnboardingService {
                   ? command.dailyFocusTargetMinutes()
                   : current.dailyFocusTargetMinutes(),
               focusDuration,
-              breakDuration);
+              breakDuration,
+              current.longBreakDurationMinutes(),
+              current.focusSessionsBeforeLongBreak(),
+              current.autoStartBreaks(),
+              current.autoStartFocusSessions(),
+              current.soundEnabled(),
+              current.browserNotificationsEnabled());
 
       updatedPreferences =
           userPreferencesRepository.save(
