@@ -33,7 +33,13 @@ import {
   type TaskListItem,
   type TaskSummaryMetricsStatus,
 } from "@features/tasks";
-import { TimeBlockRow, TimeBlockForm, DayTimeline, type TimeBlock } from "@features/time-blocks";
+import {
+  TimeBlockRow,
+  TimeBlockForm,
+  DayTimeline,
+  TimeSummary,
+  type TimeBlock,
+} from "@features/time-blocks";
 import type { ActivityTypeFilter } from "@features/activity";
 import {
   buildCommonDateRangePresets,
@@ -1777,6 +1783,68 @@ export function DayTimelineDemo() {
         onSelectBlock={(b) => alert(`Selected block: ${b.title}`)}
         onMoveBlock={(id, start, end) => alert(`Moved block ${id} to ${start}–${end}`)}
         onResizeBlock={(id, end) => alert(`Resized block ${id} end to ${end}`)}
+      />
+    </div>
+  );
+}
+
+export function TimeSummaryDemo() {
+  const fixedNow = new Date("2026-08-24T14:30:00Z");
+  const upcomingBlocks: TimeBlock[] = [
+    {
+      id: "tb-demo-1",
+      title: "Architecture Review & Refactoring",
+      category: "Focus",
+      date: "2026-08-24",
+      startTime: "15:00",
+      endTime: "16:30",
+      status: "SCHEDULED",
+    },
+    {
+      id: "tb-demo-2",
+      title: "Evening Reset & Planning",
+      category: "Personal",
+      date: "2026-08-24",
+      startTime: "17:00",
+      endTime: "17:30",
+      status: "SCHEDULED",
+    },
+  ];
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <TimeSummary
+        metricsStatus={{
+          type: "ready",
+          counts: {
+            focusMinutes: 225,
+            breakMinutes: 45,
+            personalMinutes: 135,
+            unscheduledMinutes: 75,
+          },
+        }}
+        breakdownStatus="ready"
+        categories={[
+          { name: "Focus", minutes: 225, colorName: "blue" },
+          { name: "Break", minutes: 45, colorName: "teal" },
+          { name: "Personal", minutes: 135, colorName: "purple" },
+          { name: "Unscheduled", minutes: 75, colorName: "amber" },
+        ]}
+        goalStatus="ready"
+        targetMinutes={240}
+        actualMinutes={225}
+        upcomingStatus="ready"
+        upcomingBlocks={upcomingBlocks}
+        now={fixedNow}
+        timeZone="UTC"
+        onStartFocus={(b) => alert(`Start focus session for: ${b?.title ?? "current"}`)}
+        onCompleteBlock={(b) => alert(`Complete block: ${b.title}`)}
+        onEditBlock={(b) => alert(`Edit block: ${b.title}`)}
+        onCreateBlock={() => alert("Create new block")}
+        onEditGoal={() => alert("Edit focus goal target")}
       />
     </div>
   );

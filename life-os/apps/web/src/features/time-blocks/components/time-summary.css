@@ -1,0 +1,32 @@
+.time-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.time-summary__metrics-section {
+  width: 100%;
+}
+
+.time-summary__charts-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .time-summary__charts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.time-summary__charts-col {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.time-summary__upcoming-section {
+  width: 100%;
+}

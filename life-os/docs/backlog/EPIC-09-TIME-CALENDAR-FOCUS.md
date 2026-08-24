@@ -7,7 +7,7 @@
 | LOS-0903 | Build TimeBlockRow | Category color/icon, title/link, local times/duration/status/conflict/current/actions with mobile and accessibility states. | LOS-0434 | S | Done |
 | LOS-0904 | Build TimeBlockForm | Title/category/task/project/date/start/end/timezone/repeat note with DST/overlap validation, conflict resolution and edit/create modes. | LOS-0405, LOS-0425 | M | Done |
 | LOS-0905 | Build day timeline grid | Time scale, blocks, now line, gaps, keyboard create/move alternative, drag/resize enhancement, collision, zoom/density and small-screen list fallback. | LOS-0903, LOS-0904 | M | Done |
-| LOS-0906 | Build time summary components | Focus/break/personal/unscheduled metrics, accessible donut/text summary, goal progress, upcoming blocks and quick actions. | LOS-0419, LOS-0429 | S | Backlog |
+| LOS-0906 | Build time summary components | Focus/break/personal/unscheduled metrics, accessible donut/text summary, goal progress, upcoming blocks and quick actions. | LOS-0419, LOS-0429 | S | Done |
 | LOS-0907 | Compose Time Blocks screen with mocks | Day/week switch, date nav, focus toggle, timeline, summaries, goals/upcoming/actions and all states including DST/conflict/offline. | LOS-0905, LOS-0906 | L | Backlog |
 | LOS-0908 | Integrate Time Blocks screen | Wire query/CRUD/drag-resize/duplicate/complete/conflict/version; invalidate Today/calendar precisely and test touch/keyboard alternatives. | LOS-0902, LOS-0907 | L | Backlog |
 | LOS-0909 | Implement Calendar aggregation API | Merge blocks, due dates, milestones, habit/review events for range/filter with stable source IDs, ownership, timezone and bounded result policy. | LOS-0902, LOS-0704, LOS-0803 | M | Backlog |

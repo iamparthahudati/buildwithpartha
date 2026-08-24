@@ -40,6 +40,7 @@ import {
   TimeBlockRowDemo,
   TimeBlockFormDemo,
   DayTimelineDemo,
+  TimeSummaryDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -749,6 +750,22 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "DayTimeline showing visual grid, time blocks, now line, density toggle, list fallback mode, and interactive callbacks.",
         render: () => <DayTimelineDemo />,
+      },
+    ],
+  },
+  {
+    id: "time-summary",
+    name: "TimeSummary",
+    group: "Composed",
+    summary:
+      "Time summary dashboard components composing Focus/Break/Personal/Unscheduled metric cards, category breakdown DonutChart with accessible text/table summary, daily focus goal progress card, and upcoming scheduled time blocks list with quick actions.",
+    states: [
+      {
+        id: "time-summary-default",
+        name: "Default",
+        description:
+          "TimeSummary overview displaying metric strip, time category breakdown donut chart, goal progress ring, upcoming blocks list, and quick action callbacks.",
+        render: () => <TimeSummaryDemo />,
       },
     ],
   },

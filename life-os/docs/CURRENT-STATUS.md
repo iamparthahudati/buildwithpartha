@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0905 Build day timeline grid)
+Last updated: 2026-08-24 (LOS-0906 Build time summary components)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-0906 — Built time summary components (TimeSummaryMetrics, TimeCategoryBreakdown, TimeGoalProgressCard, UpcomingBlocks, and master TimeSummary overview with catalog specimens and 100% axe accessibility tests). See `docs/handoffs/LOS-0906.md`.
 
 - LOS-0901 — Modeled core Time Block domain aggregate, persistence entity, domain repository interface, JPA adapter, Flyway migration V15, H2 test schema, and policy helper methods (duration, overnight, DST, overlaps, ownership). All backend JDK 21 checks pass. See `docs/handoffs/LOS-0901.md`.
 
