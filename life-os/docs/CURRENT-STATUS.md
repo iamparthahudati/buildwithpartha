@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0909 Implement Calendar aggregation API)
+Last updated: 2026-08-24 (LOS-0910 Build Calendar primitives)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-0910 — Built reusable Calendar primitives over the LOS-0909 event projection: local-date-safe header and Day/Week/Month navigation; controlled source filter legend; source/status/time-aware EventChip; distinct all-day lane; responsive Day, Week, and six-week Month grids; keyboard/touch date selection; accessible dense-day overflow with Escape/focus return; and semantic list alternatives for small screens and nonvisual use. Catalog specimens and focused axe coverage pass. See `docs/handoffs/LOS-0910.md`.
 
 - LOS-0909 — Implemented authenticated `GET /calendar/events` aggregation with canonical Time Block, due Task, and Milestone projections; stable source IDs; source filters; inclusive local-date ranges interpreted in an IANA timezone; deterministic ordering; owner-scoped bounded database reads; a 62-day range cap; and explicit 500-event truncation metadata. The contract reserves Habit and Review sources without inventing records before LOS-1208/LOS-1009. Full backend checks pass. See `docs/handoffs/LOS-0909.md`.
 
