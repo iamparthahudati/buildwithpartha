@@ -85,6 +85,12 @@ The server UTC clock is the only timing authority. Every response supplies `serv
 
 Starting from a linked scheduled Time Block marks it In progress and infers its Task when no explicit Task is supplied; mismatched or unavailable context is rejected. Completing a session marks a non-terminal linked Time Block Completed and adds the session's confirmed whole focus minutes to the linked Task exactly once without completing the Task. Cancelling records truthful session duration, does not add Task time, and returns a linked In-progress Time Block to Scheduled. Missing and cross-user sessions or context never disclose another Account's data.
 
+### Focus preferences
+
+`GET /user/preferences` returns the authenticated Account's planning and Focus Mode defaults; `PUT /user/preferences` replaces the submitted preference set with CSRF protection and server-side validation. Focus fields are `focusDurationMinutes` and `breakDurationMinutes` (1–1,440), `longBreakDurationMinutes` (1–180), `focusSessionsBeforeLongBreak` (1–12), `autoStartBreaks`, `autoStartFocusSessions`, `soundEnabled`, and `browserNotificationsEnabled`.
+
+New Accounts and existing rows upgraded by V18 receive conservative defaults: 25 minutes of focus, a 5-minute short break, a 15-minute long break after four completed Focus Sessions, and all automatic starts, sounds, and browser notifications disabled. LOS-0916 fields omitted by an older client retain their current values so a rolling frontend/backend deployment cannot reset them. A successful update affects future Focus Session starts only; it never mutates an active Focus Session's canonical planned durations or state.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:
@@ -98,7 +104,7 @@ Failures use `application/problem+json` and this versioned shape:
   "instance": "/life-os/api/v1/tasks",
   "code": "VALIDATION_FAILED",
   "correlationId": "c91cdba4-1d9f-4c5e-afcf-945ebca78a72",
-  "errors": [{"field": "title", "code": "NotBlank"}]
+  "errors": [{ "field": "title", "code": "NotBlank" }]
 }
 ```
 

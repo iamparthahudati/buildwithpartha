@@ -68,6 +68,24 @@ class UserPreferencesEntity {
   @Column(name = "break_duration_minutes", nullable = false)
   private int breakDurationMinutes;
 
+  @Column(name = "long_break_duration_minutes", nullable = false)
+  private int longBreakDurationMinutes;
+
+  @Column(name = "focus_sessions_before_long_break", nullable = false)
+  private int focusSessionsBeforeLongBreak;
+
+  @Column(name = "auto_start_breaks", nullable = false)
+  private boolean autoStartBreaks;
+
+  @Column(name = "auto_start_focus_sessions", nullable = false)
+  private boolean autoStartFocusSessions;
+
+  @Column(name = "sound_enabled", nullable = false)
+  private boolean soundEnabled;
+
+  @Column(name = "browser_notifications_enabled", nullable = false)
+  private boolean browserNotificationsEnabled;
+
   @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt;
 
@@ -94,6 +112,12 @@ class UserPreferencesEntity {
       Integer dailyFocusTargetMinutes,
       int focusDurationMinutes,
       int breakDurationMinutes,
+      int longBreakDurationMinutes,
+      int focusSessionsBeforeLongBreak,
+      boolean autoStartBreaks,
+      boolean autoStartFocusSessions,
+      boolean soundEnabled,
+      boolean browserNotificationsEnabled,
       Instant createdAt,
       Instant updatedAt,
       long version) {
@@ -110,6 +134,12 @@ class UserPreferencesEntity {
     this.dailyFocusTargetMinutes = dailyFocusTargetMinutes;
     this.focusDurationMinutes = focusDurationMinutes;
     this.breakDurationMinutes = breakDurationMinutes;
+    this.longBreakDurationMinutes = longBreakDurationMinutes;
+    this.focusSessionsBeforeLongBreak = focusSessionsBeforeLongBreak;
+    this.autoStartBreaks = autoStartBreaks;
+    this.autoStartFocusSessions = autoStartFocusSessions;
+    this.soundEnabled = soundEnabled;
+    this.browserNotificationsEnabled = browserNotificationsEnabled;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.version = version;
@@ -165,6 +195,30 @@ class UserPreferencesEntity {
 
   int getBreakDurationMinutes() {
     return breakDurationMinutes;
+  }
+
+  int getLongBreakDurationMinutes() {
+    return longBreakDurationMinutes;
+  }
+
+  int getFocusSessionsBeforeLongBreak() {
+    return focusSessionsBeforeLongBreak;
+  }
+
+  boolean isAutoStartBreaks() {
+    return autoStartBreaks;
+  }
+
+  boolean isAutoStartFocusSessions() {
+    return autoStartFocusSessions;
+  }
+
+  boolean isSoundEnabled() {
+    return soundEnabled;
+  }
+
+  boolean isBrowserNotificationsEnabled() {
+    return browserNotificationsEnabled;
   }
 
   Instant getCreatedAt() {

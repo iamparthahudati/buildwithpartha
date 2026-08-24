@@ -20,6 +20,12 @@ class PlanningDefaultsTests {
     assertThat(defaults.dailyFocusTargetMinutes()).isEmpty();
     assertThat(defaults.focusDurationMinutes()).isEqualTo(25);
     assertThat(defaults.breakDurationMinutes()).isEqualTo(5);
+    assertThat(defaults.longBreakDurationMinutes()).isEqualTo(15);
+    assertThat(defaults.focusSessionsBeforeLongBreak()).isEqualTo(4);
+    assertThat(defaults.autoStartBreaks()).isFalse();
+    assertThat(defaults.autoStartFocusSessions()).isFalse();
+    assertThat(defaults.soundEnabled()).isFalse();
+    assertThat(defaults.browserNotificationsEnabled()).isFalse();
   }
 
   @Test
@@ -63,6 +69,45 @@ class PlanningDefaultsTests {
             () ->
                 new PlanningDefaults(
                     List.of(1), Optional.empty(), Optional.empty(), false, Optional.empty(), 25, 0))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void rejectsUnsafeLongBreakAndCycleBounds() {
+    assertThatThrownBy(
+            () ->
+                new PlanningDefaults(
+                    List.of(1),
+                    Optional.empty(),
+                    Optional.empty(),
+                    false,
+                    Optional.empty(),
+                    25,
+                    5,
+                    181,
+                    4,
+                    false,
+                    false,
+                    false,
+                    false))
+        .isInstanceOf(IllegalArgumentException.class);
+
+    assertThatThrownBy(
+            () ->
+                new PlanningDefaults(
+                    List.of(1),
+                    Optional.empty(),
+                    Optional.empty(),
+                    false,
+                    Optional.empty(),
+                    25,
+                    5,
+                    15,
+                    13,
+                    false,
+                    false,
+                    false,
+                    false))
         .isInstanceOf(IllegalArgumentException.class);
   }
 }

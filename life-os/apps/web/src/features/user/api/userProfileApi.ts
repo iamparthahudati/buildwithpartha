@@ -35,6 +35,12 @@ export interface UpdateUserPreferencesRequest {
   readonly dailyFocusTargetMinutes: number | null;
   readonly focusDurationMinutes: number;
   readonly breakDurationMinutes: number;
+  readonly longBreakDurationMinutes: number;
+  readonly focusSessionsBeforeLongBreak: number;
+  readonly autoStartBreaks: boolean;
+  readonly autoStartFocusSessions: boolean;
+  readonly soundEnabled: boolean;
+  readonly browserNotificationsEnabled: boolean;
 }
 
 /** Retrieves the current user's profile and localization settings. */
@@ -57,7 +63,7 @@ export function getPreferences(): Promise<UserPreferencesResponse> {
   });
 }
 
-/** Updates the user's planning defaults, working days, hours, and focus durations. */
+/** Updates the user's planning defaults and complete Focus Mode preferences. */
 export function updatePreferences(
   request: UpdateUserPreferencesRequest,
 ): Promise<UserPreferencesResponse> {

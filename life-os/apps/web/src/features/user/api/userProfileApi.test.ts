@@ -80,6 +80,12 @@ describe("userProfileApi", () => {
         dailyFocusTargetMinutes: 120,
         focusDurationMinutes: 25,
         breakDurationMinutes: 5,
+        longBreakDurationMinutes: 15,
+        focusSessionsBeforeLongBreak: 4,
+        autoStartBreaks: false,
+        autoStartFocusSessions: false,
+        soundEnabled: false,
+        browserNotificationsEnabled: false,
       },
     };
     vi.mocked(fetch).mockResolvedValueOnce(jsonResponse(200, prefs));
@@ -107,6 +113,12 @@ describe("userProfileApi", () => {
         dailyFocusTargetMinutes: 200,
         focusDurationMinutes: 50,
         breakDurationMinutes: 10,
+        longBreakDurationMinutes: 20,
+        focusSessionsBeforeLongBreak: 4,
+        autoStartBreaks: false,
+        autoStartFocusSessions: false,
+        soundEnabled: false,
+        browserNotificationsEnabled: false,
       },
     };
     vi.mocked(fetch).mockResolvedValueOnce(jsonResponse(200, updated));
@@ -119,11 +131,25 @@ describe("userProfileApi", () => {
       dailyFocusTargetMinutes: 200,
       focusDurationMinutes: 50,
       breakDurationMinutes: 10,
+      longBreakDurationMinutes: 20,
+      focusSessionsBeforeLongBreak: 4,
+      autoStartBreaks: false,
+      autoStartFocusSessions: false,
+      soundEnabled: false,
+      browserNotificationsEnabled: false,
     });
 
     expect(response.planningDefaults.focusDurationMinutes).toBe(50);
     const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
     expect(url).toBe("/life-os/api/v1/user/preferences");
     expect(init.method).toBe("PUT");
+    expect(JSON.parse(String(init.body))).toMatchObject({
+      longBreakDurationMinutes: 20,
+      focusSessionsBeforeLongBreak: 4,
+      autoStartBreaks: false,
+      autoStartFocusSessions: false,
+      soundEnabled: false,
+      browserNotificationsEnabled: false,
+    });
   });
 });

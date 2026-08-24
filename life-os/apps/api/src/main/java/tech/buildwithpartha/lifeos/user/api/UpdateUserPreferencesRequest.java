@@ -13,4 +13,10 @@ public record UpdateUserPreferencesRequest(
     boolean overnightSchedule,
     @Min(1) @Max(1440) Integer dailyFocusTargetMinutes,
     @Min(1) @Max(1440) int focusDurationMinutes,
-    @Min(1) @Max(1440) int breakDurationMinutes) {}
+    @Min(1) @Max(1440) int breakDurationMinutes,
+    @Min(1) @Max(180) Integer longBreakDurationMinutes,
+    @Min(1) @Max(12) Integer focusSessionsBeforeLongBreak,
+    Boolean autoStartBreaks,
+    Boolean autoStartFocusSessions,
+    Boolean soundEnabled,
+    Boolean browserNotificationsEnabled) {}

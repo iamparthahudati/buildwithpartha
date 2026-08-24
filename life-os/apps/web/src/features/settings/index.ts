@@ -7,6 +7,7 @@ export {
   LocalizationSettingsPanel,
   type LocalizationSettingsPanelProps,
 } from "./components/LocalizationSettingsPanel";
+export { FocusPreferencesPanel } from "./components/FocusPreferencesPanel";
 export { SecuritySettingsPanel } from "./components/SecuritySettingsPanel";
 export {
   PrivacySettingsPanel,

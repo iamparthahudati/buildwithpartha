@@ -104,6 +104,12 @@ CREATE TABLE IF NOT EXISTS user_preferences (
     daily_focus_target_minutes  INT,
     focus_duration_minutes      INT                      NOT NULL,
     break_duration_minutes      INT                      NOT NULL,
+    long_break_duration_minutes INT                      NOT NULL DEFAULT 15,
+    focus_sessions_before_long_break INT                 NOT NULL DEFAULT 4,
+    auto_start_breaks           BOOLEAN                  NOT NULL DEFAULT FALSE,
+    auto_start_focus_sessions   BOOLEAN                  NOT NULL DEFAULT FALSE,
+    sound_enabled               BOOLEAN                  NOT NULL DEFAULT FALSE,
+    browser_notifications_enabled BOOLEAN                NOT NULL DEFAULT FALSE,
     created_at                  TIMESTAMP WITH TIME ZONE NOT NULL,
     updated_at                  TIMESTAMP WITH TIME ZONE NOT NULL,
     version                     BIGINT                   NOT NULL

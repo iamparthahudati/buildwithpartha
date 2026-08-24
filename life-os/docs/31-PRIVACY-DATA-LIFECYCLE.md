@@ -151,6 +151,8 @@ V17 adds `focus_session_operations` for retry safety. Each row contains only an 
 
 LOS-0915 keeps active Focus Session snapshots only in the authenticated tab's in-memory TanStack Query cache. It removes the provisional `localStorage` Focus Session fallback: refresh recovery always reads the canonical server record, and an offline refresh cannot fabricate or restore a device-only session. Cross-tab `BroadcastChannel` messages contain only a fixed change signal and prompt an ownership-scoped API recovery; they contain no session UUID, Task/Time Block identifier, duration, title, note, response body, or Account data. The cache and channel lifetime end with the page/tab process, and the existing sign-out query-cache clear remains the Account-switch boundary.
 
+LOS-0916 stores Focus Mode durations, cycle count, automatic-start choices, sound choice, and browser-notification choice in the existing Account-owned `user_preferences` row under R4. These settings contain no notification body, browser identifier, permission token, device fingerprint, Task/Time Block content, or Focus Session history. Browser permission remains device/browser-owned: LifeOS requests it only after the user explicitly enables browser notifications, stores only the resulting account preference boolean, and cannot override a browser denial. The fields are included in `preferences.json`, cascade with Account deletion, and are never written to browser storage or logs.
+
 ## Data not collected in v1
 
 - Date of birth, government identity, postal address, phone number or payment data.

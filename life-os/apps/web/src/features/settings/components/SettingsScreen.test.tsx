@@ -108,6 +108,7 @@ describe("SettingsScreen", () => {
 
     expect(screen.getByRole("tab", { name: "Profile" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "Localization" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Focus" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "Security" })).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "Data & privacy" })).toBeInTheDocument();
 
