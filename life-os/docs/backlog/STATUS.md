@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-23
+Last updated: 2026-08-24
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -180,6 +180,7 @@ Last updated: 2026-08-23
 | LOS-0909 | Done          | `feature/LOS-0909-calendar-aggregation-api`     | Added authenticated Calendar aggregation for Time Blocks, due Tasks, and Milestones with canonical source IDs, source filters, owner-scoped bounded reads, IANA timezone boundaries, deterministic ordering, and truncation metadata. Habit/Review source types are reserved for their canonical model tickets. See `docs/handoffs/LOS-0909.md`. |
 | LOS-0910 | Done          | `feature/LOS-0910-build-calendar-primitives`    | Built API-shaped Calendar header/navigation, source filter legend, event chips, all-day lane, day/week/month grids, dense-day overflow, keyboard/touch date navigation, and responsive semantic list alternatives with catalog and axe coverage. See `docs/handoffs/LOS-0910.md`. |
 | LOS-0911 | Done          | `feature/LOS-0911-compose-integrate-calendar`   | Composed and integrated the authenticated Calendar with bounded aggregate queries, URL-backed local date/view/source filters, cached/offline/error/truncation states, exact canonical source navigation, and DST/month-boundary/dense-day/responsive coverage. See `docs/handoffs/LOS-0911.md`. |
+| LOS-0912 | Done          | `feature/LOS-0912-model-focus-sessions`         | Modeled the server-authoritative Focus Session state machine, focus/break clock accounting, interruption records, ownership-scoped persistence, V16 schema constraints, optimistic versioning, and one-active-session database enforcement. See `docs/handoffs/LOS-0912.md`. |
 | LOS-1005 | Done          | `feature/LOS-1005-week-strip-capacity`          | Built Week Planner week strip & capacity components (WeekStrip, WeekCapacitySummary, WeekDayCapacityDialog, catalog specimens, and 100% axe accessibility tests). See `docs/handoffs/LOS-1005.md`. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

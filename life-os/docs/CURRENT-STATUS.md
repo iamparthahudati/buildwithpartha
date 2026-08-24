@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0911 Compose and integrate Calendar)
+Last updated: 2026-08-24 (LOS-0912 Model Focus Sessions)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-0912 — Modeled the server-authoritative Focus Session aggregate and persistence boundary with canonical Running, Paused, Completed, and Cancelled states; Focus and Break phases; planned and accumulated actual durations; monotonic start/pause/resume/break/complete/cancel transitions; optional Task and Time Block context; private interruption notes; and optimistic versioning. Flyway V16 enforces valid state/timestamp shapes, same-owner context links, cascade/nullification lifecycle, and one active (Running or Paused) session per user. Focused domain/JPA tests and real PostgreSQL migration/constraint tests pass. See `docs/handoffs/LOS-0912.md`.
 
 - LOS-0911 — Composed and integrated the authenticated Calendar route over the LOS-0909 aggregate and LOS-0910 primitives. Day, Week, and six-week Month ranges are queried as inclusive account-local dates; date/view/source filters persist in the URL; cached data remains visible through refresh/offline failure; empty, loading, error, no-source, and 500-item truncation states are explicit. Calendar items open their canonical Time Block, Task, Project milestone, Habit, or Review source, with linked Time Blocks opening in edit mode and linked milestones focused in the Project timeline. Dense-day, DST, month-boundary, accessibility, mobile/tablet/desktop, route, API, and full frontend gates pass. See `docs/handoffs/LOS-0911.md`.
 

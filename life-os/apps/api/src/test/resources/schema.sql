@@ -313,3 +313,33 @@ CREATE TABLE IF NOT EXISTS time_blocks (
     version          BIGINT                   NOT NULL
 );
 
+-- Added by LOS-0912: Focus Sessions and private interruption events.
+CREATE TABLE IF NOT EXISTS focus_sessions (
+    id                              UUID                     NOT NULL PRIMARY KEY,
+    user_id                         UUID                     NOT NULL,
+    task_id                         UUID,
+    time_block_id                   UUID,
+    status                          VARCHAR(32)              NOT NULL,
+    phase                           VARCHAR(32)              NOT NULL,
+    planned_focus_duration_seconds BIGINT                   NOT NULL,
+    planned_break_duration_seconds BIGINT                   NOT NULL,
+    actual_focus_duration_seconds  BIGINT                   NOT NULL,
+    actual_break_duration_seconds  BIGINT                   NOT NULL,
+    started_at                      TIMESTAMP WITH TIME ZONE NOT NULL,
+    phase_started_at                TIMESTAMP WITH TIME ZONE,
+    paused_at                       TIMESTAMP WITH TIME ZONE,
+    ended_at                        TIMESTAMP WITH TIME ZONE,
+    created_at                      TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at                      TIMESTAMP WITH TIME ZONE NOT NULL,
+    version                         BIGINT                   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS focus_session_interruptions (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    focus_session_id UUID                     NOT NULL,
+    user_id          UUID                     NOT NULL,
+    occurred_at      TIMESTAMP WITH TIME ZONE NOT NULL,
+    note             TEXT,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    version          BIGINT                   NOT NULL
+);
