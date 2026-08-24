@@ -59,11 +59,60 @@ import {
   CalendarHeaderDemo,
 } from "./CalendarDemos";
 import { CalendarScreenDemo } from "./CalendarScreenDemos";
+import { FocusModeSurfaceDemo } from "./FocusDemos";
 import type { CatalogEntry } from "./registry";
 
 /* Composed-component entries (LOS-0401 onward). */
 
 export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
+  {
+    id: "focus-mode-surface",
+    name: "Focus Mode surface",
+    group: "Composed",
+    summary:
+      "A controlled, distraction-reduced Focus Session surface with linked context, focus/break actions, bounded session settings, private distraction capture, deliberate browser-notification consent, confirmations, and terminal recovery states.",
+    states: [
+      {
+        id: "focus-mode-running",
+        name: "Running focus",
+        description:
+          "A linked Task and Time Block remain visible beside the active timer and controls.",
+        render: () => <FocusModeSurfaceDemo state="running" />,
+      },
+      {
+        id: "focus-mode-paused-break",
+        name: "Paused break",
+        description:
+          "The break can resume or be skipped without implying that focus work completed.",
+        render: () => <FocusModeSurfaceDemo state="paused-break" />,
+      },
+      {
+        id: "focus-mode-idle",
+        name: "Ready",
+        description: "Durations can be changed before a new Focus Session starts.",
+        render: () => <FocusModeSurfaceDemo state="idle" />,
+      },
+      {
+        id: "focus-mode-completed",
+        name: "Completed",
+        description:
+          "The summary names confirmed recorded minutes without marking the linked Task done.",
+        render: () => <FocusModeSurfaceDemo state="completed" />,
+      },
+      {
+        id: "focus-mode-unavailable",
+        name: "Unavailable",
+        description: "A retry path does not invent or overwrite the last confirmed session state.",
+        render: () => <FocusModeSurfaceDemo state="unavailable" />,
+      },
+      {
+        id: "focus-mode-loading",
+        name: "Loading",
+        description: "The surface reserves its layout while the active Focus Session is restored.",
+        render: () => <FocusModeSurfaceDemo state="loading" />,
+      },
+    ],
+  },
   {
     id: "form-field",
     name: "FormField and FormErrorSummary",

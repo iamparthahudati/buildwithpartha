@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0913 Implement Focus Session API)
+Last updated: 2026-08-24 (LOS-0914 Build Focus Mode surface)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-0914 — Built a controlled, distraction-reduced Focus Mode surface from reusable FocusControls, SessionContext, InterruptionCapture, and session-settings components. It composes TimerRing with Task/Time Block context; start, pause, resume, complete, cancel, and skip-break actions; exact terminal confirmations and summaries; bounded 25/5-style duration settings without presenting them as universal targets; private 2,000-character distraction capture; explicit browser-notification consent states; and loading, recovery, disabled, pending, focus, break, completed, and cancelled states. The component responds to its own container at mobile/tablet/desktop widths, inherits reduced-motion behavior from TimerRing/ProgressRing, and has focused behavior, axe, catalog, keyboard, overflow, and console verification. See `docs/handoffs/LOS-0914.md`.
 
 - LOS-0913 — Implemented authenticated, CSRF-protected Focus Session start/get/active-recovery, pause/resume, break/focus, complete/cancel, and interruption APIs. Every write requires a seven-day content-free idempotency key; account-row locking, the one-active-session database constraint, and optimistic versions make concurrent tabs safe. Responses pair canonical UTC anchors with `serverNow`; completed focus records whole confirmed minutes on a linked Task exactly once, while linked Time Blocks move through in-progress/completed or return to scheduled on cancellation. Cross-user context and sessions remain indistinguishable from unavailable resources. See `docs/handoffs/LOS-0913.md`.
 
