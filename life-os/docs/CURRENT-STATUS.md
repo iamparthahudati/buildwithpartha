@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0904 Build TimeBlockForm)
+Last updated: 2026-08-24 (LOS-0905 Build day timeline grid)
 
 ## Phase
 
@@ -278,9 +278,11 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 - LOS-0904 — Built `TimeBlockForm` React component in `src/features/time-blocks/components/TimeBlockForm.tsx` supporting create and edit modes, title, category, status, date, start/end time range, linked project, linked task, timezone, repeat notes, strict time ordering, DST gap/fold validation via `resolveLocalDateTime`, overlap conflict resolution banner with `allowOverlap` override toggle, full `FormDialog`/`FormFieldGroup` encapsulation, 100% test coverage with axe accessibility compliance, and catalog specimens. See `docs/handoffs/LOS-0904.md`.
 
+- LOS-0905 — Built `DayTimeline` React component in `src/features/time-blocks/components/DayTimeline.tsx` supporting 24-hour visual time scale grid, side-by-side collision column layout, current wall-clock time "now line", clickable gap slots (`onCreateBlock`), pointer drag to move position (`onMoveBlock`) and resize duration (`onResizeBlock`), accessible keyboard navigation/shortcuts, density toggles (`compact`, `comfortable`, `spacious`), small-screen list fallback using `TimeBlockRow`, catalog specimens, and 100% test coverage with 0 axe accessibility violations. See `docs/handoffs/LOS-0905.md`.
+
 ## Next recommended ticket
 
-LOS-0905 (`docs/backlog/EPIC-09-TIME-CALENDAR-FOCUS.md`) — Build day timeline grid.
+LOS-0906 (`docs/backlog/EPIC-09-TIME-CALENDAR-FOCUS.md`) — Build time summary components.
 
 ## Known decisions requiring implementation-time values
 

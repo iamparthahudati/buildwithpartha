@@ -7,6 +7,12 @@ export {
   type TimeBlockProjectOption,
   type TimeBlockCategoryOption,
 } from "./components/TimeBlockForm";
+export {
+  DayTimeline,
+  type DayTimelineProps,
+  type DayTimelineDensity,
+  type DayTimelineViewMode,
+} from "./components/DayTimeline";
 
 export {
   type TimeBlock,
