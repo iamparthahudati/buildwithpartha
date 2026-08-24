@@ -143,6 +143,12 @@ LOS-0821 stores Comment UUID, owning Account UUID, exactly one Task/Project pare
 
 An explicit Comment delete immediately hard-deletes the body rather than promising a recovery window; this shorter entity-specific rule overrides R3 and is disclosed by the `204` operation description. Parent or Account deletion cascades the Comment row. The remaining `COMMENT_DELETED` Product Activity Event contains only typed event/subject UUID metadata and no body snapshot; it cascades with the Account. Comments remain included in Account export while present.
 
+### Focus Session API implementation
+
+LOS-0913 exposes Focus Sessions only through authenticated, ownership-scoped reads and CSRF-protected writes. Canonical Focus Session and interruption data remains P2 Private content. Interruption notes are normalized plain text, are never copied into idempotency records, Activity, audit metadata, metrics, or logs, and follow the Focus Session/Account deletion lifecycle established by V16.
+
+V17 adds `focus_session_operations` for retry safety. Each row contains only an opaque UUID, owning Account UUID, a validated 8–64 character idempotency key, closed operation type, Focus Session UUID, optional interruption UUID, and UTC creation instant. It contains no title, note, request/response body, duration, Task content, Time Block content, credential, cookie, or arbitrary metadata. Rows are Account/session-owned by database foreign keys and a daily cleanup deletes keys older than seven days under R1.
+
 ## Data not collected in v1
 
 - Date of birth, government identity, postal address, phone number or payment data.

@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-24 (LOS-0912 Model Focus Sessions)
+Last updated: 2026-08-24 (LOS-0913 Implement Focus Session API)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-0913 — Implemented authenticated, CSRF-protected Focus Session start/get/active-recovery, pause/resume, break/focus, complete/cancel, and interruption APIs. Every write requires a seven-day content-free idempotency key; account-row locking, the one-active-session database constraint, and optimistic versions make concurrent tabs safe. Responses pair canonical UTC anchors with `serverNow`; completed focus records whole confirmed minutes on a linked Task exactly once, while linked Time Blocks move through in-progress/completed or return to scheduled on cancellation. Cross-user context and sessions remain indistinguishable from unavailable resources. See `docs/handoffs/LOS-0913.md`.
 
 - LOS-0912 — Modeled the server-authoritative Focus Session aggregate and persistence boundary with canonical Running, Paused, Completed, and Cancelled states; Focus and Break phases; planned and accumulated actual durations; monotonic start/pause/resume/break/complete/cancel transitions; optional Task and Time Block context; private interruption notes; and optimistic versioning. Flyway V16 enforces valid state/timestamp shapes, same-owner context links, cascade/nullification lifecycle, and one active (Running or Paused) session per user. Focused domain/JPA tests and real PostgreSQL migration/constraint tests pass. See `docs/handoffs/LOS-0912.md`.
 

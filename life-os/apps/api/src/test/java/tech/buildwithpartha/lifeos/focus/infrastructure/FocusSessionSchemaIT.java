@@ -83,7 +83,7 @@ class FocusSessionSchemaIT {
   }
 
   @Test
-  void migrationCreatesBothTablesAndSingleActiveIndex() throws Exception {
+  void migrationCreatesFocusTablesAndSingleActiveIndex() throws Exception {
     try (Connection conn = connection();
         PreparedStatement statement =
             conn.prepareStatement(
@@ -96,6 +96,7 @@ class FocusSessionSchemaIT {
     }
     assertThat(tableExists("focus_sessions")).isTrue();
     assertThat(tableExists("focus_session_interruptions")).isTrue();
+    assertThat(tableExists("focus_session_operations")).isTrue();
   }
 
   @Test
@@ -191,6 +192,30 @@ class FocusSessionSchemaIT {
                     + " WHERE focus_session_id = ?",
                 sessionId))
         .isZero();
+  }
+
+  @Test
+  void operationKeysAreOwnerScopedUniqueAndContentFree() throws Exception {
+    UUID ownerId = insertUser("focus-operation-owner");
+    UUID otherId = insertUser("focus-operation-other");
+    UUID sessionId = UUID.randomUUID();
+    insertSession(sessionId, ownerId, null, null, "RUNNING", "FOCUS");
+
+    insertOperation(ownerId, "focus-operation-key-001", "PAUSE", sessionId, null);
+    assertThatThrownBy(
+            () -> insertOperation(ownerId, "focus-operation-key-001", "RESUME", sessionId, null))
+        .isInstanceOf(SQLException.class)
+        .hasMessageContaining("uq_focus_session_operations_user_key");
+    assertThatThrownBy(
+            () -> insertOperation(otherId, "focus-operation-key-002", "PAUSE", sessionId, null))
+        .isInstanceOf(SQLException.class)
+        .hasMessageContaining("fk_focus_session_operations_session_owner");
+    assertThatThrownBy(
+            () ->
+                insertOperation(
+                    ownerId, "focus-operation-key-003", "RECORD_INTERRUPTION", sessionId, null))
+        .isInstanceOf(SQLException.class)
+        .hasMessageContaining("ck_focus_session_operations_interruption");
   }
 
   private static boolean tableExists(String tableName) throws SQLException {
@@ -309,6 +334,26 @@ class FocusSessionSchemaIT {
       statement.setTimestamp(4, Timestamp.from(occurred));
       statement.setString(5, note);
       statement.setTimestamp(6, Timestamp.from(occurred));
+      statement.executeUpdate();
+    }
+  }
+
+  private static void insertOperation(
+      UUID userId, String key, String type, UUID sessionId, UUID interruptionId)
+      throws SQLException {
+    try (Connection conn = connection();
+        PreparedStatement statement =
+            conn.prepareStatement(
+                "INSERT INTO public.focus_session_operations"
+                    + " (id, user_id, idempotency_key, operation_type, focus_session_id,"
+                    + " interruption_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+      statement.setObject(1, UUID.randomUUID());
+      statement.setObject(2, userId);
+      statement.setString(3, key);
+      statement.setString(4, type);
+      statement.setObject(5, sessionId);
+      setNullableUuid(statement, 6, interruptionId);
+      statement.setTimestamp(7, Timestamp.from(Instant.parse("2026-08-24T09:00:10Z")));
       statement.executeUpdate();
     }
   }

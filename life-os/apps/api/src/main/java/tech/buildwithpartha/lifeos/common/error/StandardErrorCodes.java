@@ -18,6 +18,11 @@ public final class StandardErrorCodes {
   public static final ErrorCode CONCURRENCY_CONFLICT = ErrorCode.of("CONCURRENCY_CONFLICT");
   public static final ErrorCode TIME_BLOCK_OVERLAP_CONFLICT =
       ErrorCode.of("TIME_BLOCK_OVERLAP_CONFLICT");
+  public static final ErrorCode FOCUS_SESSION_ALREADY_ACTIVE =
+      ErrorCode.of("FOCUS_SESSION_ALREADY_ACTIVE");
+  public static final ErrorCode FOCUS_SESSION_STATE_CONFLICT =
+      ErrorCode.of("FOCUS_SESSION_STATE_CONFLICT");
+  public static final ErrorCode IDEMPOTENCY_KEY_REUSED = ErrorCode.of("IDEMPOTENCY_KEY_REUSED");
 
   private StandardErrorCodes() {}
 }

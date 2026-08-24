@@ -1,6 +1,7 @@
 package tech.buildwithpartha.lifeos.focus.infrastructure;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Repository;
 import tech.buildwithpartha.lifeos.focus.domain.FocusSessionInterruption;
@@ -21,6 +22,13 @@ class JpaFocusSessionInterruptionRepository implements FocusSessionInterruptionR
     return jpaRepository
         .saveAndFlush(FocusSessionInterruptionEntity.fromDomain(interruption))
         .toDomain();
+  }
+
+  @Override
+  public Optional<FocusSessionInterruption> findByIdAndUserId(UUID id, UUID userId) {
+    return jpaRepository
+        .findByIdAndUserId(id, userId)
+        .map(FocusSessionInterruptionEntity::toDomain);
   }
 
   @Override
