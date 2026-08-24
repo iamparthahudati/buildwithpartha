@@ -1860,3 +1860,11 @@ export {
 } from "./SprintDemos";
 
 export { TimeBlocksScreenDemo } from "./TimeBlocksScreenDemos";
+
+export {
+  WeekStripReadyDemo,
+  WeekStripLoadingDemo,
+  WeekCapacitySummaryReadyDemo,
+  WeekCapacitySummaryOvercapacityDemo,
+  WeekCapacitySummaryLoadingDemo,
+} from "./WeekPlannerDemos";

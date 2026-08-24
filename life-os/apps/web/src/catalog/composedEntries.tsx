@@ -42,6 +42,11 @@ import {
   DayTimelineDemo,
   TimeSummaryDemo,
   TimeBlocksScreenDemo,
+  WeekStripReadyDemo,
+  WeekStripLoadingDemo,
+  WeekCapacitySummaryReadyDemo,
+  WeekCapacitySummaryOvercapacityDemo,
+  WeekCapacitySummaryLoadingDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -783,6 +788,56 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "TimeBlocksScreen overview demonstrating interactive specimens across Day view, Week view, Conflict, DST transition, Offline, Loading, Empty, and Error states.",
         render: () => <TimeBlocksScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-strip",
+    name: "WeekStrip",
+    group: "Composed",
+    summary:
+      "Seven-day week plan strip displaying daily planned vs available capacity, task completion count, overcapacity and conflict badges, accessible day selection, and non-drag action menu controls.",
+    states: [
+      {
+        id: "week-strip-ready",
+        name: "Ready",
+        description:
+          "Populated seven-day strip with today marker, overcapacity badge, conflict indicator, and day actions.",
+        render: () => <WeekStripReadyDemo />,
+      },
+      {
+        id: "week-strip-loading",
+        name: "Loading",
+        description: "Loading skeleton grid for week strip.",
+        render: () => <WeekStripLoadingDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-capacity",
+    name: "WeekCapacitySummary",
+    group: "Composed",
+    summary:
+      "Weekly workload vs capacity card displaying total planned time, workload progress meter, task completion count, time allocation DonutChart breakdown, and overcapacity alert notice.",
+    states: [
+      {
+        id: "week-capacity-summary-ready",
+        name: "Balanced Plan",
+        description: "Balanced weekly workload with allocation breakdown and task progress.",
+        render: () => <WeekCapacitySummaryReadyDemo />,
+      },
+      {
+        id: "week-capacity-summary-overcapacity",
+        name: "Overcapacity",
+        description:
+          "Overcapacity warning state with extra planned hours notice and conflict badge.",
+        render: () => <WeekCapacitySummaryOvercapacityDemo />,
+      },
+      {
+        id: "week-capacity-summary-loading",
+        name: "Loading",
+        description: "Loading skeleton state for weekly capacity summary.",
+        render: () => <WeekCapacitySummaryLoadingDemo />,
       },
     ],
   },
