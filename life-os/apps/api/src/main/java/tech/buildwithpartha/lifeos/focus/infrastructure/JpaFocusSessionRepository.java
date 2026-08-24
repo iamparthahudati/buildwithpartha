@@ -19,6 +19,13 @@ class JpaFocusSessionRepository implements FocusSessionRepository {
   }
 
   @Override
+  public void lockUser(UUID userId) {
+    if (jpaRepository.lockUserById(userId) == null) {
+      throw new IllegalArgumentException("userId must identify an existing Account");
+    }
+  }
+
+  @Override
   public FocusSession save(FocusSession session) {
     return jpaRepository.saveAndFlush(FocusSessionEntity.fromDomain(session)).toDomain();
   }

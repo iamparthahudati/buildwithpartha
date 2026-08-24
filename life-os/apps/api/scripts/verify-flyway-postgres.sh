@@ -144,8 +144,8 @@ if [ "$test_extension_count" != "1" ]; then
   exit 1
 fi
 
-if [ "$test_product_table_count" != "25" ]; then
-  echo "Expected exactly 25 product tables after V2-V16 migrations; found $test_product_table_count." >&2
+if [ "$test_product_table_count" != "26" ]; then
+  echo "Expected exactly 26 product tables after V2-V17 migrations; found $test_product_table_count." >&2
   exit 1
 fi
 

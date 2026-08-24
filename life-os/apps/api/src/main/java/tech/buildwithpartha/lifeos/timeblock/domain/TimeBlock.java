@@ -105,4 +105,23 @@ public record TimeBlock(
   public boolean isOwnedBy(UUID checkUserId) {
     return Objects.equals(this.userId, checkUserId);
   }
+
+  /** Returns the same scheduled interval with a server-reconciled lifecycle status. */
+  public TimeBlock withStatus(TimeBlockStatus newStatus, Instant newUpdatedAt) {
+    return new TimeBlock(
+        id,
+        userId,
+        projectId,
+        taskId,
+        title,
+        category,
+        Objects.requireNonNull(newStatus, "newStatus must not be null"),
+        startAt,
+        endAt,
+        sourceTimeZone,
+        notes,
+        createdAt,
+        Objects.requireNonNull(newUpdatedAt, "newUpdatedAt must not be null"),
+        version);
+  }
 }

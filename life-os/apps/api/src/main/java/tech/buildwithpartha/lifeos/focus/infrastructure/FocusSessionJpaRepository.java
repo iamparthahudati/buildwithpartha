@@ -10,6 +10,11 @@ import org.springframework.data.repository.query.Param;
 
 interface FocusSessionJpaRepository extends JpaRepository<FocusSessionEntity, UUID> {
 
+  @Query(
+      value = "SELECT u.id FROM public.users u WHERE u.id = :userId FOR UPDATE",
+      nativeQuery = true)
+  Object lockUserById(@Param("userId") UUID userId);
+
   Optional<FocusSessionEntity> findByIdAndUserId(UUID id, UUID userId);
 
   @Query(

@@ -343,3 +343,15 @@ CREATE TABLE IF NOT EXISTS focus_session_interruptions (
     created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
     version          BIGINT                   NOT NULL
 );
+
+-- Added by LOS-0913: bounded Focus Session mutation replay keys.
+CREATE TABLE IF NOT EXISTS focus_session_operations (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    user_id          UUID                     NOT NULL,
+    idempotency_key  VARCHAR(64)              NOT NULL,
+    operation_type   VARCHAR(32)              NOT NULL,
+    focus_session_id UUID                     NOT NULL,
+    interruption_id  UUID,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    CONSTRAINT uq_focus_session_operations_user_key UNIQUE (user_id, idempotency_key)
+);

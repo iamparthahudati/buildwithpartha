@@ -75,6 +75,16 @@ Supported source values are `TIME_BLOCK`, `TASK_DUE`, `MILESTONE`, `HABIT`, and 
 
 Every event has a deterministic `id`, UUID `sourceId`, `sourceType`, title, source status, and optional Project/Task context. Timed events use canonical UTC `startAt`/`endAt`; all-day events use `localDate` and `allDay: true`. Results are sorted by effective start, all-day precedence, source type, and event ID. When more than `limit` events exist, the response returns the first deterministic page with `truncated: true`; Calendar remains a projection and never creates or stores a duplicate source record.
 
+### Focus Sessions
+
+Focus Session lifecycle resources are authenticated beneath `/focus-sessions`. `POST /focus-sessions` starts one session with optional `taskId`/`timeBlockId` context and required `plannedFocusDurationSeconds`/`plannedBreakDurationSeconds`; create returns `201`, the canonical session, and its `Location`. `GET /focus-sessions/{sessionId}` returns an owned session and `GET /focus-sessions/active` restores the sole Running or Paused session, returning `204` when none exists.
+
+Lifecycle commands are `POST /focus-sessions/{sessionId}/pause`, `/resume`, `/start-break`, `/resume-focus`, `/complete`, `/cancel`, and `/interruptions`. Every command is authenticated, CSRF-protected, requires the current non-negative `version`, and requires an `Idempotency-Key` header containing 8–64 safe ASCII letters, digits, `.`, `_`, or `-`. Keys are scoped to the Account, bound to one operation/session, replay the canonical result without applying time twice, and expire after seven days. Reusing a key for a different command returns `409 IDEMPOTENCY_KEY_REUSED`; a stale version returns `409 CONCURRENCY_CONFLICT`; an invalid lifecycle edge returns `409 FOCUS_SESSION_STATE_CONFLICT`.
+
+The server UTC clock is the only timing authority. Every response supplies `serverNow`, canonical phase/start/pause/end anchors, and actual focus/break seconds calculated at `serverNow`; browser intervals are presentation-only. Account-row write locking serializes two tabs even before a first session row exists, optimistic versions reject stale transitions, and the database independently permits only one Running or Paused session per Account.
+
+Starting from a linked scheduled Time Block marks it In progress and infers its Task when no explicit Task is supplied; mismatched or unavailable context is rejected. Completing a session marks a non-terminal linked Time Block Completed and adds the session's confirmed whole focus minutes to the linked Task exactly once without completing the Task. Cancelling records truthful session duration, does not add Task time, and returns a linked In-progress Time Block to Scheduled. Missing and cross-user sessions or context never disclose another Account's data.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:

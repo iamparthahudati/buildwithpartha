@@ -18,6 +18,7 @@ import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
 import tech.buildwithpartha.lifeos.common.error.CsrfTokenInvalidException;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.error.FocusSessionConflictException;
 import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
@@ -144,6 +145,18 @@ public final class ApiExceptionHandler {
             exception.code(),
             "Schedule Conflict",
             exception.getMessage()));
+  }
+
+  @ExceptionHandler(FocusSessionConflictException.class)
+  ResponseEntity<ApiProblem> handleFocusSessionConflict(
+      FocusSessionConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Focus Session conflict",
+            "Refresh the active Focus Session and try again."));
   }
 
   @ExceptionHandler(CsrfTokenInvalidException.class)

@@ -8,6 +8,9 @@ import java.util.UUID;
 /** Ownership-scoped persistence boundary for Focus Sessions. */
 public interface FocusSessionRepository {
 
+  /** Serializes Focus Session writes for one account, including the first active-session insert. */
+  void lockUser(UUID userId);
+
   FocusSession save(FocusSession session);
 
   Optional<FocusSession> findByIdAndUserId(UUID id, UUID userId);
