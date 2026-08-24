@@ -1858,3 +1858,5 @@ export {
   SprintFormDialogDemo,
   SprintRetrospectiveDialogDemo,
 } from "./SprintDemos";
+
+export { TimeBlocksScreenDemo } from "./TimeBlocksScreenDemos";

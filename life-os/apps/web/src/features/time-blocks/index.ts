@@ -35,6 +35,7 @@ export {
   type UpcomingBlocksStatus,
 } from "./components/UpcomingBlocks";
 export { TimeSummary, type TimeSummaryProps } from "./components/TimeSummary";
+export { TimeBlocksScreen, type TimeBlocksScreenProps } from "./components/TimeBlocksScreen";
 
 export {
   type TimeBlock,
@@ -46,3 +47,23 @@ export {
   formatTimeBlockDuration,
   formatTimeBlockRange,
 } from "./model/timeBlock";
+
+export {
+  MOCK_TIME_BLOCKS,
+  MOCK_CONFLICT_TIME_BLOCKS,
+  MOCK_WEEK_TIME_BLOCKS,
+  MOCK_TIME_BLOCK_CATEGORIES,
+  MOCK_TIME_BLOCK_PROJECTS,
+  MOCK_TIME_BLOCK_TASKS,
+  MOCK_TIME_SUMMARY_CATEGORIES,
+} from "./model/mockTimeBlocks";
+
+export {
+  type TimeBlocksViewMode,
+  type TimeBlocksDateNavigation,
+  formatTimeBlocksDateLabel,
+  formatTimeBlocksWeekLabel,
+  getWeekDaysForDate,
+  filterBlocksByDate,
+  computeDayTimeBlockCounts,
+} from "./model/timeBlocksScreen";

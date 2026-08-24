@@ -41,6 +41,7 @@ import {
   TimeBlockFormDemo,
   DayTimelineDemo,
   TimeSummaryDemo,
+  TimeBlocksScreenDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -766,6 +767,22 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "TimeSummary overview displaying metric strip, time category breakdown donut chart, goal progress ring, upcoming blocks list, and quick action callbacks.",
         render: () => <TimeSummaryDemo />,
+      },
+    ],
+  },
+  {
+    id: "time-blocks-screen",
+    name: "TimeBlocksScreen",
+    group: "Composed",
+    summary:
+      "Full Time Blocks screen with page header, date navigation, Day/Week view switcher, focus toggle, summary panel toggle, DayTimeline visual grid, TimeSummary overview, TimeBlockForm dialog, delete confirmation dialog, and mock UX states (populated, week view, conflict, DST transition, offline, loading, empty, and error).",
+    states: [
+      {
+        id: "time-blocks-screen-default",
+        name: "Default",
+        description:
+          "TimeBlocksScreen overview demonstrating interactive specimens across Day view, Week view, Conflict, DST transition, Offline, Loading, Empty, and Error states.",
+        render: () => <TimeBlocksScreenDemo />,
       },
     ],
   },

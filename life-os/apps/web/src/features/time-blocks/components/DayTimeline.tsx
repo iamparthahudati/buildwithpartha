@@ -735,9 +735,6 @@ export function DayTimeline({
                 {/* Move Drag Handle & Title Bar */}
                 <div
                   className="lifeos-day-timeline__block-header"
-                  role="button"
-                  tabIndex={-1}
-                  aria-label={`Move drag handle for ${block.title}`}
                   onPointerDown={(e) => handlePointerDown(e, block, "move")}
                   onPointerMove={handlePointerMove}
                   onPointerUp={handlePointerUp}
@@ -798,13 +795,10 @@ export function DayTimeline({
                 {/* Bottom Resize Handle */}
                 <div
                   className="lifeos-day-timeline__resize-handle"
-                  role="button"
-                  tabIndex={-1}
                   onPointerDown={(e) => handlePointerDown(e, block, "resize")}
                   onPointerMove={handlePointerMove}
                   onPointerUp={handlePointerUp}
                   title="Drag to resize block duration"
-                  aria-label={`Resize handle for ${block.title}`}
                 />
               </div>
             );
