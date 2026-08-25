@@ -578,4 +578,54 @@ describe("ProjectDetailsRoute", () => {
     act(() => props.onActivityFilterChange("COMMENT"));
     expect((globalThis as Record<string, any>).__lastDetailsProps.activityFilter).toBe("COMMENT");
   });
+
+  it("invokes milestone and project mutation handlers on ProjectDetailsScreen props", async () => {
+    const mockAddMilestone = vi.fn().mockResolvedValue({});
+    const mockUpdateMilestone = vi.fn().mockResolvedValue({});
+    const mockStatusChange = vi.fn().mockResolvedValue({});
+    const mockDeleteMilestone = vi.fn().mockResolvedValue({});
+    const mockArchiveProject = vi.fn().mockResolvedValue({});
+    const mockRestoreProject = vi.fn().mockResolvedValue({});
+    const mockDeleteProject = vi.fn().mockResolvedValue({});
+
+    mockUseCreateMilestone.mockReturnValue({ mutateAsync: mockAddMilestone } as any);
+    mockUseUpdateMilestone.mockReturnValue({ mutateAsync: mockUpdateMilestone } as any);
+    mockUseUpdateMilestoneStatus.mockReturnValue({ mutateAsync: mockStatusChange } as any);
+    mockUseDeleteMilestone.mockReturnValue({ mutateAsync: mockDeleteMilestone } as any);
+    mockUseArchiveProject.mockReturnValue({ mutateAsync: mockArchiveProject } as any);
+    mockUseRestoreProject.mockReturnValue({ mutateAsync: mockRestoreProject } as any);
+    mockUseDeleteProject.mockReturnValue({ mutateAsync: mockDeleteProject } as any);
+
+    mockUseProjectDetail.mockReturnValue({
+      data: {
+        project: MOCK_PROJECT,
+        milestones: [{ id: "m-1", version: 1, title: "M1", status: "NOT_STARTED" } as any],
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    renderRoute("/life-os/app/projects/proj-123");
+    const props = (globalThis as Record<string, any>).__lastDetailsProps;
+
+    await act(async () => {
+      await props.onAddMilestone({ title: "M1", targetDate: "2026-09-01" });
+      await props.onUpdateMilestone("m-1", { title: "M1 updated" });
+      await props.onMilestoneStatusChange("m-1", "COMPLETED");
+      await props.onDeleteMilestone("m-1");
+      await props.onArchiveProject();
+      await props.onRestoreProject();
+      await props.onDeleteProject();
+    });
+
+    expect(mockAddMilestone).toHaveBeenCalled();
+    expect(mockUpdateMilestone).toHaveBeenCalled();
+    expect(mockStatusChange).toHaveBeenCalled();
+    expect(mockDeleteMilestone).toHaveBeenCalled();
+    expect(mockArchiveProject).toHaveBeenCalled();
+    expect(mockRestoreProject).toHaveBeenCalled();
+    expect(mockDeleteProject).toHaveBeenCalled();
+  });
 });

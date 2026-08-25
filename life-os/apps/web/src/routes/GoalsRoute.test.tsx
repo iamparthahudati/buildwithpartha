@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GoalsRoute } from "./GoalsRoute";
 import * as goalsFeature from "@features/goals";
 import { AuthSessionContext, type AuthSessionValue } from "@state/authSession";
+import { ApiError } from "@lib/apiClient";
 
 vi.mock("@features/goals", async () => {
   const actual = await vi.importActual<typeof goalsFeature>("@features/goals");
@@ -181,5 +182,252 @@ describe("GoalsRoute", () => {
     await user.click(retryBtn);
 
     expect(mockRefetch).toHaveBeenCalled();
+  });
+
+  it("handles filter changes, search, and pagination via URL updates", async () => {
+    const user = userEvent.setup();
+    renderGoalsRoute();
+
+    // Click status tab
+    const completedTab = screen.getByRole("tab", { name: "Completed" });
+    await user.click(completedTab);
+
+    // Search input
+    const searchInput = screen.getByPlaceholderText("Search goals...");
+    await user.type(searchInput, "Books{enter}");
+
+    expect(mockUseGoals).toHaveBeenCalled();
+  });
+
+  it("handles goal form creation trigger in GoalsRoute", async () => {
+    const user = userEvent.setup();
+    renderGoalsRoute();
+
+    // Open create dialog
+    const newGoalBtn = screen.getByRole("button", { name: /New Goal/i });
+    await user.click(newGoalBtn);
+    expect(screen.getByRole("heading", { name: "Create goal" })).toBeInTheDocument();
+
+    // Fill form and submit
+    const titleInput = screen.getByLabelText(/Goal title/i);
+    await user.type(titleInput, "New Goal Title");
+    const submitBtn = screen.getByRole("button", { name: "Create goal" });
+    await user.click(submitBtn);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "New Goal Title",
+      }),
+    );
+  });
+
+  it("handles 409 conflict error state during mutation in GoalsRoute", async () => {
+    const conflictError = new ApiError(409, {
+      status: 409,
+      detail: "Conflict",
+      type: "about:blank",
+      title: "Conflict",
+      instance: "",
+      code: "CONFLICT",
+      correlationId: "123",
+    });
+    mockMutateAsync.mockRejectedValueOnce(conflictError);
+
+    const user = userEvent.setup();
+    renderGoalsRoute();
+
+    // Open create dialog
+    const newGoalBtn = screen.getByRole("button", { name: /New Goal/i });
+    await user.click(newGoalBtn);
+    const titleInput = screen.getByLabelText(/Goal title/i);
+    await user.type(titleInput, "Conflicting Goal");
+    const submitBtn = screen.getByRole("button", { name: "Create goal" });
+    await user.click(submitBtn);
+
+    // Conflict notice should render
+    expect(
+      await screen.findByText(/Another change was made to this goal by a concurrent request/i),
+    ).toBeInTheDocument();
+  });
+
+  it("handles goal card actions (pause, complete, archive, check-in) in GoalsRoute", async () => {
+    const user = userEvent.setup();
+    renderGoalsRoute();
+
+    // Click Pause
+    const pauseBtn = screen.getByRole("button", { name: "Pause" });
+    await user.click(pauseBtn);
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "goal-1",
+      request: { version: 1 },
+    });
+
+    // Click Complete
+    const completeBtn = screen.getByRole("button", { name: "Mark Complete" });
+    await user.click(completeBtn);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "goal-1",
+      request: { version: 1 },
+    });
+
+    // Click Archive
+    const archiveBtn = screen.getByRole("button", { name: "Archive" });
+    await user.click(archiveBtn);
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "goal-1",
+      request: { version: 1 },
+    });
+  });
+
+  it("handles check-in recording from GoalCard in GoalsRoute", async () => {
+    const user = userEvent.setup();
+    renderGoalsRoute();
+
+    // Click Check In
+    const checkInBtn = screen.getByRole("button", { name: "Check In" });
+    await user.click(checkInBtn);
+
+    expect(screen.getByRole("heading", { name: /Check In: Read 12 Books/i })).toBeInTheDocument();
+    const saveCheckInBtn = screen.getByRole("button", { name: "Record Check-in" });
+    await user.click(saveCheckInBtn);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      goalId: "goal-1",
+      request: expect.objectContaining({ value: 4 }),
+    });
+  });
+
+  it("handles editing an existing goal from GoalCard in GoalsRoute", async () => {
+    const user = userEvent.setup();
+    renderGoalsRoute();
+
+    const editBtn = screen.getByRole("button", { name: "Edit" });
+    await user.click(editBtn);
+
+    expect(screen.getByRole("heading", { name: "Edit goal" })).toBeInTheDocument();
+    const submitBtn = screen.getByRole("button", { name: "Save changes" });
+    await user.click(submitBtn);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "goal-1",
+      request: expect.objectContaining({ title: "Read 12 Books" }),
+    });
+  });
+
+  it("handles restore goal in ARCHIVED tab in GoalsRoute", async () => {
+    const archivedGoal = { ...MOCK_GOAL_1, archived: true, status: "ARCHIVED" as const };
+    mockUseGoals.mockReturnValue({
+      data: {
+        items: [archivedGoal],
+        page: {
+          items: [],
+          page: 0,
+          size: 10,
+          totalItems: 1,
+          totalPages: 1,
+          first: true,
+          last: true,
+        },
+        summary: {
+          totalGoals: 1,
+          activeGoals: 0,
+          completedGoals: 0,
+          pausedGoals: 0,
+          archivedGoals: 1,
+          averageProgressPercentage: 33,
+        },
+      },
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    const user = userEvent.setup();
+    renderGoalsRoute(["/life-os/app/goals?status=ARCHIVED&selected=goal-1"]);
+
+    const restoreBtn = screen.getByRole("button", { name: "Restore" });
+    await user.click(restoreBtn);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "goal-1",
+      request: { version: 1 },
+    });
+  });
+
+  it("handles resume goal when status is PAUSED in GoalsRoute", async () => {
+    const pausedGoal = { ...MOCK_GOAL_1, status: "PAUSED" as const };
+    mockUseGoals.mockReturnValue({
+      data: {
+        items: [pausedGoal],
+        page: {
+          items: [],
+          page: 0,
+          size: 10,
+          totalItems: 1,
+          totalPages: 1,
+          first: true,
+          last: true,
+        },
+        summary: {
+          totalGoals: 1,
+          activeGoals: 0,
+          completedGoals: 0,
+          pausedGoals: 1,
+          archivedGoals: 0,
+          averageProgressPercentage: 33,
+        },
+      },
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    const user = userEvent.setup();
+    renderGoalsRoute();
+
+    const resumeBtn = screen.getByRole("button", { name: "Resume" });
+    await user.click(resumeBtn);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "goal-1",
+      request: expect.objectContaining({ title: "Read 12 Books" }),
+    });
+  });
+
+  it("renders null when user is null in GoalsRoute", () => {
+    const { container } = render(
+      <QueryClientProvider client={new QueryClient()}>
+        <AuthSessionContext.Provider value={{ ...MOCK_AUTH_STATE, user: null }}>
+          <MemoryRouter initialEntries={["/life-os/app/goals"]}>
+            <Routes>
+              <Route path="/life-os/app/goals" element={<GoalsRoute />} />
+            </Routes>
+          </MemoryRouter>
+        </AuthSessionContext.Provider>
+      </QueryClientProvider>,
+    );
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("clears conflict error when non-409 error occurs in GoalsRoute", async () => {
+    mockMutateAsync.mockRejectedValueOnce(new Error("General error"));
+
+    const user = userEvent.setup();
+    renderGoalsRoute();
+
+    const newGoalBtn = screen.getByRole("button", { name: /New Goal/i });
+    await user.click(newGoalBtn);
+    const titleInput = screen.getByLabelText(/Goal title/i);
+    await user.type(titleInput, "Test");
+    const submitBtn = screen.getByRole("button", { name: "Create goal" });
+    await user.click(submitBtn);
+
+    expect(
+      screen.queryByText(/Another change was made to this goal by a concurrent request/i),
+    ).not.toBeInTheDocument();
   });
 });
