@@ -61,6 +61,8 @@ import {
   GoalMetricSummaryDemo,
 } from "./ComposedDemos";
 
+import { GoalsScreenDemo, GoalDetailsScreenDemo } from "./GoalsDemos";
+
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
 import { TasksScreenDemo } from "./TasksScreenDemos";
 import { TaskDetailsScreenDemo, TaskDetailsSheetDemo } from "./TaskDetailsDemos";
@@ -1094,6 +1096,20 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Metric summary",
         description: "Summary strip of total, active, completed, paused goals, and avg progress %.",
         render: () => <GoalMetricSummaryDemo />,
+      },
+      {
+        id: "goals-screen",
+        name: "GoalsScreen",
+        description:
+          "Full goals list screen with header, metrics, search/filters, view toggle, grid/list, detail panel, and modals.",
+        render: () => <GoalsScreenDemo />,
+      },
+      {
+        id: "goal-details-screen",
+        name: "GoalDetailsScreen",
+        description:
+          "Full goal details screen with header, overview, progress editor, check-in history, and linked work items.",
+        render: () => <GoalDetailsScreenDemo />,
       },
     ],
   },

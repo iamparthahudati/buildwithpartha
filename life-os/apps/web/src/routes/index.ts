@@ -11,6 +11,8 @@ export { TasksRoute } from "./TasksRoute";
 export { TaskDetailsRoute } from "./TaskDetailsRoute";
 export { ProjectsRoute } from "./ProjectsRoute";
 export { ProjectDetailsRoute } from "./ProjectDetailsRoute";
+export { GoalsRoute } from "./GoalsRoute";
+export { GoalDetailsRoute } from "./GoalDetailsRoute";
 export { TimeBlocksRoute } from "./TimeBlocksRoute";
 export { CalendarRoute } from "./CalendarRoute";
 export { FocusRoute } from "./FocusRoute";

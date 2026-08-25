@@ -11,6 +11,8 @@ import {
   ComingSoonRoute,
   ForgotPasswordRoute,
   FocusRoute,
+  GoalsRoute,
+  GoalDetailsRoute,
   LoginRoute,
   NotFoundRoute,
   OnboardingRoute,
@@ -139,8 +141,8 @@ export function AppRoutes() {
           <Route path="sprints" element={<SprintsRoute />} />
           <Route path="sprints/:sprintId" element={<SprintsRoute />} />
           <Route path="week-planner" element={<WeekPlannerRoute />} />
-          <Route path="goals" element={<ComingSoonRoute />} />
-          <Route path="goals/:goalId" element={<ComingSoonRoute />} />
+          <Route path="goals" element={<GoalsRoute />} />
+          <Route path="goals/:goalId" element={<GoalDetailsRoute />} />
           <Route path="notes" element={<ComingSoonRoute />} />
           <Route path="notes/:noteId" element={<ComingSoonRoute />} />
           <Route path="brain-dump" element={<ComingSoonRoute />} />

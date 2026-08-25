@@ -11,7 +11,12 @@ export interface GoalRowProps {
   readonly goal: Goal;
   readonly onCheckIn?: (goal: Goal) => void;
   readonly onSelect?: (goal: Goal) => void;
+  readonly onClick?: (goal: Goal) => void;
+  readonly onPause?: (goal: Goal) => void;
+  readonly onResume?: (goal: Goal) => void;
+  readonly onComplete?: (goal: Goal) => void;
   readonly onEdit?: (goal: Goal) => void;
+  readonly onArchive?: (goal: Goal) => void;
   readonly className?: string;
 }
 
@@ -31,10 +36,22 @@ function getStatusBadgeTone(status: GoalStatus) {
   }
 }
 
-export function GoalRow({ goal, onCheckIn, onSelect, onEdit, className }: GoalRowProps) {
+export function GoalRow({
+  goal,
+  onCheckIn,
+  onSelect,
+  onClick,
+  onPause,
+  onResume,
+  onComplete,
+  onEdit,
+  onArchive,
+  className,
+}: GoalRowProps) {
   const progressPercentage = calculateGoalProgressPercentage(goal);
   const formattedValue = formatGoalProgressValue(goal);
   const statusTone = getStatusBadgeTone(goal.status);
+  const selectHandler = onClick ?? onSelect;
 
   return (
     <div
@@ -45,14 +62,14 @@ export function GoalRow({ goal, onCheckIn, onSelect, onEdit, className }: GoalRo
     >
       <div
         className="goal-row__main"
-        onClick={() => onSelect?.(goal)}
-        tabIndex={onSelect ? 0 : undefined}
-        role={onSelect ? "button" : undefined}
-        aria-label={onSelect ? `Select ${goal.title}` : undefined}
+        onClick={() => selectHandler?.(goal)}
+        tabIndex={selectHandler ? 0 : undefined}
+        role={selectHandler ? "button" : undefined}
+        aria-label={selectHandler ? `Select ${goal.title}` : undefined}
         onKeyDown={(e) => {
-          if (onSelect && (e.key === "Enter" || e.key === " ")) {
+          if (selectHandler && (e.key === "Enter" || e.key === " ")) {
             e.preventDefault();
-            onSelect(goal);
+            selectHandler(goal);
           }
         }}
       >
@@ -93,9 +110,29 @@ export function GoalRow({ goal, onCheckIn, onSelect, onEdit, className }: GoalRo
             Check In
           </Button>
         ) : null}
+        {goal.status === "IN_PROGRESS" && onPause ? (
+          <Button variant="secondary" size="sm" onClick={() => onPause(goal)}>
+            Pause
+          </Button>
+        ) : null}
+        {goal.status === "PAUSED" && onResume ? (
+          <Button variant="secondary" size="sm" onClick={() => onResume(goal)}>
+            Resume
+          </Button>
+        ) : null}
+        {goal.status !== "COMPLETED" && goal.status !== "ARCHIVED" && onComplete ? (
+          <Button variant="secondary" size="sm" onClick={() => onComplete(goal)}>
+            Complete
+          </Button>
+        ) : null}
         {onEdit ? (
           <Button variant="ghost" size="sm" onClick={() => onEdit(goal)}>
             Edit
+          </Button>
+        ) : null}
+        {goal.status !== "ARCHIVED" && onArchive ? (
+          <Button variant="ghost" size="sm" onClick={() => onArchive(goal)}>
+            Archive
           </Button>
         ) : null}
       </div>

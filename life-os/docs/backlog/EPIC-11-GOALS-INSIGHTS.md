@@ -5,7 +5,7 @@
 | LOS-1101 | Model goals and check-ins | Goal/check-in/link schema for percentage/numeric/milestone/binary progress, target/date/status/cadence/version. Ownership and calculation invariants tested. | LOS-0216, LOS-0801 | M | Done |
 | LOS-1102 | Implement goals API | CRUD/pause/complete/archive/restore/check-in/link endpoints with validation, version, activity, pagination and cross-user tests. | LOS-1101 | M | Done |
 | LOS-1103 | Build goal components | GoalCard/Row, ProgressEditor, CheckIn form/history, linked work, metric/empty/error states with explicit progress-calculation explanation. | LOS-0434 | M | Done |
-| LOS-1104 | Compose and integrate Goals screens | List/detail with filters, create/edit/check-in/pause/complete, charts/history, responsive/a11y and conflict behavior. | LOS-1102, LOS-1103 | L | Backlog |
+| LOS-1104 | Compose and integrate Goals screens | List/detail with filters, create/edit/check-in/pause/complete, charts/history, responsive/a11y and conflict behavior. | LOS-1102, LOS-1103 | L | Done |
 | LOS-1105 | Define analytics metric dictionary | Name formula, source, grain, timezone, exclusions, rounding, freshness and zero-data interpretation for every dashboard/report metric. Version changes are documented. | LOS-0705, LOS-0917, LOS-1010 | S | Backlog |
 | LOS-1106 | Implement progress aggregation API | Date/project/label/category queries for task completion, focus planned/actual, project/goal/habit/review progress with bounded SQL and accessible summary text. | LOS-1105 | M | Backlog |
 | LOS-1107 | Build Progress screen components | Period controls, summary cards, trends, breakdowns, comparison text, data-table alternatives, empty/partial/error and no unsupported causal claims. | LOS-0429 | M | Backlog |
