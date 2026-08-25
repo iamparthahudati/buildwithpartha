@@ -422,3 +422,31 @@ CREATE TABLE IF NOT EXISTS weekly_plan_items (
     position INT NOT NULL, task_title_snapshot TEXT NOT NULL,
     task_status_snapshot VARCHAR(32) NOT NULL
 );
+
+-- Added by LOS-1009: Daily, weekly, and monthly review sessions and snapshots.
+CREATE TABLE IF NOT EXISTS reviews (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, review_type VARCHAR(32) NOT NULL,
+    period_key VARCHAR(64) NOT NULL, start_date DATE NOT NULL, end_date DATE NOT NULL,
+    time_zone VARCHAR(64) NOT NULL, status VARCHAR(32) NOT NULL, skip_reason TEXT,
+    finalized_at TIMESTAMP WITH TIME ZONE, snapshot_tasks_completed_count INT,
+    snapshot_tasks_planned_count INT, snapshot_tasks_carried_over_count INT,
+    snapshot_tasks_cancelled_count INT, snapshot_tasks_overdue_count INT,
+    snapshot_planned_focus_minutes INT, snapshot_actual_focus_minutes INT,
+    snapshot_sprint_committed_count INT, snapshot_sprint_completed_count INT,
+    snapshot_active_project_count INT, snapshot_completed_project_count INT,
+    snapshot_stalled_project_count INT, snapshot_daily_review_completion_count INT,
+    snapshot_has_missing_data BOOLEAN, snapshot_missing_data_notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL, version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS review_answers (
+    id UUID NOT NULL PRIMARY KEY, review_id UUID NOT NULL, prompt_key VARCHAR(100) NOT NULL,
+    answer_value TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS review_item_decisions (
+    id UUID NOT NULL PRIMARY KEY, review_id UUID NOT NULL, item_type VARCHAR(32) NOT NULL,
+    item_id UUID NOT NULL, action VARCHAR(32) NOT NULL, target_date DATE, notes TEXT
+);
+

@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-25 (LOS-1008 connect week planner API & live synchronization)
+Last updated: 2026-08-25 (LOS-1009 model review records & snapshots)
 
 ## Phase
 
@@ -25,7 +25,10 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-1009 — Modeled daily (morning/evening), weekly, and monthly review schema, aggregates, and snapshot persistence. Flyway migration V21 adds `reviews`, `review_answers`, and `review_item_decisions` tables. Implemented `Review` aggregate root, `ReviewType`, `ReviewStatus`, `ReviewAnswer`, `ReviewItemDecision`, `ReviewSnapshotMetrics`, and `ReviewRepository` domain port with JPA infrastructure. Domain and database constraints enforce period key identity, answer length bounds, status check constraints, skip reasons, idempotent finalization, and immutable snapshot metrics. Full backend (`./gradlew check`), PostgreSQL schema verification (`verify-flyway-postgres.sh`), and frontend test suite passed 100%. See `docs/handoffs/LOS-1009.md`.
+
 - LOS-1008 — Connected the Week Planner route and components to the authenticated Weekly Plan REST API, Task API, and live TanStack Query hooks. Optimistic updates and version reconciliations handle capacity edits, task allocations, outcome reordering, and draft finalize/reopen transitions; successful mutations invalidate dependent query families (weekly plans, Today, Calendar, Tasks, Time Blocks, time summary). Unit test suites cover REST API contracts, custom hooks, and route integration. See `docs/handoffs/LOS-1008.md`.
+
 
 - LOS-1007 — Composed WeekPlannerScreen and WeekPlannerRoute with week navigation (`<`, `>`, `This week`), WeekStrip, capacity summary overview, WeeklyOutcomes, day schedule list with EmptyState, UnscheduledTaskQueue, WeekDayCapacityDialog, TaskAllocationDialog, conflict warning banner, and Finalize/Reopen lifecycle confirm dialogs. Catalog specimen registered and full unit and axe accessibility test suites pass. See `docs/handoffs/LOS-1007.md`.
 - LOS-1006 — Built the Week Planner's controlled WeeklyOutcomes, UnscheduledTaskQueue, and TaskAllocationDialog feature components. Users can select, create, and explicitly reorder outcomes; filter unscheduled Tasks by text, Project, and Product priority; allocate or carry Tasks with a day/outcome/planned-time form; and reuse the same form for moving planned Tasks. Every mutation can report Saving, Saved, or row-scoped failure without hiding successful content, with direct retry actions and explicit controls that work without drag on keyboard, touch, and narrow screens. Responsive table/card catalog states, focused axe coverage, the full frontend gate, and live 375px/desktop overflow and console checks pass. See `docs/handoffs/LOS-1006.md`.

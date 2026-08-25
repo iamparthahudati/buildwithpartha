@@ -152,6 +152,15 @@ test_weekly_plan_table_count=$(psql \
   --no-align \
   --command="SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('weekly_plans', 'weekly_plan_capacities', 'weekly_plan_outcomes', 'weekly_plan_items')")
 
+test_review_table_count=$(psql \
+  --host=127.0.0.1 \
+  --port="$test_postgres_port" \
+  --username="$test_postgres_admin" \
+  --dbname="$test_postgres_database" \
+  --tuples-only \
+  --no-align \
+  --command="SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('reviews', 'review_answers', 'review_item_decisions')")
+
 if [ "$test_migration_count" != "1" ]; then
   echo "Expected exactly one successful V1 migration; found $test_migration_count." >&2
   exit 1
@@ -162,8 +171,8 @@ if [ "$test_extension_count" != "1" ]; then
   exit 1
 fi
 
-if [ "$test_product_table_count" != "34" ]; then
-  echo "Expected exactly 34 product tables after V2-V20 migrations; found $test_product_table_count." >&2
+if [ "$test_product_table_count" != "37" ]; then
+  echo "Expected exactly 37 product tables after V2-V21 migrations; found $test_product_table_count." >&2
   exit 1
 fi
 
@@ -174,6 +183,11 @@ fi
 
 if [ "$test_weekly_plan_table_count" != "4" ]; then
   echo "Expected four LOS-1004 Weekly Plan tables; found $test_weekly_plan_table_count." >&2
+  exit 1
+fi
+
+if [ "$test_review_table_count" != "3" ]; then
+  echo "Expected three LOS-1009 Review tables; found $test_review_table_count." >&2
   exit 1
 fi
 
