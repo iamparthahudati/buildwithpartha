@@ -16,6 +16,10 @@ public interface GoalCheckInRepository {
 
   List<GoalCheckIn> findByGoalIdAndUserId(UUID goalId, UUID userId);
 
+  List<GoalCheckIn> findByGoalIdAndUserId(UUID goalId, UUID userId, int page, int size);
+
+  long countByGoalIdAndUserId(UUID goalId, UUID userId);
+
   void delete(GoalCheckIn checkIn);
 
   void deleteById(UUID id);

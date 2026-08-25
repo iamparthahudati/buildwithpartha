@@ -273,5 +273,76 @@ class GoalDomainTests {
       assertThat(link.targetId()).isEqualTo(GoalDomainFixture.TARGET_ID);
       assertThat(link.isOwnedBy(GoalDomainFixture.USER_ID)).isTrue();
     }
+
+    @Test
+    @DisplayName(
+        "Carrier Invariants: GoalQuery, GoalSummaryCounts, GoalQueryResult, UpdateGoalCommand")
+    void carrierInvariants() {
+      assertThatThrownBy(
+              () ->
+                  new tech.buildwithpartha.lifeos.goal.application.UpdateGoalCommand(
+                      "Title",
+                      Optional.empty(),
+                      "WORK",
+                      GoalProgressType.PERCENTAGE,
+                      Optional.empty(),
+                      BigDecimal.ZERO,
+                      Optional.empty(),
+                      Optional.empty(),
+                      CheckInCadence.NONE,
+                      -1L))
+          .isInstanceOf(IllegalArgumentException.class);
+
+      assertThatThrownBy(
+              () ->
+                  new GoalQuery(
+                      GoalDomainFixture.USER_ID,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      -1,
+                      20,
+                      "title",
+                      "ASC"))
+          .isInstanceOf(IllegalArgumentException.class);
+
+      assertThatThrownBy(
+              () ->
+                  new GoalQuery(
+                      GoalDomainFixture.USER_ID,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      0,
+                      0,
+                      "title",
+                      "ASC"))
+          .isInstanceOf(IllegalArgumentException.class);
+
+      assertThatThrownBy(
+              () ->
+                  new GoalQuery(
+                      GoalDomainFixture.USER_ID,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      0,
+                      150,
+                      "title",
+                      "ASC"))
+          .isInstanceOf(IllegalArgumentException.class);
+
+      assertThatThrownBy(() -> new GoalSummaryCounts(-1, 0, 0, 0, 0))
+          .isInstanceOf(IllegalArgumentException.class);
+
+      assertThatThrownBy(() -> new GoalQueryResult(java.util.List.of(), -1))
+          .isInstanceOf(IllegalArgumentException.class);
+    }
   }
 }

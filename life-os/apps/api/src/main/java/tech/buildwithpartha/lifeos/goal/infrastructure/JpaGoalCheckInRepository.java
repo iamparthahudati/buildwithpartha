@@ -56,6 +56,27 @@ public class JpaGoalCheckInRepository implements GoalCheckInRepository {
   }
 
   @Override
+  public List<GoalCheckIn> findByGoalIdAndUserId(UUID goalId, UUID userId, int page, int size) {
+    Objects.requireNonNull(goalId, "goalId must not be null");
+    Objects.requireNonNull(userId, "userId must not be null");
+    org.springframework.data.domain.Pageable pageable =
+        org.springframework.data.domain.PageRequest.of(page, size);
+    return jpaRepository
+        .findByGoalIdAndUserIdOrderByRecordedAtDesc(goalId, userId, pageable)
+        .getContent()
+        .stream()
+        .map(GoalCheckInEntity::toDomain)
+        .toList();
+  }
+
+  @Override
+  public long countByGoalIdAndUserId(UUID goalId, UUID userId) {
+    Objects.requireNonNull(goalId, "goalId must not be null");
+    Objects.requireNonNull(userId, "userId must not be null");
+    return jpaRepository.countByGoalIdAndUserId(goalId, userId);
+  }
+
+  @Override
   public void delete(GoalCheckIn checkIn) {
     Objects.requireNonNull(checkIn, "checkIn must not be null");
     deleteById(checkIn.id());

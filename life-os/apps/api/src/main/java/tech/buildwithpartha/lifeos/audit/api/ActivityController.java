@@ -67,6 +67,25 @@ public class ActivityController {
     return response(service.read(userId, ActivitySubjectType.PROJECT, projectId, page, size));
   }
 
+  @Operation(
+      operationId = "listGoalActivity",
+      summary = "List Goal activity",
+      description =
+          "Returns a bounded newest-first page of structured, content-minimized Goal Activity.")
+  @ApiResponse(responseCode = "200", description = "Goal Activity page.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
+  @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
+  @ApiResponse(responseCode = "404", ref = "#/components/responses/NotFound")
+  @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
+  @GetMapping("/goals/{goalId}/activity")
+  public PageResponse<ActivityEventResponse> listGoalActivity(
+      @AuthenticationPrincipal UUID userId,
+      @PathVariable("goalId") UUID goalId,
+      @RequestParam(name = "page", defaultValue = "0") int page,
+      @RequestParam(name = "size", defaultValue = "20") int size) {
+    return response(service.read(userId, ActivitySubjectType.GOAL, goalId, page, size));
+  }
+
   private static PageResponse<ActivityEventResponse> response(PageResponse<ActivityReadItem> page) {
     List<ActivityEventResponse> items =
         page.items().stream().map(ActivityEventResponse::fromApplication).toList();

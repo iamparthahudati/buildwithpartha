@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-25 (LOS-1101 model goals, check-ins, and goal links)
+Last updated: 2026-08-25 (LOS-1102 implement goals API)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1102 — Implemented Goals REST API endpoints, user-isolated GoalService application service, paginated JPA Criteria query repository, goal activity object access resolver, target linking validation, optimistic locking, and product activity event logging with 100% test pass and > 80% JaCoCo coverage. See `docs/handoffs/LOS-1102.md`.
 
 - LOS-1101 — Modeled core Goal, GoalCheckIn, and GoalLink domain aggregates, V22 Flyway database migration schema, progress calculation invariants for percentage/numeric/milestone/binary types, and Spring Data JPA repositories with 100% test pass. See `docs/handoffs/LOS-1101.md`.
 

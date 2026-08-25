@@ -18,6 +18,10 @@ public interface GoalRepository {
 
   List<Goal> findByUserIdAndCategory(UUID userId, String category);
 
+  GoalQueryResult queryGoals(GoalQuery query);
+
+  GoalSummaryCounts getSummaryCounts(UUID userId);
+
   void delete(Goal goal);
 
   void deleteById(UUID id);

@@ -18,7 +18,7 @@ public record ActivityEventResponse(
         ActivityObjectResponse object,
     @Schema(format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED) Instant occurredAt) {
 
-  static ActivityEventResponse fromApplication(ActivityReadItem item) {
+  public static ActivityEventResponse fromApplication(ActivityReadItem item) {
     return new ActivityEventResponse(
         item.id(),
         item.actorUserId(),

@@ -197,6 +197,7 @@ Last updated: 2026-08-25
 | LOS-1015 | Done gate     | `feature/LOS-1015-planning-review-gate`        | Passed the Planning and Reviews phase gate across Sprints, Week Planning, Review APIs, snapshot metrics, rollover, IANA timezones, concurrency, accessibility, and responsive behavior. See `docs/gates/PLANNING-REVIEWS-PHASE-GATE.md` and `docs/handoffs/LOS-1015.md`. |
 | LOS-1016 | Done          | `feature/LOS-1016-planning-reviews-handoff`    | Completed Epic 10 Planning and Reviews handoff, documentation updates, and develop branch synchronization. See `docs/handoffs/LOS-1016.md`. |
 | LOS-1101 | Done          | `feature/LOS-1101-model-goals-and-check-ins`   | Modeled Goal, GoalCheckIn, and GoalLink domain aggregates, V22 Flyway migration, progress calculation invariants for percentage/numeric/milestone/binary types, and Spring Data JPA repositories with 100% test pass. See `docs/handoffs/LOS-1101.md`. |
+| LOS-1102 | Done          | `feature/LOS-1102-implement-goals-api`         | Implemented Goals REST API endpoints, GoalService application service, paginated JPA Criteria query repository, goal activity object access resolver, target linking validation, optimistic locking, and product activity logging. See `docs/handoffs/LOS-1102.md`. |
 
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

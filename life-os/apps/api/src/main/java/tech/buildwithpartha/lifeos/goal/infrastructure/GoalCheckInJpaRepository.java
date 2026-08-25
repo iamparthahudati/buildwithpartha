@@ -11,4 +11,10 @@ interface GoalCheckInJpaRepository extends JpaRepository<GoalCheckInEntity, UUID
   List<GoalCheckInEntity> findByGoalIdOrderByRecordedAtDesc(UUID goalId);
 
   List<GoalCheckInEntity> findByGoalIdAndUserIdOrderByRecordedAtDesc(UUID goalId, UUID userId);
+
+  org.springframework.data.domain.Page<GoalCheckInEntity>
+      findByGoalIdAndUserIdOrderByRecordedAtDesc(
+          UUID goalId, UUID userId, org.springframework.data.domain.Pageable pageable);
+
+  long countByGoalIdAndUserId(UUID goalId, UUID userId);
 }
