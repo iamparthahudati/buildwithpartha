@@ -251,6 +251,21 @@ class OpenApiArtifactTests {
                     .value(hasItems("id", "actorUserId", "eventType", "occurredAt")))
             .andExpect(
                 jsonPath("$.components.schemas.ActivityEventResponse.properties.object").exists())
+            .andExpect(jsonPath("$.paths['/weekly-plans'].get.operationId").value("list"))
+            .andExpect(jsonPath("$.paths['/weekly-plans'].post.operationId").value("create"))
+            .andExpect(
+                jsonPath("$.paths['/weekly-plans'].post.security[0].sessionCookie").isArray())
+            .andExpect(jsonPath("$.paths['/weekly-plans'].post.security[0].csrfToken").isArray())
+            .andExpect(jsonPath("$.paths['/weekly-plans/{id}'].put.operationId").value("update"))
+            .andExpect(
+                jsonPath("$.paths['/weekly-plans/{id}/finalize'].post.operationId")
+                    .value("finalizePlan"))
+            .andExpect(
+                jsonPath("$.paths['/weekly-plans/{id}/reopen'].post.operationId").value("reopen"))
+            .andExpect(jsonPath("$.components.schemas.WeeklyPlanResponse").exists())
+            .andExpect(jsonPath("$.components.schemas.WeeklyPlanConflictResponse").exists())
+            .andExpect(jsonPath("$.components.schemas.CreateWeeklyPlanRequest").exists())
+            .andExpect(jsonPath("$.components.schemas.UpdateWeeklyPlanRequest").exists())
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))
