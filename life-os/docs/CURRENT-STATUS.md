@@ -1,10 +1,10 @@
 # Current status
 
-Last updated: 2026-08-25 (LOS-1010 implement review APIs)
+Last updated: 2026-08-25 (LOS-1015 run planning/review gate)
 
 ## Phase
 
-Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), and Epic 09 (Time Blocks, Calendar, and Focus) completed. Epic 10 planning and review implementation is in progress.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), and Epic 10 (Sprints, week planning, and reviews) completed.
 
 ## In review
 
@@ -25,7 +25,10 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-1015 — Passed the Epic 10 Planning and Reviews phase gate across Sprints, Week Planning, Review APIs, snapshot metrics, rollover, IANA timezones, optimistic locking, 100% axe accessibility audit compliance, and responsive viewports. Recorded evidence in `docs/gates/PLANNING-REVIEWS-PHASE-GATE.md`. See `docs/handoffs/LOS-1015.md`.
+
 - LOS-1010 — Implemented authenticated REST API endpoints under `/reviews` for prompt/metric retrieval (`GET /reviews/prompts`), draft saving (`POST /reviews/draft`), idempotent finalization (`POST /reviews/{id}/finalize`), skipping (`POST /reviews/skip`), reopen policy rejection (`POST /reviews/{id}/reopen` returning HTTP 409 Conflict), history listing (`GET /reviews`), OpenAPI artifacts, and full unit/integration test coverage. See `docs/handoffs/LOS-1010.md`.
+
 
 - LOS-1009 — Modeled daily (morning/evening), weekly, and monthly review schema, aggregates, and snapshot persistence. Flyway migration V21 adds `reviews`, `review_answers`, and `review_item_decisions` tables. Implemented `Review` aggregate root, `ReviewType`, `ReviewStatus`, `ReviewAnswer`, `ReviewItemDecision`, `ReviewSnapshotMetrics`, and `ReviewRepository` domain port with JPA infrastructure. Domain and database constraints enforce period key identity, answer length bounds, status check constraints, skip reasons, idempotent finalization, and immutable snapshot metrics. Full backend (`./gradlew check`), PostgreSQL schema verification (`verify-flyway-postgres.sh`), and frontend test suite passed 100%. See `docs/handoffs/LOS-1009.md`.
 

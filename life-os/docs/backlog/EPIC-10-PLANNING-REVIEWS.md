@@ -16,4 +16,4 @@
 | LOS-1012 | Build Weekly Review flow | Summary, inbox cleanup, project/goal/habit review, reflection, next outcomes/capacity; draft/resume/final and missing-data honesty. | LOS-0434, LOS-1007 | M | Backlog |
 | LOS-1013 | Build Monthly Review flow | Outcome/time/project/goal/habit summary plus highlights/challenges/stop-start-continue/themes; month/timezone boundaries and incomplete weeks. | LOS-0429, LOS-0434 | M | Backlog |
 | LOS-1014 | Integrate review flows and dashboard prompts | Connect review APIs, source navigation, carry-over actions and Today review status without double applying mutations. | LOS-1010–LOS-1013, LOS-0613 | M | Backlog |
-| LOS-1015 | Run planning/review gate | Sprint and week lifecycle plus daily/weekly/monthly draft/final/history; rollover, snapshots, timezone, concurrency, accessibility and responsive tests pass. | LOS-1001–LOS-1014 | S | Backlog |
+| LOS-1015 | Run planning/review gate | Sprint and week lifecycle plus daily/weekly/monthly draft/final/history; rollover, snapshots, timezone, concurrency, accessibility and responsive tests pass. | LOS-1001–LOS-1014 | S | Done |
