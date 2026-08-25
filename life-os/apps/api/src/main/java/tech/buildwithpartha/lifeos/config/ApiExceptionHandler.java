@@ -28,6 +28,7 @@ import tech.buildwithpartha.lifeos.common.error.TimeBlockOverlapConflictExceptio
 import tech.buildwithpartha.lifeos.common.error.TokenAlreadyUsedException;
 import tech.buildwithpartha.lifeos.common.error.TokenExpiredException;
 import tech.buildwithpartha.lifeos.common.error.TokenInvalidException;
+import tech.buildwithpartha.lifeos.common.error.WeeklyPlanStateConflictException;
 
 /** Maps server failures to safe, versioned Problem Details responses. */
 @RestControllerAdvice
@@ -182,6 +183,18 @@ public final class ApiExceptionHandler {
             exception.code(),
             "Sprint conflict",
             "Refresh the Sprint and try again."));
+  }
+
+  @ExceptionHandler(WeeklyPlanStateConflictException.class)
+  ResponseEntity<ApiProblem> handleWeeklyPlanStateConflict(
+      WeeklyPlanStateConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Weekly Plan conflict",
+            "Refresh the Weekly Plan and try again."));
   }
 
   @ExceptionHandler(CodedException.class)

@@ -105,6 +105,14 @@ Sprint start/end are inclusive local dates without an implicit timezone. Non-can
 
 Starting changes Planned to Active. Goal, capacity, Task add/remove and point changes append immutable events; removals retain the original commitment row. Completing an Active Sprint stores retrospective text/action items and stable committed/completed/added/removed/carry-over and story-point metrics. `BACKLOG` leaves open Tasks uncommitted after the completed source; `NEXT_SPRINT` requires an owned Planned target plus its current version and transactionally copies open, non-duplicate Task commitments. Completed and Cancelled Sprint scope is immutable.
 
+### Weekly Plans
+
+`/weekly-plans` is an authenticated, CSRF-protected, owner-scoped revision resource. `POST /weekly-plans` starts a Draft from a required `weekDate`; the server uses the Account's stored IANA timezone and ISO week-start preference to derive and persist the inclusive seven-local-date boundary. `GET /weekly-plans` lists revisions newest-week/revision first and accepts an optional `weekDate`; `GET /weekly-plans/{id}` returns one revision. `PUT /weekly-plans/{id}` replaces the Draft's capacities, outcomes and Task allocations with the current non-negative `version`.
+
+Capacity input is zero to 1,440 available minutes for any date in the derived week; omitted week dates are explicitly returned with zero capacity. Outcomes are ordered user-authored statements. Each Task appears at most once in a revision, is owner-validated, may link to an outcome, and may be allocated to one local date or remain explicitly unscheduled. Missing and cross-user Weekly Plan/Task IDs are indistinguishable. Draft responses calculate current total planned/capacity minutes, overcapacity dates/minutes, pairwise overlaps among non-cancelled Time Blocks in exact timezone-derived week instants, unscheduled item count, and outcomes without items. These are named warnings and do not silently change allocations.
+
+`POST /weekly-plans/{id}/finalize` requires the current version, refreshes current Task title/status snapshots, and atomically stores the warning summary and finalization instant. Repeating Finalize for the same Finalized revision returns that immutable revision without applying work twice. `POST /weekly-plans/{id}/reopen` requires the Finalized version and creates one Draft successor with a new identity/revision and remapped outcome/item identities; it never modifies the predecessor. Account-row locking and database constraints serialize create/finalize/reopen decisions, enforce one Draft per Account/week and reject stale writes with `409 CONCURRENCY_CONFLICT` or invalid lifecycle actions with `409 WEEKLY_PLAN_STATE_CONFLICT`.
+
 ## Problem Details
 
 Failures use `application/problem+json` and this versioned shape:

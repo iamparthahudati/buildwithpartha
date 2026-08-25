@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-25 (LOS-1003 integrated Sprints screen)
+Last updated: 2026-08-25 (LOS-1004 Weekly Plan API)
 
 ## Phase
 
@@ -25,6 +25,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-1004 — Implemented the authenticated, CSRF-protected Weekly Plan API and V20 persistence model. An anchor local date is normalized using the Account's saved IANA timezone and ISO week-start preference; each revision stores seven local-date capacity decisions, ordered outcomes, owner-validated Task allocations, and an optimistic version. Draft reads expose live overcapacity, overlapping Time Block, unscheduled Task, and outcome-without-item warnings. Finalization is retry-safe and freezes those warnings plus current Task title/status snapshots; finalized history is immutable, and reopening creates one editable successor revision with remapped outcome/item identities. Account-row locking and database constraints enforce one draft per Account/week, same-owner Task links, valid local dates/minutes, complete finalized snapshots, and cross-user indistinguishability. See `docs/handoffs/LOS-1004.md`.
 - LOS-1003 — Composed and integrated the protected Sprints screen over the LOS-1001 API and LOS-1002 components. Active, upcoming, and completed views persist in URL state and canonical Sprint deep links reload directly. Users can plan and edit Sprint details, add/update/remove versioned Task commitments, start the single active Sprint, complete it with retrospective notes, and either return open Tasks to the backlog or carry them transactionally to a selected versioned planned Sprint. Current Task title/status/Project context drives live planned/active metrics, while completed metrics and retrospectives remain immutable historical snapshots. Loading, empty, error, confirmation, keyboard, responsive, coarse-pointer, and axe-tested states pass the full frontend gate. See `docs/handoffs/LOS-1003.md`.
 - LOS-1001 — Implemented the authenticated, CSRF-protected Sprints API and V19 persistence model for bounded date windows, capacity, Task commitments, optimistic versions, retrospective snapshots, completion metrics, and immutable lifecycle/goal/capacity/scope events. Account-row serialization and database constraints enforce non-overlapping writes and one active Sprint; Task ownership and availability are rechecked through a Task-owned port. Planned/Active scope changes preserve removed commitments, completion freezes committed/completed/added/removed/point counts, and open work can move transactionally to a versioned planned Sprint or return to the backlog. See `docs/handoffs/LOS-1001.md`.
 - LOS-0918 — Passed the Scheduling and Focus phase gate across Task-to-Time-Block scheduling, conflict detection and explicit override, Focus Session refresh/two-tab recovery and exactly-once completion, Calendar/Today/daily-report refresh, DST/local-date handling, ownership, accessibility, and responsive behavior. The gate closed the ignored Task scheduling deep link, wired conflict preflight into the real create/edit route, prevented catalog fixtures from appearing behind API failures, and made the Time Summary/Upcoming sidebar respond to its container width. Full backend/frontend gates and rendered minimum/large layout checks pass. See `docs/gates/SCHEDULING-FOCUS-PHASE-GATE.md` and `docs/handoffs/LOS-0918.md`.
@@ -307,7 +308,7 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Next recommended ticket
 
-LOS-0906 (`docs/backlog/EPIC-09-TIME-CALENDAR-FOCUS.md`) — Build time summary components.
+LOS-1006 (`docs/backlog/EPIC-10-PLANNING-REVIEWS.md`) — Build weekly outcomes and backlog planner.
 
 ## Known decisions requiring implementation-time values
 

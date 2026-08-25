@@ -392,3 +392,33 @@ CREATE TABLE IF NOT EXISTS sprint_events (
     task_id UUID, points_delta INT, reason TEXT,
     occurred_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+-- Added by LOS-1004: Weekly Plan drafts, revisions, allocations, and snapshots.
+CREATE TABLE IF NOT EXISTS weekly_plans (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, week_start_date DATE NOT NULL,
+    week_end_date DATE NOT NULL, time_zone TEXT NOT NULL, week_start_day INT NOT NULL,
+    revision INT NOT NULL, status VARCHAR(32) NOT NULL, predecessor_plan_id UUID,
+    finalized_at TIMESTAMP WITH TIME ZONE, snapshot_total_planned_minutes INT,
+    snapshot_total_capacity_minutes INT, snapshot_overcapacity_minutes INT,
+    snapshot_overcapacity_dates TEXT, snapshot_overlapping_time_block_count INT,
+    snapshot_unscheduled_item_count INT, snapshot_outcomes_without_items_count INT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL, version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS weekly_plan_capacities (
+    id UUID NOT NULL PRIMARY KEY, weekly_plan_id UUID NOT NULL, local_date DATE NOT NULL,
+    available_minutes INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS weekly_plan_outcomes (
+    id UUID NOT NULL PRIMARY KEY, weekly_plan_id UUID NOT NULL, title TEXT NOT NULL,
+    position INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS weekly_plan_items (
+    id UUID NOT NULL PRIMARY KEY, weekly_plan_id UUID NOT NULL, user_id UUID NOT NULL,
+    task_id UUID NOT NULL, outcome_id UUID, planned_date DATE, planned_minutes INT NOT NULL,
+    position INT NOT NULL, task_title_snapshot TEXT NOT NULL,
+    task_status_snapshot VARCHAR(32) NOT NULL
+);
