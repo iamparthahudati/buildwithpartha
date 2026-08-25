@@ -33,7 +33,11 @@ Canonical entity names, statuses, priorities, UI labels, API resources and Postg
 - `WeeklyPlanCapacity`: Weekly Plan, one of its seven local dates and zero-to-1,440 available minutes. Missing capacity input is stored explicitly as zero rather than inventing availability.
 - `WeeklyPlanOutcome`: Weekly Plan, user-authored outcome title and ordering.
 - `WeeklyPlanItem`: Weekly Plan, owned Task, optional Weekly Plan outcome, optional allocated local date, planned minutes, ordering and Task title/status snapshot.
-- `Review`: period type/key, status, answers, decisions, metric snapshot, finalized/skipped timestamps.
+- `Review`: period type (`DAILY_MORNING`, `DAILY_EVENING`, `WEEKLY`, `MONTHLY`), period key, start/end dates, timezone, status (`NOT_STARTED`, `DRAFT`, `FINALIZED`, `SKIPPED`), optional skip reason, finalized timestamp, prompt answers, item decisions, and frozen snapshot metrics.
+- `ReviewAnswer`: prompt key and structured/freeform answer text.
+- `ReviewItemDecision`: item type (`TASK`, `PROJECT`, `GOAL`), target item ID, action (`KEEP_FOR_TOMORROW`, `RESCHEDULE`, `RETURN_TO_BACKLOG`, `MARK_BLOCKED`, `COMPLETE`, `CANCEL`, `CONTINUE`, `PAUSE`, `ARCHIVE`), optional target date and notes.
+- `ReviewSnapshotMetrics`: frozen snapshot of task completion, focus minutes, sprint velocity, project health, and daily review completion, with missing-data flags.
+
 
 ## Knowledge and growth
 
