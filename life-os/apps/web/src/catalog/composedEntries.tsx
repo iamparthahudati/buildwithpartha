@@ -52,6 +52,13 @@ import {
   UnscheduledTaskQueuePartialErrorDemo,
   TaskAllocationMoveDemo,
   WeekPlannerScreenDemo,
+  GoalCardDemo,
+  GoalRowDemo,
+  ProgressEditorDemo,
+  CheckInFormDialogDemo,
+  CheckInHistoryDemo,
+  GoalLinkedWorkListDemo,
+  GoalMetricSummaryDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -1033,6 +1040,60 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Interactive week planner screen with week navigation, capacity breakdown, outcomes, and unscheduled queue.",
         render: () => <WeekPlannerScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "goal-components",
+    name: "Goal components",
+    group: "Composed",
+    summary:
+      "Goal cards, list rows, progress editors, check-in history timelines, linked work item management, and goal summary metrics.",
+    states: [
+      {
+        id: "goal-card-percentage",
+        name: "Goal card",
+        description:
+          "Percentage progress goal with category, status, cadence, and action triggers.",
+        render: () => <GoalCardDemo />,
+      },
+      {
+        id: "goal-row",
+        name: "Goal row",
+        description: "Compact goal list row with category, progress bar, value label, and status.",
+        render: () => <GoalRowDemo />,
+      },
+      {
+        id: "progress-editor",
+        name: "Progress editor",
+        description:
+          "Interactive progress editor with calculation explanation and quick increments.",
+        render: () => <ProgressEditorDemo />,
+      },
+      {
+        id: "check-in-form-dialog",
+        name: "Check-in dialog",
+        description: "Form dialog to log a new check-in with value and optional note.",
+        render: () => <CheckInFormDialogDemo />,
+      },
+      {
+        id: "check-in-history",
+        name: "Check-in history",
+        description: "Timeline log of past check-ins with date, recorded value, and deltas.",
+        render: () => <CheckInHistoryDemo />,
+      },
+      {
+        id: "goal-linked-work-list",
+        name: "Linked work items",
+        description:
+          "Linked projects, tasks, and habits with target type badges and link controls.",
+        render: () => <GoalLinkedWorkListDemo />,
+      },
+      {
+        id: "goal-metric-summary",
+        name: "Metric summary",
+        description: "Summary strip of total, active, completed, paused goals, and avg progress %.",
+        render: () => <GoalMetricSummaryDemo />,
       },
     ],
   },

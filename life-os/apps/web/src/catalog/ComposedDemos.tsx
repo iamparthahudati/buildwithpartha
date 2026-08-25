@@ -1873,3 +1873,13 @@ export {
   TaskAllocationMoveDemo,
   WeekPlannerScreenDemo,
 } from "./WeekPlannerDemos";
+
+export {
+  GoalCardDemo,
+  GoalRowDemo,
+  ProgressEditorDemo,
+  CheckInFormDialogDemo,
+  CheckInHistoryDemo,
+  GoalLinkedWorkListDemo,
+  GoalMetricSummaryDemo,
+} from "./GoalsDemos";
