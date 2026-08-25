@@ -31,6 +31,42 @@ export {
   MOCK_WEEKLY_OUTCOMES,
 } from "./model/mockWeekPlanner";
 
+export {
+  createWeeklyPlan,
+  finalizeWeeklyPlan,
+  getWeeklyPlan,
+  listWeeklyPlans,
+  mapWeeklyPlanResponse,
+  reopenWeeklyPlan,
+  updateWeeklyPlan,
+  type CreateWeeklyPlanRequestDto,
+  type MappedWeeklyPlanData,
+  type TaskContextInfo,
+  type UpdateWeeklyPlanRequestDto,
+  type WeeklyPlanCapacityRequestDto,
+  type WeeklyPlanCapacityResponseDto,
+  type WeeklyPlanConflictResponseDto,
+  type WeeklyPlanItemRequestDto,
+  type WeeklyPlanItemResponseDto,
+  type WeeklyPlanOutcomeRequestDto,
+  type WeeklyPlanOutcomeResponseDto,
+  type WeeklyPlanResponseDto,
+  type WeeklyPlanVersionRequestDto,
+} from "./api/weekPlannerApi";
+
+export {
+  invalidateWeekPlannerQueries,
+  useWeekPlanner,
+  WEEKLY_PLANS_QUERY_KEY,
+  weeklyPlanQueryKeys,
+  type UseWeekPlannerResult,
+} from "./hooks/useWeekPlanner";
+
+export {
+  useWeekPlannerMutations,
+  type UseWeekPlannerMutationsParams,
+} from "./hooks/useWeekPlannerMutations";
+
 export { WeekStrip, type WeekStripProps } from "./components/WeekStrip";
 export {
   WeekCapacitySummary,

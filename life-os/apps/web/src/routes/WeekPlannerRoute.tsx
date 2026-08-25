@@ -1,41 +1,33 @@
-import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import {
-  MOCK_ALLOCATED_TASKS,
-  MOCK_DAY_OPTIONS,
-  MOCK_UNSCHEDULED_TASKS,
-  MOCK_WEEK_CAPACITY_SUMMARY,
-  MOCK_WEEK_CONFLICTS,
-  MOCK_WEEK_DAYS,
-  MOCK_WEEKLY_OUTCOMES,
+  useWeekPlanner,
+  useWeekPlannerMutations,
   WeekPlannerScreen,
   type TaskAllocationValue,
-  type WeekCapacitySummaryData,
-  type WeekDayPlan,
   type WeeklyOutcome,
-  type WeekPlanStatus,
-  type WeekPlannerTask,
-  type WeekPlannerTaskAllocation,
 } from "@features/week-planner";
+import { addLocalDays, todayLocalDate } from "@lib/localDateTime";
 import { useToast } from "@state/toastQueue";
 
 export function WeekPlannerRoute() {
   const { push } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [days, setDays] = useState<readonly WeekDayPlan[]>(MOCK_WEEK_DAYS);
-  const [capacitySummary, setCapacitySummary] = useState<WeekCapacitySummaryData>(
-    MOCK_WEEK_CAPACITY_SUMMARY,
-  );
-  const [outcomes, setOutcomes] = useState<readonly WeeklyOutcome[]>(MOCK_WEEKLY_OUTCOMES);
-  const [unscheduledTasks, setUnscheduledTasks] =
-    useState<readonly WeekPlannerTask[]>(MOCK_UNSCHEDULED_TASKS);
-  const [allocatedTasks, setAllocatedTasks] =
-    useState<readonly WeekPlannerTaskAllocation[]>(MOCK_ALLOCATED_TASKS);
-  const [status, setStatus] = useState<WeekPlanStatus>("DRAFT");
+  const weekDateParam = searchParams.get("weekDate") ?? searchParams.get("date") ?? undefined;
+  const selectedDateParam = searchParams.get("date") ?? undefined;
 
-  const selectedDateParam = searchParams.get("date") ?? "2026-08-20";
+  const { plan, rawPlan, unscheduledTasks, isLoading, isError, error, refetch } = useWeekPlanner(
+    weekDateParam,
+    selectedDateParam,
+  );
+
+  const currentWeekStart = plan?.weekStartDate ?? weekDateParam ?? todayLocalDate("UTC");
+
+  const mutations = useWeekPlannerMutations({
+    rawPlan,
+    targetWeekDate: currentWeekStart,
+  });
 
   const handleSelectDate = (date: string) => {
     setSearchParams((prev) => {
@@ -46,134 +38,134 @@ export function WeekPlannerRoute() {
   };
 
   const handleNavigateWeek = (direction: "prev" | "next" | "today") => {
-    push({ tone: "info", message: `Navigated ${direction} week` });
-  };
+    if (direction === "today") {
+      const today = todayLocalDate("UTC");
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("date", today);
+        next.set("weekDate", today);
+        return next;
+      });
+      push({ tone: "info", message: "Navigated to current week" });
+      return;
+    }
 
-  const handleUpdateDayCapacity = (dayLocalDate: string, availableMinutes: number) => {
-    setDays((prev) =>
-      prev.map((d) =>
-        d.localDate === dayLocalDate
-          ? {
-              ...d,
-              availableMinutes,
-              isOvercapacity: d.plannedMinutes > availableMinutes,
-            }
-          : d,
-      ),
-    );
-    setCapacitySummary((prev) => {
-      const newTotalAvailable = days.reduce(
-        (sum, d) =>
-          d.localDate === dayLocalDate ? sum + availableMinutes : sum + d.availableMinutes,
-        0,
-      );
-      return {
-        ...prev,
-        totalAvailableMinutes: newTotalAvailable,
-      };
+    const shiftDays = direction === "prev" ? -7 : 7;
+    const newWeekDate = addLocalDays(currentWeekStart, shiftDays);
+
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("weekDate", newWeekDate);
+      next.set("date", newWeekDate);
+      return next;
     });
-    push({ tone: "success", message: "Day capacity updated" });
+    push({
+      tone: "info",
+      message: `Navigated to ${direction === "prev" ? "previous" : "next"} week`,
+    });
   };
 
-  const handleSelectOutcome = (outcomeId: string) => {
-    setOutcomes((prev) =>
-      prev.map((o) => (o.id === outcomeId ? { ...o, selected: !o.selected } : o)),
-    );
-  };
-
-  const handleCreateOutcome = (title: string) => {
-    const newOutcome: WeeklyOutcome = {
-      id: `outcome-${Date.now()}`,
-      title,
-      selected: true,
-      itemCount: 0,
-    };
-    setOutcomes((prev) => [...prev, newOutcome]);
-    push({ tone: "success", message: "Weekly outcome created" });
-  };
-
-  const handleReorderOutcomes = (reordered: readonly WeeklyOutcome[]) => {
-    setOutcomes(reordered);
-  };
-
-  const handleAllocateTask = (taskId: string, allocation: TaskAllocationValue) => {
-    const task = unscheduledTasks.find((t) => t.id === taskId);
-    if (!task) return;
-
-    if (allocation.localDate) {
-      const outcome = outcomes.find((o) => o.id === allocation.outcomeId);
-      const newAllocated: WeekPlannerTaskAllocation = {
-        taskId: task.id,
-        taskTitle: task.title,
-        localDate: allocation.localDate,
-        ...(allocation.outcomeId ? { outcomeId: allocation.outcomeId } : {}),
-        ...(outcome?.title ? { outcomeTitle: outcome.title } : {}),
-        plannedMinutes: allocation.plannedMinutes || (task.estimateMinutes ?? 60),
-        status: task.status,
-        priority: task.priority,
-        ...(task.projectName ? { projectName: task.projectName } : {}),
-      };
-      setAllocatedTasks((prev) => [...prev.filter((a) => a.taskId !== taskId), newAllocated]);
-      setUnscheduledTasks((prev) => prev.filter((t) => t.id !== taskId));
-      push({ tone: "success", message: "Task allocated to day schedule" });
+  const handleUpdateDayCapacity = async (dayLocalDate: string, availableMinutes: number) => {
+    try {
+      await mutations.updateDayCapacity(dayLocalDate, availableMinutes);
+      push({ tone: "success", message: "Day capacity updated" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to update day capacity";
+      push({ tone: "danger", message: msg });
     }
   };
 
-  const handleUnallocateTask = (taskId: string) => {
-    const alloc = allocatedTasks.find((a) => a.taskId === taskId);
-    if (!alloc) return;
-
-    const restoredTask: WeekPlannerTask = {
-      id: alloc.taskId,
-      title: alloc.taskTitle,
-      status: alloc.status,
-      priority: alloc.priority,
-      ...(alloc.projectName ? { projectName: alloc.projectName } : {}),
-      estimateMinutes: alloc.plannedMinutes,
-    };
-
-    setAllocatedTasks((prev) => prev.filter((a) => a.taskId !== taskId));
-    setUnscheduledTasks((prev) => [...prev, restoredTask]);
-    push({ tone: "info", message: "Task unallocated back to queue" });
+  const handleCreateOutcome = async (title: string) => {
+    try {
+      await mutations.createOutcome(title);
+      push({ tone: "success", message: "Weekly outcome created" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to create outcome";
+      push({ tone: "danger", message: msg });
+    }
   };
 
-  const handleCarryOverTask = (_taskId: string) => {
-    push({ tone: "info", message: "Task flagged for carry-over" });
+  const handleReorderOutcomes = async (reordered: readonly WeeklyOutcome[]) => {
+    try {
+      await mutations.reorderOutcomes(reordered);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to reorder outcomes";
+      push({ tone: "danger", message: msg });
+    }
   };
 
-  const handleFinalizePlan = () => {
-    setStatus("FINALIZED");
-    push({ tone: "success", message: "Week plan finalized successfully" });
+  const handleAllocateTask = async (taskId: string, allocation: TaskAllocationValue) => {
+    try {
+      await mutations.allocateTask(taskId, allocation);
+      push({ tone: "success", message: "Task allocated to day schedule" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to allocate task";
+      push({ tone: "danger", message: msg });
+    }
   };
 
-  const handleReopenPlan = () => {
-    setStatus("DRAFT");
-    push({ tone: "info", message: "Week plan reopened for editing" });
+  const handleUnallocateTask = async (taskId: string) => {
+    try {
+      await mutations.unallocateTask(taskId);
+      push({ tone: "info", message: "Task unallocated back to queue" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to unallocate task";
+      push({ tone: "danger", message: msg });
+    }
   };
+
+  const handleFinalizePlan = async () => {
+    try {
+      await mutations.finalizePlan();
+      push({ tone: "success", message: "Week plan finalized successfully" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to finalize week plan";
+      push({ tone: "danger", message: msg });
+    }
+  };
+
+  const handleReopenPlan = async () => {
+    try {
+      await mutations.reopenPlan();
+      push({ tone: "info", message: "Week plan reopened for editing" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to reopen week plan";
+      push({ tone: "danger", message: msg });
+    }
+  };
+
+  const activeSelectedDate =
+    selectedDateParam ??
+    plan?.days.find((d) => d.isToday)?.localDate ??
+    plan?.days[0]?.localDate ??
+    currentWeekStart;
 
   return (
     <WeekPlannerScreen
-      weekLabel="Aug 17 – Aug 23, 2026"
-      days={days}
-      capacitySummary={capacitySummary}
-      outcomes={outcomes}
+      weekLabel={plan?.weekLabel ?? "Week Plan"}
+      days={plan?.days ?? []}
+      {...(plan?.capacitySummary ? { capacitySummary: plan.capacitySummary } : {})}
+      outcomes={plan?.outcomes ?? []}
       unscheduledTasks={unscheduledTasks}
-      allocatedTasks={allocatedTasks}
-      dayOptions={MOCK_DAY_OPTIONS}
-      conflicts={MOCK_WEEK_CONFLICTS}
-      selectedDate={selectedDateParam}
-      status={status}
+      allocatedTasks={plan?.allocatedTasks ?? []}
+      dayOptions={plan?.dayOptions ?? []}
+      conflicts={plan?.conflicts ?? []}
+      selectedDate={activeSelectedDate}
+      status={plan?.status ?? "DRAFT"}
+      loading={isLoading}
+      error={isError ? (error ?? "Failed to load week plan") : null}
+      actionPending={mutations.isPending}
+      actionError={mutations.error}
       onNavigateWeek={handleNavigateWeek}
       onSelectDate={handleSelectDate}
       onUpdateDayCapacity={handleUpdateDayCapacity}
-      onSelectOutcome={handleSelectOutcome}
       onCreateOutcome={handleCreateOutcome}
       onReorderOutcomes={handleReorderOutcomes}
       onAllocateTask={handleAllocateTask}
       onUnallocateTask={handleUnallocateTask}
-      onCarryOverTask={handleCarryOverTask}
       onFinalizePlan={handleFinalizePlan}
       onReopenPlan={handleReopenPlan}
+      onRetry={refetch}
     />
   );
 }
