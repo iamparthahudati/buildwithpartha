@@ -9,7 +9,7 @@
 | LOS-1005 | Build week strip and capacity components | Seven-day strip, planned/available minutes, task counts, completion, conflict/overcapacity and accessible non-drag controls. | LOS-0429, LOS-0903 | S | Done |
 | LOS-1006 | Build weekly outcomes and backlog planner | Select/create outcomes, unscheduled task queue, filters, allocate/move/carry, partial errors and keyboard/mobile equivalents to drag. | LOS-0424, LOS-1005 | M | Done |
 | LOS-1007 | Compose Week Planner with mocks | Week nav, capacity, outcomes, schedule, backlog, conflicts, finalize/reopen and all state matrices at responsive sizes. | LOS-1005, LOS-1006 | L | Done |
-| LOS-1008 | Integrate Week Planner | Connect weekly plan/task/block APIs with idempotent moves, conflicts, versioning, Today/calendar invalidation and large-list performance. | LOS-1004, LOS-1007 | L | Backlog |
+| LOS-1008 | Integrate Week Planner | Connect weekly plan/task/block APIs with idempotent moves, conflicts, versioning, Today/calendar invalidation and large-list performance. | LOS-1004, LOS-1007 | L | Done |
 | LOS-1009 | Model review records and snapshots | Daily/weekly/monthly review schema, answers, draft/final state, snapshot metrics, local period keys/version. Missing data and repeated finalize handled. | LOS-0216, LOS-0108 | M | Backlog |
 | LOS-1010 | Implement review APIs | Get prompts/metrics, save draft, finalize, reopen policy, list history. Snapshot is transactional, user-scoped, timezone-correct and stable after source changes. | LOS-1009 | M | Backlog |
 | LOS-1011 | Build Daily Review flow | Morning/evening steps for MIT/schedule/priorities and wins/carry-over/learning/tomorrow, draft/resume/skip/final states, 5–10 minute accessible flow. | LOS-0434, LOS-0609 | S | Backlog |

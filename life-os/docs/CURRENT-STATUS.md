@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-25 (LOS-1007 compose week planner with mocks)
+Last updated: 2026-08-25 (LOS-1008 connect week planner API & live synchronization)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1008 — Connected the Week Planner route and components to the authenticated Weekly Plan REST API, Task API, and live TanStack Query hooks. Optimistic updates and version reconciliations handle capacity edits, task allocations, outcome reordering, and draft finalize/reopen transitions; successful mutations invalidate dependent query families (weekly plans, Today, Calendar, Tasks, Time Blocks, time summary). Unit test suites cover REST API contracts, custom hooks, and route integration. See `docs/handoffs/LOS-1008.md`.
 
 - LOS-1007 — Composed WeekPlannerScreen and WeekPlannerRoute with week navigation (`<`, `>`, `This week`), WeekStrip, capacity summary overview, WeeklyOutcomes, day schedule list with EmptyState, UnscheduledTaskQueue, WeekDayCapacityDialog, TaskAllocationDialog, conflict warning banner, and Finalize/Reopen lifecycle confirm dialogs. Catalog specimen registered and full unit and axe accessibility test suites pass. See `docs/handoffs/LOS-1007.md`.
 - LOS-1006 — Built the Week Planner's controlled WeeklyOutcomes, UnscheduledTaskQueue, and TaskAllocationDialog feature components. Users can select, create, and explicitly reorder outcomes; filter unscheduled Tasks by text, Project, and Product priority; allocate or carry Tasks with a day/outcome/planned-time form; and reuse the same form for moving planned Tasks. Every mutation can report Saving, Saved, or row-scoped failure without hiding successful content, with direct retry actions and explicit controls that work without drag on keyboard, touch, and narrow screens. Responsive table/card catalog states, focused axe coverage, the full frontend gate, and live 375px/desktop overflow and console checks pass. See `docs/handoffs/LOS-1006.md`.
@@ -306,11 +308,11 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 - LOS-0904 — Built `TimeBlockForm` React component in `src/features/time-blocks/components/TimeBlockForm.tsx` supporting create and edit modes, title, category, status, date, start/end time range, linked project, linked task, timezone, repeat notes, strict time ordering, DST gap/fold validation via `resolveLocalDateTime`, overlap conflict resolution banner with `allowOverlap` override toggle, full `FormDialog`/`FormFieldGroup` encapsulation, 100% test coverage with axe accessibility compliance, and catalog specimens. See `docs/handoffs/LOS-0904.md`.
 
-- LOS-0905 — Built `DayTimeline` React component in `src/features/time-blocks/components/DayTimeline.tsx` supporting 24-hour visual time scale grid, side-by-side collision column layout, current wall-clock time "now line", clickable gap slots (`onCreateBlock`), pointer drag to move position (`onMoveBlock`) and resize duration (`onResizeBlock`), accessible keyboard navigation/shortcuts, density toggles (`compact`, `comfortable`, `spacious`), small-screen list fallback using `TimeBlockRow`, catalog specimens, and 100% test coverage with 0 axe accessibility violations. See `docs/handoffs/LOS-0905.md`.
+- LOS-1008 — Connected Week Planner REST APIs (`/weekly-plans`), TanStack Query hooks (`useWeekPlanner`, `useWeekPlannerMutations`), version reconciliation, idempotent task allocations, conflict mapping, query invalidations (`weekly-plans`, `today`, `calendar`, `tasks`, `time-blocks`, `daily-time-summary`), and route integration with 100% test suite pass. See `docs/handoffs/LOS-1008.md`.
 
 ## Next recommended ticket
 
-LOS-1007 (`docs/backlog/EPIC-10-PLANNING-REVIEWS.md`) — Compose Week Planner with mocks.
+LOS-1009 (`docs/backlog/EPIC-10-PLANNING-REVIEWS.md`) — Model review records and snapshots.
 
 ## Known decisions requiring implementation-time values
 
