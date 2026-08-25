@@ -1,0 +1,145 @@
+.lifeos-week-planner-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-6);
+  width: 100%;
+}
+
+.lifeos-week-planner-screen__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  flex-wrap: wrap;
+}
+
+.lifeos-week-planner-screen__week-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-week-planner-screen__week-label {
+  font-weight: var(--lifeos-font-weight-medium);
+  min-width: 11rem;
+  text-align: center;
+}
+
+.lifeos-week-planner-screen__offline-banner,
+.lifeos-week-planner-screen__error-banner {
+  margin-bottom: var(--lifeos-space-2);
+}
+
+.lifeos-week-planner-screen__conflicts-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-4);
+  background-color: var(--lifeos-color-bg-warning-subtle);
+  border: 1px solid var(--lifeos-color-border-warning);
+  border-radius: var(--lifeos-radius-lg);
+}
+
+.lifeos-week-planner-screen__conflicts-header {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-week-planner-screen__conflicts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  margin: 0;
+  padding-left: var(--lifeos-space-5);
+}
+
+.lifeos-week-planner-screen__conflict-item {
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-sm);
+}
+
+.lifeos-week-planner-screen__capacity-region {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--lifeos-space-6);
+}
+
+@media (min-width: 1024px) {
+  .lifeos-week-planner-screen__capacity-region {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.lifeos-week-planner-screen__main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--lifeos-space-6);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .lifeos-week-planner-screen__main-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.lifeos-week-planner-screen__left-col,
+.lifeos-week-planner-screen__right-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-6);
+}
+
+.lifeos-week-planner-screen__day-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+  padding: var(--lifeos-space-4);
+  background-color: var(--lifeos-color-bg-surface);
+  border: 1px solid var(--lifeos-color-border-subtle);
+  border-radius: var(--lifeos-radius-lg);
+}
+
+.lifeos-week-planner-screen__day-schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-week-planner-screen__allocated-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-week-planner-screen__allocated-task-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  padding: var(--lifeos-space-3);
+  background-color: var(--lifeos-color-bg-subtle);
+  border: 1px solid var(--lifeos-color-border-subtle);
+  border-radius: var(--lifeos-radius-md);
+}
+
+.lifeos-week-planner-screen__allocated-task-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-week-planner-screen__allocated-task-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  flex-wrap: wrap;
+}
+
+.lifeos-week-planner-screen__allocated-task-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  margin-top: var(--lifeos-space-1);
+}

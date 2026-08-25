@@ -26,6 +26,7 @@ import {
   TimeBlocksRoute,
   UnavailableRoute,
   VerifyEmailRoute,
+  WeekPlannerRoute,
 } from "@routes/index";
 
 /**
@@ -137,7 +138,7 @@ export function AppRoutes() {
           <Route path="projects/:projectId" element={<ProjectDetailsRoute />} />
           <Route path="sprints" element={<SprintsRoute />} />
           <Route path="sprints/:sprintId" element={<SprintsRoute />} />
-          <Route path="week-planner" element={<ComingSoonRoute />} />
+          <Route path="week-planner" element={<WeekPlannerRoute />} />
           <Route path="goals" element={<ComingSoonRoute />} />
           <Route path="goals/:goalId" element={<ComingSoonRoute />} />
           <Route path="notes" element={<ComingSoonRoute />} />

@@ -66,6 +66,29 @@ export interface WeekPlannerDayOption {
   readonly disabled?: boolean;
 }
 
+export type WeekPlanStatus = "DRAFT" | "FINALIZED";
+
+export interface WeekPlannerTaskAllocation {
+  readonly taskId: string;
+  readonly taskTitle: string;
+  readonly localDate: string;
+  readonly outcomeId?: string | null;
+  readonly outcomeTitle?: string;
+  readonly plannedMinutes: number;
+  readonly status: WeekPlannerTaskStatus;
+  readonly priority: WeekPlannerTaskPriority;
+  readonly projectName?: string;
+}
+
+export interface WeekPlannerConflict {
+  readonly id: string;
+  readonly type:
+    "OVERCAPACITY" | "UNALLOCATED_OUTCOME" | "UNSCHEDULED_PRIORITY" | "TIME_BLOCK_OVERLAP";
+  readonly message: string;
+  readonly severity: "warning" | "error";
+  readonly date?: string;
+}
+
 export interface TaskAllocationValue {
   readonly localDate: string | null;
   readonly outcomeId: string | null;

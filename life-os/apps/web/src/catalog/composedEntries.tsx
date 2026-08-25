@@ -51,6 +51,7 @@ import {
   UnscheduledTaskQueueDemo,
   UnscheduledTaskQueuePartialErrorDemo,
   TaskAllocationMoveDemo,
+  WeekPlannerScreenDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -1016,6 +1017,22 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Move form",
         description: "The same day/outcome/time form is the keyboard and mobile move path.",
         render: () => <TaskAllocationMoveDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-screen",
+    name: "WeekPlannerScreen",
+    group: "Composed",
+    summary:
+      "Composed Week Planner screen with week navigation, capacity strip & summary, weekly outcomes, allocated day schedule, unscheduled task backlog, conflict alerts, and plan finalize/reopen controls.",
+    states: [
+      {
+        id: "week-planner-screen-ready",
+        name: "Ready (Populated Draft)",
+        description:
+          "Interactive week planner screen with week navigation, capacity breakdown, outcomes, and unscheduled queue.",
+        render: () => <WeekPlannerScreenDemo />,
       },
     ],
   },

@@ -1871,4 +1871,5 @@ export {
   UnscheduledTaskQueueDemo,
   UnscheduledTaskQueuePartialErrorDemo,
   TaskAllocationMoveDemo,
+  WeekPlannerScreenDemo,
 } from "./WeekPlannerDemos";

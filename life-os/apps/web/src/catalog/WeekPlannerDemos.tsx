@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { Button } from "@components/ui";
 import {
+  MOCK_ALLOCATED_TASKS,
+  MOCK_UNSCHEDULED_TASKS,
+  MOCK_WEEK_CAPACITY_SUMMARY,
+  MOCK_WEEK_CONFLICTS,
+  MOCK_WEEK_DAYS,
+  MOCK_WEEKLY_OUTCOMES,
   TaskAllocationDialog,
   UnscheduledTaskQueue,
   WeekCapacitySummary,
   WeekDayCapacityDialog,
+  WeekPlannerScreen,
   WeekStrip,
   WeeklyOutcomes,
   type WeekCapacitySummaryData,
@@ -322,5 +329,19 @@ export function TaskAllocationMoveDemo() {
         onSubmit={() => setOpen(false)}
       />
     </>
+  );
+}
+
+export function WeekPlannerScreenDemo() {
+  return (
+    <WeekPlannerScreen
+      days={MOCK_WEEK_DAYS}
+      capacitySummary={MOCK_WEEK_CAPACITY_SUMMARY}
+      outcomes={MOCK_WEEKLY_OUTCOMES}
+      unscheduledTasks={MOCK_UNSCHEDULED_TASKS}
+      allocatedTasks={MOCK_ALLOCATED_TASKS}
+      dayOptions={MOCK_DAY_OPTIONS}
+      conflicts={MOCK_WEEK_CONFLICTS}
+    />
   );
 }
