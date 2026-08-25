@@ -22,6 +22,7 @@ export interface GoalCardProps {
   readonly onComplete?: (goal: Goal) => void;
   readonly onEdit?: (goal: Goal) => void;
   readonly onArchive?: (goal: Goal) => void;
+  readonly onClick?: (goal: Goal) => void;
   readonly className?: string;
   readonly headingLevel?: 2 | 3;
 }
@@ -71,6 +72,7 @@ export function GoalCard({
   onComplete,
   onEdit,
   onArchive,
+  onClick,
   className,
   headingLevel = 3,
 }: GoalCardProps) {
@@ -109,9 +111,17 @@ export function GoalCard({
     >
       <header className="goal-card__header">
         <div className="goal-card__title-row">
-          <Heading level={headingLevel} size="md" className="goal-card__title">
-            {goal.title}
-          </Heading>
+          {onClick ? (
+            <button type="button" className="goal-card__title-button" onClick={() => onClick(goal)}>
+              <Heading level={headingLevel} size="md" className="goal-card__title">
+                {goal.title}
+              </Heading>
+            </button>
+          ) : (
+            <Heading level={headingLevel} size="md" className="goal-card__title">
+              {goal.title}
+            </Heading>
+          )}
           <div className="goal-card__badges">
             <Badge tone="info" className="goal-card__category">
               {goal.category}

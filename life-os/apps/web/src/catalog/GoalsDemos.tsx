@@ -7,6 +7,8 @@ import {
   CheckInHistory,
   GoalLinkedWorkList,
   GoalMetricSummary,
+  GoalsScreen,
+  GoalDetailsScreen,
   type Goal,
   type GoalCheckIn,
   type GoalLink,
@@ -19,7 +21,7 @@ const MOCK_GOAL_PERCENTAGE: Goal = {
   userId: "user-demo",
   title: "Launch LifeOS Product Suite",
   description: "Complete design tokens, composed UI, and backend domain APIs for v1 release.",
-  category: "Engineering",
+  category: "LEARNING",
   progressType: "PERCENTAGE",
   targetValue: 100,
   currentValue: 75,
@@ -34,7 +36,7 @@ const MOCK_GOAL_NUMERIC: Goal = {
   id: "goal-demo-2",
   userId: "user-demo",
   title: "Save Emergency Fund",
-  category: "Finance",
+  category: "FINANCIAL",
   progressType: "NUMERIC",
   targetValue: 10000,
   currentValue: 6500,
@@ -113,18 +115,9 @@ export function GoalRowDemo() {
 }
 
 export function ProgressEditorDemo() {
-  const [goal, setGoal] = useState(MOCK_GOAL_NUMERIC);
-
   return (
     <div style={{ maxWidth: 540 }}>
-      <ProgressEditor
-        goal={goal}
-        linkedWorkCount={2}
-        onSaveProgress={(val, note) => {
-          setGoal((prev) => ({ ...prev, currentValue: val }));
-          console.log("Progress saved:", val, note);
-        }}
-      />
+      <ProgressEditor goal={MOCK_GOAL_NUMERIC} onSaveProgress={() => {}} />
     </div>
   );
 }
@@ -137,12 +130,11 @@ export function CheckInFormDialogDemo() {
       <Button onClick={() => setOpen(true)}>Open Check-in Dialog</Button>
       <CheckInFormDialog
         open={open}
+        goal={MOCK_GOAL_PERCENTAGE}
         onClose={() => setOpen(false)}
-        onSubmit={(val, note) => {
-          console.log("Check-in submitted:", val, note);
+        onSubmit={() => {
           setOpen(false);
         }}
-        goal={MOCK_GOAL_PERCENTAGE}
       />
     </div>
   );
@@ -163,16 +155,16 @@ export function GoalLinkedWorkListDemo() {
     <div style={{ maxWidth: 640 }}>
       <GoalLinkedWorkList
         links={links}
-        onAddLink={(type, targetId) => {
+        onAddLink={() => {
           setLinks((prev) => [
             ...prev,
             {
               id: `gl-${Date.now()}`,
               goalId: MOCK_GOAL_PERCENTAGE.id,
               userId: "user-demo",
-              targetType: type,
-              targetId,
-              targetTitle: `Linked ${type}: ${targetId}`,
+              targetType: "PROJECT",
+              targetId: "proj-2",
+              targetTitle: `Linked Project: proj-2`,
             },
           ]);
         }}
@@ -189,5 +181,17 @@ export function GoalMetricSummaryDemo() {
     <div style={{ maxWidth: 840 }}>
       <GoalMetricSummary counts={MOCK_SUMMARY} />
     </div>
+  );
+}
+
+export function GoalsScreenDemo() {
+  return (
+    <GoalsScreen goals={[MOCK_GOAL_PERCENTAGE, MOCK_GOAL_NUMERIC]} summaryCounts={MOCK_SUMMARY} />
+  );
+}
+
+export function GoalDetailsScreenDemo() {
+  return (
+    <GoalDetailsScreen goal={MOCK_GOAL_PERCENTAGE} checkIns={MOCK_CHECKINS} links={MOCK_LINKS} />
   );
 }

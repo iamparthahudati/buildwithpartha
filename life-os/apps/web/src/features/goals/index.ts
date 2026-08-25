@@ -1,4 +1,7 @@
 export * from "./model/goal";
+export * from "./api/goalsApi";
+export * from "./hooks/useGoals";
+export * from "./hooks/useGoalMutations";
 export * from "./components/GoalCard";
 export * from "./components/GoalRow";
 export * from "./components/ProgressEditor";
@@ -8,3 +11,7 @@ export * from "./components/GoalLinkedWorkList";
 export * from "./components/GoalMetricSummary";
 export * from "./components/GoalEmptyState";
 export * from "./components/GoalErrorState";
+export * from "./components/GoalFormDialog";
+export * from "./components/GoalLinkModal";
+export * from "./components/GoalsScreen";
+export * from "./components/GoalDetailsScreen";

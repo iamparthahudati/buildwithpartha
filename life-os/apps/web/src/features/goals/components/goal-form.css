@@ -1,0 +1,24 @@
+.lifeos-goal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-spacing-md);
+}
+
+.lifeos-goal-form__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--lifeos-spacing-md);
+}
+
+.lifeos-goal-form__progressive-toggle {
+  align-self: flex-start;
+  margin-top: var(--lifeos-spacing-xs);
+}
+
+.lifeos-goal-form__advanced {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-spacing-md);
+  padding-top: var(--lifeos-spacing-sm);
+  border-top: 1px solid var(--lifeos-color-border-subtle);
+}
