@@ -14,7 +14,7 @@ const MOCK_TASKS: readonly SprintTask[] = [
     status: "DONE",
     storyPoints: 5,
     projectName: "LifeOS Web",
-    priority: "HIGH",
+    priority: "P2",
     isCommitted: true,
   },
   {
@@ -25,7 +25,7 @@ const MOCK_TASKS: readonly SprintTask[] = [
     status: "IN_PROGRESS",
     storyPoints: 8,
     projectName: "LifeOS Web",
-    priority: "MEDIUM",
+    priority: "P3",
     isCommitted: false,
   },
 ];
@@ -65,7 +65,7 @@ describe("SprintTaskCommitmentList", () => {
     );
 
     const toggleBtn = screen.getByRole("button", {
-      name: "Mark task Build SprintCard component as todo",
+      name: "Mark task Build SprintCard component as to do",
     });
     await userEvent.click(toggleBtn);
     expect(onToggle).toHaveBeenCalledWith("st-1", "DONE");

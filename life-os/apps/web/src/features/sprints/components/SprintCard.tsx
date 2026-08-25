@@ -16,6 +16,7 @@ export interface SprintCardProps {
   readonly onViewRetrospective?: (sprint: Sprint) => void;
   readonly onEditSprint?: (sprint: Sprint) => void;
   readonly className?: string;
+  readonly headingLevel?: 2 | 3;
 }
 
 function getStatusBadgeTone(status: SprintStatus) {
@@ -55,6 +56,7 @@ export function SprintCard({
   onViewRetrospective,
   onEditSprint,
   className,
+  headingLevel = 3,
 }: SprintCardProps) {
   if (loading) {
     return <SkeletonCard {...(className ? { className } : {})} />;
@@ -89,7 +91,7 @@ export function SprintCard({
     >
       <header className="sprint-card__header">
         <div className="sprint-card__title-row">
-          <Heading level={3} size="md" className="sprint-card__title">
+          <Heading level={headingLevel} size="md" className="sprint-card__title">
             {sprint.name}
           </Heading>
           <Badge tone={statusTone}>{statusLabel}</Badge>
@@ -127,9 +129,9 @@ export function SprintCard({
           </Button>
         ) : null}
 
-        {sprint.status === "ACTIVE" && onEditScope ? (
+        {(sprint.status === "PLANNED" || sprint.status === "ACTIVE") && onEditScope ? (
           <Button variant="secondary" size="sm" onClick={() => onEditScope(sprint)}>
-            Edit Scope
+            {sprint.status === "PLANNED" ? "Plan Scope" : "Edit Scope"}
           </Button>
         ) : null}
 
@@ -139,7 +141,7 @@ export function SprintCard({
           </Button>
         ) : null}
 
-        {onEditSprint ? (
+        {(sprint.status === "PLANNED" || sprint.status === "ACTIVE") && onEditSprint ? (
           <Button variant="ghost" size="sm" onClick={() => onEditSprint(sprint)}>
             Edit Details
           </Button>

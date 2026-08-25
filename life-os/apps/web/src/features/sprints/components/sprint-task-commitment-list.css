@@ -1,18 +1,18 @@
 .sprint-task-commitment-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface);
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-4);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  background-color: var(--lifeos-color-surface);
 }
 
 .sprint-task-commitment-list__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--lifeos-space-3);
 }
 
 .sprint-task-commitment-list__title {
@@ -22,7 +22,7 @@
 .sprint-task-commitment-list__items {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--lifeos-space-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -32,17 +32,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border: 1px solid var(--color-border-subtle, var(--color-border));
-  border-radius: var(--radius-sm);
-  background-color: var(--color-surface);
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-3);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-sm);
+  background-color: var(--lifeos-color-surface);
 }
 
 .sprint-task-commitment-list__item-main {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--lifeos-space-3);
+  min-width: 0;
 }
 
 .sprint-task-commitment-list__status-toggle {
@@ -51,7 +52,7 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  border: 2px solid var(--color-border);
+  border: var(--lifeos-border-width-thick) solid var(--lifeos-color-border);
   border-radius: 50%;
   background-color: transparent;
   cursor: pointer;
@@ -61,46 +62,73 @@
 .sprint-task-commitment-list__status-toggle.is-done {
   background-color: var(--lifeos-color-success);
   border-color: var(--lifeos-color-success);
-  color: var(--lifeos-color-text-on-brand);
+  color: var(--lifeos-color-text-on-solid);
 }
 
 .sprint-task-commitment-list__item-details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--lifeos-space-1);
+  min-width: 0;
 }
 
 .sprint-task-commitment-list__item-title {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-main);
+  font-size: var(--lifeos-font-size-sm);
+  font-weight: var(--lifeos-font-weight-medium);
+  color: var(--lifeos-color-text);
 }
 
 .sprint-task-commitment-list__item-title.is-done {
   text-decoration: line-through;
-  color: var(--color-text-muted);
+  color: var(--lifeos-color-text-muted);
 }
 
 .sprint-task-commitment-list__meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--lifeos-space-2);
 }
 
 .sprint-task-commitment-list__project {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
+  font-size: var(--lifeos-font-size-xs);
+  color: var(--lifeos-color-text-muted);
 }
 
 .sprint-task-commitment-list__item-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--lifeos-space-3);
+}
+
+@media (pointer: coarse) {
+  .sprint-task-commitment-list__status-toggle {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+@media (max-width: 40rem) {
+  .sprint-task-commitment-list__header,
+  .sprint-task-commitment-list__item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sprint-task-commitment-list__item-main,
+  .sprint-task-commitment-list__item-actions {
+    width: 100%;
+  }
+
+  .sprint-task-commitment-list__item-actions {
+    justify-content: flex-end;
+  }
 }
 
 .sprint-task-commitment-list__points {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-main);
+  font-size: var(--lifeos-font-size-sm);
+  font-weight: var(--lifeos-font-weight-semibold);
+  color: var(--lifeos-color-text);
   white-space: nowrap;
 }

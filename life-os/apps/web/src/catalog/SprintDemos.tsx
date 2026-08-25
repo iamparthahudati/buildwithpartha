@@ -34,7 +34,7 @@ const MOCK_TASKS: readonly SprintTask[] = [
     status: "DONE",
     storyPoints: 8,
     projectName: "LifeOS Web",
-    priority: "HIGH",
+    priority: "P2",
     isCommitted: true,
   },
   {
@@ -45,7 +45,7 @@ const MOCK_TASKS: readonly SprintTask[] = [
     status: "DONE",
     storyPoints: 10,
     projectName: "LifeOS Web",
-    priority: "HIGH",
+    priority: "P2",
     isCommitted: true,
   },
   {
@@ -56,7 +56,7 @@ const MOCK_TASKS: readonly SprintTask[] = [
     status: "IN_PROGRESS",
     storyPoints: 7,
     projectName: "LifeOS Web",
-    priority: "MEDIUM",
+    priority: "P3",
     isCommitted: false,
   },
 ];

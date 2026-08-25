@@ -9,6 +9,8 @@ export interface SprintScopeChangeHistoryProps {
   readonly error?: string;
   readonly onRetry?: () => void;
   readonly className?: string;
+  readonly locale?: string;
+  readonly timeZone?: string;
 }
 
 function getChangeTypeBadgeTone(type: ScopeChangeType) {
@@ -43,6 +45,8 @@ export function SprintScopeChangeHistory({
   error,
   onRetry,
   className,
+  locale = "en-US",
+  timeZone = "UTC",
 }: SprintScopeChangeHistoryProps) {
   if (loading) {
     return <SkeletonTable rows={3} {...(className ? { className } : {})} />;
@@ -67,7 +71,7 @@ export function SprintScopeChangeHistory({
       className={["sprint-scope-change-history", className].filter(Boolean).join(" ")}
     >
       <div className="sprint-scope-change-history__header">
-        <Heading level={4} size="sm" className="sprint-scope-change-history__title">
+        <Heading level={3} size="sm" className="sprint-scope-change-history__title">
           Scope Change History ({events.length})
         </Heading>
       </div>
@@ -94,7 +98,11 @@ export function SprintScopeChangeHistory({
                   ) : null}
                 </div>
                 <Text size="xs" tone="muted" className="sprint-scope-change-history__timestamp">
-                  {event.timestamp}
+                  {new Intl.DateTimeFormat(locale, {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                    timeZone,
+                  }).format(new Date(event.timestamp))}
                 </Text>
               </div>
 

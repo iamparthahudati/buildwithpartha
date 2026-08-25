@@ -18,6 +18,7 @@ import {
   ProjectDetailsRoute,
   ResetPasswordRoute,
   SettingsRoute,
+  SprintsRoute,
   SignupRoute,
   TodayRoute,
   TasksRoute,
@@ -134,8 +135,8 @@ export function AppRoutes() {
           <Route path="focus" element={<FocusRoute />} />
           <Route path="projects" element={<ProjectsRoute />} />
           <Route path="projects/:projectId" element={<ProjectDetailsRoute />} />
-          <Route path="sprints" element={<ComingSoonRoute />} />
-          <Route path="sprints/:sprintId" element={<ComingSoonRoute />} />
+          <Route path="sprints" element={<SprintsRoute />} />
+          <Route path="sprints/:sprintId" element={<SprintsRoute />} />
           <Route path="week-planner" element={<ComingSoonRoute />} />
           <Route path="goals" element={<ComingSoonRoute />} />
           <Route path="goals/:goalId" element={<ComingSoonRoute />} />
