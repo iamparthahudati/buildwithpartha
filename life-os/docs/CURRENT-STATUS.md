@@ -1,10 +1,10 @@
 # Current status
 
-Last updated: 2026-08-25 (LOS-1016 complete planning and reviews handoff)
+Last updated: 2026-08-25 (LOS-1101 model goals, check-ins, and goal links)
 
 ## Phase
 
-Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), and Epic 10 (Sprints, week planning, and reviews) completed.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), and Epic 10 (Sprints, week planning, and reviews) completed. Epic 11 (Goals, progress, reports, and analytics) started.
 
 ## In review
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1101 — Modeled core Goal, GoalCheckIn, and GoalLink domain aggregates, V22 Flyway database migration schema, progress calculation invariants for percentage/numeric/milestone/binary types, and Spring Data JPA repositories with 100% test pass. See `docs/handoffs/LOS-1101.md`.
 
 - LOS-1016 — Completed Epic 10 Planning and Reviews handoff, documentation updates, and develop branch synchronization. See `docs/handoffs/LOS-1016.md`.
 

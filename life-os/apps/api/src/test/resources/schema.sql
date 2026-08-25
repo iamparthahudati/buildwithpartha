@@ -450,3 +450,25 @@ CREATE TABLE IF NOT EXISTS review_item_decisions (
     item_id UUID NOT NULL, action VARCHAR(32) NOT NULL, target_date DATE, notes TEXT
 );
 
+-- Added by LOS-1101: Goals, goal check-ins, and goal links schema.
+CREATE TABLE IF NOT EXISTS goals (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, title TEXT NOT NULL,
+    description TEXT, category VARCHAR(64) NOT NULL, progress_type VARCHAR(32) NOT NULL,
+    target_value NUMERIC(19, 4), current_value NUMERIC(19, 4) NOT NULL, unit VARCHAR(32),
+    target_date DATE, status VARCHAR(32) NOT NULL, check_in_cadence VARCHAR(32) NOT NULL,
+    archived BOOLEAN NOT NULL, created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL, version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS goal_check_ins (
+    id UUID NOT NULL PRIMARY KEY, goal_id UUID NOT NULL, user_id UUID NOT NULL,
+    "value" NUMERIC(19, 4) NOT NULL, note TEXT, recorded_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS goal_links (
+    id UUID NOT NULL PRIMARY KEY, goal_id UUID NOT NULL, user_id UUID NOT NULL,
+    target_type VARCHAR(32) NOT NULL, target_id UUID NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
