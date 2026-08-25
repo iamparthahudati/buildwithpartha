@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-25 (LOS-1009 model review records & snapshots)
+Last updated: 2026-08-25 (LOS-1010 implement review APIs)
 
 ## Phase
 
@@ -25,7 +25,10 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-1010 — Implemented authenticated REST API endpoints under `/reviews` for prompt/metric retrieval (`GET /reviews/prompts`), draft saving (`POST /reviews/draft`), idempotent finalization (`POST /reviews/{id}/finalize`), skipping (`POST /reviews/skip`), reopen policy rejection (`POST /reviews/{id}/reopen` returning HTTP 409 Conflict), history listing (`GET /reviews`), OpenAPI artifacts, and full unit/integration test coverage. See `docs/handoffs/LOS-1010.md`.
+
 - LOS-1009 — Modeled daily (morning/evening), weekly, and monthly review schema, aggregates, and snapshot persistence. Flyway migration V21 adds `reviews`, `review_answers`, and `review_item_decisions` tables. Implemented `Review` aggregate root, `ReviewType`, `ReviewStatus`, `ReviewAnswer`, `ReviewItemDecision`, `ReviewSnapshotMetrics`, and `ReviewRepository` domain port with JPA infrastructure. Domain and database constraints enforce period key identity, answer length bounds, status check constraints, skip reasons, idempotent finalization, and immutable snapshot metrics. Full backend (`./gradlew check`), PostgreSQL schema verification (`verify-flyway-postgres.sh`), and frontend test suite passed 100%. See `docs/handoffs/LOS-1009.md`.
+
 
 - LOS-1008 — Connected the Week Planner route and components to the authenticated Weekly Plan REST API, Task API, and live TanStack Query hooks. Optimistic updates and version reconciliations handle capacity edits, task allocations, outcome reordering, and draft finalize/reopen transitions; successful mutations invalidate dependent query families (weekly plans, Today, Calendar, Tasks, Time Blocks, time summary). Unit test suites cover REST API contracts, custom hooks, and route integration. See `docs/handoffs/LOS-1008.md`.
 

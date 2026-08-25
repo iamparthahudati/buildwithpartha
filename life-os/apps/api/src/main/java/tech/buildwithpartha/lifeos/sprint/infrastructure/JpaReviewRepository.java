@@ -88,6 +88,14 @@ public class JpaReviewRepository implements ReviewRepository {
         .toList();
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public List<Review> findByUserId(UUID userId) {
+    return reviewJpaRepository.findByUserIdOrderByStartDateDesc(userId).stream()
+        .map(this::loadDomain)
+        .toList();
+  }
+
   private Review loadDomain(ReviewEntity entity) {
     List<ReviewAnswerEntity> answerEntities =
         reviewAnswerJpaRepository.findByReviewId(entity.getId());

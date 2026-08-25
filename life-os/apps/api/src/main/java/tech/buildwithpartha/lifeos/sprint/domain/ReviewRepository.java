@@ -13,4 +13,6 @@ public interface ReviewRepository {
       UUID userId, ReviewType reviewType, String periodKey);
 
   List<Review> findByUserIdAndType(UUID userId, ReviewType reviewType);
+
+  List<Review> findByUserId(UUID userId);
 }

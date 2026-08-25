@@ -26,6 +26,7 @@ public final class StandardErrorCodes {
   public static final ErrorCode SPRINT_STATE_CONFLICT = ErrorCode.of("SPRINT_STATE_CONFLICT");
   public static final ErrorCode WEEKLY_PLAN_STATE_CONFLICT =
       ErrorCode.of("WEEKLY_PLAN_STATE_CONFLICT");
+  public static final ErrorCode REVIEW_STATE_CONFLICT = ErrorCode.of("REVIEW_STATE_CONFLICT");
 
   private StandardErrorCodes() {}
 }

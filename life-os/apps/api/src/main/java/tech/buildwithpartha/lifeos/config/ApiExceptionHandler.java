@@ -22,6 +22,7 @@ import tech.buildwithpartha.lifeos.common.error.FocusSessionConflictException;
 import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
+import tech.buildwithpartha.lifeos.common.error.ReviewStateConflictException;
 import tech.buildwithpartha.lifeos.common.error.SprintStateConflictException;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
 import tech.buildwithpartha.lifeos.common.error.TimeBlockOverlapConflictException;
@@ -195,6 +196,20 @@ public final class ApiExceptionHandler {
             exception.code(),
             "Weekly Plan conflict",
             "Refresh the Weekly Plan and try again."));
+  }
+
+  @ExceptionHandler(ReviewStateConflictException.class)
+  ResponseEntity<ApiProblem> handleReviewStateConflict(
+      ReviewStateConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Review conflict",
+            exception.getMessage() != null
+                ? exception.getMessage()
+                : "Refresh the Review and try again."));
   }
 
   @ExceptionHandler(CodedException.class)

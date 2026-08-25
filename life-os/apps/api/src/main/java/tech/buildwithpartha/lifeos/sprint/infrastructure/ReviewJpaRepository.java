@@ -12,4 +12,6 @@ interface ReviewJpaRepository extends JpaRepository<ReviewEntity, UUID> {
 
   List<ReviewEntity> findByUserIdAndReviewTypeOrderByStartDateDesc(
       UUID userId, ReviewType reviewType);
+
+  List<ReviewEntity> findByUserIdOrderByStartDateDesc(UUID userId);
 }

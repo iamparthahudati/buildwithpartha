@@ -193,6 +193,8 @@ Last updated: 2026-08-25
 | LOS-1007 | Done          | `feature/LOS-1007-compose-week-planner-with-mocks` | Composed WeekPlannerScreen and WeekPlannerRoute with week navigation, WeekStrip, capacity overview, outcomes, day schedule, unscheduled queue, conflict warning banner, finalize/reopen lifecycle, catalog specimens, and full test suite. See `docs/handoffs/LOS-1007.md`. |
 | LOS-1008 | Done          | `feature/LOS-1008-integrate-week-planner`       | Connected Week Planner REST APIs, TanStack Query hooks (`useWeekPlanner`, `useWeekPlannerMutations`), version reconciliation, idempotent moves, conflict mapping, query invalidations (`weekly-plans`, `today`, `calendar`, `tasks`, `time-blocks`, `daily-time-summary`), and complete test coverage. See `docs/handoffs/LOS-1008.md`. |
 | LOS-1009 | Done          | `feature/LOS-1009-model-review-records-snapshots` | Modeled daily, weekly, and monthly review schema (V21 Flyway migration), Review aggregate root, prompt answers, item decisions, immutable frozen snapshot metrics, domain invariants, repeated finalize idempotency, missing data handling, and Spring Data JPA repositories with 100% test pass. See `docs/handoffs/LOS-1009.md`. |
+| LOS-1010 | Done          | `feature/LOS-1010-implement-review-apis`        | Implemented authenticated REST API endpoints under `/reviews` for prompt/metric retrieval, draft saving, idempotent finalization, skipping, reopen policy rejection (HTTP 409 Conflict), OpenAPI artifacts, and full test suite pass. See `docs/handoffs/LOS-1010.md`. |
+
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
 
