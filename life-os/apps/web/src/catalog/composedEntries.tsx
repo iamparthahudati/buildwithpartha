@@ -47,6 +47,10 @@ import {
   WeekCapacitySummaryReadyDemo,
   WeekCapacitySummaryOvercapacityDemo,
   WeekCapacitySummaryLoadingDemo,
+  WeeklyOutcomesDemo,
+  UnscheduledTaskQueueDemo,
+  UnscheduledTaskQueuePartialErrorDemo,
+  TaskAllocationMoveDemo,
 } from "./ComposedDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -970,6 +974,48 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Loading",
         description: "Loading skeleton state for weekly capacity summary.",
         render: () => <WeekCapacitySummaryLoadingDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-outcomes",
+    name: "WeeklyOutcomes",
+    group: "Composed",
+    summary:
+      "Controlled weekly outcome selection, creation, reordering, bounded selection, per-outcome save state, and explicit keyboard/mobile controls.",
+    states: [
+      {
+        id: "weekly-outcomes-ready",
+        name: "Ready",
+        description: "Select, add, and reorder outcomes without relying on pointer drag.",
+        render: () => <WeeklyOutcomesDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-unscheduled-queue",
+    name: "UnscheduledTaskQueue and TaskAllocationDialog",
+    group: "Composed",
+    summary:
+      "Filterable unscheduled Task queue with responsive table/cards, explicit allocate/carry actions, row-level partial recovery, and a shared allocate/move/carry form.",
+    states: [
+      {
+        id: "unscheduled-task-queue-ready",
+        name: "Ready",
+        description: "Filter Tasks and allocate or carry them into the Weekly Plan.",
+        render: () => <UnscheduledTaskQueueDemo />,
+      },
+      {
+        id: "unscheduled-task-queue-partial-error",
+        name: "Partial error",
+        description: "One failed carry remains retryable while other Tasks stay available.",
+        render: () => <UnscheduledTaskQueuePartialErrorDemo />,
+      },
+      {
+        id: "task-allocation-move",
+        name: "Move form",
+        description: "The same day/outcome/time form is the keyboard and mobile move path.",
+        render: () => <TaskAllocationMoveDemo />,
       },
     ],
   },
