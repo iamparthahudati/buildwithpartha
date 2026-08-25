@@ -1867,4 +1867,8 @@ export {
   WeekCapacitySummaryReadyDemo,
   WeekCapacitySummaryOvercapacityDemo,
   WeekCapacitySummaryLoadingDemo,
+  WeeklyOutcomesDemo,
+  UnscheduledTaskQueueDemo,
+  UnscheduledTaskQueuePartialErrorDemo,
+  TaskAllocationMoveDemo,
 } from "./WeekPlannerDemos";

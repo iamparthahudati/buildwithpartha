@@ -1,10 +1,16 @@
 import { useState } from "react";
+import { Button } from "@components/ui";
 import {
+  TaskAllocationDialog,
+  UnscheduledTaskQueue,
   WeekCapacitySummary,
   WeekDayCapacityDialog,
   WeekStrip,
+  WeeklyOutcomes,
   type WeekCapacitySummaryData,
   type WeekDayPlan,
+  type WeekPlannerTask,
+  type WeeklyOutcome,
 } from "@features/week-planner";
 
 const MOCK_DAYS: readonly WeekDayPlan[] = [
@@ -123,6 +129,59 @@ const MOCK_SUMMARY_OVERCAPACITY: WeekCapacitySummaryData = {
   ],
 };
 
+const MOCK_DAY_OPTIONS = MOCK_DAYS.map((day) => ({
+  localDate: day.localDate,
+  label: `${day.dayOfWeek}, ${day.localDate}`,
+}));
+
+const INITIAL_OUTCOMES: readonly WeeklyOutcome[] = [
+  {
+    id: "outcome-accessibility",
+    title: "Complete the accessibility review",
+    selected: true,
+    itemCount: 2,
+  },
+  {
+    id: "outcome-learning",
+    title: "Finish the learning plan",
+    selected: true,
+    itemCount: 1,
+  },
+  {
+    id: "outcome-records",
+    title: "Organize home records",
+    selected: false,
+  },
+];
+
+const INITIAL_TASKS: readonly WeekPlannerTask[] = [
+  {
+    id: "task-review",
+    title: "Prepare weekly review",
+    status: "TO_DO",
+    priority: "P1",
+    projectName: "Learning plan",
+    estimateMinutes: 60,
+  },
+  {
+    id: "task-hosting",
+    title: "Compare hosting options",
+    status: "IN_PROGRESS",
+    priority: "P2",
+    projectName: "Portfolio refresh",
+    estimateMinutes: 90,
+  },
+  {
+    id: "task-records",
+    title: "Organize tax documents",
+    status: "BLOCKED",
+    priority: "P2",
+    projectName: "Home records cleanup",
+    estimateMinutes: 45,
+    isCarryOverCandidate: true,
+  },
+];
+
 export function WeekStripReadyDemo() {
   const [selectedDate, setSelectedDate] = useState("2026-08-20");
   const [dialogDay, setDialogDay] = useState<WeekDayPlan | null>(null);
@@ -162,4 +221,106 @@ export function WeekCapacitySummaryOvercapacityDemo() {
 
 export function WeekCapacitySummaryLoadingDemo() {
   return <WeekCapacitySummary loading />;
+}
+
+export function WeeklyOutcomesDemo() {
+  const [outcomes, setOutcomes] = useState<readonly WeeklyOutcome[]>(INITIAL_OUTCOMES);
+
+  return (
+    <WeeklyOutcomes
+      outcomes={outcomes}
+      onToggleOutcome={(outcomeId, selected) =>
+        setOutcomes((current) =>
+          current.map((outcome) => (outcome.id === outcomeId ? { ...outcome, selected } : outcome)),
+        )
+      }
+      onAddOutcome={(title) =>
+        setOutcomes((current) => [
+          ...current,
+          { id: `outcome-${current.length + 1}`, title, selected: true, itemCount: 0 },
+        ])
+      }
+      onMoveOutcome={(outcomeId, direction) =>
+        setOutcomes((current) => {
+          const index = current.findIndex((outcome) => outcome.id === outcomeId);
+          const destination = direction === "up" ? index - 1 : index + 1;
+          if (index < 0 || destination < 0 || destination >= current.length) return current;
+          const next = [...current];
+          [next[index], next[destination]] = [next[destination]!, next[index]!];
+          return next;
+        })
+      }
+    />
+  );
+}
+
+export function UnscheduledTaskQueueDemo() {
+  const [tasks, setTasks] = useState<readonly WeekPlannerTask[]>(INITIAL_TASKS);
+
+  function markSaved(taskId: string) {
+    setTasks((current) =>
+      current.map((task) =>
+        task.id === taskId ? { ...task, mutation: { type: "saved" as const } } : task,
+      ),
+    );
+  }
+
+  return (
+    <UnscheduledTaskQueue
+      tasks={tasks}
+      days={MOCK_DAY_OPTIONS}
+      outcomes={INITIAL_OUTCOMES}
+      onAllocateTask={markSaved}
+      onCarryTask={markSaved}
+    />
+  );
+}
+
+export function UnscheduledTaskQueuePartialErrorDemo() {
+  const [tasks, setTasks] = useState<readonly WeekPlannerTask[]>([
+    INITIAL_TASKS[0]!,
+    {
+      ...INITIAL_TASKS[2]!,
+      mutation: {
+        type: "failed",
+        message: "We couldn't carry this Task. Your selection is still here.",
+      },
+    },
+  ]);
+
+  return (
+    <UnscheduledTaskQueue
+      tasks={tasks}
+      days={MOCK_DAY_OPTIONS}
+      onRetryTask={(taskId) =>
+        setTasks((current) =>
+          current.map((task) =>
+            task.id === taskId ? { ...task, mutation: { type: "saving" as const } } : task,
+          ),
+        )
+      }
+    />
+  );
+}
+
+export function TaskAllocationMoveDemo() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button variant="secondary" onClick={() => setOpen(true)}>
+        Move task
+      </Button>
+      <TaskAllocationDialog
+        open={open}
+        task={INITIAL_TASKS[0]!}
+        mode="move"
+        days={MOCK_DAY_OPTIONS}
+        outcomes={INITIAL_OUTCOMES}
+        initialValue={{ localDate: "2026-08-20", plannedMinutes: 60 }}
+        onClose={() => setOpen(false)}
+        onSubmit={() => setOpen(false)}
+      />
+    </>
+  );
 }

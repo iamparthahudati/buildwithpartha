@@ -30,6 +30,78 @@ export interface WeekCapacitySummaryData {
   readonly categoryBreakdown?: readonly WeekDayCategoryAllocation[];
 }
 
+export type WeekPlannerTaskStatus = "TO_DO" | "IN_PROGRESS" | "BLOCKED" | "DONE" | "CANCELLED";
+
+export type WeekPlannerTaskPriority = "P1" | "P2" | "P3" | "P4";
+
+export type PlannerMutationState =
+  | { readonly type: "idle" }
+  | { readonly type: "saving" }
+  | { readonly type: "saved" }
+  | { readonly type: "failed"; readonly message: string };
+
+export interface WeeklyOutcome {
+  readonly id: string;
+  readonly title: string;
+  readonly selected: boolean;
+  readonly itemCount?: number;
+  readonly mutation?: PlannerMutationState;
+}
+
+export interface WeekPlannerTask {
+  readonly id: string;
+  readonly title: string;
+  readonly status: WeekPlannerTaskStatus;
+  readonly priority: WeekPlannerTaskPriority;
+  readonly projectName?: string;
+  readonly estimateMinutes?: number;
+  readonly dueDate?: string;
+  readonly isCarryOverCandidate?: boolean;
+  readonly mutation?: PlannerMutationState;
+}
+
+export interface WeekPlannerDayOption {
+  readonly localDate: string;
+  readonly label: string;
+  readonly disabled?: boolean;
+}
+
+export interface TaskAllocationValue {
+  readonly localDate: string | null;
+  readonly outcomeId: string | null;
+  readonly plannedMinutes: number;
+}
+
+export interface WeekPlannerTaskFilters {
+  readonly search: string;
+  readonly project: string;
+  readonly priority: WeekPlannerTaskPriority | "ALL";
+}
+
+export const EMPTY_WEEK_PLANNER_TASK_FILTERS: WeekPlannerTaskFilters = Object.freeze({
+  search: "",
+  project: "",
+  priority: "ALL",
+});
+
+export function filterWeekPlannerTasks(
+  tasks: readonly WeekPlannerTask[],
+  filters: WeekPlannerTaskFilters,
+): readonly WeekPlannerTask[] {
+  const query = filters.search.trim().toLocaleLowerCase();
+
+  return tasks.filter((task) => {
+    const matchesSearch =
+      query === "" ||
+      task.title.toLocaleLowerCase().includes(query) ||
+      (task.projectName?.toLocaleLowerCase().includes(query) ?? false);
+    const matchesProject = filters.project === "" || task.projectName === filters.project;
+    const matchesPriority = filters.priority === "ALL" || task.priority === filters.priority;
+
+    return matchesSearch && matchesProject && matchesPriority;
+  });
+}
+
 /** Format minutes into human-readable hours and minutes (e.g., 90 -> "1h 30m", 480 -> "8h", 45 -> "45m"). */
 export function formatMinutesToHours(minutes: number): string {
   const safeMinutes = Math.max(0, Math.round(minutes));

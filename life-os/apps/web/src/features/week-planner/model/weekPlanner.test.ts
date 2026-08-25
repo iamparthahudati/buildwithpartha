@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { calculateCapacityPercentage, formatMinutesToHours } from "./weekPlanner";
+import {
+  calculateCapacityPercentage,
+  filterWeekPlannerTasks,
+  formatMinutesToHours,
+  type WeekPlannerTask,
+} from "./weekPlanner";
 
 describe("weekPlanner models & helpers", () => {
   describe("formatMinutesToHours", () => {
@@ -36,6 +41,41 @@ describe("weekPlanner models & helpers", () => {
     it("calculates accurate capacity percentage", () => {
       expect(calculateCapacityPercentage(240, 480)).toBe(50);
       expect(calculateCapacityPercentage(600, 480)).toBe(125);
+    });
+  });
+
+  describe("filterWeekPlannerTasks", () => {
+    const tasks: readonly WeekPlannerTask[] = [
+      {
+        id: "task-1",
+        title: "Prepare weekly review",
+        status: "TO_DO",
+        priority: "P1",
+        projectName: "Learning plan",
+      },
+      {
+        id: "task-2",
+        title: "Organize tax documents",
+        status: "BLOCKED",
+        priority: "P2",
+        projectName: "Home records cleanup",
+      },
+    ];
+
+    it("matches a case-insensitive title or project search", () => {
+      expect(
+        filterWeekPlannerTasks(tasks, { search: "LEARNING", project: "", priority: "ALL" }),
+      ).toEqual([tasks[0]]);
+    });
+
+    it("combines project and priority filters", () => {
+      expect(
+        filterWeekPlannerTasks(tasks, {
+          search: "",
+          project: "Home records cleanup",
+          priority: "P2",
+        }),
+      ).toEqual([tasks[1]]);
     });
   });
 });
