@@ -1,0 +1,68 @@
+.goal-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  background-color: var(--lifeos-color-surface);
+  border: var(--lifeos-border-width-hairline, 1px) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+}
+
+.goal-row[role="button"]:hover {
+  background-color: var(--lifeos-color-surface-raised);
+  cursor: pointer;
+}
+
+.goal-row__main {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  min-width: 200px;
+  flex: 1;
+}
+
+.goal-row__title {
+  color: var(--lifeos-color-text);
+}
+
+.goal-row__progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+  width: 220px;
+}
+
+.goal-row__progress-bar-bg {
+  width: 100%;
+  height: 6px;
+  background-color: var(--lifeos-color-surface-muted);
+  border-radius: var(--lifeos-radius-full);
+  overflow: hidden;
+}
+
+.goal-row__progress-bar-fill {
+  height: 100%;
+  background-color: var(--lifeos-color-primary);
+  border-radius: var(--lifeos-radius-full);
+  transition: width 0.2s ease;
+}
+
+.goal-row--completed .goal-row__progress-bar-fill {
+  background-color: var(--lifeos-color-success);
+}
+
+.goal-row__progress-text {
+  white-space: nowrap;
+}
+
+.goal-row__status {
+  display: flex;
+  align-items: center;
+}
+
+.goal-row__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
