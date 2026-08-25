@@ -196,6 +196,7 @@ Last updated: 2026-08-25
 | LOS-1010 | Done          | `feature/LOS-1010-implement-review-apis`        | Implemented authenticated REST API endpoints under `/reviews` for prompt/metric retrieval, draft saving, idempotent finalization, skipping, reopen policy rejection (HTTP 409 Conflict), OpenAPI artifacts, and full test suite pass. See `docs/handoffs/LOS-1010.md`. |
 | LOS-1015 | Done gate     | `feature/LOS-1015-planning-review-gate`        | Passed the Planning and Reviews phase gate across Sprints, Week Planning, Review APIs, snapshot metrics, rollover, IANA timezones, concurrency, accessibility, and responsive behavior. See `docs/gates/PLANNING-REVIEWS-PHASE-GATE.md` and `docs/handoffs/LOS-1015.md`. |
 | LOS-1016 | Done          | `feature/LOS-1016-planning-reviews-handoff`    | Completed Epic 10 Planning and Reviews handoff, documentation updates, and develop branch synchronization. See `docs/handoffs/LOS-1016.md`. |
+| LOS-1101 | Done          | `feature/LOS-1101-model-goals-and-check-ins`   | Modeled Goal, GoalCheckIn, and GoalLink domain aggregates, V22 Flyway migration, progress calculation invariants for percentage/numeric/milestone/binary types, and Spring Data JPA repositories with 100% test pass. See `docs/handoffs/LOS-1101.md`. |
 
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

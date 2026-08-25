@@ -2,7 +2,7 @@
 
 | ID | Ticket | Description and acceptance contract | Depends on | Estimate | Status |
 | --- | --- | --- | --- | --- | --- |
-| LOS-1101 | Model goals and check-ins | Goal/check-in/link schema for percentage/numeric/milestone/binary progress, target/date/status/cadence/version. Ownership and calculation invariants tested. | LOS-0216, LOS-0801 | M | Backlog |
+| LOS-1101 | Model goals and check-ins | Goal/check-in/link schema for percentage/numeric/milestone/binary progress, target/date/status/cadence/version. Ownership and calculation invariants tested. | LOS-0216, LOS-0801 | M | Done |
 | LOS-1102 | Implement goals API | CRUD/pause/complete/archive/restore/check-in/link endpoints with validation, version, activity, pagination and cross-user tests. | LOS-1101 | M | Backlog |
 | LOS-1103 | Build goal components | GoalCard/Row, ProgressEditor, CheckIn form/history, linked work, metric/empty/error states with explicit progress-calculation explanation. | LOS-0434 | M | Backlog |
 | LOS-1104 | Compose and integrate Goals screens | List/detail with filters, create/edit/check-in/pause/complete, charts/history, responsive/a11y and conflict behavior. | LOS-1102, LOS-1103 | L | Backlog |
