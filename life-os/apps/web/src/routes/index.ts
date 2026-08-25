@@ -14,6 +14,7 @@ export { ProjectDetailsRoute } from "./ProjectDetailsRoute";
 export { TimeBlocksRoute } from "./TimeBlocksRoute";
 export { CalendarRoute } from "./CalendarRoute";
 export { FocusRoute } from "./FocusRoute";
+export { SprintsRoute } from "./SprintsRoute";
 export { ComingSoonRoute } from "./ComingSoonRoute";
 export { NotFoundRoute, type NotFoundRouteProps } from "./NotFoundRoute";
 export { UnavailableRoute } from "./UnavailableRoute";

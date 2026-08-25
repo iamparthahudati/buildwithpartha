@@ -2,20 +2,23 @@ import type { LocalDate } from "@lib/localDateTime";
 
 export type SprintStatus = "PLANNED" | "ACTIVE" | "COMPLETED" | "CANCELLED";
 
-export type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE" | "CANCELLED";
-export type TaskPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
+export type TaskStatus = "TO_DO" | "IN_PROGRESS" | "BLOCKED" | "DONE" | "CANCELLED";
+export type TaskPriority = "P1" | "P2" | "P3" | "P4";
 
 export interface SprintTask {
   readonly id: string;
   readonly sprintId: string;
   readonly taskId: string;
   readonly title: string;
-  readonly status: TaskStatus;
+  /** Null when the current owner-scoped Task projection is unavailable. */
+  readonly status: TaskStatus | null;
   readonly storyPoints: number;
   readonly projectName?: string;
   readonly priority?: TaskPriority;
   readonly isCommitted: boolean;
   readonly addedAt?: string;
+  readonly removedAt?: string;
+  readonly carriedOverToSprintId?: string;
 }
 
 export type ScopeChangeType = "TASK_ADDED" | "TASK_REMOVED" | "POINTS_CHANGED" | "CAPACITY_CHANGED";
@@ -46,4 +49,12 @@ export interface Sprint {
   readonly whatCouldBeImproved?: string;
   readonly actionItems?: readonly string[];
   readonly completedAt?: string;
+  readonly committedTaskCount?: number;
+  readonly completedTaskCount?: number;
+  readonly addedTaskCount?: number;
+  readonly removedTaskCount?: number;
+  readonly carriedOverTaskCount?: number;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
+  readonly version?: number;
 }

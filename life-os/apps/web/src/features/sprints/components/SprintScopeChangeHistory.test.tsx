@@ -13,7 +13,7 @@ const MOCK_EVENTS: readonly SprintScopeChangeEvent[] = [
     taskTitle: "Hotfix critical login bug",
     pointsDelta: 3,
     reason: "Urgent issue reported by user",
-    timestamp: "2026-08-18 10:30",
+    timestamp: "2026-08-18T10:30:00Z",
   },
   {
     id: "evt-2",
@@ -23,7 +23,7 @@ const MOCK_EVENTS: readonly SprintScopeChangeEvent[] = [
     taskTitle: "Optional documentation page",
     pointsDelta: -2,
     reason: "Deprioritized for next sprint",
-    timestamp: "2026-08-19 14:15",
+    timestamp: "2026-08-19T14:15:00Z",
   },
 ];
 
