@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-25
+Last updated: 2026-08-26
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -198,6 +198,9 @@ Last updated: 2026-08-25
 | LOS-1016 | Done          | `feature/LOS-1016-planning-reviews-handoff`    | Completed Epic 10 Planning and Reviews handoff, documentation updates, and develop branch synchronization. See `docs/handoffs/LOS-1016.md`. |
 | LOS-1101 | Done          | `feature/LOS-1101-model-goals-and-check-ins`   | Modeled Goal, GoalCheckIn, and GoalLink domain aggregates, V22 Flyway migration, progress calculation invariants for percentage/numeric/milestone/binary types, and Spring Data JPA repositories with 100% test pass. See `docs/handoffs/LOS-1101.md`. |
 | LOS-1102 | Done          | `feature/LOS-1102-implement-goals-api`         | Implemented Goals REST API endpoints, GoalService application service, paginated JPA Criteria query repository, goal activity object access resolver, target linking validation, optimistic locking, and product activity logging. See `docs/handoffs/LOS-1102.md`. |
+| LOS-1103 | Done          | `feature/LOS-1103-build-goal-components`       | Built responsive GoalCard/Row, ProgressEditor, CheckIn form/history, GoalLinkModal, catalog specimens, and 100% axe accessibility tests. See `docs/handoffs/LOS-1103.md`. |
+| LOS-1104 | Done          | `feature/LOS-1104-compose-and-integrate-goals-screens` | Composed and integrated Goals list and detail screens with filters, search, sorting, view toggles, 409 conflict handling, routes, and catalog specimens. See `docs/handoffs/LOS-1104.md`. |
+| LOS-1105 | Done          | `feature/LOS-1105-define-analytics-metric-dictionary` | Defined canonical Analytics Metric Dictionary (docs/33-ANALYTICS-METRIC-DICTIONARY.md) establishing standardized formulas, sources, grain, timezone/DST handling, exclusions, rounding, freshness, and zero-data rules for all dashboard and report metrics. See `docs/handoffs/LOS-1105.md`. |
 
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

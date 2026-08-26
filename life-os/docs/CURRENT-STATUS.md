@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-25 (LOS-1102 implement goals API)
+Last updated: 2026-08-26 (LOS-1105 define analytics metric dictionary)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1105 — Defined canonical Analytics Metric Dictionary (`docs/33-ANALYTICS-METRIC-DICTIONARY.md`) establishing standardized formulas, sources, grain, timezone/DST handling, exclusions, rounding, freshness, and zero-data rules for all dashboard and report metrics. Version governance rules defined. See `docs/handoffs/LOS-1105.md`.
 
 - LOS-1102 — Implemented Goals REST API endpoints, user-isolated GoalService application service, paginated JPA Criteria query repository, goal activity object access resolver, target linking validation, optimistic locking, and product activity event logging with 100% test pass and > 80% JaCoCo coverage. See `docs/handoffs/LOS-1102.md`.
 
