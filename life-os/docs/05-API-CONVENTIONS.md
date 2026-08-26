@@ -97,6 +97,12 @@ New Accounts and existing rows upgraded by V18 receive conservative defaults: 25
 
 The supplied IANA timezone converts the inclusive local date into start-inclusive/end-exclusive instants, retaining the true length of DST-short and DST-long days. Time Blocks overlapping the day are clipped to those instants. A completed Focus Session is attributed to the local date containing its `startedAt`; Cancelled sessions do not contribute to reported actual time, and durations use confirmed whole minutes. When planned Focus Time Blocks exist they are the denominator; otherwise the optional daily target is used. With neither, `comparisonMinutes` and `progressPercentage` are null rather than a misleading `0%`. Percentages may exceed 100 because actual time is not capped.
 
+### Progress report
+
+`GET /reports/progress?timeZone={ianaZone}&startDate={localDate}&endDate={localDate}&projectId={uuid}&labelId={uuid}&category={string}` is an authenticated, private/no-store progress aggregation projection adhering strictly to the Analytics Metric Dictionary (`docs/33-ANALYTICS-METRIC-DICTIONARY.md` v1.0.0). `timeZone` is required. `startDate` and `endDate` default to a 7-day range ending today in the target timezone when omitted. Date range queries are capped at a maximum of 366 days (1 year) to ensure bounded SQL execution.
+
+The response aggregates task completion rates, focus execution ratios, project status breakdowns, goal progress averages, habit consistency (zero-data default), and review completion streaks. It exposes `metricDictionaryVersion: "1.0.0"` in response metadata and provides a non-causal accessible narrative (`summaryText`) describing factual progress for screen readers and UI components.
+
 ### Sprints
 
 `/sprints` is an authenticated, CSRF-protected, owner-scoped lifecycle resource. `GET /sprints` accepts an optional comma-separated `status` filter; `POST /sprints`, `GET /sprints/{id}`, `PUT /sprints/{id}`, and planned-only `DELETE /sprints/{id}?version=...` provide CRUD. Lifecycle commands are `POST /sprints/{id}/start`, `/complete`, and `/cancel`. Scope commands add a Task, update its points/order, or mark the commitment removed while preserving history.

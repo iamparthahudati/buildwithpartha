@@ -201,6 +201,7 @@ Last updated: 2026-08-26
 | LOS-1103 | Done          | `feature/LOS-1103-build-goal-components`       | Built responsive GoalCard/Row, ProgressEditor, CheckIn form/history, GoalLinkModal, catalog specimens, and 100% axe accessibility tests. See `docs/handoffs/LOS-1103.md`. |
 | LOS-1104 | Done          | `feature/LOS-1104-compose-and-integrate-goals-screens` | Composed and integrated Goals list and detail screens with filters, search, sorting, view toggles, 409 conflict handling, routes, and catalog specimens. See `docs/handoffs/LOS-1104.md`. |
 | LOS-1105 | Done          | `feature/LOS-1105-define-analytics-metric-dictionary` | Defined canonical Analytics Metric Dictionary (docs/33-ANALYTICS-METRIC-DICTIONARY.md) establishing standardized formulas, sources, grain, timezone/DST handling, exclusions, rounding, freshness, and zero-data rules for all dashboard and report metrics. See `docs/handoffs/LOS-1105.md`. |
+| LOS-1106 | Done          | `feature/LOS-1106-implement-progress-aggregation-api` | Implemented authenticated REST endpoint GET /reports/progress returning progress aggregations across tasks, focus time, projects, goals, habits, and reviews with bounded SQL and accessible summary text. See `docs/handoffs/LOS-1106.md`. |
 
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
