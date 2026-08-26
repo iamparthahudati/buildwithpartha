@@ -1883,3 +1883,12 @@ export {
   GoalLinkedWorkListDemo,
   GoalMetricSummaryDemo,
 } from "./GoalsDemos";
+
+export {
+  PeriodControlsDemo,
+  ProgressSummaryCardsDemo,
+  ProgressTrendsChartDemo,
+  ProgressCategoryBreakdownDemo,
+  ProgressComparisonTextDemo,
+  ProgressStatesDemo,
+} from "./ProgressDemos";

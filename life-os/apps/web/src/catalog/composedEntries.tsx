@@ -59,6 +59,12 @@ import {
   CheckInHistoryDemo,
   GoalLinkedWorkListDemo,
   GoalMetricSummaryDemo,
+  PeriodControlsDemo,
+  ProgressSummaryCardsDemo,
+  ProgressTrendsChartDemo,
+  ProgressCategoryBreakdownDemo,
+  ProgressComparisonTextDemo,
+  ProgressStatesDemo,
 } from "./ComposedDemos";
 
 import { GoalsScreenDemo, GoalDetailsScreenDemo } from "./GoalsDemos";
@@ -1110,6 +1116,54 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Full goal details screen with header, overview, progress editor, check-in history, and linked work items.",
         render: () => <GoalDetailsScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "progress-components",
+    name: "Progress screen components (Period Controls, Summary Cards, Trends, Breakdowns, Descriptive Insights, Empty & Error States)",
+    group: "Composed",
+    summary:
+      "Comprehensive progress components (LOS-1107): PeriodControls, ProgressSummaryCards, ProgressTrendsChart, ProgressCategoryBreakdown, ProgressComparisonText, ProgressEmptyState, and ProgressErrorState with data table fallback and non-causal claims enforcement.",
+    states: [
+      {
+        id: "period-controls",
+        name: "PeriodControls",
+        description:
+          "Period preset button group with custom date range pickers and timezone context.",
+        render: () => <PeriodControlsDemo />,
+      },
+      {
+        id: "progress-summary-cards",
+        name: "ProgressSummaryCards",
+        description:
+          "Summary cards for task completion, focus time, project/goal progress, habit completion, and review streak.",
+        render: () => <ProgressSummaryCardsDemo />,
+      },
+      {
+        id: "progress-trends-chart",
+        name: "ProgressTrendsChart",
+        description: "ChartFrame execution trends with accessible data table alternative.",
+        render: () => <ProgressTrendsChartDemo />,
+      },
+      {
+        id: "progress-category-breakdown",
+        name: "ProgressCategoryBreakdown",
+        description: "DonutChart focus category breakdown with accessible table view.",
+        render: () => <ProgressCategoryBreakdownDemo />,
+      },
+      {
+        id: "progress-comparison-text",
+        name: "ProgressComparisonText",
+        description:
+          "Factual, descriptive summary callout adhering strictly to non-causal claims enforcement.",
+        render: () => <ProgressComparisonTextDemo />,
+      },
+      {
+        id: "progress-states",
+        name: "ProgressEmptyState and ProgressErrorState",
+        description: "Zero-shame empty state and region error state with retry callback.",
+        render: () => <ProgressStatesDemo />,
       },
     ],
   },
