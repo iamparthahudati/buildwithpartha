@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-27 (LOS-1108 compose and integrate progress screen)
+Last updated: 2026-08-27 (LOS-1109 implement reports API)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1109 — Implemented authenticated REST API endpoints `/reports/definitions`, `/reports/definitions/{reportType}`, `/reports/generate`, and `/reports/named/{reportType}` returning structured report payloads with summary metrics (`metrics`), tabular breakdowns (`tables`), visualization chart series (`chartSeries`), asynchronous execution threshold handling (> 90 days), and Analytics Metric Dictionary v1.0.0 compliance. 100% test suite and JaCoCo coverage verified. See `docs/handoffs/LOS-1109.md`.
 
 - LOS-1108 — Composed and integrated the full Progress screen at `/life-os/app/progress` with URL search parameter filtering (`preset`, `startDate`, `endDate`, `projectId`, `category`), React Query hook (`useProgressReport`), PageHeader, PeriodControls, project selector, export navigation, range boundary alert (> 366 days), loading skeleton, zero-shame empty state, error state, catalog specimen, and 100% axe accessibility tests. See `docs/handoffs/LOS-1108.md`.
 
