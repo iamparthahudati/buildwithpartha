@@ -1,4 +1,6 @@
 export * from "./model/progress";
+export * from "./api/progressApi";
+export * from "./hooks/useProgress";
 export { PeriodControls, type PeriodControlsProps } from "./components/PeriodControls";
 export {
   ProgressSummaryCards,
@@ -18,3 +20,4 @@ export {
 } from "./components/ProgressComparisonText";
 export { ProgressEmptyState, type ProgressEmptyStateProps } from "./components/ProgressEmptyState";
 export { ProgressErrorState, type ProgressErrorStateProps } from "./components/ProgressErrorState";
+export { ProgressScreen, type ProgressScreenProps } from "./components/ProgressScreen";

@@ -203,6 +203,7 @@ Last updated: 2026-08-26
 | LOS-1105 | Done          | `feature/LOS-1105-define-analytics-metric-dictionary` | Defined canonical Analytics Metric Dictionary (docs/33-ANALYTICS-METRIC-DICTIONARY.md) establishing standardized formulas, sources, grain, timezone/DST handling, exclusions, rounding, freshness, and zero-data rules for all dashboard and report metrics. See `docs/handoffs/LOS-1105.md`. |
 | LOS-1106 | Done          | `feature/LOS-1106-implement-progress-aggregation-api` | Implemented authenticated REST endpoint GET /reports/progress returning progress aggregations across tasks, focus time, projects, goals, habits, and reviews with bounded SQL and accessible summary text. See `docs/handoffs/LOS-1106.md`. |
 | LOS-1107 | Done          | `feature/LOS-1107-build-progress-screen-components` | Built responsive PeriodControls, ProgressSummaryCards, ProgressTrendsChart, ProgressCategoryBreakdown, ProgressComparisonText, ProgressEmptyState, ProgressErrorState, catalog specimens, and 100% axe accessibility tests. See `docs/handoffs/LOS-1107.md`. |
+| LOS-1108 | Done          | `feature/LOS-1108-compose-integrate-progress-screen` | Composed and integrated Progress screen at `/life-os/app/progress` with URL search filters, React Query caching, project selector, export navigation, catalog specimen, and unit/a11y tests. See `docs/handoffs/LOS-1108.md`. |
 
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

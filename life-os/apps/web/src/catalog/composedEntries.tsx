@@ -65,6 +65,7 @@ import {
   ProgressCategoryBreakdownDemo,
   ProgressComparisonTextDemo,
   ProgressStatesDemo,
+  ProgressScreenDemo,
 } from "./ComposedDemos";
 
 import { GoalsScreenDemo, GoalDetailsScreenDemo } from "./GoalsDemos";
@@ -1164,6 +1165,13 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "ProgressEmptyState and ProgressErrorState",
         description: "Zero-shame empty state and region error state with retry callback.",
         render: () => <ProgressStatesDemo />,
+      },
+      {
+        id: "progress-screen",
+        name: "ProgressScreen",
+        description:
+          "Composed Progress & Insights screen with period controls, summary cards, and charts.",
+        render: () => <ProgressScreenDemo />,
       },
     ],
   },

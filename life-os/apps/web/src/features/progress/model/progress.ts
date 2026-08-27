@@ -74,9 +74,9 @@ export interface ProgressFilterParams {
   startDate: string;
   endDate: string;
   timeZone: string;
-  projectId?: string;
-  labelId?: string;
-  category?: string;
+  projectId?: string | undefined;
+  labelId?: string | undefined;
+  category?: string | undefined;
 }
 
 /**

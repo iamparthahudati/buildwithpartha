@@ -7,6 +7,7 @@ import {
   ProgressComparisonText,
   ProgressEmptyState,
   ProgressErrorState,
+  ProgressScreen,
   type ProgressFilterParams,
   type ProgressReport,
 } from "@features/progress";
@@ -113,6 +114,27 @@ export function ProgressStatesDemo() {
     <div style={{ maxWidth: 840, display: "flex", flexDirection: "column", gap: 24 }}>
       <ProgressEmptyState />
       <ProgressErrorState onRetry={() => {}} />
+    </div>
+  );
+}
+
+export function ProgressScreenDemo() {
+  const [filter, setFilter] = useState<ProgressFilterParams>({
+    periodPreset: "THIS_MONTH",
+    startDate: "2026-08-01",
+    endDate: "2026-08-31",
+    timeZone: "Asia/Kolkata",
+  });
+
+  return (
+    <div style={{ width: "100%" }}>
+      <ProgressScreen
+        report={MOCK_REPORT}
+        filter={filter}
+        onFilterChange={setFilter}
+        projects={[{ id: "p-1", name: "LifeOS Engine" }]}
+        onExportClick={() => {}}
+      />
     </div>
   );
 }

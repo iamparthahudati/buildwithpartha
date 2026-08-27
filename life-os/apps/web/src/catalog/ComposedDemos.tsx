@@ -1891,4 +1891,5 @@ export {
   ProgressCategoryBreakdownDemo,
   ProgressComparisonTextDemo,
   ProgressStatesDemo,
+  ProgressScreenDemo,
 } from "./ProgressDemos";

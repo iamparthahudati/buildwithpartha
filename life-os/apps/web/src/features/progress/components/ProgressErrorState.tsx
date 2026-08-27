@@ -1,10 +1,10 @@
 import { ErrorState } from "@components/feedback";
 
 export interface ProgressErrorStateProps {
-  readonly title?: string;
-  readonly description?: string;
-  readonly onRetry?: () => void;
-  readonly className?: string;
+  readonly title?: string | undefined;
+  readonly description?: string | undefined;
+  readonly onRetry?: (() => void) | undefined;
+  readonly className?: string | undefined;
 }
 
 export function ProgressErrorState({
