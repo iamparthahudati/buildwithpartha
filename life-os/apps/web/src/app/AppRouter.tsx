@@ -19,6 +19,7 @@ import {
   ProgressRoute,
   ProjectsRoute,
   ProjectDetailsRoute,
+  ReportsRoute,
   ResetPasswordRoute,
   SettingsRoute,
   SprintsRoute,
@@ -150,7 +151,7 @@ export function AppRoutes() {
           <Route path="habits" element={<ComingSoonRoute />} />
           <Route path="habits/:habitId" element={<ComingSoonRoute />} />
           <Route path="progress" element={<ProgressRoute />} />
-          <Route path="reports" element={<ComingSoonRoute />} />
+          <Route path="reports" element={<ReportsRoute />} />
           <Route path="reviews" element={<ComingSoonRoute />} />
           <Route path="reviews/daily/:date" element={<ComingSoonRoute />} />
           <Route path="reviews/weekly/:weekStart" element={<ComingSoonRoute />} />

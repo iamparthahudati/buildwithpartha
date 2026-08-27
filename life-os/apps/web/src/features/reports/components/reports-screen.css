@@ -1,0 +1,113 @@
+.reports-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+.reports-screen__controls-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.reports-screen__top-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.reports-screen__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.reports-screen__summary-box {
+  background-color: var(--color-surface-subtle);
+  border-left: 4px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.reports-screen__summary-heading {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.reports-screen__summary-text {
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+.reports-screen__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.reports-screen__section-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.reports-screen__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.reports-screen__skeleton-box {
+  height: 120px;
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  animation: report-pulse 1.5s infinite ease-in-out;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .reports-screen {
+    gap: var(--space-4);
+  }
+}
+
+/* Print-friendly stylesheet rules for mobile/desktop printing */
+@media print {
+  body {
+    background-color: var(--color-surface) !important;
+    color: var(--color-text) !important;
+  }
+
+  .reports-screen__controls-area,
+  .reports-screen__top-actions,
+  .app-shell__sidebar,
+  .app-shell__topbar,
+  header button,
+  button {
+    display: none !important;
+  }
+
+  .reports-screen {
+    gap: var(--space-4);
+  }
+
+  .reports-screen__summary-box {
+    border-left: 4px solid var(--color-text);
+    background-color: var(--color-surface-subtle) !important;
+    page-break-inside: avoid;
+  }
+
+  .reports-screen__section {
+    page-break-inside: avoid;
+  }
+}

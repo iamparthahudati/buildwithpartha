@@ -66,6 +66,14 @@ import {
   ProgressComparisonTextDemo,
   ProgressStatesDemo,
   ProgressScreenDemo,
+  ReportSelectorDemo,
+  ReportFilterBarDemo,
+  ReportSummaryMetricsDemo,
+  ReportChartDemo,
+  ReportDataTableDemo,
+  ReportAsynchronousNoticeDemo,
+  ReportStatesDemo,
+  ReportsScreenDemo,
 } from "./ComposedDemos";
 
 import { GoalsScreenDemo, GoalDetailsScreenDemo } from "./GoalsDemos";
@@ -1172,6 +1180,66 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Composed Progress & Insights screen with period controls, summary cards, and charts.",
         render: () => <ProgressScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "reports-components",
+    name: "Reports screen components (Report Selector, Filters, Summary Metrics, Chart Series, Data Table, Async Notice, Print-friendly)",
+    group: "Composed",
+    summary:
+      "Comprehensive reports components (LOS-1110): ReportSelector, ReportFilterBar, ReportSummaryMetrics, ReportChart, ReportDataTable, ReportAsynchronousNotice, ReportEmptyState, ReportErrorState, and ReportsScreen with saved recent settings and mobile print-friendly support.",
+    states: [
+      {
+        id: "report-selector",
+        name: "ReportSelector",
+        description: "Report type dropdown selector and active report details card.",
+        render: () => <ReportSelectorDemo />,
+      },
+      {
+        id: "report-filter-bar",
+        name: "ReportFilterBar",
+        description:
+          "Period preset button group, custom date range pickers, project, and category filters.",
+        render: () => <ReportFilterBarDemo />,
+      },
+      {
+        id: "report-summary-metrics",
+        name: "ReportSummaryMetrics",
+        description: "Summary metric cards displaying key report metrics and comparison trends.",
+        render: () => <ReportSummaryMetricsDemo />,
+      },
+      {
+        id: "report-chart",
+        name: "ReportChart",
+        description: "Visual trend charts with accessible data table alternative.",
+        render: () => <ReportChartDemo />,
+      },
+      {
+        id: "report-data-table",
+        name: "ReportDataTable",
+        description: "Tabular data breakdowns with headers, rows, and total counts.",
+        render: () => <ReportDataTableDemo />,
+      },
+      {
+        id: "report-async-notice",
+        name: "ReportAsynchronousNotice",
+        description:
+          "Notice alert when report date range triggers background asynchronous processing.",
+        render: () => <ReportAsynchronousNoticeDemo />,
+      },
+      {
+        id: "report-states",
+        name: "ReportEmptyState and ReportErrorState",
+        description: "Zero-data empty state and error state with retry callback.",
+        render: () => <ReportStatesDemo />,
+      },
+      {
+        id: "reports-screen",
+        name: "ReportsScreen",
+        description:
+          "Full composed Reports screen with selector, filter bar, summary, charts, data tables, and print action.",
+        render: () => <ReportsScreenDemo />,
       },
     ],
   },

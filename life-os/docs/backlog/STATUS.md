@@ -205,6 +205,7 @@ Last updated: 2026-08-26
 | LOS-1107 | Done          | `feature/LOS-1107-build-progress-screen-components` | Built responsive PeriodControls, ProgressSummaryCards, ProgressTrendsChart, ProgressCategoryBreakdown, ProgressComparisonText, ProgressEmptyState, ProgressErrorState, catalog specimens, and 100% axe accessibility tests. See `docs/handoffs/LOS-1107.md`. |
 | LOS-1108 | Done          | `feature/LOS-1108-compose-integrate-progress-screen` | Composed and integrated Progress screen at `/life-os/app/progress` with URL search filters, React Query caching, project selector, export navigation, catalog specimen, and unit/a11y tests. See `docs/handoffs/LOS-1108.md`. |
 | LOS-1109 | Done          | `feature/LOS-1109-implement-reports-api`         | Implemented authenticated REST endpoints `/reports/definitions`, `/reports/definitions/{reportType}`, `/reports/generate`, and `/reports/named/{reportType}` with validated filters, summary metrics, tables, chart series, async threshold handling, and 100% test coverage. See `docs/handoffs/LOS-1109.md`. |
+| LOS-1110 | Done          | `feature/LOS-1110-build-reports-screen`          | Built and integrated Reports screen UI at `/life-os/app/reports` with report selector, filter bar, summary metrics, chart series, data breakdown tables, recent settings persistence, and mobile print-friendly support. See `docs/handoffs/LOS-1110.md`. |
 
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

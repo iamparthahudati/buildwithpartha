@@ -19,6 +19,7 @@ export { FocusRoute } from "./FocusRoute";
 export { SprintsRoute } from "./SprintsRoute";
 export { WeekPlannerRoute } from "./WeekPlannerRoute";
 export { ProgressRoute } from "./ProgressRoute";
+export { ReportsRoute } from "./ReportsRoute";
 export { ComingSoonRoute } from "./ComingSoonRoute";
 export { NotFoundRoute, type NotFoundRouteProps } from "./NotFoundRoute";
 export { UnavailableRoute } from "./UnavailableRoute";
