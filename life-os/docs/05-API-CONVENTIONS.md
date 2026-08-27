@@ -103,6 +103,12 @@ The supplied IANA timezone converts the inclusive local date into start-inclusiv
 
 The response aggregates task completion rates, focus execution ratios, project status breakdowns, goal progress averages, habit consistency (zero-data default), and review completion streaks. It exposes `metricDictionaryVersion: "1.0.0"` in response metadata and provides a non-causal accessible narrative (`summaryText`) describing factual progress for screen readers and UI components.
 
+### Named reports API
+
+`GET /reports/definitions` lists all supported named report metadata (`TASK_COMPLETION`, `TIME_ALLOCATION`, `PROJECT_PROGRESS`, `GOAL_EXECUTION`, `REVIEW_RITUALS`, `COMPREHENSIVE_PROGRESS`) including supported filter keys, default timeframe days, and asynchronous processing thresholds (`asyncThresholdDays`). `GET /reports/definitions/{reportType}` returns metadata for a single report definition.
+
+`GET /reports/generate?reportType={type}&timeZone={ianaZone}&startDate={localDate}&endDate={localDate}&projectId={uuid}&labelId={uuid}&category={string}` and `GET /reports/named/{reportType}?timeZone={ianaZone}&...` return structured report payloads containing summary metrics (`metrics`), tabular breakdowns (`tables`), visualization chart series (`chartSeries`), and non-causal accessible narrative copy (`summaryText`). Range queries validate `startDate <= endDate`, cap maximum bounds at 366 days, and determine asynchronous execution thresholds (ranges > 90 days set `isAsynchronous: true`, `jobId`, and `status: "QUEUED"`). All endpoints adhere strictly to Analytics Metric Dictionary v1.0.0 and require authenticated user ownership.
+
 ### Sprints
 
 `/sprints` is an authenticated, CSRF-protected, owner-scoped lifecycle resource. `GET /sprints` accepts an optional comma-separated `status` filter; `POST /sprints`, `GET /sprints/{id}`, `PUT /sprints/{id}`, and planned-only `DELETE /sprints/{id}?version=...` provide CRUD. Lifecycle commands are `POST /sprints/{id}/start`, `/complete`, and `/cancel`. Scope commands add a Task, update its points/order, or mark the commitment removed while preserving history.

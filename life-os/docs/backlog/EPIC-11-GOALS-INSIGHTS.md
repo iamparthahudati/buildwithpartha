@@ -10,7 +10,7 @@
 | LOS-1106 | Implement progress aggregation API | Date/project/label/category queries for task completion, focus planned/actual, project/goal/habit/review progress with bounded SQL and accessible summary text. | LOS-1105 | M | Done |
 | LOS-1107 | Build Progress screen components | Period controls, summary cards, trends, breakdowns, comparison text, data-table alternatives, empty/partial/error and no unsupported causal claims. | LOS-0429 | M | Done |
 | LOS-1108 | Compose and integrate Progress screen | URL filters, API queries, responsive chart/list layouts, export entry, caching/freshness and large-range performance. | LOS-1106, LOS-1107 | L | Done |
-| LOS-1109 | Implement reports API | Named report definitions, validated filters, summary/tables/chart series, asynchronous threshold and ownership. Same metric dictionary drives UI/export. | LOS-1106 | M | Backlog |
+| LOS-1109 | Implement reports API | Named report definitions, validated filters, summary/tables/chart series, asynchronous threshold and ownership. Same metric dictionary drives UI/export. | LOS-1106 | M | Done |
 | LOS-1110 | Build Reports screen | Report selector, filters, summary/chart/table, saved recent settings if approved, loading/empty/error/large range and mobile print-friendly behavior. | LOS-1109, LOS-0429 | M | Backlog |
 | LOS-1111 | Implement CSV export | Background/synchronous threshold, RFC-compatible encoding, formula-injection protection, timezone/metadata header, private short-lived download and audit. | LOS-1109, LOS-1403 | S | Backlog |
 | LOS-1112 | Implement PDF report export | Server/client approach ADR, accessible/print-tested layout, page breaks, privacy, private expiry, failure/notification. Only ships after visual QA. | LOS-1111 | M | Backlog |
