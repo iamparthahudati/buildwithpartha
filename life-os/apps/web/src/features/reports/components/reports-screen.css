@@ -101,6 +101,10 @@
   }
 }
 
+.reports-screen__print-header {
+  display: none;
+}
+
 /* Print-friendly stylesheet rules for mobile/desktop printing */
 @media print {
   body {
@@ -110,6 +114,7 @@
 
   .reports-screen__controls-area,
   .reports-screen__top-actions,
+  .reports-screen__header-actions,
   .app-shell__sidebar,
   .app-shell__topbar,
   header button,
@@ -119,6 +124,36 @@
 
   .reports-screen {
     gap: var(--space-4);
+  }
+
+  .reports-screen__print-header {
+    display: block !important;
+    margin-bottom: var(--space-6);
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: var(--space-4);
+  }
+
+  .reports-screen__print-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+    margin: 0 0 var(--space-3) 0;
+  }
+
+  .reports-screen__print-metadata {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+
+  .reports-screen__print-meta-item {
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+  }
+
+  .reports-screen__print-meta-label {
+    font-weight: var(--font-weight-semibold);
+    margin-right: var(--space-1);
   }
 
   .reports-screen__summary-box {

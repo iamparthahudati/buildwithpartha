@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import { ReportsScreen } from "../components/ReportsScreen";
 import type { ReportDataResponse, ReportFilterParams } from "../model/reports";
 
@@ -186,5 +186,34 @@ describe("ReportsScreen", () => {
     );
 
     expect(screen.getByText("Date Range Exceeds Maximum Boundary (366 Days)")).toBeInTheDocument();
+  });
+
+  it("renders print-only header with active metadata and resolves project name", () => {
+    const filterWithProject: ReportFilterParams = {
+      ...DEFAULT_FILTER,
+      projectId: "proj-123",
+      category: "Personal",
+    };
+    const mockProjects = [{ id: "proj-123", name: "Mock Project Alpha" }];
+
+    render(
+      <ReportsScreen
+        report={MOCK_REPORT_DATA}
+        filter={filterWithProject}
+        onFilterChange={vi.fn()}
+        projects={mockProjects}
+      />,
+    );
+
+    const printHeader = screen.getByTestId("reports-print-header");
+    expect(printHeader).toBeInTheDocument();
+
+    const { getByText } = within(printHeader);
+    expect(getByText("LifeOS Analytics Report")).toBeInTheDocument();
+    expect(getByText("TASK_COMPLETION")).toBeInTheDocument();
+    expect(getByText("2026-08-01 to 2026-08-31")).toBeInTheDocument();
+    expect(getByText("Asia/Kolkata")).toBeInTheDocument();
+    expect(getByText("Mock Project Alpha")).toBeInTheDocument();
+    expect(getByText("Personal")).toBeInTheDocument();
   });
 });

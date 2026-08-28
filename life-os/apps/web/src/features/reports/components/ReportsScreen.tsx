@@ -78,6 +78,10 @@ export function ReportsScreen({
     });
   };
 
+  const selectedProjectName = filter.projectId
+    ? (projects.find((p) => p.id === filter.projectId)?.name ?? filter.projectId)
+    : null;
+
   const handlePrint = () => {
     if (typeof window !== "undefined") {
       window.print();
@@ -86,6 +90,41 @@ export function ReportsScreen({
 
   return (
     <div className="reports-screen" data-testid="reports-screen">
+      {/* Print-only report metadata header (LOS-1112) */}
+      <div className="reports-screen__print-header" data-testid="reports-print-header">
+        <h1 className="reports-screen__print-title">LifeOS Analytics Report</h1>
+        <div className="reports-screen__print-metadata">
+          <div className="reports-screen__print-meta-item">
+            <span className="reports-screen__print-meta-label">Report Type:</span>
+            <span className="reports-screen__print-meta-value">
+              {selectedDef?.name ?? filter.reportType}
+            </span>
+          </div>
+          <div className="reports-screen__print-meta-item">
+            <span className="reports-screen__print-meta-label">Date Range:</span>
+            <span className="reports-screen__print-meta-value">
+              {filter.startDate} to {filter.endDate}
+            </span>
+          </div>
+          <div className="reports-screen__print-meta-item">
+            <span className="reports-screen__print-meta-label">Timezone:</span>
+            <span className="reports-screen__print-meta-value">{filter.timeZone}</span>
+          </div>
+          {selectedProjectName && (
+            <div className="reports-screen__print-meta-item">
+              <span className="reports-screen__print-meta-label">Project:</span>
+              <span className="reports-screen__print-meta-value">{selectedProjectName}</span>
+            </div>
+          )}
+          {filter.category && (
+            <div className="reports-screen__print-meta-item">
+              <span className="reports-screen__print-meta-label">Category:</span>
+              <span className="reports-screen__print-meta-value">{filter.category}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="reports-screen__header-area">
         <PageHeader
           title="Reports & Analytics"
