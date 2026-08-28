@@ -9,7 +9,7 @@
 
 ## Context
 
-LOS-1112 requires implementing PDF report export capability for LifeOS. A named analytics report contains metric summaries, complex charts (rendered with SVG/canvas in React), and tables. The system needs to export these reports as high-fidelity PDF documents that can be downloaded, printed, or saved locally by the user. We must decide whether to perform PDF generation on the server or on the client, keeping in mind the privacy posture defined in [ADR-012](./ADR-012-V1-PRIVACY-POSTURE.md) and the strict dependency-locking policy defined in [ADR-004](./ADR-004-Java-21-Spring-Boot.md) and [ADR-003](./ADR-003-React-TypeScript-Vite.md).
+LOS-1112 requires implementing PDF report export capability for LifeOS. A named analytics report contains metric summaries, complex charts (rendered with SVG/canvas in React), and tables. The system needs to export these reports as high-fidelity PDF documents that can be downloaded, printed, or saved locally by the user. We must decide whether to perform PDF generation on the server or on the client, keeping in mind the privacy posture defined in [ADR-012](./ADR-012-V1-PRIVACY-POSTURE.md) and the strict dependency-locking policy defined in [ADR-004](../10-DECISIONS.md) and [ADR-003](../10-DECISIONS.md).
 
 ## Decision drivers
 

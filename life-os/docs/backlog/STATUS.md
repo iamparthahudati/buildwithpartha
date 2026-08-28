@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-28
+Last updated: 2026-08-29
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -207,7 +207,8 @@ Last updated: 2026-08-28
 | LOS-1109 | Done          | `feature/LOS-1109-implement-reports-api`         | Implemented authenticated REST endpoints `/reports/definitions`, `/reports/definitions/{reportType}`, `/reports/generate`, and `/reports/named/{reportType}` with validated filters, summary metrics, tables, chart series, async threshold handling, and 100% test coverage. See `docs/handoffs/LOS-1109.md`. |
 | LOS-1110 | Done          | `feature/LOS-1110-build-reports-screen`          | Built and integrated Reports screen UI at `/life-os/app/reports` with report selector, filter bar, summary metrics, chart series, data breakdown tables, recent settings persistence, and mobile print-friendly support. See `docs/handoffs/LOS-1110.md`. |
 | LOS-1111 | Done          | `feature/LOS-1111-implement-csv-export`         | Implemented CSV report export with RFC 4180 encoding, formula-injection protection, timezone/metadata header block, UTF-8 BOM, private short-lived download token, and frontend ReportExportButton. See `docs/handoffs/LOS-1111.md`. |
-
+| LOS-1112 | Done          | `feature/LOS-1112-implement-pdf-report-export` | Implemented print-only header and `@media print` CSS rules in reports screen to hide controls, adjust layouts, and prevent awkward page breaks. Documented client-side print decision in ADR-014. See `docs/handoffs/LOS-1112.md`. |
+| LOS-1113 | Done gate     | `feature/LOS-1113-run-goals-analytics-gate`     | Ran Epic 11 phase gate verifying Goals, Progress, and Reports components, APIs, and exports. All 926 backend and 2,158 Vitest tests passed with 80%+ coverage. See `docs/gates/GOALS-ANALYTICS-PHASE-GATE.md`. |
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
 
