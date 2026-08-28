@@ -11,6 +11,7 @@ import { ReportDataTable } from "./ReportDataTable";
 import { ReportAsynchronousNotice } from "./ReportAsynchronousNotice";
 import { ReportEmptyState } from "./ReportEmptyState";
 import { ReportErrorState } from "./ReportErrorState";
+import { ReportExportButton } from "./ReportExportButton";
 
 import type {
   ReportDataResponse,
@@ -90,15 +91,22 @@ export function ReportsScreen({
           title="Reports & Analytics"
           description="Configurable named analytics reports with metric breakdown, charts, tabular data, and export support."
           primaryAction={
-            <Button
-              variant="secondary"
-              size="sm"
-              iconStart={Printer}
-              onClick={handlePrint}
-              disabled={loading || !report}
-            >
-              Print / Save PDF
-            </Button>
+            <div className="reports-screen__header-actions">
+              <ReportExportButton
+                filter={filter}
+                reportLoading={loading}
+                reportAvailable={Boolean(report)}
+              />
+              <Button
+                variant="secondary"
+                size="sm"
+                iconStart={Printer}
+                onClick={handlePrint}
+                disabled={loading || !report}
+              >
+                Print / Save PDF
+              </Button>
+            </div>
           }
           metadata={
             report?.metricDictionaryVersion ? (

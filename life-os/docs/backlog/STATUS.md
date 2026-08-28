@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-26
+Last updated: 2026-08-28
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -206,6 +206,7 @@ Last updated: 2026-08-26
 | LOS-1108 | Done          | `feature/LOS-1108-compose-integrate-progress-screen` | Composed and integrated Progress screen at `/life-os/app/progress` with URL search filters, React Query caching, project selector, export navigation, catalog specimen, and unit/a11y tests. See `docs/handoffs/LOS-1108.md`. |
 | LOS-1109 | Done          | `feature/LOS-1109-implement-reports-api`         | Implemented authenticated REST endpoints `/reports/definitions`, `/reports/definitions/{reportType}`, `/reports/generate`, and `/reports/named/{reportType}` with validated filters, summary metrics, tables, chart series, async threshold handling, and 100% test coverage. See `docs/handoffs/LOS-1109.md`. |
 | LOS-1110 | Done          | `feature/LOS-1110-build-reports-screen`          | Built and integrated Reports screen UI at `/life-os/app/reports` with report selector, filter bar, summary metrics, chart series, data breakdown tables, recent settings persistence, and mobile print-friendly support. See `docs/handoffs/LOS-1110.md`. |
+| LOS-1111 | Done          | `feature/LOS-1111-implement-csv-export`         | Implemented CSV report export with RFC 4180 encoding, formula-injection protection, timezone/metadata header block, UTF-8 BOM, private short-lived download token, and frontend ReportExportButton. See `docs/handoffs/LOS-1111.md`. |
 
 
 All unlisted tickets remain Backlog until explicitly added or promoted.

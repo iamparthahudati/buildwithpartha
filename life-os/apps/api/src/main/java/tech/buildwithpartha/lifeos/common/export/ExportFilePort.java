@@ -71,4 +71,13 @@ public interface ExportFilePort {
    * @return list of export summaries
    */
   java.util.List<ExportSummary> getExportsForUser(UUID userId);
+
+  /**
+   * Validates download token, verifies user ownership and file status, and opens a stream.
+   *
+   * @param rawToken the raw download token
+   * @param authenticatedUserId the authenticated user requesting the download
+   * @return the download payload containing stream and metadata
+   */
+  ExportDownloadPayload openDownloadStream(String rawToken, UUID authenticatedUserId);
 }

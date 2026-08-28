@@ -18,6 +18,26 @@
   justify-content: flex-end;
 }
 
+.reports-screen__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.report-export-button {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.report-export-button__error {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+  margin: 0;
+  max-width: 24rem;
+}
+
 .reports-screen__content {
   display: flex;
   flex-direction: column;

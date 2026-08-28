@@ -3,6 +3,17 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { ReportsScreen } from "../components/ReportsScreen";
 import type { ReportDataResponse, ReportFilterParams } from "../model/reports";
 
+// Mock the CSV export hook so ReportsScreen tests don't need a QueryClientProvider.
+vi.mock("../hooks/useExportCsv", () => ({
+  useExportCsv: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+    isError: false,
+    error: null,
+    reset: vi.fn(),
+  }),
+}));
+
 const MOCK_REPORT_DATA: ReportDataResponse = {
   reportType: "TASK_COMPLETION",
   reportName: "Task Completion Report",
