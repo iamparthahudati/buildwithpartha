@@ -472,3 +472,21 @@ CREATE TABLE IF NOT EXISTS goal_links (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
+-- Added by LOS-1201: Notes, note labels, and note links schema.
+CREATE TABLE IF NOT EXISTS notes (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, title TEXT NOT NULL,
+    body TEXT NOT NULL, pinned BOOLEAN NOT NULL, archived BOOLEAN NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL, updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS note_labels (
+    note_id UUID NOT NULL, label_id UUID NOT NULL,
+    PRIMARY KEY (note_id, label_id)
+);
+
+CREATE TABLE IF NOT EXISTS note_links (
+    id UUID NOT NULL PRIMARY KEY, note_id UUID NOT NULL, user_id UUID NOT NULL,
+    target_type VARCHAR(32) NOT NULL, target_id UUID NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL
+);

@@ -2,7 +2,7 @@
 
 | ID | Ticket | Description and acceptance contract | Depends on | Estimate | Status |
 | --- | --- | --- | --- | --- | --- |
-| LOS-1201 | Model and implement notes API | Note schema and CRUD/search/pin/archive/restore with plain/Markdown body, labels, optional entity links, version, ownership and no sensitive body logging. | LOS-0216, LOS-0806 | M | Backlog |
+| LOS-1201 | Model and implement notes API | Note schema and CRUD/search/pin/archive/restore with plain/Markdown body, labels, optional entity links, version, ownership and no sensitive body logging. | LOS-0216, LOS-0806 | M | Done |
 | LOS-1202 | Build notes list/editor components | NoteCard, filters, title/body editor, autosave status, labels/links, pin/archive/delete, long text, conflict/offline drafts and mobile layout. | LOS-0434 | M | Backlog |
 | LOS-1203 | Compose and integrate Notes | List/detail deep links, search/filter, autosave debounce/cancel/version, safe Markdown rendering, stale/conflict recovery, responsive/a11y. | LOS-1201, LOS-1202 | L | Backlog |
 | LOS-1204 | Model and implement brain dump API | Fast create/list/process/archive/delete/convert with source trace and idempotent transactional conversion to task/note/project idea/goal. | LOS-0802, LOS-1201, LOS-1102 | M | Backlog |
