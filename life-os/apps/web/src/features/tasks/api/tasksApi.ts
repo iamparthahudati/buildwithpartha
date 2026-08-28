@@ -1,6 +1,8 @@
 import { apiRequest } from "@lib/apiClient";
 
 import type { TaskFormLabelOption } from "../components/TaskForm";
+import type { SubtaskChecklistItem } from "../components/SubtaskChecklist";
+import type { DependencyEditorTask } from "../components/DependencyEditor";
 import type { TaskPriority, TaskProjectContext, TaskRecord, TaskStatus } from "../model/task";
 import type { BulkActionOutcome, BulkTaskAction } from "../model/taskScreen";
 import type { TaskSummaryCounts } from "../components/TaskSummaryMetrics";
@@ -36,7 +38,58 @@ export interface TaskResponseDto {
   readonly updatedAt: string;
   readonly subtaskCount?: number;
   readonly completedSubtaskCount?: number;
+  readonly subtasks?: readonly SubtaskResponseDto[];
   readonly labelIds?: readonly string[];
+  readonly version: number;
+}
+
+export interface SubtaskResponseDto {
+  readonly id: string;
+  readonly taskId: string;
+  readonly title: string;
+  readonly completed: boolean;
+  readonly position: number;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+  readonly version: number;
+}
+
+export interface TaskDependencyResponseDto {
+  readonly id: string;
+  readonly title: string;
+  readonly status: TaskStatus;
+  readonly priority: TaskPriority;
+  readonly dueAt?: string | null;
+}
+
+export interface TaskDependenciesSummaryDto {
+  readonly blockers: readonly TaskDependencyResponseDto[];
+  readonly dependents: readonly TaskDependencyResponseDto[];
+  readonly isBlocked: boolean;
+  readonly unresolvedBlockerCount: number;
+}
+
+export interface TaskDetailCountsDto {
+  readonly linkedTimeBlockCount: number;
+  readonly focusSessionCount: number;
+  readonly commentCount: number;
+  readonly attachmentCount: number;
+  readonly activityEventCount: number;
+}
+
+export interface TaskDetailResponseDto {
+  readonly task: TaskResponseDto;
+  readonly dependencies: TaskDependenciesSummaryDto;
+  readonly counts: TaskDetailCountsDto;
+  readonly version: number;
+}
+
+export interface TaskDetail {
+  readonly task: TaskRecord;
+  readonly subtasks: readonly SubtaskChecklistItem[];
+  readonly blockers: readonly DependencyEditorTask[];
+  readonly dependents: readonly DependencyEditorTask[];
+  readonly counts: TaskDetailCountsDto;
   readonly version: number;
 }
 
@@ -173,11 +226,49 @@ export function mapTaskResponse(
     blockerCount: 0,
     overdue: dto.overdue,
     archivedAt: dto.archivedAt ?? (dto.archived ? dto.updatedAt : null),
+    spentMinutes: dto.spentMinutes ?? null,
+    deletedAt: dto.deletedAt ?? null,
     labelIds: dto.labelIds ?? [],
     version: dto.version,
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
     href: `/life-os/app/tasks/${dto.id}`,
+  };
+}
+
+function mapDependency(dto: TaskDependencyResponseDto): DependencyEditorTask {
+  return {
+    id: dto.id,
+    title: dto.title,
+    status: dto.status,
+    priority: dto.priority,
+    href: `/life-os/app/tasks/${dto.id}`,
+  };
+}
+
+export function mapTaskDetailResponse(
+  dto: TaskDetailResponseDto,
+  projectById: ReadonlyMap<string, TaskProjectContext> = new Map(),
+): TaskDetail {
+  const task = mapTaskResponse(dto.task, projectById);
+  return {
+    task: {
+      ...task,
+      commentCount: dto.counts.commentCount,
+      blockerCount: dto.dependencies.unresolvedBlockerCount,
+      version: dto.version,
+    },
+    subtasks: (dto.task.subtasks ?? []).map((subtask) => ({
+      id: subtask.id,
+      title: subtask.title,
+      completed: subtask.completed,
+      position: subtask.position,
+      version: subtask.version,
+    })),
+    blockers: dto.dependencies.blockers.map(mapDependency),
+    dependents: dto.dependencies.dependents.map(mapDependency),
+    counts: dto.counts,
+    version: dto.version,
   };
 }
 
@@ -241,6 +332,18 @@ export async function getTaskSummaryCounts(signal?: AbortSignal): Promise<TaskSu
     ...(signal ? { signal } : {}),
   });
   return mapTaskSummary(dto);
+}
+
+export async function getTaskDetail(
+  id: string,
+  signal?: AbortSignal,
+  projectById?: ReadonlyMap<string, TaskProjectContext>,
+): Promise<TaskDetail> {
+  const dto = await apiRequest<TaskDetailResponseDto>(`/tasks/${id}/detail`, {
+    method: "GET",
+    ...(signal ? { signal } : {}),
+  });
+  return mapTaskDetailResponse(dto, projectById);
 }
 
 export async function listLabels(signal?: AbortSignal): Promise<readonly TaskFormLabelOption[]> {
@@ -328,6 +431,73 @@ export async function setTaskMit(id: string, date: string): Promise<TaskRecord> 
 export async function clearTaskMit(id: string): Promise<TaskRecord> {
   const dto = await apiRequest<TaskResponseDto>(`/tasks/${id}/mit`, { method: "DELETE" });
   return mapTaskResponse(dto);
+}
+
+export async function addSubtask(
+  taskId: string,
+  title: string,
+  position?: number,
+): Promise<TaskResponseDto> {
+  return apiRequest<TaskResponseDto>(`/tasks/${taskId}/subtasks`, {
+    method: "POST",
+    body: { title, ...(position === undefined ? {} : { position }) },
+  });
+}
+
+export async function updateSubtask(
+  taskId: string,
+  subtaskId: string,
+  request: { readonly title: string; readonly completed?: boolean; readonly position?: number },
+): Promise<TaskResponseDto> {
+  return apiRequest<TaskResponseDto>(`/tasks/${taskId}/subtasks/${subtaskId}`, {
+    method: "PUT",
+    body: request,
+  });
+}
+
+export async function toggleSubtask(taskId: string, subtaskId: string): Promise<TaskResponseDto> {
+  return apiRequest<TaskResponseDto>(`/tasks/${taskId}/subtasks/${subtaskId}/toggle`, {
+    method: "PATCH",
+  });
+}
+
+export async function deleteSubtask(taskId: string, subtaskId: string): Promise<TaskResponseDto> {
+  return apiRequest<TaskResponseDto>(`/tasks/${taskId}/subtasks/${subtaskId}`, {
+    method: "DELETE",
+  });
+}
+
+export async function reorderSubtasks(
+  taskId: string,
+  subtaskIds: readonly string[],
+): Promise<TaskResponseDto> {
+  return apiRequest<TaskResponseDto>(`/tasks/${taskId}/subtasks/reorder`, {
+    method: "PUT",
+    body: { subtaskIds },
+  });
+}
+
+export async function addTaskDependency(
+  taskId: string,
+  targetTaskId: string,
+  type: "BLOCKER" | "DEPENDENT" = "BLOCKER",
+): Promise<TaskDependenciesSummaryDto> {
+  return apiRequest<TaskDependenciesSummaryDto>(`/tasks/${taskId}/dependencies`, {
+    method: "POST",
+    body: { targetTaskId, type },
+  });
+}
+
+export async function removeTaskDependency(
+  taskId: string,
+  targetTaskId: string,
+  type: "BLOCKER" | "DEPENDENT",
+): Promise<TaskDependenciesSummaryDto> {
+  const params = new URLSearchParams({ type });
+  return apiRequest<TaskDependenciesSummaryDto>(
+    `/tasks/${taskId}/dependencies/${targetTaskId}?${params.toString()}`,
+    { method: "DELETE" },
+  );
 }
 
 export function toBulkRequest(

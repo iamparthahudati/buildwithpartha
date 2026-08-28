@@ -91,7 +91,7 @@ describe("ProjectsRoute", () => {
         page: {
           items: [],
           page: 0,
-          size: 6,
+          size: 10,
           totalItems: 1,
           totalPages: 1,
           first: true,
@@ -142,7 +142,7 @@ describe("ProjectsRoute", () => {
         sortBy: "name",
         sortDirection: "ASC",
         page: 1,
-        size: 6,
+        size: 10,
       }),
       true,
     );
@@ -207,5 +207,134 @@ describe("ProjectsRoute", () => {
     await user.click(retryBtns[0]!);
 
     expect(mockRefetch).toHaveBeenCalled();
+  });
+
+  it("renders null when user is null in ProjectsRoute", () => {
+    const { container } = render(
+      <QueryClientProvider client={new QueryClient()}>
+        <AuthSessionContext.Provider value={{ ...MOCK_AUTH_STATE, user: null }}>
+          <MemoryRouter initialEntries={["/life-os/app/projects"]}>
+            <Routes>
+              <Route path="/life-os/app/projects" element={<ProjectsRoute />} />
+            </Routes>
+          </MemoryRouter>
+        </AuthSessionContext.Provider>
+      </QueryClientProvider>,
+    );
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("handles create project, edit project, archive project, and delete project actions", async () => {
+    const user = userEvent.setup();
+    renderProjectsRoute();
+
+    // Create project
+    const newProjectBtn = screen.getByRole("button", { name: "Add project" });
+    await user.click(newProjectBtn);
+
+    const nameInput = screen.getByLabelText(/Project Name/i);
+    await user.type(nameInput, "New Test Project");
+
+    const submitCreateBtn = screen.getByRole("button", { name: "Create project" });
+    await user.click(submitCreateBtn);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "New Test Project" }),
+    );
+
+    // Edit project
+    const cardOptionsBtn = screen.getByRole("button", { name: "Project actions" });
+    await user.click(cardOptionsBtn);
+
+    const editItem = screen.getByRole("menuitem", { name: "Edit" });
+    await user.click(editItem);
+
+    const submitSaveBtn = screen.getByRole("button", { name: "Save changes" });
+    await user.click(submitSaveBtn);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "proj-1",
+      request: expect.objectContaining({ name: "Launch Platform v1" }),
+    });
+
+    // Archive project
+    await user.click(cardOptionsBtn);
+    const archiveItem = screen.getByRole("menuitem", { name: "Archive" });
+    await user.click(archiveItem);
+
+    const confirmArchiveBtn = screen.getByRole("button", { name: "Archive project" });
+    await user.click(confirmArchiveBtn);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "proj-1",
+      request: { version: 1 },
+    });
+  });
+
+  it("handles restore project in ARCHIVED tab", async () => {
+    const archivedProject = {
+      ...MOCK_PROJECT_1,
+      archivedAt: "2026-08-01T00:00:00Z",
+      status: "ARCHIVED" as const,
+    };
+    mockUseProjects.mockReturnValue({
+      data: {
+        items: [archivedProject],
+        page: {
+          items: [],
+          page: 0,
+          size: 10,
+          totalItems: 1,
+          totalPages: 1,
+          first: true,
+          last: true,
+        },
+        summary: { total: 1, active: 0, completed: 0, onHold: 0, atRisk: 0, averageProgress: 40 },
+      },
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    const user = userEvent.setup();
+    renderProjectsRoute(["/life-os/app/projects?status=ARCHIVED"]);
+
+    const cardOptionsBtn = screen.getByRole("button", { name: "Project actions" });
+    await user.click(cardOptionsBtn);
+
+    const restoreItem = screen.getByRole("menuitem", { name: "Restore" });
+    await user.click(restoreItem);
+
+    expect(mockMutateAsync).toHaveBeenCalledWith({
+      id: "proj-1",
+      request: { version: 1 },
+    });
+  });
+
+  it("handles search query, priority, health, sort, view, and pagination updates", async () => {
+    const user = userEvent.setup();
+    renderProjectsRoute();
+
+    const searchInput = screen.getByPlaceholderText("Search projects...");
+    await user.type(searchInput, "Platform");
+
+    const prioritySelect = screen.getByLabelText("Priority filter");
+    await user.selectOptions(prioritySelect, "P1");
+
+    const healthSelect = screen.getByLabelText("Health filter");
+    await user.selectOptions(healthSelect, "ON_TRACK");
+
+    await waitFor(() => {
+      expect(mockUseProjects).toHaveBeenCalledWith(
+        expect.objectContaining({
+          q: "Platform",
+          priority: ["P1"],
+          health: ["ON_TRACK"],
+        }),
+        true,
+      );
+    });
   });
 });

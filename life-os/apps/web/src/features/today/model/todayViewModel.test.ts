@@ -271,6 +271,32 @@ describe("todayViewModel", () => {
     });
   });
 
+  it("labels the daily focus target when no explicit focus plan exists", () => {
+    const response = populatedResponse();
+    const view = mapTodayResponse(
+      {
+        ...response,
+        focusSummary: widget("SUCCESS", {
+          actualFocusMinutesToday: 30,
+          plannedFocusMinutesToday: 0,
+          activeSessionTimerSummary: null,
+          isSessionActive: false,
+          dailyFocusTargetMinutes: 60,
+          comparisonMinutes: 60,
+          comparisonSource: "DAILY_TARGET",
+          progressPercentage: 50,
+        }),
+        metrics: widget("EMPTY", { metrics: [] }),
+      },
+      "en-IN",
+    );
+
+    expect(view.focusTimeStatus).toEqual({
+      type: "ready",
+      value: "30 mins of 1 hr daily target",
+    });
+  });
+
   it("keeps provider failures isolated and never exposes backend error text", () => {
     const response = populatedResponse();
     const view = mapTodayResponse(

@@ -20,9 +20,13 @@ import {
   TaskRowDemo,
   TaskCardDemo,
   TaskDetailsHeaderDemo,
+  SubtaskChecklistDemo,
+  DependencyEditorDemo,
+  SchedulingPanelDemo,
   TaskFormDemo,
   TaskSummaryMetricsDemo,
   ProjectDetailsHeaderDemo,
+  ProjectDetailsScreenDemo,
   ProjectOverviewDemo,
   ProjectTimelineDemo,
   ProjectFormDemo,
@@ -34,15 +38,110 @@ import {
   SprintFormDialogDemo,
   SprintRetrospectiveDialogDemo,
   TimeBlockRowDemo,
+  TimeBlockFormDemo,
+  DayTimelineDemo,
+  TimeSummaryDemo,
+  TimeBlocksScreenDemo,
+  WeekStripReadyDemo,
+  WeekStripLoadingDemo,
+  WeekCapacitySummaryReadyDemo,
+  WeekCapacitySummaryOvercapacityDemo,
+  WeekCapacitySummaryLoadingDemo,
+  WeeklyOutcomesDemo,
+  UnscheduledTaskQueueDemo,
+  UnscheduledTaskQueuePartialErrorDemo,
+  TaskAllocationMoveDemo,
+  WeekPlannerScreenDemo,
+  GoalCardDemo,
+  GoalRowDemo,
+  ProgressEditorDemo,
+  CheckInFormDialogDemo,
+  CheckInHistoryDemo,
+  GoalLinkedWorkListDemo,
+  GoalMetricSummaryDemo,
+  PeriodControlsDemo,
+  ProgressSummaryCardsDemo,
+  ProgressTrendsChartDemo,
+  ProgressCategoryBreakdownDemo,
+  ProgressComparisonTextDemo,
+  ProgressStatesDemo,
+  ProgressScreenDemo,
+  ReportSelectorDemo,
+  ReportFilterBarDemo,
+  ReportSummaryMetricsDemo,
+  ReportChartDemo,
+  ReportDataTableDemo,
+  ReportAsynchronousNoticeDemo,
+  ReportStatesDemo,
+  ReportsScreenDemo,
 } from "./ComposedDemos";
+
+import { GoalsScreenDemo, GoalDetailsScreenDemo } from "./GoalsDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
 import { TasksScreenDemo } from "./TasksScreenDemos";
+import { TaskDetailsScreenDemo, TaskDetailsSheetDemo } from "./TaskDetailsDemos";
+import {
+  CalendarEventDemo,
+  CalendarFilterDemo,
+  CalendarGridsDemo,
+  CalendarHeaderDemo,
+} from "./CalendarDemos";
+import { CalendarScreenDemo } from "./CalendarScreenDemos";
+import { FocusModeSurfaceDemo } from "./FocusDemos";
 import type { CatalogEntry } from "./registry";
 
 /* Composed-component entries (LOS-0401 onward). */
 
 export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
+  {
+    id: "focus-mode-surface",
+    name: "Focus Mode surface",
+    group: "Composed",
+    summary:
+      "A controlled, distraction-reduced Focus Session surface with linked context, focus/break actions, bounded session settings, private distraction capture, deliberate browser-notification consent, confirmations, and terminal recovery states.",
+    states: [
+      {
+        id: "focus-mode-running",
+        name: "Running focus",
+        description:
+          "A linked Task and Time Block remain visible beside the active timer and controls.",
+        render: () => <FocusModeSurfaceDemo state="running" />,
+      },
+      {
+        id: "focus-mode-paused-break",
+        name: "Paused break",
+        description:
+          "The break can resume or be skipped without implying that focus work completed.",
+        render: () => <FocusModeSurfaceDemo state="paused-break" />,
+      },
+      {
+        id: "focus-mode-idle",
+        name: "Ready",
+        description: "Durations can be changed before a new Focus Session starts.",
+        render: () => <FocusModeSurfaceDemo state="idle" />,
+      },
+      {
+        id: "focus-mode-completed",
+        name: "Completed",
+        description:
+          "The summary names confirmed recorded minutes without marking the linked Task done.",
+        render: () => <FocusModeSurfaceDemo state="completed" />,
+      },
+      {
+        id: "focus-mode-unavailable",
+        name: "Unavailable",
+        description: "A retry path does not invent or overwrite the last confirmed session state.",
+        render: () => <FocusModeSurfaceDemo state="unavailable" />,
+      },
+      {
+        id: "focus-mode-loading",
+        name: "Loading",
+        description: "The surface reserves its layout while the active Focus Session is restored.",
+        render: () => <FocusModeSurfaceDemo state="loading" />,
+      },
+    ],
+  },
   {
     id: "form-field",
     name: "FormField and FormErrorSummary",
@@ -314,6 +413,164 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
     ],
   },
   {
+    id: "subtask-checklist",
+    name: "SubtaskChecklist",
+    group: "Composed",
+    summary:
+      "An ordered Subtask checklist with exact progress, add/edit/toggle/delete actions, button and Alt+Arrow keyboard reordering, isolated pending/failure states, and an explicit boundary between 100% checklist progress and parent Task completion.",
+    states: [
+      {
+        id: "subtask-checklist-ready",
+        name: "Interactive checklist",
+        description: "Add, edit, reorder, toggle, and delete Subtasks with controlled data.",
+        render: () => <SubtaskChecklistDemo />,
+      },
+      {
+        id: "subtask-checklist-pending-partial",
+        name: "Pending and partial failure",
+        description:
+          "One pending Subtask and one failed reorder stay isolated while the rest remain available.",
+        render: () => <SubtaskChecklistDemo state="partial" />,
+      },
+      {
+        id: "subtask-checklist-empty",
+        name: "First-use empty",
+        description: "The value of Subtasks is explained beside the available add control.",
+        render: () => <SubtaskChecklistDemo state="empty" />,
+      },
+      {
+        id: "subtask-checklist-read-only",
+        name: "Permission read-only",
+        description: "Confirmed Subtasks stay visible while every mutation is unavailable.",
+        render: () => <SubtaskChecklistDemo state="read-only" />,
+      },
+      {
+        id: "subtask-checklist-error",
+        name: "Load error",
+        description:
+          "The failed checklist is isolated while the surrounding Task remains available.",
+        render: () => <SubtaskChecklistDemo state="error" />,
+      },
+      {
+        id: "subtask-checklist-loading",
+        name: "Loading",
+        description: "The checklist reserves its header, progress, and row layout while loading.",
+        render: () => <SubtaskChecklistDemo state="loading" />,
+      },
+    ],
+  },
+  {
+    id: "dependency-editor",
+    name: "DependencyEditor",
+    group: "Composed",
+    summary:
+      "A directional Task dependency editor with blocker search and selection, blocker/dependent lists, direct completion navigation, cycle/self explanations, isolated mutation recovery, and a full-screen mobile add dialog.",
+    states: [
+      {
+        id: "dependency-editor-ready",
+        name: "Interactive dependencies",
+        description:
+          "Search for blockers, navigate to unresolved Tasks, and unlink either relationship direction.",
+        render: () => <DependencyEditorDemo />,
+      },
+      {
+        id: "dependency-editor-cycle",
+        name: "Cycle explanation",
+        description:
+          "Open Add blocker and select Update learning plan to see the dependency-loop explanation.",
+        render: () => <DependencyEditorDemo state="cycle" />,
+      },
+      {
+        id: "dependency-editor-pending-partial",
+        name: "Pending and partial failure",
+        description:
+          "One unlink is pending while a conflict stays isolated to a different relationship.",
+        render: () => <DependencyEditorDemo state="partial" />,
+      },
+      {
+        id: "dependency-editor-empty",
+        name: "First-use empty",
+        description: "Both relationship directions explain their independent empty state.",
+        render: () => <DependencyEditorDemo state="empty" />,
+      },
+      {
+        id: "dependency-editor-read-only",
+        name: "Permission read-only",
+        description: "Confirmed relationships stay visible while every mutation is unavailable.",
+        render: () => <DependencyEditorDemo state="read-only" />,
+      },
+      {
+        id: "dependency-editor-error",
+        name: "Load error",
+        description:
+          "A failed dependency region is isolated while the surrounding Task remains available.",
+        render: () => <DependencyEditorDemo state="error" />,
+      },
+      {
+        id: "dependency-editor-loading",
+        name: "Loading",
+        description: "The editor reserves its relationship headings and rows while loading.",
+        render: () => <DependencyEditorDemo state="loading" />,
+      },
+    ],
+  },
+  {
+    id: "scheduling-panel",
+    name: "SchedulingPanel",
+    group: "Composed",
+    summary:
+      "A controlled Task scheduling and focus panel that reuses linked TimeBlockRows, shows confirmed Focus Session time, delegates schedule and Start focus actions, and prevents duplicate active sessions.",
+    states: [
+      {
+        id: "scheduling-panel-ready",
+        name: "Linked schedule and focus",
+        description:
+          "Confirmed time, linked Time Blocks, Schedule, and Task/Time Block Start focus actions remain in one responsive region.",
+        render: () => <SchedulingPanelDemo />,
+      },
+      {
+        id: "scheduling-panel-conflict",
+        name: "Schedule conflict",
+        description:
+          "The shared Time Block conflict detail stays visible with an explicit path to the scheduling service's resolution flow.",
+        render: () => <SchedulingPanelDemo state="conflict" />,
+      },
+      {
+        id: "scheduling-panel-active-focus",
+        name: "Active Focus Session",
+        description:
+          "An existing shared Focus Session replaces every duplicate Start focus action with one Open focus path.",
+        render: () => <SchedulingPanelDemo state="active" />,
+      },
+      {
+        id: "scheduling-panel-empty",
+        name: "No linked Time Blocks",
+        description: "The first schedule action is available from the truthful first-use state.",
+        render: () => <SchedulingPanelDemo state="empty" />,
+      },
+      {
+        id: "scheduling-panel-read-only",
+        name: "Permission read-only",
+        description:
+          "Confirmed schedule and time remain visible while every mutation is unavailable.",
+        render: () => <SchedulingPanelDemo state="read-only" />,
+      },
+      {
+        id: "scheduling-panel-error",
+        name: "Load error",
+        description:
+          "The failed region names that the rest of the Task remains available and offers retry.",
+        render: () => <SchedulingPanelDemo state="error" />,
+      },
+      {
+        id: "scheduling-panel-loading",
+        name: "Loading",
+        description: "The panel reserves its summary and linked-Time-Block layout while loading.",
+        render: () => <SchedulingPanelDemo state="loading" />,
+      },
+    ],
+  },
+  {
     id: "task-summary-metrics",
     name: "TaskSummaryMetrics",
     group: "Composed",
@@ -365,6 +622,29 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
     ],
   },
   {
+    id: "task-details-screen",
+    name: "TaskDetailsScreen",
+    group: "Composed",
+    summary:
+      "Task Details composition with responsive tabs and list-context sheet presentation, reusing the completed header, Subtask checklist, dependency editor, scheduling, comments, attachments, and activity components.",
+    states: [
+      {
+        id: "task-details-screen-states",
+        name: "Tabs and UX states",
+        description:
+          "Switch among populated, empty, partial, refreshing, offline, archived, deleted, loading, unavailable, and service-error states, then exercise every enabled tab.",
+        render: () => <TaskDetailsScreenDemo />,
+      },
+      {
+        id: "task-details-screen-sheet",
+        name: "List-context sheet",
+        description:
+          "A trailing desktop sheet that becomes full-screen on mobile and restores focus to the originating Task control when closed.",
+        render: () => <TaskDetailsSheetDemo />,
+      },
+    ],
+  },
+  {
     id: "project-details-header",
     name: "ProjectDetailsHeader",
     group: "Composed",
@@ -376,6 +656,21 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Default",
         description: "Renders project details header in active, archived, and loading states.",
         render: () => <ProjectDetailsHeaderDemo />,
+      },
+    ],
+  },
+  {
+    id: "project-details-screen",
+    name: "ProjectDetailsScreen",
+    group: "Composed",
+    summary:
+      "Project Details composition with responsive tabs, Activity filtering, pagination, and accessible timestamps.",
+    states: [
+      {
+        id: "project-details-screen-default",
+        name: "Default",
+        description: "Interactive Project Details tabs plus loading and unavailable states.",
+        render: () => <ProjectDetailsScreenDemo />,
       },
     ],
   },
@@ -515,6 +810,436 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "TimeBlockRow in scheduled, active current, completed, conflict warning, and loading skeleton states.",
         render: () => <TimeBlockRowDemo />,
+      },
+    ],
+  },
+  {
+    id: "time-block-form",
+    name: "TimeBlockForm",
+    group: "Composed",
+    summary:
+      "Form dialog for creating and editing Time Blocks with title, category, linked task/project, date/time range, timezone, notes, DST validation, and conflict resolution override.",
+    states: [
+      {
+        id: "time-block-form-default",
+        name: "Default",
+        description: "Interactive specimens for Create and Edit TimeBlockForm dialogs.",
+        render: () => <TimeBlockFormDemo />,
+      },
+    ],
+  },
+  {
+    id: "day-timeline",
+    name: "DayTimeline",
+    group: "Composed",
+    summary:
+      "24-hour visual time scale grid for scheduling time blocks with current time now line, gap slots, collision layout, density toggle, drag/resize handles, keyboard navigation, and small-screen list fallback.",
+    states: [
+      {
+        id: "day-timeline-default",
+        name: "Default",
+        description:
+          "DayTimeline showing visual grid, time blocks, now line, density toggle, list fallback mode, and interactive callbacks.",
+        render: () => <DayTimelineDemo />,
+      },
+    ],
+  },
+  {
+    id: "time-summary",
+    name: "TimeSummary",
+    group: "Composed",
+    summary:
+      "Time summary dashboard components composing Focus/Break/Personal/Unscheduled metric cards, category breakdown DonutChart with accessible text/table summary, daily focus goal progress card, and upcoming scheduled time blocks list with quick actions.",
+    states: [
+      {
+        id: "time-summary-default",
+        name: "Default",
+        description:
+          "TimeSummary overview displaying metric strip, time category breakdown donut chart, goal progress ring, upcoming blocks list, and quick action callbacks.",
+        render: () => <TimeSummaryDemo />,
+      },
+    ],
+  },
+  {
+    id: "time-blocks-screen",
+    name: "TimeBlocksScreen",
+    group: "Composed",
+    summary:
+      "Full Time Blocks screen with page header, date navigation, Day/Week view switcher, focus toggle, summary panel toggle, DayTimeline visual grid, TimeSummary overview, TimeBlockForm dialog, delete confirmation dialog, and mock UX states (populated, week view, conflict, DST transition, offline, loading, empty, and error).",
+    states: [
+      {
+        id: "time-blocks-screen-default",
+        name: "Default",
+        description:
+          "TimeBlocksScreen overview demonstrating interactive specimens across Day view, Week view, Conflict, DST transition, Offline, Loading, Empty, and Error states.",
+        render: () => <TimeBlocksScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-header",
+    name: "CalendarHeader",
+    group: "Composed",
+    summary:
+      "Date-aware Calendar navigation with previous/next period controls, Today return, Day/Week/Month view selection, and an optional Add Time Block action.",
+    states: [
+      {
+        id: "calendar-header-ready",
+        name: "Ready",
+        description: "Interactive month header with local-date navigation and view controls.",
+        render: () => <CalendarHeaderDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-events",
+    name: "EventChip and OverflowList",
+    group: "Composed",
+    summary:
+      "Source-labelled Calendar event projections and a keyboard/touch-operable dense-day disclosure that preserves canonical source selection.",
+    states: [
+      {
+        id: "calendar-events-ready",
+        name: "Sources and overflow",
+        description: "Timed and all-day source types plus the accessible overflow list.",
+        render: () => <CalendarEventDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-filter-legend",
+    name: "CalendarFilterLegend",
+    group: "Composed",
+    summary:
+      "A controlled, labelled source legend that combines accessible checkboxes with redundant source color markers and optional counts.",
+    states: [
+      {
+        id: "calendar-filter-ready",
+        name: "All sources",
+        description: "All canonical Calendar source types selected with current counts.",
+        render: () => <CalendarFilterDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-grids",
+    name: "Calendar grids and list alternative",
+    group: "Composed",
+    summary:
+      "Day, week and six-week month Calendar grids with a distinct all-day lane, keyboard/touch date selection, dense-day overflow, responsive agendas, and a semantic list alternative.",
+    states: [
+      {
+        id: "calendar-grids-ready",
+        name: "Ready",
+        description: "Populated day, week and month views followed by the same records as a list.",
+        render: () => <CalendarGridsDemo />,
+      },
+    ],
+  },
+  {
+    id: "calendar-screen",
+    name: "CalendarScreen",
+    group: "Composed",
+    summary:
+      "Complete responsive Calendar composition with URL-owned date, Day/Week/Month view and source filters; loading, empty, offline, error, truncation, dense-day, DST, and month-boundary states; and canonical source selection.",
+    states: [
+      {
+        id: "calendar-screen-scenarios",
+        name: "Integrated states",
+        description:
+          "Interactive mock scenarios for every Calendar view and network/data boundary before route integration.",
+        render: () => <CalendarScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-strip",
+    name: "WeekStrip",
+    group: "Composed",
+    summary:
+      "Seven-day week plan strip displaying daily planned vs available capacity, task completion count, overcapacity and conflict badges, accessible day selection, and non-drag action menu controls.",
+    states: [
+      {
+        id: "week-strip-ready",
+        name: "Ready",
+        description:
+          "Populated seven-day strip with today marker, overcapacity badge, conflict indicator, and day actions.",
+        render: () => <WeekStripReadyDemo />,
+      },
+      {
+        id: "week-strip-loading",
+        name: "Loading",
+        description: "Loading skeleton grid for week strip.",
+        render: () => <WeekStripLoadingDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-capacity",
+    name: "WeekCapacitySummary",
+    group: "Composed",
+    summary:
+      "Weekly workload vs capacity card displaying total planned time, workload progress meter, task completion count, time allocation DonutChart breakdown, and overcapacity alert notice.",
+    states: [
+      {
+        id: "week-capacity-summary-ready",
+        name: "Balanced Plan",
+        description: "Balanced weekly workload with allocation breakdown and task progress.",
+        render: () => <WeekCapacitySummaryReadyDemo />,
+      },
+      {
+        id: "week-capacity-summary-overcapacity",
+        name: "Overcapacity",
+        description:
+          "Overcapacity warning state with extra planned hours notice and conflict badge.",
+        render: () => <WeekCapacitySummaryOvercapacityDemo />,
+      },
+      {
+        id: "week-capacity-summary-loading",
+        name: "Loading",
+        description: "Loading skeleton state for weekly capacity summary.",
+        render: () => <WeekCapacitySummaryLoadingDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-outcomes",
+    name: "WeeklyOutcomes",
+    group: "Composed",
+    summary:
+      "Controlled weekly outcome selection, creation, reordering, bounded selection, per-outcome save state, and explicit keyboard/mobile controls.",
+    states: [
+      {
+        id: "weekly-outcomes-ready",
+        name: "Ready",
+        description: "Select, add, and reorder outcomes without relying on pointer drag.",
+        render: () => <WeeklyOutcomesDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-unscheduled-queue",
+    name: "UnscheduledTaskQueue and TaskAllocationDialog",
+    group: "Composed",
+    summary:
+      "Filterable unscheduled Task queue with responsive table/cards, explicit allocate/carry actions, row-level partial recovery, and a shared allocate/move/carry form.",
+    states: [
+      {
+        id: "unscheduled-task-queue-ready",
+        name: "Ready",
+        description: "Filter Tasks and allocate or carry them into the Weekly Plan.",
+        render: () => <UnscheduledTaskQueueDemo />,
+      },
+      {
+        id: "unscheduled-task-queue-partial-error",
+        name: "Partial error",
+        description: "One failed carry remains retryable while other Tasks stay available.",
+        render: () => <UnscheduledTaskQueuePartialErrorDemo />,
+      },
+      {
+        id: "task-allocation-move",
+        name: "Move form",
+        description: "The same day/outcome/time form is the keyboard and mobile move path.",
+        render: () => <TaskAllocationMoveDemo />,
+      },
+    ],
+  },
+  {
+    id: "week-planner-screen",
+    name: "WeekPlannerScreen",
+    group: "Composed",
+    summary:
+      "Composed Week Planner screen with week navigation, capacity strip & summary, weekly outcomes, allocated day schedule, unscheduled task backlog, conflict alerts, and plan finalize/reopen controls.",
+    states: [
+      {
+        id: "week-planner-screen-ready",
+        name: "Ready (Populated Draft)",
+        description:
+          "Interactive week planner screen with week navigation, capacity breakdown, outcomes, and unscheduled queue.",
+        render: () => <WeekPlannerScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "goal-components",
+    name: "Goal components",
+    group: "Composed",
+    summary:
+      "Goal cards, list rows, progress editors, check-in history timelines, linked work item management, and goal summary metrics.",
+    states: [
+      {
+        id: "goal-card-percentage",
+        name: "Goal card",
+        description:
+          "Percentage progress goal with category, status, cadence, and action triggers.",
+        render: () => <GoalCardDemo />,
+      },
+      {
+        id: "goal-row",
+        name: "Goal row",
+        description: "Compact goal list row with category, progress bar, value label, and status.",
+        render: () => <GoalRowDemo />,
+      },
+      {
+        id: "progress-editor",
+        name: "Progress editor",
+        description:
+          "Interactive progress editor with calculation explanation and quick increments.",
+        render: () => <ProgressEditorDemo />,
+      },
+      {
+        id: "check-in-form-dialog",
+        name: "Check-in dialog",
+        description: "Form dialog to log a new check-in with value and optional note.",
+        render: () => <CheckInFormDialogDemo />,
+      },
+      {
+        id: "check-in-history",
+        name: "Check-in history",
+        description: "Timeline log of past check-ins with date, recorded value, and deltas.",
+        render: () => <CheckInHistoryDemo />,
+      },
+      {
+        id: "goal-linked-work-list",
+        name: "Linked work items",
+        description:
+          "Linked projects, tasks, and habits with target type badges and link controls.",
+        render: () => <GoalLinkedWorkListDemo />,
+      },
+      {
+        id: "goal-metric-summary",
+        name: "Metric summary",
+        description: "Summary strip of total, active, completed, paused goals, and avg progress %.",
+        render: () => <GoalMetricSummaryDemo />,
+      },
+      {
+        id: "goals-screen",
+        name: "GoalsScreen",
+        description:
+          "Full goals list screen with header, metrics, search/filters, view toggle, grid/list, detail panel, and modals.",
+        render: () => <GoalsScreenDemo />,
+      },
+      {
+        id: "goal-details-screen",
+        name: "GoalDetailsScreen",
+        description:
+          "Full goal details screen with header, overview, progress editor, check-in history, and linked work items.",
+        render: () => <GoalDetailsScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "progress-components",
+    name: "Progress screen components (Period Controls, Summary Cards, Trends, Breakdowns, Descriptive Insights, Empty & Error States)",
+    group: "Composed",
+    summary:
+      "Comprehensive progress components (LOS-1107): PeriodControls, ProgressSummaryCards, ProgressTrendsChart, ProgressCategoryBreakdown, ProgressComparisonText, ProgressEmptyState, and ProgressErrorState with data table fallback and non-causal claims enforcement.",
+    states: [
+      {
+        id: "period-controls",
+        name: "PeriodControls",
+        description:
+          "Period preset button group with custom date range pickers and timezone context.",
+        render: () => <PeriodControlsDemo />,
+      },
+      {
+        id: "progress-summary-cards",
+        name: "ProgressSummaryCards",
+        description:
+          "Summary cards for task completion, focus time, project/goal progress, habit completion, and review streak.",
+        render: () => <ProgressSummaryCardsDemo />,
+      },
+      {
+        id: "progress-trends-chart",
+        name: "ProgressTrendsChart",
+        description: "ChartFrame execution trends with accessible data table alternative.",
+        render: () => <ProgressTrendsChartDemo />,
+      },
+      {
+        id: "progress-category-breakdown",
+        name: "ProgressCategoryBreakdown",
+        description: "DonutChart focus category breakdown with accessible table view.",
+        render: () => <ProgressCategoryBreakdownDemo />,
+      },
+      {
+        id: "progress-comparison-text",
+        name: "ProgressComparisonText",
+        description:
+          "Factual, descriptive summary callout adhering strictly to non-causal claims enforcement.",
+        render: () => <ProgressComparisonTextDemo />,
+      },
+      {
+        id: "progress-states",
+        name: "ProgressEmptyState and ProgressErrorState",
+        description: "Zero-shame empty state and region error state with retry callback.",
+        render: () => <ProgressStatesDemo />,
+      },
+      {
+        id: "progress-screen",
+        name: "ProgressScreen",
+        description:
+          "Composed Progress & Insights screen with period controls, summary cards, and charts.",
+        render: () => <ProgressScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "reports-components",
+    name: "Reports screen components (Report Selector, Filters, Summary Metrics, Chart Series, Data Table, Async Notice, Print-friendly)",
+    group: "Composed",
+    summary:
+      "Comprehensive reports components (LOS-1110): ReportSelector, ReportFilterBar, ReportSummaryMetrics, ReportChart, ReportDataTable, ReportAsynchronousNotice, ReportEmptyState, ReportErrorState, and ReportsScreen with saved recent settings and mobile print-friendly support.",
+    states: [
+      {
+        id: "report-selector",
+        name: "ReportSelector",
+        description: "Report type dropdown selector and active report details card.",
+        render: () => <ReportSelectorDemo />,
+      },
+      {
+        id: "report-filter-bar",
+        name: "ReportFilterBar",
+        description:
+          "Period preset button group, custom date range pickers, project, and category filters.",
+        render: () => <ReportFilterBarDemo />,
+      },
+      {
+        id: "report-summary-metrics",
+        name: "ReportSummaryMetrics",
+        description: "Summary metric cards displaying key report metrics and comparison trends.",
+        render: () => <ReportSummaryMetricsDemo />,
+      },
+      {
+        id: "report-chart",
+        name: "ReportChart",
+        description: "Visual trend charts with accessible data table alternative.",
+        render: () => <ReportChartDemo />,
+      },
+      {
+        id: "report-data-table",
+        name: "ReportDataTable",
+        description: "Tabular data breakdowns with headers, rows, and total counts.",
+        render: () => <ReportDataTableDemo />,
+      },
+      {
+        id: "report-async-notice",
+        name: "ReportAsynchronousNotice",
+        description:
+          "Notice alert when report date range triggers background asynchronous processing.",
+        render: () => <ReportAsynchronousNoticeDemo />,
+      },
+      {
+        id: "report-states",
+        name: "ReportEmptyState and ReportErrorState",
+        description: "Zero-data empty state and error state with retry callback.",
+        render: () => <ReportStatesDemo />,
+      },
+      {
+        id: "reports-screen",
+        name: "ReportsScreen",
+        description:
+          "Full composed Reports screen with selector, filter bar, summary, charts, data tables, and print action.",
+        render: () => <ReportsScreenDemo />,
       },
     ],
   },

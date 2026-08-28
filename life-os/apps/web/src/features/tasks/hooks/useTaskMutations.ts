@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 
 import { ApiError } from "@lib/apiClient";
+import { invalidateActivityQueries } from "@features/activity";
 
 import {
   applyBulkTaskAction,
@@ -64,6 +65,7 @@ export function useCreateTask(): UseMutationResult<TaskRecord, Error, CreateTask
     mutationFn: (request) => createTask(request),
     onSuccess: () => {
       void invalidateTasksQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }
@@ -78,6 +80,7 @@ export function useUpdateTask(): UseMutationResult<
     mutationFn: ({ id, request }) => updateTask(id, request),
     onSuccess: () => {
       void invalidateTasksQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }
@@ -108,6 +111,9 @@ export function useCompleteTask(): UseMutationResult<TaskRecord, Error, Versione
     },
     onError: (_error, _variables, context) => {
       if (context?.previous) restoreLists(queryClient, context.previous);
+    },
+    onSuccess: () => {
+      void invalidateActivityQueries(queryClient);
     },
     onSettled: () => {
       void invalidateTasksQueries(queryClient);
@@ -145,6 +151,9 @@ export function useChangeTaskStatus(): UseMutationResult<
     onError: (_error, _variables, context) => {
       if (context?.previous) restoreLists(queryClient, context.previous);
     },
+    onSuccess: () => {
+      void invalidateActivityQueries(queryClient);
+    },
     onSettled: () => {
       void invalidateTasksQueries(queryClient);
     },
@@ -167,6 +176,9 @@ export function useArchiveTask(): UseMutationResult<TaskRecord, Error, Versioned
     onError: (_error, _variables, context) => {
       if (context?.previous) restoreLists(queryClient, context.previous);
     },
+    onSuccess: () => {
+      void invalidateActivityQueries(queryClient);
+    },
     onSettled: () => {
       void invalidateTasksQueries(queryClient);
     },
@@ -179,6 +191,7 @@ export function useRestoreTask(): UseMutationResult<TaskRecord, Error, Versioned
     mutationFn: ({ id, version }) => restoreTask(id, { version }),
     onSuccess: () => {
       void invalidateTasksQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }
@@ -189,6 +202,7 @@ export function useDeleteTask(): UseMutationResult<void, Error, string> {
     mutationFn: (id) => deleteTask(id),
     onSuccess: () => {
       void invalidateTasksQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }
@@ -199,6 +213,7 @@ export function useDuplicateTask(): UseMutationResult<TaskRecord, Error, string>
     mutationFn: (id) => duplicateTask(id),
     onSuccess: () => {
       void invalidateTasksQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }
@@ -237,6 +252,9 @@ export function useToggleTaskMit(): UseMutationResult<
     onError: (_error, _variables, context) => {
       if (context?.previous) restoreLists(queryClient, context.previous);
     },
+    onSuccess: () => {
+      void invalidateActivityQueries(queryClient);
+    },
     onSettled: () => {
       void invalidateTasksQueries(queryClient);
     },
@@ -258,6 +276,7 @@ export function useBulkTaskAction(): UseMutationResult<
       applyBulkTaskAction(taskIds, action, titlesById),
     onSuccess: () => {
       void invalidateTasksQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }

@@ -30,6 +30,7 @@ final class PackageBoundaryRules {
           "report",
           "search",
           "notification",
+          "comment",
           "audit",
           "job",
           "export");

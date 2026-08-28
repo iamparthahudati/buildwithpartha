@@ -1,13 +1,13 @@
 .sprint-form-dialog__fields {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--lifeos-space-4);
 }
 
 .sprint-form-dialog__grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
+  gap: var(--lifeos-space-3);
 }
 
 @media (max-width: 600px) {

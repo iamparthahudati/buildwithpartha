@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import tech.buildwithpartha.lifeos.report.application.TodayQueryResult;
+import tech.buildwithpartha.lifeos.report.domain.FocusComparisonSource;
 import tech.buildwithpartha.lifeos.report.domain.WidgetStatus;
 
 /**
@@ -312,7 +313,9 @@ public record TodayResponse(
   public record FocusSummaryWidget(WidgetStatus status, FocusSummaryData data, String error) {
     public static FocusSummaryWidget empty() {
       return new FocusSummaryWidget(
-          WidgetStatus.EMPTY, new FocusSummaryData(0, 0, null, false), null);
+          WidgetStatus.EMPTY,
+          new FocusSummaryData(0, 0, null, false, null, null, FocusComparisonSource.NONE, null),
+          null);
     }
 
     public static FocusSummaryWidget error(String message) {
@@ -336,16 +339,25 @@ public record TodayResponse(
       int actualFocusMinutesToday,
       int plannedFocusMinutesToday,
       String activeSessionTimerSummary,
-      boolean isSessionActive) {
+      boolean isSessionActive,
+      Integer dailyFocusTargetMinutes,
+      Integer comparisonMinutes,
+      FocusComparisonSource comparisonSource,
+      Integer progressPercentage) {
     public static FocusSummaryData fromQueryResult(TodayQueryResult.FocusSummaryData d) {
       if (d == null) {
-        return new FocusSummaryData(0, 0, null, false);
+        return new FocusSummaryData(
+            0, 0, null, false, null, null, FocusComparisonSource.NONE, null);
       }
       return new FocusSummaryData(
           d.actualFocusMinutesToday(),
           d.plannedFocusMinutesToday(),
           d.activeSessionTimerSummary(),
-          d.isSessionActive());
+          d.isSessionActive(),
+          d.dailyFocusTargetMinutes(),
+          d.comparisonMinutes(),
+          d.comparisonSource(),
+          d.progressPercentage());
     }
   }
 

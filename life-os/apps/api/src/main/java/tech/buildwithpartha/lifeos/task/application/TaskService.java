@@ -14,6 +14,10 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.buildwithpartha.lifeos.common.activity.ActivityEventType;
+import tech.buildwithpartha.lifeos.common.activity.ActivitySubjectType;
+import tech.buildwithpartha.lifeos.common.activity.ProductActivityCommand;
+import tech.buildwithpartha.lifeos.common.activity.ProductActivityPort;
 import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
@@ -42,16 +46,19 @@ public class TaskService {
   private final LabelOwnershipValidator labelOwnershipValidator;
   private final TaskDependencyRepository taskDependencyRepository;
   private final ProjectOwnershipValidator projectOwnershipValidator;
+  private final ProductActivityPort activityPort;
 
   public TaskService(
       TaskRepository taskRepository,
       LabelOwnershipValidator labelOwnershipValidator,
       TaskDependencyRepository taskDependencyRepository,
-      ProjectOwnershipValidator projectOwnershipValidator) {
+      ProjectOwnershipValidator projectOwnershipValidator,
+      ProductActivityPort activityPort) {
     this.taskRepository = taskRepository;
     this.labelOwnershipValidator = labelOwnershipValidator;
     this.taskDependencyRepository = taskDependencyRepository;
     this.projectOwnershipValidator = projectOwnershipValidator;
+    this.activityPort = activityPort;
   }
 
   public Task createTask(UUID userId, CreateTaskCommand command) {
@@ -61,6 +68,7 @@ public class TaskService {
     Set<UUID> labelIds = command.labelIds() != null ? command.labelIds() : Set.of();
 
     labelOwnershipValidator.validateOwnership(userId, labelIds);
+    command.projectId().ifPresent(id -> projectOwnershipValidator.validateAssignment(userId, id));
 
     Instant now = Instant.now();
     Task task =
@@ -86,7 +94,9 @@ public class TaskService {
             labelIds,
             0L);
 
-    return taskRepository.save(task);
+    Task saved = taskRepository.save(task);
+    recordTaskActivity(saved, ActivityEventType.TASK_CREATED);
+    return saved;
   }
 
   @Transactional(readOnly = true)
@@ -123,6 +133,9 @@ public class TaskService {
     Set<UUID> labelIds = command.labelIds() != null ? command.labelIds() : existing.labelIds();
 
     labelOwnershipValidator.validateOwnership(userId, labelIds);
+    if (!existing.projectId().equals(command.projectId())) {
+      command.projectId().ifPresent(id -> projectOwnershipValidator.validateAssignment(userId, id));
+    }
 
     Instant now = Instant.now();
     Task updated =
@@ -141,7 +154,9 @@ public class TaskService {
             labelIds,
             now);
 
-    return taskRepository.save(updated);
+    Task saved = taskRepository.save(updated);
+    recordTaskActivity(saved, ActivityEventType.TASK_UPDATED, existing.projectId());
+    return saved;
   }
 
   public Task changeStatus(UUID userId, UUID taskId, TaskStatus status, long version) {
@@ -151,6 +166,9 @@ public class TaskService {
 
     Task existing = getTask(userId, taskId);
     checkVersion(existing, version);
+    if (existing.status() == status) {
+      return existing;
+    }
 
     Instant now = Instant.now();
     int progress = status == TaskStatus.DONE ? 100 : existing.progress();
@@ -173,6 +191,7 @@ public class TaskService {
             now);
 
     Task saved = taskRepository.save(updated);
+    recordTaskActivity(saved, ActivityEventType.TASK_STATUS_CHANGED);
     if (status.isTerminal()) {
       unblockDependentsIfAllBlockersResolved(userId, taskId);
     }
@@ -195,7 +214,9 @@ public class TaskService {
     }
     Instant now = Instant.now();
     Task archived = existing.archive(now, now);
-    return taskRepository.save(archived);
+    Task saved = taskRepository.save(archived);
+    recordTaskActivity(saved, ActivityEventType.TASK_ARCHIVED);
+    return saved;
   }
 
   public Task restoreTask(UUID userId, UUID taskId, long version) {
@@ -206,37 +227,53 @@ public class TaskService {
     }
     Instant now = Instant.now();
     Task restored = existing.restore(now);
-    return taskRepository.save(restored);
+    Task saved = taskRepository.save(restored);
+    recordTaskActivity(saved, ActivityEventType.TASK_RESTORED);
+    return saved;
   }
 
   public void deleteTask(UUID userId, UUID taskId) {
     Task existing = getTask(userId, taskId);
     Instant now = Instant.now();
     Task deleted = existing.softDelete(now, now);
-    taskRepository.save(deleted);
+    Task saved = taskRepository.save(deleted);
+    recordTaskActivity(saved, ActivityEventType.TASK_DELETED);
   }
 
   public Task duplicateTask(UUID userId, UUID taskId, String newTitle) {
     Task existing = getTask(userId, taskId);
     Instant now = Instant.now();
     Task duplicated = existing.duplicate(UUID.randomUUID(), newTitle, now);
-    return taskRepository.save(duplicated);
+    Task saved = taskRepository.save(duplicated);
+    recordTaskActivity(saved, ActivityEventType.TASK_CREATED);
+    return saved;
   }
 
   public Task applyBulkAction(UUID userId, UUID taskId, BulkTaskActionCommand command) {
     Objects.requireNonNull(command, "command must not be null");
     Task existing = getTask(userId, taskId);
 
-    return switch (command.action()) {
-      case STATUS -> applyBulkStatus(userId, existing, command.status());
-      case PRIORITY -> applyBulkPriority(existing, command.priority());
-      case PROJECT -> applyBulkProject(userId, existing, command.projectId());
-      case ADD_LABEL -> applyBulkLabel(userId, existing, command.labelId(), true);
-      case REMOVE_LABEL -> applyBulkLabel(userId, existing, command.labelId(), false);
-      case SCHEDULE -> applyBulkDueAt(existing, command.dueAt());
-      case CLEAR_SCHEDULE -> applyBulkDueAt(existing, Optional.empty());
-      case ARCHIVE -> applyBulkArchive(existing);
-    };
+    Task result =
+        switch (command.action()) {
+          case STATUS -> applyBulkStatus(userId, existing, command.status());
+          case PRIORITY -> applyBulkPriority(existing, command.priority());
+          case PROJECT -> applyBulkProject(userId, existing, command.projectId());
+          case ADD_LABEL -> applyBulkLabel(userId, existing, command.labelId(), true);
+          case REMOVE_LABEL -> applyBulkLabel(userId, existing, command.labelId(), false);
+          case SCHEDULE -> applyBulkDueAt(existing, command.dueAt());
+          case CLEAR_SCHEDULE -> applyBulkDueAt(existing, Optional.empty());
+          case ARCHIVE -> applyBulkArchive(existing);
+        };
+    if (result != existing) {
+      ActivityEventType eventType =
+          switch (command.action()) {
+            case STATUS -> ActivityEventType.TASK_STATUS_CHANGED;
+            case ARCHIVE -> ActivityEventType.TASK_ARCHIVED;
+            default -> ActivityEventType.TASK_UPDATED;
+          };
+      recordTaskActivity(result, eventType, existing.projectId());
+    }
+    return result;
   }
 
   private Task applyBulkStatus(UUID userId, Task existing, TaskStatus status) {
@@ -384,13 +421,17 @@ public class TaskService {
     updatedSubtasks.add(newSubtask);
 
     Task updatedTask = task.withSubtasks(updatedSubtasks, now);
-    return taskRepository.save(recalculateTaskProgress(updatedTask, now));
+    Task saved = taskRepository.save(recalculateTaskProgress(updatedTask, now));
+    recordTaskActivity(saved, ActivityEventType.SUBTASK_CREATED);
+    return saved;
   }
 
   public Task updateSubtask(
       UUID userId, UUID taskId, UUID subtaskId, String title, Boolean completed, Integer position) {
     Task task = getTask(userId, taskId);
     Instant now = Instant.now();
+    Optional<Subtask> existingSubtask =
+        task.subtasks().stream().filter(subtask -> subtask.id().equals(subtaskId)).findFirst();
 
     List<Subtask> updatedSubtasks =
         task.subtasks().stream()
@@ -415,12 +456,22 @@ public class TaskService {
             .toList();
 
     Task updatedTask = task.withSubtasks(updatedSubtasks, now);
-    return taskRepository.save(recalculateTaskProgress(updatedTask, now));
+    Task saved = taskRepository.save(recalculateTaskProgress(updatedTask, now));
+    existingSubtask.ifPresent(
+        subtask ->
+            recordTaskActivity(
+                saved,
+                Boolean.TRUE.equals(completed) && !subtask.completed()
+                    ? ActivityEventType.SUBTASK_COMPLETED
+                    : ActivityEventType.SUBTASK_UPDATED));
+    return saved;
   }
 
   public Task toggleSubtask(UUID userId, UUID taskId, UUID subtaskId) {
     Task task = getTask(userId, taskId);
     Instant now = Instant.now();
+    Optional<Subtask> existingSubtask =
+        task.subtasks().stream().filter(subtask -> subtask.id().equals(subtaskId)).findFirst();
 
     List<Subtask> updatedSubtasks =
         task.subtasks().stream()
@@ -428,18 +479,31 @@ public class TaskService {
             .toList();
 
     Task updatedTask = task.withSubtasks(updatedSubtasks, now);
-    return taskRepository.save(recalculateTaskProgress(updatedTask, now));
+    Task saved = taskRepository.save(recalculateTaskProgress(updatedTask, now));
+    existingSubtask.ifPresent(
+        subtask ->
+            recordTaskActivity(
+                saved,
+                subtask.completed()
+                    ? ActivityEventType.SUBTASK_UPDATED
+                    : ActivityEventType.SUBTASK_COMPLETED));
+    return saved;
   }
 
   public Task deleteSubtask(UUID userId, UUID taskId, UUID subtaskId) {
     Task task = getTask(userId, taskId);
     Instant now = Instant.now();
+    boolean existed = task.subtasks().stream().anyMatch(subtask -> subtask.id().equals(subtaskId));
 
     List<Subtask> updatedSubtasks =
         task.subtasks().stream().filter(s -> !s.id().equals(subtaskId)).toList();
 
     Task updatedTask = task.withSubtasks(updatedSubtasks, now);
-    return taskRepository.save(recalculateTaskProgress(updatedTask, now));
+    Task saved = taskRepository.save(recalculateTaskProgress(updatedTask, now));
+    if (existed) {
+      recordTaskActivity(saved, ActivityEventType.SUBTASK_DELETED);
+    }
+    return saved;
   }
 
   public Task reorderSubtasks(UUID userId, UUID taskId, List<UUID> subtaskIds) {
@@ -462,7 +526,11 @@ public class TaskService {
             .toList();
 
     Task updatedTask = task.withSubtasks(reordered, now);
-    return taskRepository.save(updatedTask);
+    Task saved = taskRepository.save(updatedTask);
+    if (!task.subtasks().equals(reordered)) {
+      recordTaskActivity(saved, ActivityEventType.SUBTASK_UPDATED);
+    }
+    return saved;
   }
 
   private Task recalculateTaskProgress(Task task, Instant now) {
@@ -497,7 +565,12 @@ public class TaskService {
       throw new IllegalArgumentException("Cannot set terminal task as MIT");
     }
 
+    Optional<Task> previousMit =
+        taskRepository.findByUserIdAndMitDate(userId, date).stream()
+            .filter(previous -> !previous.id().equals(taskId))
+            .findFirst();
     taskRepository.clearMitDateForUserAndDate(userId, date);
+    previousMit.ifPresent(previous -> recordTaskActivity(previous, ActivityEventType.TASK_UPDATED));
 
     Instant now = Instant.now();
     Task updated =
@@ -515,7 +588,9 @@ public class TaskService {
             task.position(),
             now);
 
-    return taskRepository.save(updated);
+    Task saved = taskRepository.save(updated);
+    recordTaskActivity(saved, ActivityEventType.TASK_UPDATED);
+    return saved;
   }
 
   public Task clearMit(UUID userId, UUID taskId) {
@@ -543,7 +618,9 @@ public class TaskService {
             task.position(),
             now);
 
-    return taskRepository.save(updated);
+    Task saved = taskRepository.save(updated);
+    recordTaskActivity(saved, ActivityEventType.TASK_UPDATED);
+    return saved;
   }
 
   @Transactional(readOnly = true)
@@ -607,8 +684,12 @@ public class TaskService {
           "Validation failed", List.of(new FieldProblem("targetTaskId", "INVALID_DEPENDENCY")));
     }
 
-    return taskDependencyRepository.save(
-        new TaskDependency(blockingTaskId, blockedTaskId, Instant.now()));
+    TaskDependency saved =
+        taskDependencyRepository.save(
+            new TaskDependency(blockingTaskId, blockedTaskId, Instant.now()));
+    recordTaskActivity(task, ActivityEventType.TASK_UPDATED);
+    recordTaskActivity(targetTask, ActivityEventType.TASK_UPDATED);
+    return saved;
   }
 
   public void removeDependency(
@@ -618,13 +699,17 @@ public class TaskService {
     Objects.requireNonNull(targetTaskId, "targetTaskId must not be null");
     Objects.requireNonNull(type, "type must not be null");
 
-    // Verify main task exists and belongs to user
-    getTask(userId, taskId);
+    Task task = getTask(userId, taskId);
+    Task targetTask = getTask(userId, targetTaskId);
 
     UUID blockingTaskId = type == TaskDependencyType.BLOCKER ? targetTaskId : taskId;
     UUID blockedTaskId = type == TaskDependencyType.BLOCKER ? taskId : targetTaskId;
 
-    taskDependencyRepository.delete(blockingTaskId, blockedTaskId);
+    if (taskDependencyRepository.find(blockingTaskId, blockedTaskId).isPresent()) {
+      taskDependencyRepository.delete(blockingTaskId, blockedTaskId);
+      recordTaskActivity(task, ActivityEventType.TASK_UPDATED);
+      recordTaskActivity(targetTask, ActivityEventType.TASK_UPDATED);
+    }
   }
 
   @Transactional(readOnly = true)
@@ -684,10 +769,36 @@ public class TaskService {
                     dependentTask.mitDate(),
                     dependentTask.position(),
                     now);
-            taskRepository.save(unblocked);
+            Task saved = taskRepository.save(unblocked);
+            recordTaskActivity(saved, ActivityEventType.TASK_STATUS_CHANGED);
           }
         }
       }
     }
+  }
+
+  private void recordTaskActivity(Task task, ActivityEventType eventType) {
+    recordTaskActivity(task, eventType, Optional.empty());
+  }
+
+  private void recordTaskActivity(
+      Task task, ActivityEventType eventType, Optional<UUID> previousProjectId) {
+    activityPort.record(
+        new ProductActivityCommand(
+            task.userId(), task.userId(), eventType, ActivitySubjectType.TASK, task.id()));
+    Set<UUID> projectFeedIds = new HashSet<>();
+    task.projectId().ifPresent(projectFeedIds::add);
+    previousProjectId.ifPresent(projectFeedIds::add);
+    projectFeedIds.forEach(
+        projectId ->
+            activityPort.record(
+                new ProductActivityCommand(
+                    task.userId(),
+                    task.userId(),
+                    eventType,
+                    ActivitySubjectType.PROJECT,
+                    projectId,
+                    ActivitySubjectType.TASK,
+                    task.id())));
   }
 }

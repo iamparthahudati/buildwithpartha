@@ -1,0 +1,85 @@
+.time-goal-progress-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  width: 100%;
+}
+
+.time-goal-progress-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.time-goal-progress-card__title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.time-goal-progress-card__icon {
+  color: var(--color-accent);
+}
+
+.time-goal-progress-card__body {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.time-goal-progress-card__ring-wrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.time-goal-progress-card__ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.time-goal-progress-card__ring-track {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 6;
+}
+
+.time-goal-progress-card__ring-progress {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.time-goal-progress-card__percentage {
+  position: absolute;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.time-goal-progress-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.time-goal-progress-card__values {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.time-goal-progress-card__badge-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}

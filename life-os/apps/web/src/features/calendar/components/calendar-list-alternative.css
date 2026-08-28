@@ -1,0 +1,38 @@
+.lifeos-calendar-list__groups,
+.lifeos-calendar-list__events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lifeos-calendar-list__groups,
+.lifeos-calendar-list__group,
+.lifeos-calendar-list__events {
+  display: flex;
+  flex-direction: column;
+}
+
+.lifeos-calendar-list__groups {
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-calendar-list__group,
+.lifeos-calendar-list__events {
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-calendar-list__group h3 {
+  margin: 0;
+}
+
+.lifeos-calendar-list__empty {
+  padding: var(--lifeos-space-8);
+  text-align: center;
+  border: var(--lifeos-border-width-hairline) dashed var(--lifeos-color-border-strong);
+  border-radius: var(--lifeos-radius-md);
+  background: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-calendar-list__empty h3 {
+  margin: 0 0 var(--lifeos-space-2);
+}

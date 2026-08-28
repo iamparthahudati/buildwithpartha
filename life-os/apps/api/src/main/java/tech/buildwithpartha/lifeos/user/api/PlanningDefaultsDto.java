@@ -11,7 +11,13 @@ public record PlanningDefaultsDto(
     boolean overnightSchedule,
     Integer dailyFocusTargetMinutes,
     int focusDurationMinutes,
-    int breakDurationMinutes) {
+    int breakDurationMinutes,
+    int longBreakDurationMinutes,
+    int focusSessionsBeforeLongBreak,
+    boolean autoStartBreaks,
+    boolean autoStartFocusSessions,
+    boolean soundEnabled,
+    boolean browserNotificationsEnabled) {
 
   private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -23,6 +29,12 @@ public record PlanningDefaultsDto(
         defaults.overnightSchedule(),
         defaults.dailyFocusTargetMinutes().orElse(null),
         defaults.focusDurationMinutes(),
-        defaults.breakDurationMinutes());
+        defaults.breakDurationMinutes(),
+        defaults.longBreakDurationMinutes(),
+        defaults.focusSessionsBeforeLongBreak(),
+        defaults.autoStartBreaks(),
+        defaults.autoStartFocusSessions(),
+        defaults.soundEnabled(),
+        defaults.browserNotificationsEnabled());
   }
 }

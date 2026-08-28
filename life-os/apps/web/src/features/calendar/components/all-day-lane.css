@@ -1,0 +1,42 @@
+.lifeos-all-day-lane {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  border-block: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  background: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-all-day-lane__label {
+  padding: var(--lifeos-space-2);
+  color: var(--lifeos-color-text-secondary);
+  border-right: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-all-day-lane__days {
+  display: grid;
+  grid-template-columns: repeat(var(--lifeos-calendar-columns), minmax(0, 1fr));
+  min-width: 0;
+}
+
+.lifeos-all-day-lane__day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+  min-width: 0;
+  min-height: var(--lifeos-space-10);
+  padding: var(--lifeos-space-1);
+  border-right: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+}
+
+.lifeos-all-day-lane__day:last-child {
+  border-right: 0;
+}
+
+.lifeos-all-day-lane__empty {
+  min-height: 1.75rem;
+}
+
+@media (max-width: 639px) {
+  .lifeos-all-day-lane {
+    grid-template-columns: 3.75rem minmax(0, 1fr);
+  }
+}

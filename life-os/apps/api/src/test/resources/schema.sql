@@ -104,6 +104,12 @@ CREATE TABLE IF NOT EXISTS user_preferences (
     daily_focus_target_minutes  INT,
     focus_duration_minutes      INT                      NOT NULL,
     break_duration_minutes      INT                      NOT NULL,
+    long_break_duration_minutes INT                      NOT NULL DEFAULT 15,
+    focus_sessions_before_long_break INT                 NOT NULL DEFAULT 4,
+    auto_start_breaks           BOOLEAN                  NOT NULL DEFAULT FALSE,
+    auto_start_focus_sessions   BOOLEAN                  NOT NULL DEFAULT FALSE,
+    sound_enabled               BOOLEAN                  NOT NULL DEFAULT FALSE,
+    browser_notifications_enabled BOOLEAN                NOT NULL DEFAULT FALSE,
     created_at                  TIMESTAMP WITH TIME ZONE NOT NULL,
     updated_at                  TIMESTAMP WITH TIME ZONE NOT NULL,
     version                     BIGINT                   NOT NULL
@@ -253,3 +259,216 @@ CREATE TABLE IF NOT EXISTS task_dependencies (
     created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
     PRIMARY KEY (blocking_task_id, blocked_task_id)
 );
+
+-- Added by LOS-1404: product Activity Events and restricted Security Audit Events.
+CREATE TABLE IF NOT EXISTS product_activity_events (
+    id             UUID                     NOT NULL PRIMARY KEY,
+    user_id        UUID                     NOT NULL,
+    actor_user_id  UUID                     NOT NULL,
+    event_type     VARCHAR(64)              NOT NULL,
+    subject_type   VARCHAR(32)              NOT NULL,
+    subject_id     UUID                     NOT NULL,
+    object_type    VARCHAR(32)              NOT NULL,
+    object_id      UUID                     NOT NULL,
+    correlation_id VARCHAR(64)              NOT NULL,
+    occurred_at    TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS security_audit_events (
+    id              UUID                     NOT NULL PRIMARY KEY,
+    event_type      VARCHAR(64)              NOT NULL,
+    outcome         VARCHAR(16)              NOT NULL,
+    actor_user_id   UUID,
+    subject_user_id UUID,
+    target_type     VARCHAR(32),
+    target_id       UUID,
+    correlation_id  VARCHAR(64)              NOT NULL,
+    occurred_at     TIMESTAMP WITH TIME ZONE NOT NULL,
+    expires_at      TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+-- Added by LOS-0821: personal Task/Project Comments.
+CREATE TABLE IF NOT EXISTS comments (
+    id         UUID                     NOT NULL PRIMARY KEY,
+    user_id    UUID                     NOT NULL,
+    task_id    UUID,
+    project_id UUID,
+    body       TEXT                     NOT NULL,
+    format     VARCHAR(16)              NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    edited_at  TIMESTAMP WITH TIME ZONE,
+    version    BIGINT                   NOT NULL
+);
+
+-- Added by LOS-0901: Time blocks.
+CREATE TABLE IF NOT EXISTS time_blocks (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    user_id          UUID                     NOT NULL,
+    project_id       UUID,
+    task_id          UUID,
+    title            TEXT                     NOT NULL,
+    category         VARCHAR(64)              NOT NULL,
+    status           VARCHAR(32)              NOT NULL,
+    start_at         TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_at           TIMESTAMP WITH TIME ZONE NOT NULL,
+    source_time_zone TEXT                     NOT NULL,
+    notes            TEXT,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    version          BIGINT                   NOT NULL
+);
+
+-- Added by LOS-0912: Focus Sessions and private interruption events.
+CREATE TABLE IF NOT EXISTS focus_sessions (
+    id                              UUID                     NOT NULL PRIMARY KEY,
+    user_id                         UUID                     NOT NULL,
+    task_id                         UUID,
+    time_block_id                   UUID,
+    status                          VARCHAR(32)              NOT NULL,
+    phase                           VARCHAR(32)              NOT NULL,
+    planned_focus_duration_seconds BIGINT                   NOT NULL,
+    planned_break_duration_seconds BIGINT                   NOT NULL,
+    actual_focus_duration_seconds  BIGINT                   NOT NULL,
+    actual_break_duration_seconds  BIGINT                   NOT NULL,
+    started_at                      TIMESTAMP WITH TIME ZONE NOT NULL,
+    phase_started_at                TIMESTAMP WITH TIME ZONE,
+    paused_at                       TIMESTAMP WITH TIME ZONE,
+    ended_at                        TIMESTAMP WITH TIME ZONE,
+    created_at                      TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at                      TIMESTAMP WITH TIME ZONE NOT NULL,
+    version                         BIGINT                   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS focus_session_interruptions (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    focus_session_id UUID                     NOT NULL,
+    user_id          UUID                     NOT NULL,
+    occurred_at      TIMESTAMP WITH TIME ZONE NOT NULL,
+    note             TEXT,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    version          BIGINT                   NOT NULL
+);
+
+-- Added by LOS-0913: bounded Focus Session mutation replay keys.
+CREATE TABLE IF NOT EXISTS focus_session_operations (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    user_id          UUID                     NOT NULL,
+    idempotency_key  VARCHAR(64)              NOT NULL,
+    operation_type   VARCHAR(32)              NOT NULL,
+    focus_session_id UUID                     NOT NULL,
+    interruption_id  UUID,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    CONSTRAINT uq_focus_session_operations_user_key UNIQUE (user_id, idempotency_key)
+);
+
+-- Added by LOS-1001: Sprints, commitments, retrospective metrics, and immutable events.
+CREATE TABLE IF NOT EXISTS sprints (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, name TEXT NOT NULL, goal TEXT,
+    start_date DATE NOT NULL, end_date DATE NOT NULL, status VARCHAR(32) NOT NULL,
+    target_capacity_points INT NOT NULL, retrospective_notes TEXT, what_went_well TEXT,
+    what_could_be_improved TEXT, committed_task_count INT NOT NULL,
+    completed_task_count INT NOT NULL, added_task_count INT NOT NULL,
+    removed_task_count INT NOT NULL, carried_over_task_count INT NOT NULL,
+    total_story_points INT NOT NULL, completed_story_points INT NOT NULL,
+    completed_at TIMESTAMP WITH TIME ZONE, created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL, version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS sprint_action_items (
+    sprint_id UUID NOT NULL, position INT NOT NULL, body TEXT NOT NULL,
+    PRIMARY KEY (sprint_id, position)
+);
+
+CREATE TABLE IF NOT EXISTS sprint_tasks (
+    id UUID NOT NULL PRIMARY KEY, sprint_id UUID NOT NULL, task_id UUID NOT NULL,
+    story_points INT NOT NULL, position INT NOT NULL, added_after_start BOOLEAN NOT NULL,
+    committed_at TIMESTAMP WITH TIME ZONE NOT NULL, removed_at TIMESTAMP WITH TIME ZONE,
+    carried_over_to_sprint_id UUID
+);
+
+CREATE TABLE IF NOT EXISTS sprint_events (
+    id UUID NOT NULL PRIMARY KEY, sprint_id UUID NOT NULL, event_type VARCHAR(32) NOT NULL,
+    task_id UUID, points_delta INT, reason TEXT,
+    occurred_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+-- Added by LOS-1004: Weekly Plan drafts, revisions, allocations, and snapshots.
+CREATE TABLE IF NOT EXISTS weekly_plans (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, week_start_date DATE NOT NULL,
+    week_end_date DATE NOT NULL, time_zone TEXT NOT NULL, week_start_day INT NOT NULL,
+    revision INT NOT NULL, status VARCHAR(32) NOT NULL, predecessor_plan_id UUID,
+    finalized_at TIMESTAMP WITH TIME ZONE, snapshot_total_planned_minutes INT,
+    snapshot_total_capacity_minutes INT, snapshot_overcapacity_minutes INT,
+    snapshot_overcapacity_dates TEXT, snapshot_overlapping_time_block_count INT,
+    snapshot_unscheduled_item_count INT, snapshot_outcomes_without_items_count INT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL, version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS weekly_plan_capacities (
+    id UUID NOT NULL PRIMARY KEY, weekly_plan_id UUID NOT NULL, local_date DATE NOT NULL,
+    available_minutes INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS weekly_plan_outcomes (
+    id UUID NOT NULL PRIMARY KEY, weekly_plan_id UUID NOT NULL, title TEXT NOT NULL,
+    position INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS weekly_plan_items (
+    id UUID NOT NULL PRIMARY KEY, weekly_plan_id UUID NOT NULL, user_id UUID NOT NULL,
+    task_id UUID NOT NULL, outcome_id UUID, planned_date DATE, planned_minutes INT NOT NULL,
+    position INT NOT NULL, task_title_snapshot TEXT NOT NULL,
+    task_status_snapshot VARCHAR(32) NOT NULL
+);
+
+-- Added by LOS-1009: Daily, weekly, and monthly review sessions and snapshots.
+CREATE TABLE IF NOT EXISTS reviews (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, review_type VARCHAR(32) NOT NULL,
+    period_key VARCHAR(64) NOT NULL, start_date DATE NOT NULL, end_date DATE NOT NULL,
+    time_zone VARCHAR(64) NOT NULL, status VARCHAR(32) NOT NULL, skip_reason TEXT,
+    finalized_at TIMESTAMP WITH TIME ZONE, snapshot_tasks_completed_count INT,
+    snapshot_tasks_planned_count INT, snapshot_tasks_carried_over_count INT,
+    snapshot_tasks_cancelled_count INT, snapshot_tasks_overdue_count INT,
+    snapshot_planned_focus_minutes INT, snapshot_actual_focus_minutes INT,
+    snapshot_sprint_committed_count INT, snapshot_sprint_completed_count INT,
+    snapshot_active_project_count INT, snapshot_completed_project_count INT,
+    snapshot_stalled_project_count INT, snapshot_daily_review_completion_count INT,
+    snapshot_has_missing_data BOOLEAN, snapshot_missing_data_notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL, version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS review_answers (
+    id UUID NOT NULL PRIMARY KEY, review_id UUID NOT NULL, prompt_key VARCHAR(100) NOT NULL,
+    answer_value TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS review_item_decisions (
+    id UUID NOT NULL PRIMARY KEY, review_id UUID NOT NULL, item_type VARCHAR(32) NOT NULL,
+    item_id UUID NOT NULL, action VARCHAR(32) NOT NULL, target_date DATE, notes TEXT
+);
+
+-- Added by LOS-1101: Goals, goal check-ins, and goal links schema.
+CREATE TABLE IF NOT EXISTS goals (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, title TEXT NOT NULL,
+    description TEXT, category VARCHAR(64) NOT NULL, progress_type VARCHAR(32) NOT NULL,
+    target_value NUMERIC(19, 4), current_value NUMERIC(19, 4) NOT NULL, unit VARCHAR(32),
+    target_date DATE, status VARCHAR(32) NOT NULL, check_in_cadence VARCHAR(32) NOT NULL,
+    archived BOOLEAN NOT NULL, created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL, version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS goal_check_ins (
+    id UUID NOT NULL PRIMARY KEY, goal_id UUID NOT NULL, user_id UUID NOT NULL,
+    "value" NUMERIC(19, 4) NOT NULL, note TEXT, recorded_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS goal_links (
+    id UUID NOT NULL PRIMARY KEY, goal_id UUID NOT NULL, user_id UUID NOT NULL,
+    target_type VARCHAR(32) NOT NULL, target_id UUID NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+

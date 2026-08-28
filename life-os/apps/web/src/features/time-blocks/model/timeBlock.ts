@@ -44,6 +44,7 @@ export interface TimeBlock {
   readonly taskTitle?: string | null;
   readonly notes?: string | null;
   readonly href?: string;
+  readonly version?: number;
 }
 
 function timeToMinutes(time: LocalTime): number {

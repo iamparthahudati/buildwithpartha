@@ -18,16 +18,29 @@ import {
 import {
   TASK_FILTER_PRESETS,
   TaskCard,
+  DependencyEditor,
+  SchedulingPanel,
   TaskDetailsHeader,
   TaskForm,
   TaskRow,
+  SubtaskChecklist,
   TaskSummaryMetrics,
+  type SubtaskChecklistItem,
+  type DependencyEditorTask,
+  type SchedulingPanelTask,
   type TaskDetailsHeaderTask,
   type TaskFilterPresetId,
   type TaskListItem,
   type TaskSummaryMetricsStatus,
 } from "@features/tasks";
-import { TimeBlockRow, type TimeBlock } from "@features/time-blocks";
+import {
+  TimeBlockRow,
+  TimeBlockForm,
+  DayTimeline,
+  TimeSummary,
+  type TimeBlock,
+} from "@features/time-blocks";
+import type { ActivityTypeFilter } from "@features/activity";
 import {
   buildCommonDateRangePresets,
   ColorIconPicker,
@@ -731,6 +744,358 @@ export function TaskDetailsHeaderDemo() {
   );
 }
 
+const MOCK_SUBTASKS: readonly SubtaskChecklistItem[] = [
+  {
+    id: "subtask-outline",
+    title: "Outline the interaction states",
+    completed: true,
+    position: 0,
+    version: 1,
+  },
+  {
+    id: "subtask-keyboard",
+    title: "Verify keyboard reorder controls",
+    completed: false,
+    position: 1,
+    version: 2,
+  },
+  {
+    id: "subtask-responsive",
+    title: "Check the narrow-screen layout",
+    completed: false,
+    position: 2,
+    version: 1,
+  },
+];
+
+export function SubtaskChecklistDemo({
+  state = "ready",
+}: {
+  readonly state?: "ready" | "loading" | "empty" | "error" | "read-only" | "partial";
+}) {
+  const [subtasks, setSubtasks] = useState(MOCK_SUBTASKS);
+
+  if (state === "loading") return <SubtaskChecklist loading />;
+  if (state === "error") {
+    return (
+      <SubtaskChecklist error="Task details are still available." onRetry={handleTaskDemoAction} />
+    );
+  }
+
+  const displayedSubtasks = state === "empty" ? [] : subtasks;
+  const readOnly = state === "read-only";
+
+  return (
+    <SubtaskChecklist
+      subtasks={displayedSubtasks}
+      readOnly={readOnly}
+      {...(readOnly
+        ? {
+            readOnlyReason:
+              "You can view these Subtasks, but you don't have permission to change them.",
+          }
+        : {})}
+      {...(state === "partial"
+        ? {
+            pendingOperations: [{ operation: "toggle" as const, subtaskId: "subtask-outline" }],
+            operationErrors: [
+              {
+                operation: "reorder" as const,
+                subtaskId: "subtask-keyboard",
+                message:
+                  "This Subtask couldn't be moved. The saved order is still shown. Try again.",
+                onRetry: handleTaskDemoAction,
+              },
+            ],
+          }
+        : {})}
+      onAdd={(title) => {
+        setSubtasks((current) => [
+          ...current,
+          {
+            id: `subtask-${current.length + 1}`,
+            title,
+            completed: false,
+            position: current.length,
+            version: 0,
+          },
+        ]);
+      }}
+      onEdit={(subtaskId, title) =>
+        setSubtasks((current) =>
+          current.map((subtask) => (subtask.id === subtaskId ? { ...subtask, title } : subtask)),
+        )
+      }
+      onToggle={(subtaskId, completed) =>
+        setSubtasks((current) =>
+          current.map((subtask) =>
+            subtask.id === subtaskId ? { ...subtask, completed } : subtask,
+          ),
+        )
+      }
+      onReorder={(orderedIds) =>
+        setSubtasks((current) =>
+          orderedIds
+            .map((subtaskId) => current.find((subtask) => subtask.id === subtaskId))
+            .filter((subtask): subtask is SubtaskChecklistItem => Boolean(subtask))
+            .map((subtask, position) => ({ ...subtask, position })),
+        )
+      }
+      onDelete={(subtaskId) =>
+        setSubtasks((current) =>
+          current
+            .filter((subtask) => subtask.id !== subtaskId)
+            .map((subtask, position) => ({ ...subtask, position })),
+        )
+      }
+    />
+  );
+}
+
+const MOCK_DEPENDENCY_TASK: DependencyEditorTask = {
+  id: "task-weekly-review",
+  title: "Prepare weekly review",
+  status: "BLOCKED",
+  priority: "P1",
+  href: "/life-os/app/tasks/task-weekly-review",
+};
+
+const MOCK_BLOCKERS: readonly DependencyEditorTask[] = [
+  {
+    id: "task-hosting-options",
+    title: "Compare hosting options",
+    status: "IN_PROGRESS",
+    priority: "P2",
+    href: "/life-os/app/tasks/task-hosting-options",
+  },
+  {
+    id: "task-organize-records",
+    title: "Organize tax documents",
+    status: "DONE",
+    priority: "P3",
+    href: "/life-os/app/tasks/task-organize-records",
+  },
+];
+
+const MOCK_DEPENDENTS: readonly DependencyEditorTask[] = [
+  {
+    id: "task-accessibility-course",
+    title: "Complete the accessibility course",
+    status: "TO_DO",
+    priority: "P2",
+    href: "/life-os/app/tasks/task-accessibility-course",
+  },
+];
+
+const MOCK_BLOCKER_OPTIONS: readonly DependencyEditorTask[] = [
+  MOCK_DEPENDENCY_TASK,
+  ...MOCK_BLOCKERS,
+  {
+    id: "task-home-records",
+    title: "Review home records",
+    status: "TO_DO",
+    priority: "P3",
+    href: "/life-os/app/tasks/task-home-records",
+  },
+  {
+    id: "task-learning-plan",
+    title: "Update learning plan",
+    status: "IN_PROGRESS",
+    priority: "P2",
+    href: "/life-os/app/tasks/task-learning-plan",
+  },
+];
+
+export function DependencyEditorDemo({
+  state = "ready",
+}: {
+  readonly state?: "ready" | "loading" | "empty" | "error" | "read-only" | "partial" | "cycle";
+}) {
+  const [blockers, setBlockers] = useState(MOCK_BLOCKERS);
+  const [dependents, setDependents] = useState(MOCK_DEPENDENTS);
+
+  if (state === "loading") {
+    return <DependencyEditor task={MOCK_DEPENDENCY_TASK} loading />;
+  }
+  if (state === "error") {
+    return (
+      <DependencyEditor
+        task={MOCK_DEPENDENCY_TASK}
+        error="Task details are still available."
+        onRetry={handleTaskDemoAction}
+      />
+    );
+  }
+
+  const displayedBlockers = state === "empty" ? [] : blockers;
+  const displayedDependents = state === "empty" ? [] : dependents;
+  const readOnly = state === "read-only";
+
+  return (
+    <DependencyEditor
+      task={MOCK_DEPENDENCY_TASK}
+      blockers={displayedBlockers}
+      dependents={displayedDependents}
+      blockerOptions={MOCK_BLOCKER_OPTIONS}
+      readOnly={readOnly}
+      {...(readOnly
+        ? {
+            readOnlyReason:
+              "You can view these dependencies, but you don't have permission to change them.",
+          }
+        : {})}
+      {...(state === "partial"
+        ? {
+            pendingRemovals: [{ taskId: "task-hosting-options", relationship: "BLOCKER" as const }],
+            operationErrors: [
+              {
+                operation: "remove" as const,
+                relationship: "BLOCKER" as const,
+                taskId: "task-organize-records",
+                reason: "conflict" as const,
+                onRetry: handleTaskDemoAction,
+              },
+            ],
+          }
+        : {})}
+      {...(state === "cycle"
+        ? {
+            operationErrors: [
+              {
+                operation: "add" as const,
+                relationship: "BLOCKER" as const,
+                taskId: "task-learning-plan",
+                reason: "cycle" as const,
+              },
+            ],
+          }
+        : {})}
+      onAddBlocker={(taskId) => {
+        const blocker = MOCK_BLOCKER_OPTIONS.find((candidate) => candidate.id === taskId);
+        if (blocker) setBlockers((current) => [...current, blocker]);
+      }}
+      onRemoveDependency={(taskId, relationship) => {
+        if (relationship === "BLOCKER") {
+          setBlockers((current) => current.filter((blocker) => blocker.id !== taskId));
+        } else {
+          setDependents((current) => current.filter((dependent) => dependent.id !== taskId));
+        }
+      }}
+    />
+  );
+}
+
+const MOCK_SCHEDULING_TASK: SchedulingPanelTask = {
+  id: "task-weekly-review",
+  title: "Prepare weekly review",
+  status: "IN_PROGRESS",
+};
+
+const MOCK_SCHEDULING_BLOCKS: readonly TimeBlock[] = [
+  {
+    id: "time-block-weekly-planning",
+    title: "Weekly planning",
+    category: "Deep work",
+    categoryColor: "blue",
+    categoryIcon: "brain",
+    date: "2026-08-24",
+    startTime: "09:00",
+    endTime: "10:00",
+    status: "SCHEDULED",
+    taskId: MOCK_SCHEDULING_TASK.id,
+    taskTitle: MOCK_SCHEDULING_TASK.title,
+  },
+  {
+    id: "time-block-reading",
+    title: "Reading",
+    category: "Learning",
+    categoryColor: "green",
+    categoryIcon: "book-open",
+    date: "2026-08-24",
+    startTime: "15:00",
+    endTime: "15:30",
+    status: "SCHEDULED",
+    taskId: MOCK_SCHEDULING_TASK.id,
+    taskTitle: MOCK_SCHEDULING_TASK.title,
+  },
+];
+
+export function SchedulingPanelDemo({
+  state = "ready",
+}: {
+  readonly state?: "ready" | "conflict" | "active" | "empty" | "read-only" | "error" | "loading";
+}) {
+  const [lastAction, setLastAction] = useState("No action yet");
+
+  if (state === "loading") {
+    return <SchedulingPanel task={MOCK_SCHEDULING_TASK} loading />;
+  }
+  if (state === "error") {
+    return (
+      <SchedulingPanel
+        task={MOCK_SCHEDULING_TASK}
+        error="Task details are still available."
+        onRetry={() => setLastAction("Retried scheduling details")}
+      />
+    );
+  }
+
+  const timeBlocks =
+    state === "empty"
+      ? []
+      : state === "conflict"
+        ? [
+            {
+              ...MOCK_SCHEDULING_BLOCKS[0]!,
+              hasConflict: true,
+              conflictDescriptions: ["Overlaps with Reading (09:30 – 10:15)"],
+            },
+          ]
+        : MOCK_SCHEDULING_BLOCKS;
+
+  return (
+    <div className="specimen-stack" style={{ width: "100%" }}>
+      <Text tone="secondary" size="xs">
+        {lastAction}
+      </Text>
+      <SchedulingPanel
+        task={MOCK_SCHEDULING_TASK}
+        timeBlocks={timeBlocks}
+        spentMinutes={95}
+        locale="en-IN"
+        timeZone="Asia/Kolkata"
+        now={new Date("2026-08-23T12:00:00Z")}
+        readOnly={state === "read-only"}
+        {...(state === "read-only"
+          ? {
+              readOnlyReason:
+                "You can view this schedule, but you don't have permission to change it.",
+            }
+          : {})}
+        {...(state === "active"
+          ? {
+              activeFocusSession: {
+                id: "focus-weekly-review",
+                taskId: MOCK_SCHEDULING_TASK.id,
+                timeBlockId: "time-block-weekly-planning",
+                status: "running" as const,
+                taskTitle: MOCK_SCHEDULING_TASK.title,
+              },
+              onOpenActiveFocus: () => setLastAction("Opened active focus"),
+            }
+          : {})}
+        onSchedule={() => setLastAction("Opened scheduling")}
+        onResolveScheduleConflict={() => setLastAction("Opened conflict resolution")}
+        onStartFocus={(timeBlockId) =>
+          setLastAction(
+            timeBlockId ? `Started focus from ${timeBlockId}` : "Started focus from this Task",
+          )
+        }
+      />
+    </div>
+  );
+}
+
 export function TaskFormDemo({
   presentation = "full",
 }: {
@@ -1102,6 +1467,7 @@ export function ProjectTimelineDemo() {
 
 export function ProjectDetailsScreenDemo() {
   const [selectedTab, setSelectedTab] = useState("overview");
+  const [activityFilter, setActivityFilter] = useState<ActivityTypeFilter>("ALL");
 
   const sampleMilestones: readonly Milestone[] = [
     {
@@ -1144,6 +1510,27 @@ export function ProjectDetailsScreenDemo() {
     updatedAt: "2026-08-20T10:00:00Z",
     version: 2,
   };
+  const activityEvents = [
+    {
+      id: "project-activity-updated",
+      type: "PROJECT" as const,
+      actorName: "You",
+      action: "updated",
+      object: { label: sampleProject.name, href: `/life-os/app/projects/${sampleProject.id}` },
+      createdAt: "2026-08-20T10:00:00Z",
+    },
+    {
+      id: "project-activity-task",
+      type: "TASK" as const,
+      actorName: "You",
+      action: "created",
+      object: { label: "Prepare weekly review", href: "/life-os/app/tasks/task-weekly-review" },
+      createdAt: "2026-08-20T09:00:00Z",
+    },
+  ];
+  const filteredActivityEvents = activityEvents.filter(
+    (event) => activityFilter === "ALL" || event.type === activityFilter,
+  );
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-6)" }}>
@@ -1162,6 +1549,20 @@ export function ProjectDetailsScreenDemo() {
           estimatedHours={40}
           actualHours={18}
           labels={["Design", "Frontend", "Q3-Goal"]}
+          activityEvents={activityEvents}
+          activityTabEvents={filteredActivityEvents}
+          activityCount={22}
+          activityPage={1}
+          activityPageSize={20}
+          activityTotal={22}
+          onActivityPageChange={() => undefined}
+          activityFilter={activityFilter}
+          onActivityFilterChange={setActivityFilter}
+          activityEmptyTitle={
+            activityFilter === "ALL"
+              ? "No activity recorded"
+              : `No ${activityFilter.toLowerCase()} changes on this page`
+          }
           now={new Date("2026-08-20T12:00:00Z")}
         />
       </div>
@@ -1317,6 +1718,138 @@ export function TimeBlockRowDemo() {
   );
 }
 
+export function TimeBlockFormDemo() {
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+
+  return (
+    <div className="specimen-stack" style={{ display: "flex", gap: "var(--lifeos-space-4)" }}>
+      <Button onClick={() => setOpenCreate(true)}>Open Create TimeBlockForm</Button>
+      <Button variant="secondary" onClick={() => setOpenEdit(true)}>
+        Open Edit TimeBlockForm
+      </Button>
+
+      <TimeBlockForm
+        open={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSubmit={(data) => {
+          alert(`Submitted time block: ${data.title}`);
+          setOpenCreate(false);
+        }}
+        mode="create"
+      />
+
+      <TimeBlockForm
+        open={openEdit}
+        onClose={() => setOpenEdit(false)}
+        onSubmit={(data) => {
+          alert(`Saved changes for: ${data.title}`);
+          setOpenEdit(false);
+        }}
+        mode="edit"
+        initialValues={MOCK_TIME_BLOCK_SCHEDULED}
+      />
+    </div>
+  );
+}
+
+export function DayTimelineDemo() {
+  const [density, setDensity] = useState<"compact" | "comfortable" | "spacious">("comfortable");
+  const [viewMode, setViewMode] = useState<"auto" | "grid" | "list">("auto");
+  const fixedNow = new Date("2026-08-21T11:15:00Z");
+
+  const mockBlocks: TimeBlock[] = [
+    MOCK_TIME_BLOCK_COMPLETED,
+    MOCK_TIME_BLOCK_SCHEDULED,
+    MOCK_TIME_BLOCK_CURRENT,
+    MOCK_TIME_BLOCK_CONFLICT,
+  ];
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <DayTimeline
+        blocks={mockBlocks}
+        date="2026-08-21"
+        now={fixedNow}
+        timeZone="UTC"
+        density={density}
+        onDensityChange={setDensity}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        onCreateBlock={(start, end) => alert(`Create block from ${start} to ${end}`)}
+        onSelectBlock={(b) => alert(`Selected block: ${b.title}`)}
+        onMoveBlock={(id, start, end) => alert(`Moved block ${id} to ${start}–${end}`)}
+        onResizeBlock={(id, end) => alert(`Resized block ${id} end to ${end}`)}
+      />
+    </div>
+  );
+}
+
+export function TimeSummaryDemo() {
+  const fixedNow = new Date("2026-08-24T14:30:00Z");
+  const upcomingBlocks: TimeBlock[] = [
+    {
+      id: "tb-demo-1",
+      title: "Architecture Review & Refactoring",
+      category: "Focus",
+      date: "2026-08-24",
+      startTime: "15:00",
+      endTime: "16:30",
+      status: "SCHEDULED",
+    },
+    {
+      id: "tb-demo-2",
+      title: "Evening Reset & Planning",
+      category: "Personal",
+      date: "2026-08-24",
+      startTime: "17:00",
+      endTime: "17:30",
+      status: "SCHEDULED",
+    },
+  ];
+
+  return (
+    <div
+      className="specimen-stack"
+      style={{ display: "flex", flexDirection: "column", gap: "var(--lifeos-space-4)" }}
+    >
+      <TimeSummary
+        metricsStatus={{
+          type: "ready",
+          counts: {
+            focusMinutes: 225,
+            breakMinutes: 45,
+            personalMinutes: 135,
+            unscheduledMinutes: 75,
+          },
+        }}
+        breakdownStatus="ready"
+        categories={[
+          { name: "Focus", minutes: 225, colorName: "blue" },
+          { name: "Break", minutes: 45, colorName: "teal" },
+          { name: "Personal", minutes: 135, colorName: "purple" },
+          { name: "Unscheduled", minutes: 75, colorName: "amber" },
+        ]}
+        goalStatus="ready"
+        targetMinutes={240}
+        actualMinutes={225}
+        upcomingStatus="ready"
+        upcomingBlocks={upcomingBlocks}
+        now={fixedNow}
+        timeZone="UTC"
+        onStartFocus={(b) => alert(`Start focus session for: ${b?.title ?? "current"}`)}
+        onCompleteBlock={(b) => alert(`Complete block: ${b.title}`)}
+        onEditBlock={(b) => alert(`Edit block: ${b.title}`)}
+        onCreateBlock={() => alert("Create new block")}
+        onEditGoal={() => alert("Edit focus goal target")}
+      />
+    </div>
+  );
+}
+
 export {
   SprintCardDemo,
   SprintProgressCapacityDemo,
@@ -1325,3 +1858,49 @@ export {
   SprintFormDialogDemo,
   SprintRetrospectiveDialogDemo,
 } from "./SprintDemos";
+
+export { TimeBlocksScreenDemo } from "./TimeBlocksScreenDemos";
+
+export {
+  WeekStripReadyDemo,
+  WeekStripLoadingDemo,
+  WeekCapacitySummaryReadyDemo,
+  WeekCapacitySummaryOvercapacityDemo,
+  WeekCapacitySummaryLoadingDemo,
+  WeeklyOutcomesDemo,
+  UnscheduledTaskQueueDemo,
+  UnscheduledTaskQueuePartialErrorDemo,
+  TaskAllocationMoveDemo,
+  WeekPlannerScreenDemo,
+} from "./WeekPlannerDemos";
+
+export {
+  GoalCardDemo,
+  GoalRowDemo,
+  ProgressEditorDemo,
+  CheckInFormDialogDemo,
+  CheckInHistoryDemo,
+  GoalLinkedWorkListDemo,
+  GoalMetricSummaryDemo,
+} from "./GoalsDemos";
+
+export {
+  PeriodControlsDemo,
+  ProgressSummaryCardsDemo,
+  ProgressTrendsChartDemo,
+  ProgressCategoryBreakdownDemo,
+  ProgressComparisonTextDemo,
+  ProgressStatesDemo,
+  ProgressScreenDemo,
+} from "./ProgressDemos";
+
+export {
+  ReportSelectorDemo,
+  ReportFilterBarDemo,
+  ReportSummaryMetricsDemo,
+  ReportChartDemo,
+  ReportDataTableDemo,
+  ReportAsynchronousNoticeDemo,
+  ReportStatesDemo,
+  ReportsScreenDemo,
+} from "./ReportsDemos";

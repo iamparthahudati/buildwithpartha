@@ -77,7 +77,8 @@ public class ProfileController {
 
   @Operation(
       summary = "Update user preferences",
-      description = "Updates planning defaults, working days, work hours, and focus durations.")
+      description =
+          "Updates planning defaults, work schedule, Focus Mode cycle, and device-alert choices.")
   @ApiResponse(responseCode = "200", description = "Preferences updated.")
   @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
   @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
@@ -87,6 +88,7 @@ public class ProfileController {
   public UserPreferencesResponse updatePreferences(
       @AuthenticationPrincipal UUID userId,
       @Valid @RequestBody UpdateUserPreferencesRequest request) {
+    PlanningDefaults current = userProfileService.getPreferences(userId).planningDefaults();
     PlanningDefaults defaults =
         new PlanningDefaults(
             request.workingDays(),
@@ -95,7 +97,23 @@ public class ProfileController {
             request.overnightSchedule(),
             Optional.ofNullable(request.dailyFocusTargetMinutes()),
             request.focusDurationMinutes(),
-            request.breakDurationMinutes());
+            request.breakDurationMinutes(),
+            request.longBreakDurationMinutes() == null
+                ? current.longBreakDurationMinutes()
+                : request.longBreakDurationMinutes(),
+            request.focusSessionsBeforeLongBreak() == null
+                ? current.focusSessionsBeforeLongBreak()
+                : request.focusSessionsBeforeLongBreak(),
+            request.autoStartBreaks() == null
+                ? current.autoStartBreaks()
+                : request.autoStartBreaks(),
+            request.autoStartFocusSessions() == null
+                ? current.autoStartFocusSessions()
+                : request.autoStartFocusSessions(),
+            request.soundEnabled() == null ? current.soundEnabled() : request.soundEnabled(),
+            request.browserNotificationsEnabled() == null
+                ? current.browserNotificationsEnabled()
+                : request.browserNotificationsEnabled());
 
     UserPreferences updated =
         userProfileService.updatePreferences(userId, new UpdatePreferencesCommand(defaults));

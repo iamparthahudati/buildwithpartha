@@ -10,22 +10,34 @@ export interface SprintTaskCommitmentListProps {
   readonly onRetry?: () => void;
   readonly onToggleTaskStatus?: (taskId: string, currentStatus: TaskStatus) => void;
   readonly onRemoveTask?: (taskId: string) => void;
+  readonly onEditTask?: (taskId: string) => void;
   readonly onAddTask?: () => void;
   readonly isEditable?: boolean;
   readonly className?: string;
 }
 
-function getTaskStatusBadgeTone(status: TaskStatus) {
+function getTaskStatusBadgeTone(status: TaskStatus | null) {
   switch (status) {
-    case "TODO":
+    case "TO_DO":
       return "neutral";
     case "IN_PROGRESS":
       return "info";
+    case "BLOCKED":
+      return "warning";
     case "DONE":
       return "success";
     case "CANCELLED":
       return "neutral";
+    case null:
+      return "neutral";
   }
+}
+
+function getTaskStatusLabel(status: TaskStatus | null) {
+  if (status === null) return "Unavailable";
+  if (status === "TO_DO") return "To Do";
+  if (status === "IN_PROGRESS") return "In Progress";
+  return status.charAt(0) + status.slice(1).toLowerCase();
 }
 
 export function SprintTaskCommitmentList({
@@ -35,6 +47,7 @@ export function SprintTaskCommitmentList({
   onRetry,
   onToggleTaskStatus,
   onRemoveTask,
+  onEditTask,
   onAddTask,
   isEditable = true,
   className,
@@ -68,7 +81,7 @@ export function SprintTaskCommitmentList({
     >
       <div className="sprint-task-commitment-list__header">
         <div>
-          <Heading level={4} size="sm" className="sprint-task-commitment-list__title">
+          <Heading level={3} size="sm" className="sprint-task-commitment-list__title">
             Task Commitments ({tasks.length})
           </Heading>
           <Text size="xs" tone="muted">
@@ -101,11 +114,13 @@ export function SprintTaskCommitmentList({
                   type="button"
                   className={[
                     "sprint-task-commitment-list__status-toggle",
-                    `is-${task.status.toLowerCase()}`,
+                    `is-${task.status?.toLowerCase() ?? "unavailable"}`,
                   ].join(" ")}
-                  aria-label={`Mark task ${task.title} as ${task.status === "DONE" ? "todo" : "done"}`}
-                  onClick={() => onToggleTaskStatus?.(task.id, task.status)}
-                  disabled={!onToggleTaskStatus}
+                  aria-label={`Mark task ${task.title} as ${task.status === "DONE" ? "to do" : "done"}`}
+                  onClick={() => {
+                    if (task.status !== null) onToggleTaskStatus?.(task.id, task.status);
+                  }}
+                  disabled={!onToggleTaskStatus || task.status === null}
                 >
                   <span className="sprint-task-commitment-list__check-icon" aria-hidden="true">
                     {task.status === "DONE" ? "✓" : ""}
@@ -130,7 +145,9 @@ export function SprintTaskCommitmentList({
                         {task.projectName}
                       </span>
                     ) : null}
-                    <Badge tone={getTaskStatusBadgeTone(task.status)}>{task.status}</Badge>
+                    <Badge tone={getTaskStatusBadgeTone(task.status)}>
+                      {getTaskStatusLabel(task.status)}
+                    </Badge>
                     {task.isCommitted ? (
                       <Badge tone="neutral">Committed</Badge>
                     ) : (
@@ -142,6 +159,16 @@ export function SprintTaskCommitmentList({
 
               <div className="sprint-task-commitment-list__item-actions">
                 <span className="sprint-task-commitment-list__points">{task.storyPoints} pts</span>
+                {isEditable && onEditTask ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={`Edit ${task.title} commitment`}
+                    onClick={() => onEditTask(task.id)}
+                  >
+                    Edit
+                  </Button>
+                ) : null}
                 {isEditable && onRemoveTask ? (
                   <Button
                     variant="ghost"

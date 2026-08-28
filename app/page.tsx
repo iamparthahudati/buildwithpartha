@@ -1,29 +1,21 @@
 export default function Home() {
   return (
-    <main>
-      <header>
-        <a className="brand" href="/" aria-label="Build with Partha home">
-          Build with Partha
-        </a>
-        <div className="status">In the works</div>
+    <main className="min-h-screen p-8 flex flex-col justify-between">
+      <header className="flex justify-between items-center">
+        <h1 className="text-xl font-bold tracking-tight">Build with Partha</h1>
       </header>
 
-      <section className="hero" aria-labelledby="coming-soon-title">
-        <p className="eyebrow">A new home for builders</p>
-        <h1 id="coming-soon-title">
-          Coming <span>soon.</span>
-        </h1>
-        <p className="intro">
-          Practical ideas, thoughtful products, and useful things are taking
-          shape. Check back soon&mdash;we&apos;re building something worth the
-          wait.
+      <section className="my-auto py-12 max-w-2xl">
+        <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl mb-4">
+          Build with Partha
+        </h2>
+        <p className="text-lg text-neutral-400">
+          Welcome to Build with Partha. Ready to build something great.
         </p>
       </section>
 
-      <footer>
-        <span>&copy; 2026 Build with Partha</span>
-        <span className="rule" aria-hidden="true" />
-        <span>buildwithpartha.tech</span>
+      <footer className="text-sm text-neutral-500">
+        &copy; {new Date().getFullYear()} Build with Partha
       </footer>
     </main>
   );

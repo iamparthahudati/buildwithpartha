@@ -3,6 +3,7 @@ package tech.buildwithpartha.lifeos.task.api;
 import java.time.Instant;
 import java.util.UUID;
 import tech.buildwithpartha.lifeos.task.domain.Task;
+import tech.buildwithpartha.lifeos.task.domain.TaskDependencySummaryItem;
 import tech.buildwithpartha.lifeos.task.domain.TaskPriority;
 import tech.buildwithpartha.lifeos.task.domain.TaskStatus;
 
@@ -13,5 +14,10 @@ public record TaskDependencyResponse(
   public static TaskDependencyResponse fromDomain(Task task) {
     return new TaskDependencyResponse(
         task.id(), task.title(), task.status(), task.priority(), task.dueAt().orElse(null));
+  }
+
+  public static TaskDependencyResponse fromDomain(TaskDependencySummaryItem item) {
+    return new TaskDependencyResponse(
+        item.id(), item.title(), item.status(), item.priority(), item.dueAt());
   }
 }

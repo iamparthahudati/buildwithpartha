@@ -106,7 +106,8 @@ export function TodayRoute() {
           onChangeMit: () => navigate("/life-os/app/tasks"),
           onSetMit: () => {},
           onMarkDone: () => {},
-          onStartFocus: () => {},
+          onStartFocus: (taskId) =>
+            navigate(`/life-os/app/focus?taskId=${encodeURIComponent(taskId)}`),
           onAddTask: () => onQuickAddClick("task"),
           onRetryMit: retryToday,
           onRetryTasks: retryToday,
@@ -121,9 +122,9 @@ export function TodayRoute() {
         schedule={{
           state: viewModel.scheduleState,
           onAddTimeBlock: () => onQuickAddClick("time-block"),
-          onStartFocus: () => {},
+          onStartFocus: (blockId) =>
+            navigate(`/life-os/app/focus?timeBlockId=${encodeURIComponent(blockId)}`),
           onRetry: retryToday,
-          startDisabledReason: "Focus actions aren't available from Today yet.",
         }}
         review={{
           status: viewModel.reviewStatus,

@@ -1,0 +1,39 @@
+.time-category-breakdown {
+  width: 100%;
+}
+
+.time-category-breakdown__table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding: var(--space-2);
+}
+
+.time-category-breakdown__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  text-align: left;
+}
+
+.time-category-breakdown__table caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.time-category-breakdown__table th,
+.time-category-breakdown__table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.time-category-breakdown__table th[scope="col"] {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}

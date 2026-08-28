@@ -6,6 +6,7 @@ import { Skeleton } from "@components/ui";
 import { useUserProfile, type UserProfileResponse } from "@features/user";
 
 import { LocalizationSettingsPanel } from "./LocalizationSettingsPanel";
+import { FocusPreferencesPanel } from "./FocusPreferencesPanel";
 import { PrivacySettingsPanel } from "./PrivacySettingsPanel";
 import { ProfileSettingsPanel } from "./ProfileSettingsPanel";
 import { SecuritySettingsPanel } from "./SecuritySettingsPanel";
@@ -91,6 +92,11 @@ export function SettingsScreen({
       id: "localization",
       label: "Localization",
       panel: <LocalizationSettingsPanel profile={profile} />,
+    },
+    {
+      id: "focus",
+      label: "Focus",
+      panel: <FocusPreferencesPanel />,
     },
     {
       id: "security",

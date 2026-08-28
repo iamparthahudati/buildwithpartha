@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
 import {
@@ -47,6 +47,8 @@ export interface Comment {
   readonly createdAt: string;
   /** ISO instant. Presence renders an "(edited)" annotation. */
   readonly editedAt?: string;
+  /** Optimistic local echo; the body is not yet confirmed by the server. */
+  readonly pendingLabel?: string;
 }
 
 export type CommentListStatus =
@@ -99,6 +101,11 @@ export function CommentList({
   const [editValue, setEditValue] = useState("");
   const [wasEditPending, setWasEditPending] = useState(editPending);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const editTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (editingId !== null) editTextareaRef.current?.focus();
+  }, [editingId]);
 
   // Exits edit mode once the caller's own save finishes without an error —
   // there is no separate `onEdited` callback to wait for.
@@ -180,6 +187,11 @@ export function CommentList({
                       (edited)
                     </span>
                   ) : null}
+                  {comment.pendingLabel ? (
+                    <span className="lifeos-comment-list__edited" role="status">
+                      ({comment.pendingLabel})
+                    </span>
+                  ) : null}
                 </div>
 
                 {isEditing ? (
@@ -190,6 +202,7 @@ export function CommentList({
                     onChange={setEditValue}
                     onSubmit={() => onEdit?.(comment.id, editValue)}
                     onCancel={() => setEditingId(null)}
+                    textareaRef={editTextareaRef}
                     pending={editPending}
                     {...(editError !== undefined ? { error: editError } : {})}
                   />
@@ -197,7 +210,7 @@ export function CommentList({
                   <>
                     <p className="lifeos-comment-list__body">{comment.body}</p>
 
-                    {onEdit || onDelete ? (
+                    {!comment.pendingLabel && (onEdit || onDelete) ? (
                       <div className="lifeos-comment-list__actions">
                         {onEdit ? (
                           <IconButton

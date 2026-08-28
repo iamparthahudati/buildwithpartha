@@ -90,6 +90,8 @@ export interface ApiRequestInit {
   readonly method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   readonly body?: unknown;
   readonly signal?: AbortSignal;
+  /** Additional endpoint-specific headers such as optimistic `If-Match` versions. */
+  readonly headers?: Readonly<Record<string, string>>;
   /** When true, a 401 does not clear the in-memory session or redirect to login. */
   readonly suppressAuthenticationRecovery?: boolean;
 }
@@ -106,7 +108,7 @@ export async function apiRequest<TResponse = void>(
 ): Promise<TResponse> {
   const method = init.method ?? "GET";
   const { apiBasePath } = readPublicEnvironment();
-  const headers = new Headers();
+  const headers = new Headers(init.headers);
 
   if (init.body !== undefined) {
     headers.set("Content-Type", "application/json");

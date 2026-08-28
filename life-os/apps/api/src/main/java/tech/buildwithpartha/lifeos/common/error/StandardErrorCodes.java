@@ -16,6 +16,17 @@ public final class StandardErrorCodes {
   public static final ErrorCode TOKEN_INVALID = ErrorCode.of("TOKEN_INVALID");
   public static final ErrorCode VALIDATION_FAILED = ErrorCode.of("VALIDATION_FAILED");
   public static final ErrorCode CONCURRENCY_CONFLICT = ErrorCode.of("CONCURRENCY_CONFLICT");
+  public static final ErrorCode TIME_BLOCK_OVERLAP_CONFLICT =
+      ErrorCode.of("TIME_BLOCK_OVERLAP_CONFLICT");
+  public static final ErrorCode FOCUS_SESSION_ALREADY_ACTIVE =
+      ErrorCode.of("FOCUS_SESSION_ALREADY_ACTIVE");
+  public static final ErrorCode FOCUS_SESSION_STATE_CONFLICT =
+      ErrorCode.of("FOCUS_SESSION_STATE_CONFLICT");
+  public static final ErrorCode IDEMPOTENCY_KEY_REUSED = ErrorCode.of("IDEMPOTENCY_KEY_REUSED");
+  public static final ErrorCode SPRINT_STATE_CONFLICT = ErrorCode.of("SPRINT_STATE_CONFLICT");
+  public static final ErrorCode WEEKLY_PLAN_STATE_CONFLICT =
+      ErrorCode.of("WEEKLY_PLAN_STATE_CONFLICT");
+  public static final ErrorCode REVIEW_STATE_CONFLICT = ErrorCode.of("REVIEW_STATE_CONFLICT");
 
   private StandardErrorCodes() {}
 }

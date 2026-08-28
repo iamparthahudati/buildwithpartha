@@ -14,33 +14,23 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://buildwithpartha.tech"),
-  title: "Coming Soon | Build with Partha",
-  description:
-    "Build with Partha is launching soon. Practical ideas, thoughtful products, and useful things for builders.",
+  title: "Build with Partha",
+  description: "Build with Partha - Practical ideas, thoughtful products, and useful things.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
   },
   openGraph: {
-    title: "Coming Soon | Build with Partha",
-    description: "Practical ideas, thoughtful products, and useful things are taking shape.",
+    title: "Build with Partha",
+    description: "Practical ideas, thoughtful products, and useful things.",
     url: "https://buildwithpartha.tech",
     siteName: "Build with Partha",
     type: "website",
-    images: [
-      {
-        url: "/og.png",
-        width: 1680,
-        height: 945,
-        alt: "Build with Partha — Coming soon.",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Coming Soon | Build with Partha",
-    description: "Practical ideas, thoughtful products, and useful things are taking shape.",
-    images: ["/og.png"],
+    title: "Build with Partha",
+    description: "Practical ideas, thoughtful products, and useful things.",
   },
 };
 
