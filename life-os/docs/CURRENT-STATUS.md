@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-30 (LOS-1208 model habits and entries)
+Last updated: 2026-08-30 (LOS-1209 habits API)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1209 — Implemented the authenticated Habits REST API: owner-scoped CRUD with reminder preferences and optimistic versions, idempotent archive/restore, permanent cascade delete, timezone-aware today entries, bounded 366-day entry/statistics ranges, increment/set/idempotent remove, inclusive pause periods, and plain window completion statistics. Added stable OpenAPI operation contracts plus integration coverage for authentication, CSRF, validation, cross-user isolation, conflicts, daily-entry uniqueness, retry-safe lifecycle/removal behavior, and database cascades. All 54 Habit tests and both OpenAPI artifact tests pass. The full 995-test backend run retains the two pre-existing Today/Brain Dump expectation failures, and whole-tree Spotless/Checkstyle retains only the pre-existing Brain Dump violations already documented by LOS-1208. See `docs/handoffs/LOS-1209.md`.
 
 - LOS-1208 — Modeled habits, habit entries, and habit pause periods (Epic 12 data slice). Added Flyway migration `V27__habits_schema.sql` (`habits` with cadence/target_count/IANA time_zone/reminder + `@Version`; `habit_entries` unique on `(habit_id, local_date)` with positive `completed_count` and `@Version`; `habit_pause_periods` with an inclusive, ordered date range), immutable domain aggregates (`Habit` with `localDateFor(Instant)` for timezone-safe streak bucketing, `HabitEntry`, `HabitPausePeriod` with `covers(LocalDate)`), domain repository ports, and JPA entity/adapter persistence. No API/UI (that is LOS-1209/1211). 22 new backend tests pass (domain invariants, H2 round-trips, and a Testcontainers PostgreSQL `HabitSchemaIT` exercising every constraint); ArchUnit boundaries and `checkstyleTest` pass. The two failing `report` Today-widget tests and the `spotless`/`checkstyleMain` violations on `braindump/**` are pre-existing on `develop` and unrelated. See `docs/handoffs/LOS-1208.md`.
 

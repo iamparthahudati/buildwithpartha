@@ -10,10 +10,9 @@
 | LOS-1206 | Build conversion workflow | Destination preview/fields, preserve source, transactional result link, retry after timeout without duplicates, partial batch results. | LOS-1204, LOS-1205 | M | Done |
 | LOS-1207 | Compose and integrate Brain Dump | Capture, inbox, filters, batch triage/conversion, responsive/a11y and offline draft/queue integration. | LOS-1204–LOS-1206 | L | Done |
 | LOS-1208 | Model habits and entries | Habit/cadence/reminder/entry schema with local date, target count, pause periods, uniqueness/version and timezone-safe streak invariants. | LOS-0216, LOS-0513 | M | Done |
-| LOS-1209 | Implement habits API | CRUD/pause/archive/restore, today/range entries, increment/set/remove, reminder preferences, stats endpoint and cross-user/idempotency tests. | LOS-1208 | M | Backlog |
+| LOS-1209 | Implement habits API | CRUD/pause/archive/restore, today/range entries, increment/set/remove, reminder preferences, stats endpoint and cross-user/idempotency tests. | LOS-1208 | M | Done |
 | LOS-1210 | Define habit/streak calculations | Document cadence eligibility, pause, late edit, timezone change, missed day, count target and rounding. Deterministic fixtures cover boundaries. | LOS-1208 | S | Backlog |
 | LOS-1211 | Build habit components | HabitRow/Card, entry control, streak/consistency, calendar heatmap with table alternative, form, reminder, pause/archive and all states. | LOS-0429, LOS-0434 | M | Backlog |
 | LOS-1212 | Compose and integrate Habits | Today/list/detail/history/statistics with optimistic safe entry rollback, URL dates, timezone change and responsive/a11y. | LOS-1209–LOS-1211 | L | Backlog |
 | LOS-1213 | Add Today capture/habit integration | Quick Add/Today widgets use shared note/brain/habit services, show accurate queued/saved state and precise invalidation. | LOS-0604, LOS-1203, LOS-1207, LOS-1212 | M | Backlog |
 | LOS-1214 | Run knowledge/habits gate | Notes autosave/conflict, brain conversion idempotency, habit/streak/timezone, ownership, offline labeling, sanitization, a11y and large data pass. | LOS-1201–LOS-1213 | S | Backlog |
-
