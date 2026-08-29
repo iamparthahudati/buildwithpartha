@@ -9,7 +9,7 @@ import {
   Target,
   Trash2,
 } from "lucide-react";
-import { Badge, IconButton, Surface, Text, VisuallyHidden } from "@components/ui";
+import { Badge, Checkbox, IconButton, Surface, Text, VisuallyHidden } from "@components/ui";
 import type { BrainDumpItem } from "../model/brainDumpItem";
 import "./brain-dump-item-row.css";
 
@@ -18,6 +18,9 @@ export interface BrainDumpItemRowProps {
   readonly loading?: boolean;
   readonly selected?: boolean;
   readonly onSelect?: (item: BrainDumpItem) => void;
+  /** Shows a batch-selection checkbox (LOS-1206). */
+  readonly selectable?: boolean;
+  readonly onToggleSelect?: (item: BrainDumpItem) => void;
   readonly onDefer?: (item: BrainDumpItem) => void;
   readonly onArchiveToggle?: (item: BrainDumpItem) => void;
   readonly onDelete?: (item: BrainDumpItem) => void;
@@ -54,6 +57,8 @@ export function BrainDumpItemRow({
   loading = false,
   selected = false,
   onSelect,
+  selectable = false,
+  onToggleSelect,
   onDefer,
   onArchiveToggle,
   onDelete,
@@ -121,6 +126,15 @@ export function BrainDumpItemRow({
       style={{ display: "contents" }}
     >
       <Surface bordered interactive={!!onSelect} padding="sm" className={rootClass}>
+        {selectable && (
+          <div className="lifeos-brain-dump-item-row__select" onClick={(e) => e.stopPropagation()}>
+            <Checkbox
+              checked={selected}
+              onChange={() => onToggleSelect?.(item)}
+              label={`Select item: ${item.content.slice(0, 40)}`}
+            />
+          </div>
+        )}
         <div className="lifeos-brain-dump-item-row__content-area">
           <Text size="sm" className="lifeos-brain-dump-item-row__content">
             {item.content}

@@ -15,19 +15,18 @@ import {
   archiveBrainDumpItem,
   restoreBrainDumpItem,
   deleteBrainDumpItem,
-  convertBrainDumpToTask,
-  convertBrainDumpToNote,
-  convertBrainDumpToProject,
-  convertBrainDumpToGoal,
+  convertBrainDumpByTarget,
   type BrainDumpQueryParams,
   type CaptureBrainDumpRequestDto,
   type UpdateBrainDumpContentRequestDto,
-  type ConvertToTaskRequestDto,
-  type ConvertToNoteRequestDto,
-  type ConvertToProjectRequestDto,
-  type ConvertToGoalRequestDto,
+  type ConvertBrainDumpRequest,
 } from "../api/brainDumpApi";
-import type { BrainDumpItem, BrainDumpPageResponse } from "../model/brainDumpItem";
+import type {
+  BrainDumpConvertTargetType,
+  BrainDumpItem,
+  BrainDumpPageResponse,
+} from "../model/brainDumpItem";
+import { buildConvertRequest, initialConvertFields } from "../model/brainDumpConversion";
 
 export const BRAIN_DUMP_QUERY_KEY = ["brain-dump"] as const;
 
@@ -135,14 +134,21 @@ export function useDeleteBrainDumpItem(): UseMutationResult<void, Error, string>
   });
 }
 
-export function useConvertBrainDumpToTask(): UseMutationResult<
+/**
+ * Converts a single Brain Dump item into a destination entity (LOS-1206).
+ *
+ * Returns the updated item, whose `convertedToType`/`convertedToId` back the
+ * transactional result link. The backend conversion is idempotent, so a retry
+ * after a timeout returns the already-created entity without duplicating it.
+ */
+export function useConvertBrainDumpItem(): UseMutationResult<
   BrainDumpItem,
   Error,
-  { readonly id: string; readonly request?: ConvertToTaskRequestDto }
+  { readonly id: string } & ConvertBrainDumpRequest
 > {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, request = {} }) => convertBrainDumpToTask(id, request),
+    mutationFn: ({ id, ...payload }) => convertBrainDumpByTarget(id, payload),
     onSuccess: () => {
       void invalidateBrainDumpQueries(queryClient);
       void invalidateActivityQueries(queryClient);
@@ -150,44 +156,78 @@ export function useConvertBrainDumpToTask(): UseMutationResult<
   });
 }
 
-export function useConvertBrainDumpToNote(): UseMutationResult<
-  BrainDumpItem,
-  Error,
-  { readonly id: string; readonly request?: ConvertToNoteRequestDto }
-> {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, request = {} }) => convertBrainDumpToNote(id, request),
-    onSuccess: () => {
-      void invalidateBrainDumpQueries(queryClient);
-      void invalidateActivityQueries(queryClient);
-    },
-  });
+/** Per-item outcome of a batch conversion (LOS-1206). */
+export interface BatchConvertItemResult {
+  readonly id: string;
+  readonly content: string;
+  readonly ok: boolean;
+  readonly item?: BrainDumpItem;
+  readonly error?: string;
 }
 
-export function useConvertBrainDumpToProject(): UseMutationResult<
-  BrainDumpItem,
-  Error,
-  { readonly id: string; readonly request?: ConvertToProjectRequestDto }
-> {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, request = {} }) => convertBrainDumpToProject(id, request),
-    onSuccess: () => {
-      void invalidateBrainDumpQueries(queryClient);
-      void invalidateActivityQueries(queryClient);
-    },
-  });
+export interface BatchConvertResult {
+  readonly target: BrainDumpConvertTargetType;
+  readonly results: readonly BatchConvertItemResult[];
+  readonly successCount: number;
+  readonly failureCount: number;
 }
 
-export function useConvertBrainDumpToGoal(): UseMutationResult<
-  BrainDumpItem,
+export interface BatchConvertInput {
+  readonly items: readonly BrainDumpItem[];
+  readonly target: BrainDumpConvertTargetType;
+}
+
+/**
+ * Converts many items to a single destination type, reporting a partial
+ * result: each item succeeds or fails independently (`Promise.allSettled`),
+ * so one failure never rolls back the items that converted. Failed items can
+ * be retried safely thanks to backend idempotency.
+ */
+export async function runBatchConvert({
+  items,
+  target,
+}: BatchConvertInput): Promise<BatchConvertResult> {
+  const settled = await Promise.allSettled(
+    items.map((item) => {
+      const request = buildConvertRequest(
+        target as never,
+        initialConvertFields(item.content),
+        item.version,
+      );
+      return convertBrainDumpByTarget(item.id, {
+        target,
+        request,
+      } as ConvertBrainDumpRequest);
+    }),
+  );
+
+  const results: BatchConvertItemResult[] = settled.map((outcome, index) => {
+    const source = items[index]!;
+    if (outcome.status === "fulfilled") {
+      return { id: source.id, content: source.content, ok: true, item: outcome.value };
+    }
+    const reason = outcome.reason;
+    const message = reason instanceof Error ? reason.message : "Conversion failed. Try again.";
+    return { id: source.id, content: source.content, ok: false, error: message };
+  });
+
+  const successCount = results.filter((result) => result.ok).length;
+  return {
+    target,
+    results,
+    successCount,
+    failureCount: results.length - successCount,
+  };
+}
+
+export function useBrainDumpBatchConvert(): UseMutationResult<
+  BatchConvertResult,
   Error,
-  { readonly id: string; readonly request?: ConvertToGoalRequestDto }
+  BatchConvertInput
 > {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, request = {} }) => convertBrainDumpToGoal(id, request),
+    mutationFn: runBatchConvert,
     onSuccess: () => {
       void invalidateBrainDumpQueries(queryClient);
       void invalidateActivityQueries(queryClient);

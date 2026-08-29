@@ -13,6 +13,8 @@ import {
   convertBrainDumpToNote,
   convertBrainDumpToProject,
   convertBrainDumpToGoal,
+  convertBrainDumpByTarget,
+  mapBrainDumpItemDto,
   type BrainDumpItemResponseDto,
 } from "../api/brainDumpApi";
 
@@ -168,41 +170,107 @@ describe("brainDumpApi", () => {
   });
 
   describe("convert operations", () => {
-    it("should convert to Task", async () => {
-      mockApiRequest.mockResolvedValue({ ...MOCK_DTO, status: "CONVERTED" });
-      const result = await convertBrainDumpToTask("bd-1", { title: "Buy milk" });
+    const CONVERTED_DTO: BrainDumpItemResponseDto = {
+      ...MOCK_DTO,
+      status: "CONVERTED",
+      convertedToType: "TASK",
+      convertedToId: "task-99",
+      convertedAt: "2026-08-29T11:00:00Z",
+    };
+
+    it("should convert to Task with the full destination payload", async () => {
+      mockApiRequest.mockResolvedValue(CONVERTED_DTO);
+      const result = await convertBrainDumpToTask("bd-1", {
+        title: "Buy milk",
+        priority: "P3",
+        version: 0,
+      });
       expect(mockApiRequest).toHaveBeenCalledWith("/brain-dump-items/bd-1/convert/task", {
         method: "POST",
-        body: { title: "Buy milk" },
+        body: { title: "Buy milk", priority: "P3", version: 0 },
       });
       expect(result.status).toBe("CONVERTED");
+      expect(result.convertedToType).toBe("TASK");
+      expect(result.convertedToId).toBe("task-99");
     });
 
-    it("should convert to Note", async () => {
-      mockApiRequest.mockResolvedValue({ ...MOCK_DTO, status: "CONVERTED" });
-      await convertBrainDumpToNote("bd-1");
+    it("should convert to Note with a body and version", async () => {
+      mockApiRequest.mockResolvedValue({ ...CONVERTED_DTO, convertedToType: "NOTE" });
+      await convertBrainDumpToNote("bd-1", { title: "Idea", body: "the body", version: 2 });
       expect(mockApiRequest).toHaveBeenCalledWith("/brain-dump-items/bd-1/convert/note", {
         method: "POST",
-        body: {},
+        body: { title: "Idea", body: "the body", version: 2 },
       });
     });
 
-    it("should convert to Project", async () => {
-      mockApiRequest.mockResolvedValue({ ...MOCK_DTO, status: "CONVERTED" });
-      await convertBrainDumpToProject("bd-1", { name: "New Project" });
+    it("should convert to Project with a priority and version", async () => {
+      mockApiRequest.mockResolvedValue({ ...CONVERTED_DTO, convertedToType: "PROJECT" });
+      await convertBrainDumpToProject("bd-1", { name: "New Project", priority: "P2", version: 0 });
       expect(mockApiRequest).toHaveBeenCalledWith("/brain-dump-items/bd-1/convert/project", {
         method: "POST",
-        body: { name: "New Project" },
+        body: { name: "New Project", priority: "P2", version: 0 },
       });
     });
 
-    it("should convert to Goal", async () => {
-      mockApiRequest.mockResolvedValue({ ...MOCK_DTO, status: "CONVERTED" });
-      await convertBrainDumpToGoal("bd-1");
+    it("should convert to Goal with category/progress/cadence", async () => {
+      mockApiRequest.mockResolvedValue({ ...CONVERTED_DTO, convertedToType: "GOAL" });
+      await convertBrainDumpToGoal("bd-1", {
+        title: "Run a marathon",
+        category: "HEALTH",
+        progressType: "BINARY",
+        checkInCadence: "WEEKLY",
+        version: 0,
+      });
       expect(mockApiRequest).toHaveBeenCalledWith("/brain-dump-items/bd-1/convert/goal", {
         method: "POST",
-        body: {},
+        body: {
+          title: "Run a marathon",
+          category: "HEALTH",
+          progressType: "BINARY",
+          checkInCadence: "WEEKLY",
+          version: 0,
+        },
       });
+    });
+
+    it("convertBrainDumpByTarget dispatches to the matching endpoint", async () => {
+      mockApiRequest.mockResolvedValue({ ...CONVERTED_DTO, convertedToType: "PROJECT" });
+      await convertBrainDumpByTarget("bd-1", {
+        target: "PROJECT",
+        request: { name: "Dispatched", priority: "P3", version: 0 },
+      });
+      expect(mockApiRequest).toHaveBeenCalledWith("/brain-dump-items/bd-1/convert/project", {
+        method: "POST",
+        body: { name: "Dispatched", priority: "P3", version: 0 },
+      });
+    });
+  });
+
+  describe("mapBrainDumpItemDto", () => {
+    it("derives archived from archivedAt and maps conversion fields", () => {
+      const { archived: _omitted, ...withoutArchived } = MOCK_DTO;
+      void _omitted;
+      const mapped = mapBrainDumpItemDto({
+        ...withoutArchived,
+        archivedAt: "2026-08-29T12:00:00Z",
+        convertedToType: "GOAL",
+        convertedToId: "goal-7",
+        convertedAt: "2026-08-29T12:30:00Z",
+      });
+      expect(mapped.archived).toBe(true);
+      expect(mapped.archivedAt).toBe("2026-08-29T12:00:00Z");
+      expect(mapped.convertedToType).toBe("GOAL");
+      expect(mapped.convertedToId).toBe("goal-7");
+      expect(mapped.convertedAt).toBe("2026-08-29T12:30:00Z");
+    });
+
+    it("defaults conversion fields to null when absent", () => {
+      const mapped = mapBrainDumpItemDto(MOCK_DTO);
+      expect(mapped.archived).toBe(false);
+      expect(mapped.convertedToType).toBeNull();
+      expect(mapped.convertedToId).toBeNull();
+      expect(mapped.convertedAt).toBeNull();
+      expect(mapped.archivedAt).toBeNull();
     });
   });
 });

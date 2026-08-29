@@ -129,17 +129,13 @@ export function ProjectSummaryMetrics({
                   <IconButton
                     type="button"
                     icon={Filter}
-                    label={
-                      isActive
-                        ? `Filtered by ${item.label}`
-                        : `Filter by ${item.label}`
-                    }
+                    label={isActive ? `Filtered by ${item.label}` : `Filter by ${item.label}`}
                     variant="ghost"
                     size="sm"
                     aria-pressed={isActive}
-                    className={
-                      isActive ? "lifeos-project-summary-metrics__filter--active" : undefined
-                    }
+                    {...(isActive
+                      ? { className: "lifeos-project-summary-metrics__filter--active" }
+                      : {})}
                     onClick={() => onSelectFilter(item.key as ProjectFilterCategory)}
                   />
                 ) : undefined

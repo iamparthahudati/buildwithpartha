@@ -1,0 +1,55 @@
+/* BrainDumpBatchResultDialog (LOS-1206). */
+
+.lifeos-brain-dump-batch-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-brain-dump-batch-result__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.lifeos-brain-dump-batch-result__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-2);
+  padding: var(--lifeos-space-2);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-sm);
+}
+
+.lifeos-brain-dump-batch-result__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.lifeos-brain-dump-batch-result__icon--ok {
+  color: var(--lifeos-color-success);
+  flex-shrink: 0;
+  margin-block-start: 2px;
+}
+
+.lifeos-brain-dump-batch-result__icon--fail {
+  color: var(--lifeos-color-danger);
+  flex-shrink: 0;
+  margin-block-start: 2px;
+}
+
+.lifeos-brain-dump-batch-result__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--lifeos-space-3);
+  flex-wrap: wrap;
+}

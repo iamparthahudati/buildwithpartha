@@ -71,3 +71,23 @@
 .lifeos-brain-dump-screen__empty-title {
   margin: 0;
 }
+
+/* Batch conversion bar (LOS-1206). */
+.lifeos-brain-dump-screen__batch-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  background: var(--lifeos-color-surface-raised);
+  border: 1px solid var(--lifeos-color-border-strong);
+  border-radius: var(--lifeos-radius-md);
+}
+
+.lifeos-brain-dump-screen__batch-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  flex-wrap: wrap;
+}

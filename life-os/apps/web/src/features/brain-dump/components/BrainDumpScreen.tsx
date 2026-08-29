@@ -4,13 +4,25 @@ import { PageHeader, Tabs, type TabItem } from "@components/navigation";
 import { SearchField } from "@components/forms";
 import { ConfirmDialog } from "@components/feedback";
 import { Button, Heading, Select, Text } from "@components/ui";
-import type { BrainDumpItem } from "../model/brainDumpItem";
+import type { BrainDumpConvertTargetType, BrainDumpItem } from "../model/brainDumpItem";
+import { BRAIN_DUMP_TARGET_LABELS } from "../model/brainDumpItem";
+import type { BatchConvertResult } from "../hooks/useBrainDump";
 import type { BrainDumpCaptureStatus } from "./BrainDumpCaptureBar";
 import { BrainDumpCaptureBar } from "./BrainDumpCaptureBar";
 import { BrainDumpItemRow } from "./BrainDumpItemRow";
+import {
+  BrainDumpConvertDialog,
+  type BrainDumpConvertResult,
+  type BrainDumpConvertSubmit,
+} from "./BrainDumpConvertDialog";
+import { BrainDumpBatchResultDialog } from "./BrainDumpBatchResultDialog";
 import "./brain-dump-screen.css";
 
 export type BrainDumpStatusFilter = "UNPROCESSED" | "DEFERRED" | "CONVERTED" | "ALL";
+
+export interface BrainDumpConvertResultState extends BrainDumpConvertResult {
+  readonly itemId: string;
+}
 
 export interface BrainDumpScreenProps {
   readonly items: readonly BrainDumpItem[];
@@ -28,20 +40,40 @@ export interface BrainDumpScreenProps {
   readonly onDefer: (item: BrainDumpItem) => void;
   readonly onArchiveToggle: (item: BrainDumpItem) => void;
   readonly onDelete: (item: BrainDumpItem) => void;
-  readonly onConvertToTask: (item: BrainDumpItem) => void;
-  readonly onConvertToNote: (item: BrainDumpItem) => void;
-  readonly onConvertToProject: (item: BrainDumpItem) => void;
-  readonly onConvertToGoal: (item: BrainDumpItem) => void;
+  // Conversion workflow (LOS-1206)
+  readonly onConvertSubmit: (payload: BrainDumpConvertSubmit) => void;
+  readonly convertPending: boolean;
+  readonly convertError: string | null;
+  readonly convertResult: BrainDumpConvertResultState | null;
+  readonly onConvertDismiss: () => void;
+  // Batch conversion (LOS-1206)
+  readonly onBatchConvert: (
+    items: readonly BrainDumpItem[],
+    target: BrainDumpConvertTargetType,
+  ) => void;
+  readonly batchPending: boolean;
+  readonly batchResult: BatchConvertResult | null;
+  readonly onBatchDismiss: () => void;
 }
 
 const CAPTURE_SECTION_ID = "brain-dump-capture-section";
 
+const BATCH_TARGET_OPTIONS: readonly { value: BrainDumpConvertTargetType; label: string }[] = [
+  { value: "TASK", label: "Tasks" },
+  { value: "NOTE", label: "Notes" },
+  { value: "PROJECT", label: "Projects" },
+  { value: "GOAL", label: "Goals" },
+];
+
+function isBatchSelectable(item: BrainDumpItem): boolean {
+  return item.status !== "CONVERTED" && !item.archived;
+}
+
 /**
- * Brain Dump capture and inbox screen (LOS-1205).
- *
- * Split into a capture panel (top) and a triage inbox list below. Items can
- * be searched, filtered by status/archived, and triaged (convert, defer,
- * archive/restore, delete) without leaving the screen.
+ * Brain Dump capture and inbox screen (LOS-1205), extended with the
+ * conversion workflow (LOS-1206): a per-item conversion dialog with editable
+ * destination fields and a transactional result link, plus multi-select batch
+ * conversion that reports partial results.
  */
 export function BrainDumpScreen({
   items,
@@ -59,13 +91,62 @@ export function BrainDumpScreen({
   onDefer,
   onArchiveToggle,
   onDelete,
-  onConvertToTask,
-  onConvertToNote,
-  onConvertToProject,
-  onConvertToGoal,
+  onConvertSubmit,
+  convertPending,
+  convertError,
+  convertResult,
+  onConvertDismiss,
+  onBatchConvert,
+  batchPending,
+  batchResult,
+  onBatchDismiss,
 }: BrainDumpScreenProps) {
   const [searchDraft, setSearchDraft] = useState(searchQuery);
   const [itemToDelete, setItemToDelete] = useState<BrainDumpItem | null>(null);
+
+  // Conversion dialog (LOS-1206).
+  const [convertItem, setConvertItem] = useState<BrainDumpItem | null>(null);
+  const [convertTarget, setConvertTarget] = useState<BrainDumpConvertTargetType>("TASK");
+
+  // Batch selection (LOS-1206).
+  const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(() => new Set());
+  const [batchTarget, setBatchTarget] = useState<BrainDumpConvertTargetType>("TASK");
+
+  const openConvert = (item: BrainDumpItem, target: BrainDumpConvertTargetType) => {
+    setConvertTarget(target);
+    setConvertItem(item);
+  };
+
+  const closeConvert = () => {
+    setConvertItem(null);
+    onConvertDismiss();
+  };
+
+  const toggleSelect = (item: BrainDumpItem) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(item.id)) next.delete(item.id);
+      else next.add(item.id);
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const selectedItems = items.filter((item) => selectedIds.has(item.id) && isBatchSelectable(item));
+
+  const handleBatchConvert = () => {
+    if (selectedItems.length === 0) return;
+    onBatchConvert(selectedItems, batchTarget);
+  };
+
+  const handleBatchDismiss = () => {
+    onBatchDismiss();
+    clearSelection();
+  };
+
+  const resultForOpenItem =
+    convertResult && convertItem && convertResult.itemId === convertItem.id ? convertResult : null;
 
   const renderItemList = (itemsToRender: readonly BrainDumpItem[]) => {
     if (loading) {
@@ -117,13 +198,16 @@ export function BrainDumpScreen({
           <div key={item.id} role="listitem">
             <BrainDumpItemRow
               item={item}
+              selectable={isBatchSelectable(item)}
+              selected={selectedIds.has(item.id)}
+              onToggleSelect={toggleSelect}
               onDefer={onDefer}
               onArchiveToggle={onArchiveToggle}
               onDelete={setItemToDelete}
-              onConvertToTask={onConvertToTask}
-              onConvertToNote={onConvertToNote}
-              onConvertToProject={onConvertToProject}
-              onConvertToGoal={onConvertToGoal}
+              onConvertToTask={(row) => openConvert(row, "TASK")}
+              onConvertToNote={(row) => openConvert(row, "NOTE")}
+              onConvertToProject={(row) => openConvert(row, "PROJECT")}
+              onConvertToGoal={(row) => openConvert(row, "GOAL")}
             />
           </div>
         ))}
@@ -132,26 +216,10 @@ export function BrainDumpScreen({
   };
 
   const tabItems: readonly TabItem[] = [
-    {
-      id: "UNPROCESSED",
-      label: "Unprocessed",
-      panel: renderItemList(items),
-    },
-    {
-      id: "DEFERRED",
-      label: "Deferred",
-      panel: renderItemList(items),
-    },
-    {
-      id: "CONVERTED",
-      label: "Converted",
-      panel: renderItemList(items),
-    },
-    {
-      id: "ALL",
-      label: "All",
-      panel: renderItemList(items),
-    },
+    { id: "UNPROCESSED", label: "Unprocessed", panel: renderItemList(items) },
+    { id: "DEFERRED", label: "Deferred", panel: renderItemList(items) },
+    { id: "CONVERTED", label: "Converted", panel: renderItemList(items) },
+    { id: "ALL", label: "All", panel: renderItemList(items) },
   ];
 
   return (
@@ -209,6 +277,41 @@ export function BrainDumpScreen({
             />
           </div>
 
+          {selectedItems.length > 0 && (
+            <div
+              className="lifeos-brain-dump-screen__batch-bar"
+              role="region"
+              aria-label="Batch conversion"
+            >
+              <Text size="sm" weight="medium">
+                {selectedItems.length} selected
+              </Text>
+              <div className="lifeos-brain-dump-screen__batch-controls">
+                <Select
+                  label="Convert selected to"
+                  labelHidden
+                  value={batchTarget}
+                  onChange={(e) => setBatchTarget(e.target.value as BrainDumpConvertTargetType)}
+                  options={BATCH_TARGET_OPTIONS}
+                  disabled={batchPending}
+                />
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleBatchConvert}
+                  disabled={batchPending}
+                >
+                  {batchPending
+                    ? "Converting…"
+                    : `Convert to ${BRAIN_DUMP_TARGET_LABELS[batchTarget]}`}
+                </Button>
+                <Button variant="ghost" size="sm" onClick={clearSelection} disabled={batchPending}>
+                  Clear
+                </Button>
+              </div>
+            </div>
+          )}
+
           <Tabs
             label="Brain Dump status filter"
             items={tabItems}
@@ -231,6 +334,29 @@ export function BrainDumpScreen({
           }}
         />
       )}
+
+      <BrainDumpConvertDialog
+        key={convertItem ? `${convertItem.id}-${convertTarget}` : "none"}
+        open={convertItem !== null}
+        item={convertItem}
+        initialTarget={convertTarget}
+        pending={convertPending}
+        error={convertError}
+        result={resultForOpenItem}
+        onSubmit={onConvertSubmit}
+        onClose={closeConvert}
+      />
+
+      <BrainDumpBatchResultDialog
+        open={batchResult !== null}
+        result={batchResult}
+        retrying={batchPending}
+        onRetryFailed={(ids, target) => {
+          const failed = items.filter((item) => ids.includes(item.id));
+          if (failed.length > 0) onBatchConvert(failed, target);
+        }}
+        onClose={handleBatchDismiss}
+      />
     </>
   );
 }

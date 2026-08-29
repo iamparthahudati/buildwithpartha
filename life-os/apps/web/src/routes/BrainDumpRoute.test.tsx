@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrainDumpRoute } from "./BrainDumpRoute";
 import * as brainDumpFeature from "@features/brain-dump";
+import type { BatchConvertResult } from "@features/brain-dump";
 import { AuthSessionContext, type AuthSessionValue } from "@state/authSession";
 import { ToastProvider } from "@state/ToastProvider";
 
@@ -18,10 +19,8 @@ vi.mock("@features/brain-dump", async () => {
     useArchiveBrainDumpItem: vi.fn(),
     useRestoreBrainDumpItem: vi.fn(),
     useDeleteBrainDumpItem: vi.fn(),
-    useConvertBrainDumpToTask: vi.fn(),
-    useConvertBrainDumpToNote: vi.fn(),
-    useConvertBrainDumpToProject: vi.fn(),
-    useConvertBrainDumpToGoal: vi.fn(),
+    useConvertBrainDumpItem: vi.fn(),
+    useBrainDumpBatchConvert: vi.fn(),
   };
 });
 
@@ -31,10 +30,8 @@ const mockUseDeferBrainDumpItem = vi.mocked(brainDumpFeature.useDeferBrainDumpIt
 const mockUseArchiveBrainDumpItem = vi.mocked(brainDumpFeature.useArchiveBrainDumpItem);
 const mockUseRestoreBrainDumpItem = vi.mocked(brainDumpFeature.useRestoreBrainDumpItem);
 const mockUseDeleteBrainDumpItem = vi.mocked(brainDumpFeature.useDeleteBrainDumpItem);
-const mockUseConvertBrainDumpToTask = vi.mocked(brainDumpFeature.useConvertBrainDumpToTask);
-const mockUseConvertBrainDumpToNote = vi.mocked(brainDumpFeature.useConvertBrainDumpToNote);
-const mockUseConvertBrainDumpToProject = vi.mocked(brainDumpFeature.useConvertBrainDumpToProject);
-const mockUseConvertBrainDumpToGoal = vi.mocked(brainDumpFeature.useConvertBrainDumpToGoal);
+const mockUseConvertBrainDumpItem = vi.mocked(brainDumpFeature.useConvertBrainDumpItem);
+const mockUseBrainDumpBatchConvert = vi.mocked(brainDumpFeature.useBrainDumpBatchConvert);
 
 const MOCK_USER = {
   id: "user-1",
@@ -60,8 +57,20 @@ const MOCK_ITEM_1: brainDumpFeature.BrainDumpItem = {
   status: "UNPROCESSED",
   archived: false,
   version: 0,
+  convertedToType: null,
+  convertedToId: null,
+  convertedAt: null,
+  archivedAt: null,
   createdAt: "2026-08-29T10:00:00Z",
   updatedAt: "2026-08-29T10:00:00Z",
+};
+
+const CONVERTED_TASK: brainDumpFeature.BrainDumpItem = {
+  ...MOCK_ITEM_1,
+  status: "CONVERTED",
+  convertedToType: "TASK",
+  convertedToId: "task-42",
+  convertedAt: "2026-08-29T11:00:00Z",
 };
 
 const spyCapture = vi.fn();
@@ -69,10 +78,9 @@ const spyDefer = vi.fn();
 const spyArchive = vi.fn();
 const spyRestore = vi.fn();
 const spyDelete = vi.fn();
-const spyConvertToTask = vi.fn();
-const spyConvertToNote = vi.fn();
-const spyConvertToProject = vi.fn();
-const spyConvertToGoal = vi.fn();
+const spyConvert = vi.fn();
+const spyBatch = vi.fn();
+const spyBatchReset = vi.fn();
 
 function renderBrainDumpRoute(initialEntries = ["/life-os/app/brain-dump"]) {
   const queryClient = new QueryClient({
@@ -94,6 +102,16 @@ function renderBrainDumpRoute(initialEntries = ["/life-os/app/brain-dump"]) {
   );
 }
 
+function setBatchState(data: BatchConvertResult | undefined = undefined, isPending = false) {
+  mockUseBrainDumpBatchConvert.mockReturnValue({
+    mutateAsync: spyBatch,
+    mutate: spyBatch,
+    reset: spyBatchReset,
+    data,
+    isPending,
+  } as never);
+}
+
 describe("BrainDumpRoute", () => {
   beforeEach(() => {
     vi.resetAllMocks();
@@ -103,55 +121,45 @@ describe("BrainDumpRoute", () => {
     spyArchive.mockReset().mockResolvedValue(MOCK_ITEM_1);
     spyRestore.mockReset().mockResolvedValue(MOCK_ITEM_1);
     spyDelete.mockReset().mockResolvedValue(undefined);
-    spyConvertToTask.mockReset().mockResolvedValue(MOCK_ITEM_1);
-    spyConvertToNote.mockReset().mockResolvedValue(MOCK_ITEM_1);
-    spyConvertToProject.mockReset().mockResolvedValue(MOCK_ITEM_1);
-    spyConvertToGoal.mockReset().mockResolvedValue(MOCK_ITEM_1);
+    spyConvert.mockReset().mockResolvedValue(CONVERTED_TASK);
+    spyBatch.mockReset().mockResolvedValue({
+      target: "TASK",
+      results: [{ id: "bd-1", content: MOCK_ITEM_1.content, ok: true, item: CONVERTED_TASK }],
+      successCount: 1,
+      failureCount: 0,
+    } satisfies BatchConvertResult);
+    spyBatchReset.mockReset();
 
     mockUseBrainDumpItems.mockReturnValue({
-      data: {
-        items: [MOCK_ITEM_1],
-        page: 0,
-        size: 20,
-        totalItems: 1,
-        totalPages: 1,
-      },
+      data: { items: [MOCK_ITEM_1], page: 0, size: 20, totalItems: 1, totalPages: 1 },
       isPending: false,
       isError: false,
       error: null,
       refetch: vi.fn(),
-    } as any);
+    } as never);
 
     mockUseCaptureBrainDumpItem.mockReturnValue({
       mutateAsync: spyCapture,
       isPending: false,
-    } as any);
-    mockUseDeferBrainDumpItem.mockReturnValue({ mutateAsync: spyDefer, isPending: false } as any);
+    } as never);
+    mockUseDeferBrainDumpItem.mockReturnValue({ mutateAsync: spyDefer, isPending: false } as never);
     mockUseArchiveBrainDumpItem.mockReturnValue({
       mutateAsync: spyArchive,
       isPending: false,
-    } as any);
+    } as never);
     mockUseRestoreBrainDumpItem.mockReturnValue({
       mutateAsync: spyRestore,
       isPending: false,
-    } as any);
-    mockUseDeleteBrainDumpItem.mockReturnValue({ mutateAsync: spyDelete, isPending: false } as any);
-    mockUseConvertBrainDumpToTask.mockReturnValue({
-      mutateAsync: spyConvertToTask,
+    } as never);
+    mockUseDeleteBrainDumpItem.mockReturnValue({
+      mutateAsync: spyDelete,
       isPending: false,
-    } as any);
-    mockUseConvertBrainDumpToNote.mockReturnValue({
-      mutateAsync: spyConvertToNote,
+    } as never);
+    mockUseConvertBrainDumpItem.mockReturnValue({
+      mutateAsync: spyConvert,
       isPending: false,
-    } as any);
-    mockUseConvertBrainDumpToProject.mockReturnValue({
-      mutateAsync: spyConvertToProject,
-      isPending: false,
-    } as any);
-    mockUseConvertBrainDumpToGoal.mockReturnValue({
-      mutateAsync: spyConvertToGoal,
-      isPending: false,
-    } as any);
+    } as never);
+    setBatchState();
   });
 
   it("renders brain dump screen correctly", () => {
@@ -167,8 +175,7 @@ describe("BrainDumpRoute", () => {
     const textarea = screen.getByRole("textbox", { name: "What is on your mind?" });
     await userEvent.type(textarea, "Learn React Query");
 
-    const captureButton = screen.getByRole("button", { name: "Capture" });
-    await userEvent.click(captureButton);
+    await userEvent.click(screen.getByRole("button", { name: "Capture" }));
 
     expect(spyCapture).toHaveBeenCalledWith({ content: "Learn React Query" });
     await waitFor(() => {
@@ -196,42 +203,77 @@ describe("BrainDumpRoute", () => {
     renderBrainDumpRoute();
 
     await userEvent.click(screen.getByRole("button", { name: "Delete item" }));
-
-    // Click confirm
     await userEvent.click(screen.getByRole("button", { name: "Delete" }));
 
     expect(spyDelete).toHaveBeenCalledWith("bd-1");
   });
 
-  it("triggers convert to task mutation when Convert to Task button is clicked", async () => {
+  it("opens the conversion dialog and submits a full task payload", async () => {
     renderBrainDumpRoute();
 
     await userEvent.click(screen.getByRole("button", { name: "Convert to Task" }));
 
-    expect(spyConvertToTask).toHaveBeenCalledWith({ id: "bd-1" });
+    const dialog = await screen.findByRole("dialog");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Convert to Task" }));
+
+    expect(spyConvert).toHaveBeenCalledTimes(1);
+    expect(spyConvert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "bd-1",
+        target: "TASK",
+        request: expect.objectContaining({
+          title: "Buy groceries and write tests",
+          priority: "P3",
+          version: 0,
+        }),
+      }),
+    );
   });
 
-  it("triggers convert to note mutation when Convert to Note button is clicked", async () => {
+  it("shows the transactional result link after a conversion resolves", async () => {
     renderBrainDumpRoute();
 
-    await userEvent.click(screen.getByRole("button", { name: "Convert to Note" }));
+    await userEvent.click(screen.getByRole("button", { name: "Convert to Task" }));
+    const dialog = await screen.findByRole("dialog");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Convert to Task" }));
 
-    expect(spyConvertToNote).toHaveBeenCalledWith({ id: "bd-1" });
+    const link = await screen.findByRole("link", { name: /Open the new Task/i });
+    expect(link).toHaveAttribute("href", "/life-os/app/tasks/task-42");
   });
 
-  it("triggers convert to project mutation when Convert to Project button is clicked", async () => {
+  it("batch-converts selected items", async () => {
     renderBrainDumpRoute();
 
-    await userEvent.click(screen.getByRole("button", { name: "Convert to Project" }));
+    await userEvent.click(screen.getByRole("checkbox", { name: /Select item/i }));
 
-    expect(spyConvertToProject).toHaveBeenCalledWith({ id: "bd-1" });
+    const region = screen.getByRole("region", { name: "Batch conversion" });
+    await userEvent.click(within(region).getByRole("button", { name: /Convert to Task/i }));
+
+    expect(spyBatch).toHaveBeenCalledWith({
+      items: [expect.objectContaining({ id: "bd-1" })],
+      target: "TASK",
+    });
   });
 
-  it("triggers convert to goal mutation when Convert to Goal button is clicked", async () => {
+  it("renders partial batch results with a retry for failures", async () => {
+    setBatchState({
+      target: "NOTE",
+      results: [
+        {
+          id: "bd-1",
+          content: "ok item",
+          ok: true,
+          item: { ...CONVERTED_TASK, convertedToType: "NOTE", convertedToId: "note-1" },
+        },
+        { id: "bd-2", content: "bad item", ok: false, error: "Conversion failed." },
+      ],
+      successCount: 1,
+      failureCount: 1,
+    });
+
     renderBrainDumpRoute();
 
-    await userEvent.click(screen.getByRole("button", { name: "Convert to Goal" }));
-
-    expect(spyConvertToGoal).toHaveBeenCalledWith({ id: "bd-1" });
+    expect(screen.getByText(/Converted 1 of 2 to Note/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Retry 1 failed/i })).toBeInTheDocument();
   });
 });
