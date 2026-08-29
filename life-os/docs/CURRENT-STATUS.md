@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-28 (LOS-1111 implement CSV export)
+Last updated: 2026-08-29 (LOS-1204 model and implement Brain Dump API)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1204 — Brain Dump API: brain_dump_items schema (V25 Flyway migration), domain aggregate, JPA persistence, transactional BrainDumpService, idempotent conversion to Task/Note/Project/Goal via domain-neutral common interfaces, BrainDumpController REST endpoints (capture/get/list/update/defer/archive/restore/delete/convert), and Today widget live unprocessed count integration. All ArchUnit boundary and unit tests pass. See `docs/handoffs/LOS-1204.md`.
 
 - LOS-1111 — Implemented CSV export for reports including RFC 4180-compatible encoding, formula injection protection, timezone/metadata header block, UTF-8 BOM, private short-lived (15 minutes) download token integration, secure download controller, and frontend ReportExportButton component with loading/error feedback. Passed 100% backend quality checks/tests/ArchUnit boundaries and frontend quality/test suites. See `docs/handoffs/LOS-1111.md`.
 

@@ -83,7 +83,7 @@ class TodayServiceTests {
     weekWidgetProvider = new DefaultWeekWidgetProvider();
     activeProjectsWidgetProvider = new DefaultActiveProjectsWidgetProvider();
     reviewWidgetProvider = new DefaultReviewWidgetProvider();
-    brainDumpWidgetProvider = new DefaultBrainDumpWidgetProvider();
+    brainDumpWidgetProvider = new DefaultBrainDumpWidgetProvider(userId -> 0);
     habitsWidgetProvider = new DefaultHabitsWidgetProvider();
     metricsWidgetProvider = new DefaultMetricsWidgetProvider();
 
