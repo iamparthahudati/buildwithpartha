@@ -77,6 +77,7 @@ import {
 } from "./ComposedDemos";
 
 import { GoalsScreenDemo, GoalDetailsScreenDemo } from "./GoalsDemos";
+import { NoteCardDemo, NoteFormDemo } from "./NotesDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
 import { TasksScreenDemo } from "./TasksScreenDemos";
@@ -1240,6 +1241,28 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Full composed Reports screen with selector, filter bar, summary, charts, data tables, and print action.",
         render: () => <ReportsScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "note-components",
+    name: "Note components",
+    group: "Composed",
+    summary:
+      "Note cards, editor/creation forms with autosaving, inline notifications, label pickers, and link managers.",
+    states: [
+      {
+        id: "note-card",
+        name: "NoteCard",
+        description: "Renders note title, body snippet, date, label badges, and entity links.",
+        render: () => <NoteCardDemo />,
+      },
+      {
+        id: "note-form",
+        name: "NoteForm",
+        description:
+          "Interactive title/body editor with autosaving status, label selector, and entity link controls.",
+        render: () => <NoteFormDemo />,
       },
     ],
   },
