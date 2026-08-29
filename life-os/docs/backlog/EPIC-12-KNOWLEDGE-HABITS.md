@@ -3,9 +3,9 @@
 | ID | Ticket | Description and acceptance contract | Depends on | Estimate | Status |
 | --- | --- | --- | --- | --- | --- |
 | LOS-1201 | Model and implement notes API | Note schema and CRUD/search/pin/archive/restore with plain/Markdown body, labels, optional entity links, version, ownership and no sensitive body logging. | LOS-0216, LOS-0806 | M | Done |
-| LOS-1202 | Build notes list/editor components | NoteCard, filters, title/body editor, autosave status, labels/links, pin/archive/delete, long text, conflict/offline drafts and mobile layout. | LOS-0434 | M | Backlog |
-| LOS-1203 | Compose and integrate Notes | List/detail deep links, search/filter, autosave debounce/cancel/version, safe Markdown rendering, stale/conflict recovery, responsive/a11y. | LOS-1201, LOS-1202 | L | Backlog |
-| LOS-1204 | Model and implement brain dump API | Fast create/list/process/archive/delete/convert with source trace and idempotent transactional conversion to task/note/project idea/goal. | LOS-0802, LOS-1201, LOS-1102 | M | Backlog |
+| LOS-1202 | Build notes list/editor components | NoteCard, filters, title/body editor, autosave status, labels/links, pin/archive/delete, long text, conflict/offline drafts and mobile layout. | LOS-0434 | M | Done |
+| LOS-1203 | Compose and integrate Notes | List/detail deep links, search/filter, autosave debounce/cancel/version, safe Markdown rendering, stale/conflict recovery, responsive/a11y. | LOS-1201, LOS-1202 | L | Done |
+| LOS-1204 | Model and implement brain dump API | Fast create/list/process/archive/delete/convert with source trace and idempotent transactional conversion to task/note/project idea/goal. | LOS-0802, LOS-1201, LOS-1102 | M | Done |
 | LOS-1205 | Build brain-dump capture and inbox | Fast text capture, queued/offline label, keyboard shortcut, item list, batch selection, convert/defer/archive/delete and clear empty/errors. | LOS-0434 | S | Done |
 | LOS-1206 | Build conversion workflow | Destination preview/fields, preserve source, transactional result link, retry after timeout without duplicates, partial batch results. | LOS-1204, LOS-1205 | M | Backlog |
 | LOS-1207 | Compose and integrate Brain Dump | Capture, inbox, filters, batch triage/conversion, responsive/a11y and offline draft/queue integration. | LOS-1204–LOS-1206 | L | Backlog |
