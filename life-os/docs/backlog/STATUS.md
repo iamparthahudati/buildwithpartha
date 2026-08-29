@@ -213,6 +213,7 @@ Last updated: 2026-08-30
 | LOS-1204 | Done          | `feature/LOS-1204-model-implement-brain-dump-api` | Brain Dump API: schema (V25), domain aggregate, JPA persistence, transactional service, idempotent conversion to Task/Note/Project/Goal, REST endpoints, and Today unprocessed count. See `docs/handoffs/LOS-1204.md`. |
 | LOS-1205 | Done          | `feature/LOS-1205-brain-dump-capture-inbox`      | Brain Dump capture bar, inbox rows, composed screen and route with URL filter sync. See `docs/handoffs/LOS-1205.md`. |
 | LOS-1206 | Done          | `feature/LOS-1206-build-conversion-workflow`     | Brain Dump conversion workflow: destination preview/fields dialog, preserved source, transactional result link, idempotent retry, and partial batch results. Corrected the frontend convert contract/model to match LOS-1204. See `docs/handoffs/LOS-1206.md`. |
+| LOS-1207 | Done          | `feature/LOS-1207-compose-integrate-brain-dump`  | Composed and integrated Brain Dump; added persistent per-user offline capture queue (`useBrainDumpCaptureQueue` + `model/captureQueue.ts`) with auto-flush on reconnect, a sync/discard banner, and guarded `localStorage`. See `docs/handoffs/LOS-1207.md`. |
 
 
 All unlisted tickets remain Backlog until explicitly added or promoted. Note: LOS-1202 and LOS-1203 are Done in git history and `CURRENT-STATUS.md` but not yet mirrored here; this ledger drifted after LOS-1201 and should be reconciled in a docs pass.

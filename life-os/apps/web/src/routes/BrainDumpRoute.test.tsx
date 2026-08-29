@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
@@ -21,6 +21,7 @@ vi.mock("@features/brain-dump", async () => {
     useDeleteBrainDumpItem: vi.fn(),
     useConvertBrainDumpItem: vi.fn(),
     useBrainDumpBatchConvert: vi.fn(),
+    useBrainDumpCaptureQueue: vi.fn(),
   };
 });
 
@@ -32,6 +33,7 @@ const mockUseRestoreBrainDumpItem = vi.mocked(brainDumpFeature.useRestoreBrainDu
 const mockUseDeleteBrainDumpItem = vi.mocked(brainDumpFeature.useDeleteBrainDumpItem);
 const mockUseConvertBrainDumpItem = vi.mocked(brainDumpFeature.useConvertBrainDumpItem);
 const mockUseBrainDumpBatchConvert = vi.mocked(brainDumpFeature.useBrainDumpBatchConvert);
+const mockUseBrainDumpCaptureQueue = vi.mocked(brainDumpFeature.useBrainDumpCaptureQueue);
 
 const MOCK_USER = {
   id: "user-1",
@@ -81,6 +83,24 @@ const spyDelete = vi.fn();
 const spyConvert = vi.fn();
 const spyBatch = vi.fn();
 const spyBatchReset = vi.fn();
+const spyEnqueue = vi.fn();
+const spyFlush = vi.fn();
+const spyDiscardAll = vi.fn();
+
+function setQueueState(
+  overrides: Partial<ReturnType<typeof brainDumpFeature.useBrainDumpCaptureQueue>> = {},
+) {
+  const queuedItems = overrides.queuedItems ?? [];
+  mockUseBrainDumpCaptureQueue.mockReturnValue({
+    queuedItems,
+    queuedCount: queuedItems.length,
+    isFlushing: false,
+    enqueue: spyEnqueue,
+    flush: spyFlush,
+    discardAll: spyDiscardAll,
+    ...overrides,
+  });
+}
 
 function renderBrainDumpRoute(initialEntries = ["/life-os/app/brain-dump"]) {
   const queryClient = new QueryClient({
@@ -129,6 +149,9 @@ describe("BrainDumpRoute", () => {
       failureCount: 0,
     } satisfies BatchConvertResult);
     spyBatchReset.mockReset();
+    spyEnqueue.mockReset();
+    spyFlush.mockReset().mockResolvedValue({ sent: 0, remaining: 0 });
+    spyDiscardAll.mockReset();
 
     mockUseBrainDumpItems.mockReturnValue({
       data: { items: [MOCK_ITEM_1], page: 0, size: 20, totalItems: 1, totalPages: 1 },
@@ -160,6 +183,7 @@ describe("BrainDumpRoute", () => {
       isPending: false,
     } as never);
     setBatchState();
+    setQueueState();
   });
 
   it("renders brain dump screen correctly", () => {
@@ -275,5 +299,51 @@ describe("BrainDumpRoute", () => {
 
     expect(screen.getByText(/Converted 1 of 2 to Note/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Retry 1 failed/i })).toBeInTheDocument();
+  });
+
+  describe("offline capture queue (LOS-1207)", () => {
+    const originalOnLine = window.navigator.onLine;
+
+    afterEach(() => {
+      Object.defineProperty(window.navigator, "onLine", {
+        value: originalOnLine,
+        configurable: true,
+      });
+    });
+
+    it("queues a capture instead of sending it while offline", async () => {
+      Object.defineProperty(window.navigator, "onLine", { value: false, configurable: true });
+      renderBrainDumpRoute();
+
+      const textarea = screen.getByRole("textbox", { name: "What is on your mind?" });
+      await userEvent.type(textarea, "Offline idea");
+      await userEvent.click(screen.getByRole("button", { name: "Queue item" }));
+
+      expect(spyEnqueue).toHaveBeenCalledWith("Offline idea");
+      expect(spyCapture).not.toHaveBeenCalled();
+    });
+
+    it("shows the sync banner and flushes on demand", async () => {
+      spyFlush.mockResolvedValue({ sent: 1, remaining: 0 });
+      setQueueState({
+        queuedItems: [{ id: "q1", content: "waiting thought", queuedAt: "2026-08-30T10:00:00Z" }],
+      });
+      renderBrainDumpRoute();
+
+      expect(screen.getByText(/1 capture waiting to sync/i)).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole("button", { name: "Sync now" }));
+      await waitFor(() => expect(spyFlush).toHaveBeenCalled());
+    });
+
+    it("discards queued captures", async () => {
+      setQueueState({
+        queuedItems: [{ id: "q1", content: "waiting thought", queuedAt: "2026-08-30T10:00:00Z" }],
+      });
+      renderBrainDumpRoute();
+
+      await userEvent.click(screen.getByRole("button", { name: "Discard" }));
+      expect(spyDiscardAll).toHaveBeenCalled();
+    });
   });
 });

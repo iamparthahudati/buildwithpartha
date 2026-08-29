@@ -14,6 +14,7 @@ import {
   useDeleteBrainDumpItem,
   useConvertBrainDumpItem,
   useBrainDumpBatchConvert,
+  useBrainDumpCaptureQueue,
   type BrainDumpConvertResultState,
   type BrainDumpConvertSubmit,
   type BrainDumpConvertTargetType,
@@ -109,9 +110,18 @@ export function BrainDumpRoute() {
   const convertMutation = useConvertBrainDumpItem();
   const batchMutation = useBrainDumpBatchConvert();
 
+  // Offline capture queue (LOS-1207): persists captures made while offline and
+  // flushes them automatically when connectivity returns.
+  const captureQueue = useBrainDumpCaptureQueue({
+    userId: user?.id ?? "",
+    isOnline,
+    enabled: user !== null,
+  });
+
   // Handlers
   const handleCapture = async (content: string) => {
     if (!isOnline) {
+      captureQueue.enqueue(content);
       setCaptureStatus({ type: "offline-queued" });
       return;
     }
@@ -125,6 +135,23 @@ export function BrainDumpRoute() {
         message: "Failed to capture item. Your text is preserved — try again.",
       });
     }
+  };
+
+  const handleFlushQueue = async () => {
+    const { sent, remaining } = await captureQueue.flush();
+    if (sent > 0 && remaining === 0) {
+      toast.push({ tone: "success", message: "Queued captures synced." });
+    } else if (remaining > 0) {
+      toast.push({
+        tone: "warning",
+        message: `${sent} synced, ${remaining} still queued — try again when back online.`,
+      });
+    }
+  };
+
+  const handleDiscardQueued = () => {
+    captureQueue.discardAll();
+    toast.push({ tone: "info", message: "Queued captures discarded." });
   };
 
   const handleDefer = async (item: BrainDumpItem) => {
@@ -225,6 +252,10 @@ export function BrainDumpRoute() {
       captureStatus={captureStatus}
       isOnline={isOnline}
       onCapture={handleCapture}
+      queuedCount={captureQueue.queuedCount}
+      flushing={captureQueue.isFlushing}
+      onFlushQueue={handleFlushQueue}
+      onDiscardQueued={handleDiscardQueued}
       onDefer={handleDefer}
       onArchiveToggle={handleArchiveToggle}
       onDelete={handleDelete}
