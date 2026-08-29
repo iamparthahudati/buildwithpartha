@@ -505,3 +505,26 @@ CREATE TABLE IF NOT EXISTS brain_dump_items (
     updated_at        TIMESTAMP WITH TIME ZONE NOT NULL,
     version           BIGINT                   NOT NULL
 );
+
+-- Added by LOS-1208: Habits, habit entries, and habit pause periods schema.
+CREATE TABLE IF NOT EXISTS habits (
+    id UUID NOT NULL PRIMARY KEY, user_id UUID NOT NULL, name TEXT NOT NULL,
+    description TEXT, cadence_type VARCHAR(32) NOT NULL, target_count INT NOT NULL,
+    time_zone VARCHAR(64) NOT NULL, color VARCHAR(32),
+    reminder_enabled BOOLEAN NOT NULL, reminder_time TIME, archived BOOLEAN NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL, updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS habit_entries (
+    id UUID NOT NULL PRIMARY KEY, habit_id UUID NOT NULL, user_id UUID NOT NULL,
+    local_date DATE NOT NULL, completed_count INT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL, updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    version BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS habit_pause_periods (
+    id UUID NOT NULL PRIMARY KEY, habit_id UUID NOT NULL, user_id UUID NOT NULL,
+    start_date DATE NOT NULL, end_date DATE, reason TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
