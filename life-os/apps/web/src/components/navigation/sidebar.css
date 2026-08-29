@@ -51,6 +51,12 @@
   outline: none;
 }
 
+/* Nudge the brand mark up one step from the logo's own `md` size — the symbol
+   and wordmark both scale from this because the logo sizes itself in em. */
+.lifeos-sidebar__brand .lifeos-logo {
+  font-size: var(--lifeos-font-size-2xl);
+}
+
 .lifeos-sidebar__brand:focus-visible {
   outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
   outline-offset: var(--lifeos-focus-ring-offset);

@@ -137,6 +137,7 @@ class ActivityEmissionIntegrationTests {
                 null,
                 null,
                 null,
+                null,
                 Set.of()));
     Project updated =
         projectService.updateProject(
@@ -148,6 +149,7 @@ class ActivityEmissionIntegrationTests {
                 ProjectStatus.ACTIVE,
                 ProjectPriority.P1,
                 ProjectHealth.ON_TRACK,
+                null,
                 null,
                 null,
                 null,

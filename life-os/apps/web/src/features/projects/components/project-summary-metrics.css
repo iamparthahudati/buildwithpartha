@@ -1,7 +1,7 @@
 /* ProjectSummaryMetrics (LOS-0708) */
 .lifeos-project-summary-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(9.5rem, 100%), 1fr));
   gap: 0;
   width: 100%;
 }
@@ -15,6 +15,47 @@
 .lifeos-project-summary-metrics__item > .lifeos-surface {
   height: 100%;
   border-radius: 0;
+}
+
+/* Compact these cards: the summary strip packs six metrics in a row, so each
+   card lays out on a single row — icon, the value+label group, then the filter
+   button pushed to the trailing edge — instead of the tall vertical stack a
+   standalone MetricCard uses. */
+.lifeos-project-summary-metrics__item .lifeos-metric-card {
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-3);
+}
+
+.lifeos-project-summary-metrics__item .lifeos-metric-card__icon {
+  flex: none;
+}
+
+.lifeos-project-summary-metrics__item .lifeos-metric-card__metric {
+  min-width: 0;
+}
+
+/* Trailing edge, aligned with the row rather than stacked beneath it. */
+.lifeos-project-summary-metrics__item .lifeos-metric-card__action {
+  margin-top: 0;
+  margin-inline-start: auto;
+}
+
+/* The active filter is already signalled by the card's blue outline, so the
+   funnel stays a quiet ghost button — only lightly tinted when active rather
+   than a heavy solid fill that would compete with the metric value. */
+.lifeos-project-summary-metrics__filter--active {
+  color: var(--lifeos-color-primary);
+}
+
+/* IconButton keeps its accessible name as a zero-width, visually-hidden flex
+   sibling of the icon. The button content's gap would otherwise sit between the
+   funnel and that empty label and push the icon off-centre — collapse it so the
+   funnel sits dead-centre in its square target. */
+.lifeos-project-summary-metrics__item .lifeos-metric-card__action .lifeos-button__content {
+  gap: 0;
 }
 
 .lifeos-project-summary-metrics__item:first-child > .lifeos-surface {

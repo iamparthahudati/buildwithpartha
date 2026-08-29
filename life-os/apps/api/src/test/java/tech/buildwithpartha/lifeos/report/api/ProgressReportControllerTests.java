@@ -139,6 +139,7 @@ class ProgressReportControllerTests {
             ProjectHealth.ON_TRACK,
             Optional.of("#000000"),
             Optional.of("bar-chart"),
+            Optional.empty(),
             Optional.of(startDate),
             Optional.of(today.plusDays(30)),
             Optional.of(1200),

@@ -138,6 +138,7 @@ class ProjectControllerTests {
             Optional.empty(),
             Optional.empty(),
             Optional.empty(),
+            Optional.empty(),
             Instant.now(),
             Instant.now(),
             Set.of(),
@@ -197,6 +198,49 @@ class ProjectControllerTests {
         .andExpect(jsonPath("$.health").value("NOT_SET"))
         .andExpect(jsonPath("$.labelIds[0]").value(userLabel.id().toString()))
         .andExpect(jsonPath("$.version").isNumber());
+  }
+
+  @Test
+  void createProjectPersistsCoverImageUrl() throws Exception {
+    String body =
+        """
+        {
+          "name": "Cover Project",
+          "coverImageUrl": "https://example.test/covers/hero.jpg"
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/projects")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.coverImageUrl").value("https://example.test/covers/hero.jpg"));
+  }
+
+  @Test
+  void createProjectRejectsInvalidCoverImageUrl() throws Exception {
+    String body =
+        """
+        {
+          "name": "Bad Cover",
+          "coverImageUrl": "javascript:alert(1)"
+        }
+        """;
+
+    mockMvc
+        .perform(
+            post("/projects")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("VALIDATION_FAILED"))
+        .andExpect(jsonPath("$.errors[0].field").value("coverImageUrl"));
   }
 
   @Test
@@ -504,6 +548,7 @@ class ProjectControllerTests {
             health,
             Optional.of("blue"),
             Optional.of("star"),
+            Optional.empty(),
             Optional.of(LocalDate.now().minusDays(5)),
             Optional.ofNullable(deadline),
             Optional.of(60),

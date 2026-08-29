@@ -16,6 +16,7 @@ public record UpdateProjectCommand(
     ProjectHealth health,
     String color,
     String icon,
+    String coverImageUrl,
     LocalDate startDate,
     LocalDate deadlineDate,
     Integer estimateMinutes,

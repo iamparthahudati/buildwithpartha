@@ -24,12 +24,16 @@ export interface ProjectFormData {
   readonly health: ProjectHealth;
   readonly color?: ColorSwatchName | null;
   readonly icon?: IconOptionName | null;
+  readonly coverImageUrl?: string | null;
   readonly startDate?: string | null;
   readonly deadlineDate?: string | null;
   readonly estimatedMinutes?: number | null;
   readonly labels?: readonly string[];
   readonly version?: number;
 }
+
+/** Accepts an absolute https URL or a root-relative app path (matches the API contract). */
+const COVER_IMAGE_URL_PATTERN = /^(https:\/\/|\/).*/;
 
 export interface ProjectFormProps {
   readonly open: boolean;
@@ -83,6 +87,7 @@ function hasAdvancedValues(initial: Partial<ProjectFormData> | null | undefined)
     (initial.estimatedMinutes !== undefined && initial.estimatedMinutes !== null) ||
     (initial.color && initial.color !== "blue") ||
     (initial.icon && initial.icon !== "folder") ||
+    Boolean(initial.coverImageUrl) ||
     (initial.labels && initial.labels.length > 0),
   );
 }
@@ -106,6 +111,7 @@ export function ProjectForm({
   const [health, setHealth] = useState<ProjectHealth>(initialValues?.health ?? "NOT_SET");
   const [color, setColor] = useState<ColorSwatchName | null>(initialValues?.color ?? "blue");
   const [icon, setIcon] = useState<IconOptionName | null>(initialValues?.icon ?? "folder");
+  const [coverImageUrl, setCoverImageUrl] = useState(initialValues?.coverImageUrl ?? "");
   const [startDate, setStartDate] = useState(initialValues?.startDate ?? "");
   const [deadlineDate, setDeadlineDate] = useState(initialValues?.deadlineDate ?? "");
   const [estimatedMinutes, setEstimatedMinutes] = useState<number | null>(
@@ -133,6 +139,7 @@ export function ProjectForm({
       setHealth(initialValues?.health ?? "NOT_SET");
       setColor(initialValues?.color ?? "blue");
       setIcon(initialValues?.icon ?? "folder");
+      setCoverImageUrl(initialValues?.coverImageUrl ?? "");
       setStartDate(initialValues?.startDate ?? "");
       setDeadlineDate(initialValues?.deadlineDate ?? "");
       setEstimatedMinutes(initialValues?.estimatedMinutes ?? null);
@@ -151,6 +158,7 @@ export function ProjectForm({
     const origHealth = initialValues?.health ?? "NOT_SET";
     const origColor = initialValues?.color ?? "blue";
     const origIcon = initialValues?.icon ?? "folder";
+    const origCover = initialValues?.coverImageUrl ?? "";
     const origStart = initialValues?.startDate ?? "";
     const origDeadline = initialValues?.deadlineDate ?? "";
     const origEst = initialValues?.estimatedMinutes ?? null;
@@ -164,6 +172,7 @@ export function ProjectForm({
       health !== origHealth ||
       color !== origColor ||
       icon !== origIcon ||
+      coverImageUrl !== origCover ||
       startDate !== origStart ||
       deadlineDate !== origDeadline ||
       estimatedMinutes !== origEst ||
@@ -179,6 +188,7 @@ export function ProjectForm({
     health,
     color,
     icon,
+    coverImageUrl,
     startDate,
     deadlineDate,
     estimatedMinutes,
@@ -192,6 +202,10 @@ export function ProjectForm({
     }
     if (startDate && deadlineDate && startDate > deadlineDate) {
       errors.deadlineDate = "Deadline date cannot be before start date.";
+    }
+    const trimmedCover = coverImageUrl.trim();
+    if (trimmedCover && !COVER_IMAGE_URL_PATTERN.test(trimmedCover)) {
+      errors.coverImageUrl = "Enter an https:// URL or a path starting with /.";
     }
 
     if (Object.keys(errors).length > 0) {
@@ -208,6 +222,7 @@ export function ProjectForm({
       health,
       color,
       icon,
+      coverImageUrl: coverImageUrl.trim() || null,
       startDate: startDate || null,
       deadlineDate: deadlineDate || null,
       estimatedMinutes,
@@ -348,6 +363,24 @@ export function ProjectForm({
                   setIcon(val.icon);
                 }}
               />
+
+              <FormField
+                name="coverImageUrl"
+                label="Cover image URL"
+                required={false}
+                {...(fieldErrors.coverImageUrl ? { error: fieldErrors.coverImageUrl } : {})}
+              >
+                {(fieldProps) => (
+                  <TextInput
+                    {...fieldProps}
+                    type="url"
+                    inputMode="url"
+                    placeholder="https://… or /life-os/project-covers/…"
+                    value={coverImageUrl}
+                    onChange={(e) => setCoverImageUrl(e.target.value)}
+                  />
+                )}
+              </FormField>
 
               <div className="lifeos-project-form__grid">
                 <FormField

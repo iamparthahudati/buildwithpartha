@@ -5,9 +5,10 @@ import {
   PauseCircle,
   AlertTriangle,
   BarChart2,
+  Filter,
 } from "lucide-react";
 import { MetricCard, type MetricCardStatus } from "@components/navigation";
-import { Button } from "@components/ui";
+import { IconButton } from "@components/ui";
 import "./project-summary-metrics.css";
 
 export interface ProjectSummaryCounts {
@@ -125,14 +126,22 @@ export function ProjectSummaryMetrics({
               status={getStatus(item.value)}
               action={
                 isFilterable ? (
-                  <Button
+                  <IconButton
                     type="button"
-                    variant={isActive ? "primary" : "ghost"}
+                    icon={Filter}
+                    label={
+                      isActive
+                        ? `Filtered by ${item.label}`
+                        : `Filter by ${item.label}`
+                    }
+                    variant="ghost"
                     size="sm"
+                    aria-pressed={isActive}
+                    className={
+                      isActive ? "lifeos-project-summary-metrics__filter--active" : undefined
+                    }
                     onClick={() => onSelectFilter(item.key as ProjectFilterCategory)}
-                  >
-                    {isActive ? "Filtered" : "Filter"}
-                  </Button>
+                  />
                 ) : undefined
               }
             />

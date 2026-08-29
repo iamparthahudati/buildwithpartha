@@ -239,6 +239,7 @@ class ProjectProgressCalculatorTests {
         Optional.empty(),
         Optional.empty(),
         Optional.empty(),
+        Optional.empty(),
         TEST_NOW,
         TEST_NOW,
         Set.of(),

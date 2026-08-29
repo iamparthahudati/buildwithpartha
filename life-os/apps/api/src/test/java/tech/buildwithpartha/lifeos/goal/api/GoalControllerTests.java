@@ -383,6 +383,7 @@ class GoalControllerTests {
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
+                Optional.empty(),
                 Instant.now(),
                 Instant.now(),
                 Set.of(),

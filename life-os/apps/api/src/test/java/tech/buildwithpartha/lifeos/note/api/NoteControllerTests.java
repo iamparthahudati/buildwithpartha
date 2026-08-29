@@ -262,6 +262,7 @@ class NoteControllerTests {
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
+                Optional.empty(),
                 Instant.now(),
                 Instant.now(),
                 Collections.emptySet(),

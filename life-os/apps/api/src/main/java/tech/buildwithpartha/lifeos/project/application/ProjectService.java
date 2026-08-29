@@ -86,6 +86,9 @@ public class ProjectService {
             command.health(),
             Optional.ofNullable(command.color()).map(String::trim),
             Optional.ofNullable(command.icon()).map(String::trim),
+            Optional.ofNullable(command.coverImageUrl())
+                .map(String::trim)
+                .filter(s -> !s.isEmpty()),
             Optional.ofNullable(command.startDate()),
             Optional.ofNullable(command.deadlineDate()),
             Optional.ofNullable(command.estimateMinutes()),
@@ -123,6 +126,9 @@ public class ProjectService {
             command.health(),
             Optional.ofNullable(command.color()).map(String::trim),
             Optional.ofNullable(command.icon()).map(String::trim),
+            Optional.ofNullable(command.coverImageUrl())
+                .map(String::trim)
+                .filter(s -> !s.isEmpty()),
             Optional.ofNullable(command.startDate()),
             Optional.ofNullable(command.deadlineDate()),
             Optional.ofNullable(command.estimateMinutes()),

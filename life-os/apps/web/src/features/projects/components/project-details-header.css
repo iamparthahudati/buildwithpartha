@@ -10,6 +10,15 @@
   background-color: var(--lifeos-color-surface);
 }
 
+/* Optional project logo shown in the top-right of the details header. */
+.lifeos-project-details-header__logo {
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  object-fit: cover;
+  border-radius: var(--lifeos-radius-md);
+}
+
 .lifeos-project-details-header--archived {
   opacity: 0.85;
   border-color: var(--lifeos-color-border-warning);

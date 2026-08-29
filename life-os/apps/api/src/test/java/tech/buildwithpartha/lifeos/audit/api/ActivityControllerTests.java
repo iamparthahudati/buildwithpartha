@@ -314,6 +314,7 @@ class ActivityControllerTests {
         Optional.empty(),
         Optional.empty(),
         Optional.empty(),
+        Optional.empty(),
         now,
         now,
         Set.of(),

@@ -185,6 +185,7 @@ CREATE TABLE IF NOT EXISTS projects (
     health           VARCHAR(32)              NOT NULL,
     color            TEXT,
     icon             TEXT,
+    cover_image_url  TEXT,
     start_date       DATE,
     deadline_date    DATE,
     estimate_minutes INT,
@@ -489,4 +490,18 @@ CREATE TABLE IF NOT EXISTS note_links (
     id UUID NOT NULL PRIMARY KEY, note_id UUID NOT NULL, user_id UUID NOT NULL,
     target_type VARCHAR(32) NOT NULL, target_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS brain_dump_items (
+    id                UUID                     NOT NULL PRIMARY KEY,
+    user_id           UUID                     NOT NULL,
+    content           TEXT                     NOT NULL,
+    status            TEXT                     NOT NULL,
+    converted_to_type TEXT,
+    converted_to_id   UUID,
+    converted_at      TIMESTAMP WITH TIME ZONE,
+    archived_at       TIMESTAMP WITH TIME ZONE,
+    created_at        TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at        TIMESTAMP WITH TIME ZONE NOT NULL,
+    version           BIGINT                   NOT NULL
 );

@@ -18,6 +18,7 @@ public record Project(
     ProjectHealth health,
     Optional<String> color,
     Optional<String> icon,
+    Optional<String> coverImageUrl,
     Optional<LocalDate> startDate,
     Optional<LocalDate> deadlineDate,
     Optional<Integer> estimateMinutes,
@@ -26,6 +27,11 @@ public record Project(
     Instant updatedAt,
     Set<UUID> labelIds,
     long version) {
+  /**
+   * Maximum stored length of a cover image URL/path, aligned with the database check constraint.
+   */
+  public static final int MAX_COVER_IMAGE_URL_LENGTH = 2048;
+
   public Project {
     Objects.requireNonNull(id, "id must not be null");
     Objects.requireNonNull(userId, "userId must not be null");
@@ -36,6 +42,7 @@ public record Project(
     Objects.requireNonNull(health, "health must not be null");
     Objects.requireNonNull(color, "color must not be null");
     Objects.requireNonNull(icon, "icon must not be null");
+    Objects.requireNonNull(coverImageUrl, "coverImageUrl must not be null");
     Objects.requireNonNull(startDate, "startDate must not be null");
     Objects.requireNonNull(deadlineDate, "deadlineDate must not be null");
     Objects.requireNonNull(estimateMinutes, "estimateMinutes must not be null");
@@ -52,6 +59,10 @@ public record Project(
     if (estimateMinutes.isPresent() && estimateMinutes.get() < 0) {
       throw new IllegalArgumentException("Estimate minutes must not be negative");
     }
+    if (coverImageUrl.isPresent() && coverImageUrl.get().length() > MAX_COVER_IMAGE_URL_LENGTH) {
+      throw new IllegalArgumentException(
+          "Cover image URL must not exceed " + MAX_COVER_IMAGE_URL_LENGTH + " characters");
+    }
   }
 
   public Project withUpdates(
@@ -62,6 +73,7 @@ public record Project(
       ProjectHealth newHealth,
       Optional<String> newColor,
       Optional<String> newIcon,
+      Optional<String> newCoverImageUrl,
       Optional<LocalDate> newStartDate,
       Optional<LocalDate> newDeadlineDate,
       Optional<Integer> newEstimateMinutes,
@@ -77,6 +89,7 @@ public record Project(
         newHealth != null ? newHealth : health,
         newColor != null ? newColor : color,
         newIcon != null ? newIcon : icon,
+        newCoverImageUrl != null ? newCoverImageUrl : coverImageUrl,
         newStartDate != null ? newStartDate : startDate,
         newDeadlineDate != null ? newDeadlineDate : deadlineDate,
         newEstimateMinutes != null ? newEstimateMinutes : estimateMinutes,
@@ -98,6 +111,7 @@ public record Project(
         health,
         color,
         icon,
+        coverImageUrl,
         startDate,
         deadlineDate,
         estimateMinutes,
@@ -119,6 +133,7 @@ public record Project(
         health,
         color,
         icon,
+        coverImageUrl,
         startDate,
         deadlineDate,
         estimateMinutes,
