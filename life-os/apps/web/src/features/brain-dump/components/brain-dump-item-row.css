@@ -56,3 +56,23 @@
     opacity: 1;
   }
 }
+
+/* Batch-selection checkbox (LOS-1206). The accessible name stays for screen
+   readers; the visible label text is hidden to keep the list compact. */
+.lifeos-brain-dump-item-row__select {
+  display: flex;
+  align-items: flex-start;
+  padding-inline-end: var(--lifeos-space-2);
+}
+
+.lifeos-brain-dump-item-row__select .lifeos-choice__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

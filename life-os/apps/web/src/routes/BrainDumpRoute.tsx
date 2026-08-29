@@ -5,27 +5,31 @@ import { useToast } from "@state/toastQueue";
 import { useAuthSession } from "@state/authSession";
 import {
   BrainDumpScreen,
+  BRAIN_DUMP_TARGET_LABELS,
   useBrainDumpItems,
   useCaptureBrainDumpItem,
   useDeferBrainDumpItem,
   useArchiveBrainDumpItem,
   useRestoreBrainDumpItem,
   useDeleteBrainDumpItem,
-  useConvertBrainDumpToTask,
-  useConvertBrainDumpToNote,
-  useConvertBrainDumpToProject,
-  useConvertBrainDumpToGoal,
+  useConvertBrainDumpItem,
+  useBrainDumpBatchConvert,
+  type BrainDumpConvertResultState,
+  type BrainDumpConvertSubmit,
+  type BrainDumpConvertTargetType,
   type BrainDumpItem,
   type BrainDumpStatusFilter,
   type BrainDumpCaptureStatus,
 } from "@features/brain-dump";
 
 /**
- * BrainDumpRoute (LOS-1205).
+ * BrainDumpRoute (LOS-1205, conversion workflow LOS-1206).
  *
  * Integration layer between the `BrainDumpScreen` component and the API hooks.
  * URL search params persist filter state so the inbox position survives
- * navigation. The route owns capture status so text is preserved on error.
+ * navigation. The route owns capture status and conversion result state so a
+ * converted item's transactional result link, and any conversion error, are
+ * surfaced honestly.
  */
 export function BrainDumpRoute() {
   const { user } = useAuthSession();
@@ -33,6 +37,10 @@ export function BrainDumpRoute() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [captureStatus, setCaptureStatus] = useState<BrainDumpCaptureStatus>({ type: "idle" });
+
+  // Conversion workflow state (LOS-1206).
+  const [convertResult, setConvertResult] = useState<BrainDumpConvertResultState | null>(null);
+  const [convertError, setConvertError] = useState<string | null>(null);
 
   // Browser online/offline tracking
   const [isOnline, setIsOnline] = useState(() =>
@@ -98,10 +106,8 @@ export function BrainDumpRoute() {
   const archiveMutation = useArchiveBrainDumpItem();
   const restoreMutation = useRestoreBrainDumpItem();
   const deleteMutation = useDeleteBrainDumpItem();
-  const convertToTaskMutation = useConvertBrainDumpToTask();
-  const convertToNoteMutation = useConvertBrainDumpToNote();
-  const convertToProjectMutation = useConvertBrainDumpToProject();
-  const convertToGoalMutation = useConvertBrainDumpToGoal();
+  const convertMutation = useConvertBrainDumpItem();
+  const batchMutation = useBrainDumpBatchConvert();
 
   // Handlers
   const handleCapture = async (content: string) => {
@@ -153,40 +159,54 @@ export function BrainDumpRoute() {
     }
   };
 
-  const handleConvertToTask = async (item: BrainDumpItem) => {
+  const handleConvertSubmit = async (payload: BrainDumpConvertSubmit) => {
+    const label = BRAIN_DUMP_TARGET_LABELS[payload.target];
+    setConvertError(null);
     try {
-      await convertToTaskMutation.mutateAsync({ id: item.id });
-      toast.push({ tone: "success", message: "Converted to Task." });
+      const updated = await convertMutation.mutateAsync(payload);
+      if (updated.convertedToType && updated.convertedToId) {
+        setConvertResult({
+          itemId: payload.id,
+          type: updated.convertedToType,
+          id: updated.convertedToId,
+        });
+        toast.push({ tone: "success", message: `Converted to ${label}.` });
+      } else {
+        setConvertError(`Converted, but the new ${label} link is unavailable.`);
+      }
     } catch {
-      toast.push({ tone: "danger", message: "Failed to convert to Task." });
+      // The item is preserved; the conversion is idempotent, so retrying is safe.
+      setConvertError(`Failed to convert to ${label}. Your item is unchanged — try again.`);
     }
   };
 
-  const handleConvertToNote = async (item: BrainDumpItem) => {
+  const handleConvertDismiss = () => {
+    setConvertResult(null);
+    setConvertError(null);
+  };
+
+  const handleBatchConvert = async (
+    items: readonly BrainDumpItem[],
+    target: BrainDumpConvertTargetType,
+  ) => {
+    const label = BRAIN_DUMP_TARGET_LABELS[target];
     try {
-      await convertToNoteMutation.mutateAsync({ id: item.id });
-      toast.push({ tone: "success", message: "Converted to Note." });
+      const result = await batchMutation.mutateAsync({ items, target });
+      if (result.failureCount === 0) {
+        toast.push({ tone: "success", message: `Converted ${result.successCount} to ${label}.` });
+      } else {
+        toast.push({
+          tone: "warning",
+          message: `${result.successCount} converted, ${result.failureCount} failed.`,
+        });
+      }
     } catch {
-      toast.push({ tone: "danger", message: "Failed to convert to Note." });
+      toast.push({ tone: "danger", message: `Failed to convert items to ${label}.` });
     }
   };
 
-  const handleConvertToProject = async (item: BrainDumpItem) => {
-    try {
-      await convertToProjectMutation.mutateAsync({ id: item.id });
-      toast.push({ tone: "success", message: "Converted to Project." });
-    } catch {
-      toast.push({ tone: "danger", message: "Failed to convert to Project." });
-    }
-  };
-
-  const handleConvertToGoal = async (item: BrainDumpItem) => {
-    try {
-      await convertToGoalMutation.mutateAsync({ id: item.id });
-      toast.push({ tone: "success", message: "Converted to Goal." });
-    } catch {
-      toast.push({ tone: "danger", message: "Failed to convert to Goal." });
-    }
+  const handleBatchDismiss = () => {
+    batchMutation.reset();
   };
 
   if (user === null) return null;
@@ -208,10 +228,15 @@ export function BrainDumpRoute() {
       onDefer={handleDefer}
       onArchiveToggle={handleArchiveToggle}
       onDelete={handleDelete}
-      onConvertToTask={handleConvertToTask}
-      onConvertToNote={handleConvertToNote}
-      onConvertToProject={handleConvertToProject}
-      onConvertToGoal={handleConvertToGoal}
+      onConvertSubmit={handleConvertSubmit}
+      convertPending={convertMutation.isPending}
+      convertError={convertError}
+      convertResult={convertResult}
+      onConvertDismiss={handleConvertDismiss}
+      onBatchConvert={handleBatchConvert}
+      batchPending={batchMutation.isPending}
+      batchResult={batchMutation.data ?? null}
+      onBatchDismiss={handleBatchDismiss}
     />
   );
 }

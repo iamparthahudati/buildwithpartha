@@ -12,6 +12,10 @@ const MOCK_ITEM: BrainDumpItem = {
   status: "UNPROCESSED",
   archived: false,
   version: 0,
+  convertedToType: null,
+  convertedToId: null,
+  convertedAt: null,
+  archivedAt: null,
   createdAt: "2026-08-29T10:00:00Z",
   updatedAt: "2026-08-29T10:00:00Z",
 };

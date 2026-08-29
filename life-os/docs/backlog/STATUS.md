@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-29
+Last updated: 2026-08-30
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -210,7 +210,10 @@ Last updated: 2026-08-29
 | LOS-1112 | Done          | `feature/LOS-1112-implement-pdf-report-export` | Implemented print-only header and `@media print` CSS rules in reports screen to hide controls, adjust layouts, and prevent awkward page breaks. Documented client-side print decision in ADR-014. See `docs/handoffs/LOS-1112.md`. |
 | LOS-1113 | Done gate     | `feature/LOS-1113-run-goals-analytics-gate`     | Ran Epic 11 phase gate verifying Goals, Progress, and Reports components, APIs, and exports. All 926 backend and 2,158 Vitest tests passed with 80%+ coverage. See `docs/gates/GOALS-ANALYTICS-PHASE-GATE.md`. |
 | LOS-1201 | Done          | `feature/LOS-1201-model-and-implement-notes-api` | Implemented notes schema, JPA entity mapping, CRUD repository port/adapter, transactional service, REST controller endpoints, target entity ownership validation, optimistic versioning, and body/search query redaction in logging. See `docs/handoffs/LOS-1201.md`. |
+| LOS-1204 | Done          | `feature/LOS-1204-model-implement-brain-dump-api` | Brain Dump API: schema (V25), domain aggregate, JPA persistence, transactional service, idempotent conversion to Task/Note/Project/Goal, REST endpoints, and Today unprocessed count. See `docs/handoffs/LOS-1204.md`. |
+| LOS-1205 | Done          | `feature/LOS-1205-brain-dump-capture-inbox`      | Brain Dump capture bar, inbox rows, composed screen and route with URL filter sync. See `docs/handoffs/LOS-1205.md`. |
+| LOS-1206 | Done          | `feature/LOS-1206-build-conversion-workflow`     | Brain Dump conversion workflow: destination preview/fields dialog, preserved source, transactional result link, idempotent retry, and partial batch results. Corrected the frontend convert contract/model to match LOS-1204. See `docs/handoffs/LOS-1206.md`. |
 
 
-All unlisted tickets remain Backlog until explicitly added or promoted.
+All unlisted tickets remain Backlog until explicitly added or promoted. Note: LOS-1202 and LOS-1203 are Done in git history and `CURRENT-STATUS.md` but not yet mirrored here; this ledger drifted after LOS-1201 and should be reconciled in a docs pass.
 

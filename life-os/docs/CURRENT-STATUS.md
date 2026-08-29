@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-29 (LOS-1204 model and implement Brain Dump API)
+Last updated: 2026-08-30 (LOS-1206 build brain-dump conversion workflow)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1206 — Built the Brain Dump conversion workflow on the frontend: a `BrainDumpConvertDialog` with a destination selector (Task/Note/Project/Goal) and editable, prefilled destination fields, the original captured text preserved and shown, a transactional result link to the created entity, and idempotent retry-after-timeout without duplicates. Added multi-select batch conversion with a `BrainDumpBatchResultDialog` that reports partial results and retries only failures. Corrected the frontend convert API/model to the real LOS-1204 contract (required `priority`/`body`/`category`/`progressType`/`checkInCadence` and `version`, plus `convertedToType`/`convertedToId`/`convertedAt`/`archivedAt` mapping). See `docs/handoffs/LOS-1206.md`.
 
 - LOS-1205 — Built the Brain Dump capture and inbox feature on the frontend, including the `BrainDumpCaptureBar` component (with offline status indicator and keyboard shortcut Ctrl+Enter), `BrainDumpItemRow` component (revealing actions on hover/focus, and one-tap convert buttons), and composed `BrainDumpScreen` screen structure with list search, filters, and status tabs. Configured route at `/life-os/app/brain-dump` with URL query sync, hooks integration, and 100% test coverage. See `docs/handoffs/LOS-1205.md`.
 
