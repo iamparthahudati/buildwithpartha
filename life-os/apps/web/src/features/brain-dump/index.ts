@@ -2,6 +2,8 @@ export * from "./model/brainDumpItem";
 export * from "./model/brainDumpConversion";
 export * from "./api/brainDumpApi";
 export * from "./hooks/useBrainDump";
+export * from "./hooks/useBrainDumpCaptureQueue";
+export * from "./model/captureQueue";
 export * from "./components/BrainDumpCaptureBar";
 export * from "./components/BrainDumpItemRow";
 export * from "./components/BrainDumpConvertDialog";

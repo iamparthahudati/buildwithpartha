@@ -91,3 +91,23 @@
   gap: var(--lifeos-space-2);
   flex-wrap: wrap;
 }
+
+.lifeos-brain-dump-screen__queue {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-3);
+  margin-block-start: var(--lifeos-space-4);
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  background: var(--lifeos-color-surface-muted);
+  border: 1px solid var(--lifeos-color-border-default);
+  border-radius: var(--lifeos-radius-md);
+}
+
+.lifeos-brain-dump-screen__queue-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  flex-wrap: wrap;
+}

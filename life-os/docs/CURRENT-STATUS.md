@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-30 (LOS-1206 build brain-dump conversion workflow)
+Last updated: 2026-08-30 (LOS-1207 compose and integrate Brain Dump)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1207 — Composed and integrated the full Brain Dump experience and closed the offline draft/queue gap. Captures made while offline are now persisted to a per-user `localStorage` queue (`useBrainDumpCaptureQueue` + `model/captureQueue.ts`) instead of being dropped, flushed FIFO and automatically on reconnect (failed sends retained, first-failure stop), with a `role="status"` capture-section banner exposing the pending count, a **Sync now** button (online only), and **Discard**. All storage access is guarded against private-window/quota/corrupt-data failures. Added 15 tests (queue model, hook lifecycle, route offline flows); `verify:quality` and the web suite pass (the sole failure, `ProjectsRoute.test.tsx`, is a pre-existing base-branch regression). See `docs/handoffs/LOS-1207.md`.
 
 - LOS-1206 — Built the Brain Dump conversion workflow on the frontend: a `BrainDumpConvertDialog` with a destination selector (Task/Note/Project/Goal) and editable, prefilled destination fields, the original captured text preserved and shown, a transactional result link to the created entity, and idempotent retry-after-timeout without duplicates. Added multi-select batch conversion with a `BrainDumpBatchResultDialog` that reports partial results and retries only failures. Corrected the frontend convert API/model to the real LOS-1204 contract (required `priority`/`body`/`category`/`progressType`/`checkInCadence` and `version`, plus `convertedToType`/`convertedToId`/`convertedAt`/`archivedAt` mapping). See `docs/handoffs/LOS-1206.md`.
 

@@ -37,6 +37,11 @@ export interface BrainDumpScreenProps {
   readonly captureStatus: BrainDumpCaptureStatus;
   readonly isOnline: boolean;
   readonly onCapture: (content: string) => void;
+  // Offline capture queue (LOS-1207)
+  readonly queuedCount: number;
+  readonly flushing: boolean;
+  readonly onFlushQueue: () => void;
+  readonly onDiscardQueued: () => void;
   readonly onDefer: (item: BrainDumpItem) => void;
   readonly onArchiveToggle: (item: BrainDumpItem) => void;
   readonly onDelete: (item: BrainDumpItem) => void;
@@ -88,6 +93,10 @@ export function BrainDumpScreen({
   captureStatus,
   isOnline,
   onCapture,
+  queuedCount,
+  flushing,
+  onFlushQueue,
+  onDiscardQueued,
   onDefer,
   onArchiveToggle,
   onDelete,
@@ -241,6 +250,35 @@ export function BrainDumpScreen({
             captureStatus={captureStatus}
             onCapture={onCapture}
           />
+
+          {queuedCount > 0 && (
+            <div
+              className="lifeos-brain-dump-screen__queue"
+              role="status"
+              aria-live="polite"
+              aria-label="Offline capture queue"
+            >
+              <Text size="sm" weight="medium">
+                {queuedCount} {queuedCount === 1 ? "capture" : "captures"} waiting to sync
+                {isOnline ? "…" : " — you are offline"}
+              </Text>
+              <div className="lifeos-brain-dump-screen__queue-actions">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={onFlushQueue}
+                  loading={flushing}
+                  loadingLabel="Syncing queued captures"
+                  disabled={!isOnline || flushing}
+                >
+                  Sync now
+                </Button>
+                <Button variant="ghost" size="sm" onClick={onDiscardQueued} disabled={flushing}>
+                  Discard
+                </Button>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Inbox section */}

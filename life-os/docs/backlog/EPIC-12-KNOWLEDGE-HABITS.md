@@ -8,7 +8,7 @@
 | LOS-1204 | Model and implement brain dump API | Fast create/list/process/archive/delete/convert with source trace and idempotent transactional conversion to task/note/project idea/goal. | LOS-0802, LOS-1201, LOS-1102 | M | Done |
 | LOS-1205 | Build brain-dump capture and inbox | Fast text capture, queued/offline label, keyboard shortcut, item list, batch selection, convert/defer/archive/delete and clear empty/errors. | LOS-0434 | S | Done |
 | LOS-1206 | Build conversion workflow | Destination preview/fields, preserve source, transactional result link, retry after timeout without duplicates, partial batch results. | LOS-1204, LOS-1205 | M | Done |
-| LOS-1207 | Compose and integrate Brain Dump | Capture, inbox, filters, batch triage/conversion, responsive/a11y and offline draft/queue integration. | LOS-1204–LOS-1206 | L | Backlog |
+| LOS-1207 | Compose and integrate Brain Dump | Capture, inbox, filters, batch triage/conversion, responsive/a11y and offline draft/queue integration. | LOS-1204–LOS-1206 | L | Done |
 | LOS-1208 | Model habits and entries | Habit/cadence/reminder/entry schema with local date, target count, pause periods, uniqueness/version and timezone-safe streak invariants. | LOS-0216, LOS-0513 | M | Backlog |
 | LOS-1209 | Implement habits API | CRUD/pause/archive/restore, today/range entries, increment/set/remove, reminder preferences, stats endpoint and cross-user/idempotency tests. | LOS-1208 | M | Backlog |
 | LOS-1210 | Define habit/streak calculations | Document cadence eligibility, pause, late edit, timezone change, missed day, count target and rounding. Deterministic fixtures cover boundaries. | LOS-1208 | S | Backlog |
