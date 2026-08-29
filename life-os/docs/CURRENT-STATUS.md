@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-30 (LOS-1207 compose and integrate Brain Dump)
+Last updated: 2026-08-30 (LOS-1208 model habits and entries)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1208 — Modeled habits, habit entries, and habit pause periods (Epic 12 data slice). Added Flyway migration `V27__habits_schema.sql` (`habits` with cadence/target_count/IANA time_zone/reminder + `@Version`; `habit_entries` unique on `(habit_id, local_date)` with positive `completed_count` and `@Version`; `habit_pause_periods` with an inclusive, ordered date range), immutable domain aggregates (`Habit` with `localDateFor(Instant)` for timezone-safe streak bucketing, `HabitEntry`, `HabitPausePeriod` with `covers(LocalDate)`), domain repository ports, and JPA entity/adapter persistence. No API/UI (that is LOS-1209/1211). 22 new backend tests pass (domain invariants, H2 round-trips, and a Testcontainers PostgreSQL `HabitSchemaIT` exercising every constraint); ArchUnit boundaries and `checkstyleTest` pass. The two failing `report` Today-widget tests and the `spotless`/`checkstyleMain` violations on `braindump/**` are pre-existing on `develop` and unrelated. See `docs/handoffs/LOS-1208.md`.
 
 - LOS-1207 — Composed and integrated the full Brain Dump experience and closed the offline draft/queue gap. Captures made while offline are now persisted to a per-user `localStorage` queue (`useBrainDumpCaptureQueue` + `model/captureQueue.ts`) instead of being dropped, flushed FIFO and automatically on reconnect (failed sends retained, first-failure stop), with a `role="status"` capture-section banner exposing the pending count, a **Sync now** button (online only), and **Discard**. All storage access is guarded against private-window/quota/corrupt-data failures. Added 15 tests (queue model, hook lifecycle, route offline flows); `verify:quality` and the web suite pass (the sole failure, `ProjectsRoute.test.tsx`, is a pre-existing base-branch regression). See `docs/handoffs/LOS-1207.md`.
 
