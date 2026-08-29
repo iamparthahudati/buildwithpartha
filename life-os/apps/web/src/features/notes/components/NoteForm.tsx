@@ -25,7 +25,7 @@ export type NoteAutosaveStatus =
   | { readonly type: "idle" };
 
 export interface NoteFormProps {
-  readonly note?: Note;
+  readonly note?: Note | null;
   readonly isPending?: boolean;
   readonly isOnline?: boolean;
   readonly status?: NoteAutosaveStatus;
@@ -34,8 +34,8 @@ export interface NoteFormProps {
   readonly availableTasks?: readonly { readonly id: string; readonly title: string }[];
   readonly availableGoals?: readonly { readonly id: string; readonly title: string }[];
   readonly onSubmit: (data: NoteFormData) => void;
-  readonly onCancel?: () => void;
-  readonly onResolveConflict?: (choice: "server" | "draft") => void;
+  readonly onCancel?: (() => void) | undefined;
+  readonly onResolveConflict?: ((choice: "server" | "draft") => void) | undefined;
   readonly className?: string;
 }
 
@@ -66,7 +66,7 @@ export function NoteForm({
 
   const [labelsQuery, setLabelsQuery] = useState("");
   const [linksQuery, setLinksQuery] = useState("");
-  const [prevNote, setPrevNote] = useState<Note | undefined>(note);
+  const [prevNote, setPrevNote] = useState<Note | null | undefined>(note);
 
   const rootClass = ["lifeos-note-form", className].filter(Boolean).join(" ");
   const isConflict = status.type === "conflict";
