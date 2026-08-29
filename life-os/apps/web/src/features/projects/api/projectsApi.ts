@@ -23,6 +23,7 @@ export interface ProjectResponseDto {
   readonly health: string;
   readonly color?: string | null;
   readonly icon?: string | null;
+  readonly coverImageUrl?: string | null;
   readonly startDate?: string | null;
   readonly deadlineDate?: string | null;
   readonly estimateMinutes?: number | null;
@@ -69,6 +70,7 @@ export interface CreateProjectRequestDto {
   readonly health?: string | null;
   readonly color?: string | null;
   readonly icon?: string | null;
+  readonly coverImageUrl?: string | null;
   readonly startDate?: string | null;
   readonly deadlineDate?: string | null;
   readonly estimateMinutes?: number | null;
@@ -84,6 +86,7 @@ export interface UpdateProjectRequestDto {
   readonly health?: string | null;
   readonly color?: string | null;
   readonly icon?: string | null;
+  readonly coverImageUrl?: string | null;
   readonly startDate?: string | null;
   readonly deadlineDate?: string | null;
   readonly estimateMinutes?: number | null;
@@ -136,6 +139,7 @@ export function mapProjectResponse(dto: ProjectResponseDto): Project {
     health: dto.health as ProjectHealth,
     color: dto.color ?? null,
     icon: dto.icon ?? null,
+    coverImageUrl: dto.coverImageUrl ?? null,
     startDate: dto.startDate ?? null,
     deadlineDate: dto.deadlineDate ?? null,
     completedTasksCount:

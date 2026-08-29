@@ -1,0 +1,31 @@
+.check-in-form-dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-4);
+}
+
+.check-in-form-dialog__summary-box {
+  padding: var(--lifeos-space-3);
+  background-color: var(--lifeos-color-info-soft);
+  border: var(--lifeos-border-width-hairline, 1px) solid
+    var(--lifeos-color-info-border, var(--lifeos-color-info));
+  border-radius: var(--lifeos-radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+}
+
+.check-in-form-dialog__explanation {
+  color: var(--lifeos-color-text-secondary);
+}
+
+.check-in-form-dialog__binary {
+  padding: var(--lifeos-space-2) 0;
+}
+
+.check-in-form-dialog__checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  cursor: pointer;
+}

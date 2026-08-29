@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tech.buildwithpartha.lifeos.common.export.ExportFileKind;
 import tech.buildwithpartha.lifeos.common.export.ExportFilePort;
+import tech.buildwithpartha.lifeos.export.application.ExportDownloadService;
 import tech.buildwithpartha.lifeos.export.application.ExportFileService;
 import tech.buildwithpartha.lifeos.export.application.ExportTokenService;
 import tech.buildwithpartha.lifeos.export.domain.ExportFile;
@@ -37,7 +38,10 @@ class ExportFilePortAdapterTests {
     service =
         new ExportFileService(
             repository, storage, new ExportTokenService(), Clock.fixed(NOW, ZoneOffset.UTC));
-    adapter = new ExportFilePortAdapter(service);
+    ExportDownloadService downloadService =
+        new ExportDownloadService(
+            repository, storage, new ExportTokenService(), Clock.fixed(NOW, ZoneOffset.UTC));
+    adapter = new ExportFilePortAdapter(service, downloadService);
   }
 
   @Test

@@ -18,13 +18,18 @@ import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
 import tech.buildwithpartha.lifeos.common.error.CsrfTokenInvalidException;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.error.FocusSessionConflictException;
 import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
+import tech.buildwithpartha.lifeos.common.error.ReviewStateConflictException;
+import tech.buildwithpartha.lifeos.common.error.SprintStateConflictException;
 import tech.buildwithpartha.lifeos.common.error.StandardErrorCodes;
+import tech.buildwithpartha.lifeos.common.error.TimeBlockOverlapConflictException;
 import tech.buildwithpartha.lifeos.common.error.TokenAlreadyUsedException;
 import tech.buildwithpartha.lifeos.common.error.TokenExpiredException;
 import tech.buildwithpartha.lifeos.common.error.TokenInvalidException;
+import tech.buildwithpartha.lifeos.common.error.WeeklyPlanStateConflictException;
 
 /** Maps server failures to safe, versioned Problem Details responses. */
 @RestControllerAdvice
@@ -133,6 +138,30 @@ public final class ApiExceptionHandler {
             "The resource was updated by another request."));
   }
 
+  @ExceptionHandler(TimeBlockOverlapConflictException.class)
+  ResponseEntity<ApiProblem> handleTimeBlockOverlapConflict(
+      TimeBlockOverlapConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Schedule Conflict",
+            exception.getMessage()));
+  }
+
+  @ExceptionHandler(FocusSessionConflictException.class)
+  ResponseEntity<ApiProblem> handleFocusSessionConflict(
+      FocusSessionConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Focus Session conflict",
+            "Refresh the active Focus Session and try again."));
+  }
+
   @ExceptionHandler(CsrfTokenInvalidException.class)
   ResponseEntity<ApiProblem> handleCsrfTokenInvalid(
       CsrfTokenInvalidException exception, HttpServletRequest request) {
@@ -143,6 +172,44 @@ public final class ApiExceptionHandler {
             exception.code(),
             "CSRF token invalid",
             "Refresh and try again."));
+  }
+
+  @ExceptionHandler(SprintStateConflictException.class)
+  ResponseEntity<ApiProblem> handleSprintStateConflict(
+      SprintStateConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Sprint conflict",
+            "Refresh the Sprint and try again."));
+  }
+
+  @ExceptionHandler(WeeklyPlanStateConflictException.class)
+  ResponseEntity<ApiProblem> handleWeeklyPlanStateConflict(
+      WeeklyPlanStateConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Weekly Plan conflict",
+            "Refresh the Weekly Plan and try again."));
+  }
+
+  @ExceptionHandler(ReviewStateConflictException.class)
+  ResponseEntity<ApiProblem> handleReviewStateConflict(
+      ReviewStateConflictException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Review conflict",
+            exception.getMessage() != null
+                ? exception.getMessage()
+                : "Refresh the Review and try again."));
   }
 
   @ExceptionHandler(CodedException.class)

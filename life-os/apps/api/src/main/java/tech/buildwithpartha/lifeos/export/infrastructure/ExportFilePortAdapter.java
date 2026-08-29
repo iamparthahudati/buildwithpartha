@@ -5,8 +5,10 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
+import tech.buildwithpartha.lifeos.common.export.ExportDownloadPayload;
 import tech.buildwithpartha.lifeos.common.export.ExportFileKind;
 import tech.buildwithpartha.lifeos.common.export.ExportFilePort;
+import tech.buildwithpartha.lifeos.export.application.ExportDownloadService;
 import tech.buildwithpartha.lifeos.export.application.ExportFileService;
 
 /**
@@ -18,9 +20,12 @@ import tech.buildwithpartha.lifeos.export.application.ExportFileService;
 class ExportFilePortAdapter implements ExportFilePort {
 
   private final ExportFileService exportFileService;
+  private final ExportDownloadService exportDownloadService;
 
-  ExportFilePortAdapter(ExportFileService exportFileService) {
+  ExportFilePortAdapter(
+      ExportFileService exportFileService, ExportDownloadService exportDownloadService) {
     this.exportFileService = exportFileService;
+    this.exportDownloadService = exportDownloadService;
   }
 
   @Override
@@ -54,5 +59,13 @@ class ExportFilePortAdapter implements ExportFilePort {
   public java.util.List<tech.buildwithpartha.lifeos.common.export.ExportSummary> getExportsForUser(
       UUID userId) {
     return exportFileService.getExportsForUser(userId);
+  }
+
+  @Override
+  public ExportDownloadPayload openDownloadStream(String rawToken, UUID authenticatedUserId) {
+    ExportDownloadService.DownloadPayload payload =
+        exportDownloadService.openDownloadStream(rawToken, authenticatedUserId);
+    return new ExportDownloadPayload(
+        payload.exportId(), payload.fileName(), payload.fileSizeBytes(), payload.contentStream());
   }
 }

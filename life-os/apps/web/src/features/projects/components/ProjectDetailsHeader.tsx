@@ -294,13 +294,22 @@ export function ProjectDetailsHeader({
 
       <div className="lifeos-project-details-header__main">
         <div className="lifeos-project-details-header__identity">
-          <div
-            className="lifeos-project-details-header__icon-wrapper"
-            style={{ color: iconColor }}
-            aria-hidden="true"
-          >
-            <Icon icon={ProjectIcon} size="lg" decorative />
-          </div>
+          {project.coverImageUrl ? (
+            <img
+              src={project.coverImageUrl}
+              alt=""
+              aria-hidden="true"
+              className="lifeos-project-details-header__logo"
+            />
+          ) : (
+            <div
+              className="lifeos-project-details-header__icon-wrapper"
+              style={{ color: iconColor }}
+              aria-hidden="true"
+            >
+              <Icon icon={ProjectIcon} size="lg" decorative />
+            </div>
+          )}
           <div className="lifeos-project-details-header__title-block">
             <div className="lifeos-project-details-header__title-row">
               <Heading level={1} className="lifeos-project-details-header__title">

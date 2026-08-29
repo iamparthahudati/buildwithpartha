@@ -2,6 +2,7 @@ package tech.buildwithpartha.lifeos.task.api;
 
 import java.util.List;
 import tech.buildwithpartha.lifeos.task.domain.TaskDependenciesSummary;
+import tech.buildwithpartha.lifeos.task.domain.TaskDetailDependencies;
 
 /** Response DTO containing blocker and dependent lists with derived blocked status summary. */
 public record TaskDependenciesSummaryResponse(
@@ -18,5 +19,15 @@ public record TaskDependenciesSummaryResponse(
 
     return new TaskDependenciesSummaryResponse(
         blockers, dependents, summary.isBlocked(), summary.unresolvedBlockerCount());
+  }
+
+  public static TaskDependenciesSummaryResponse fromDomain(TaskDetailDependencies dependencies) {
+    List<TaskDependencyResponse> blockers =
+        dependencies.blockers().stream().map(TaskDependencyResponse::fromDomain).toList();
+    List<TaskDependencyResponse> dependents =
+        dependencies.dependents().stream().map(TaskDependencyResponse::fromDomain).toList();
+
+    return new TaskDependenciesSummaryResponse(
+        blockers, dependents, dependencies.isBlocked(), dependencies.unresolvedBlockerCount());
   }
 }

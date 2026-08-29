@@ -50,6 +50,30 @@ describe("ProjectCard", () => {
     expect(screen.getByText(/Updated/)).toBeInTheDocument();
   });
 
+  it("renders a project logo when coverImageUrl is set", () => {
+    const { container } = renderWithUser(
+      <ProjectCard
+        project={{ ...MOCK_PROJECT, coverImageUrl: "https://example.test/logo.png" }}
+        now={NOW}
+        locale="en-US"
+        timeZone="UTC"
+      />,
+    );
+
+    const img = container.querySelector<HTMLImageElement>(".lifeos-project-card__logo");
+    expect(img).not.toBeNull();
+    expect(img).toHaveAttribute("src", "https://example.test/logo.png");
+    expect(img).toHaveAttribute("alt", "");
+  });
+
+  it("renders no logo when coverImageUrl is absent", () => {
+    const { container } = renderWithUser(
+      <ProjectCard project={MOCK_PROJECT} now={NOW} locale="en-US" timeZone="UTC" />,
+    );
+
+    expect(container.querySelector(".lifeos-project-card__logo")).toBeNull();
+  });
+
   it("renders loading skeleton when loading is true", () => {
     renderWithUser(<ProjectCard loading />);
     expect(screen.getByText("Loading project card.")).toBeInTheDocument();

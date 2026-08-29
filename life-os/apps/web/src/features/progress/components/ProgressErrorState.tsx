@@ -1,0 +1,25 @@
+import { ErrorState } from "@components/feedback";
+
+export interface ProgressErrorStateProps {
+  readonly title?: string | undefined;
+  readonly description?: string | undefined;
+  readonly onRetry?: (() => void) | undefined;
+  readonly className?: string | undefined;
+}
+
+export function ProgressErrorState({
+  title = "Unable to load progress data",
+  description = "A network or server error occurred while retrieving progress analytics. Please check your connection and try again.",
+  onRetry,
+  className,
+}: ProgressErrorStateProps) {
+  return (
+    <ErrorState
+      scope="region"
+      title={title}
+      description={description}
+      {...(onRetry ? { onRetry } : {})}
+      {...(className ? { className } : {})}
+    />
+  );
+}

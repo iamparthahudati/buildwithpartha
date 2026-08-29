@@ -288,6 +288,28 @@ public record Task(
         version);
   }
 
+  /** Adds confirmed Focus Session time without changing the Task lifecycle. */
+  public Task recordSpentMinutes(int additionalMinutes, Instant newUpdatedAt) {
+    if (additionalMinutes < 0) {
+      throw new IllegalArgumentException("additionalMinutes must not be negative");
+    }
+    Objects.requireNonNull(newUpdatedAt, "newUpdatedAt must not be null");
+    return withUpdates(
+        projectId,
+        title,
+        description,
+        status,
+        priority,
+        dueAt,
+        estimateMinutes,
+        Math.addExact(spentMinutes, additionalMinutes),
+        progress,
+        mitDate,
+        position,
+        labelIds,
+        newUpdatedAt);
+  }
+
   public Task duplicate(UUID newId, String newTitle, Instant now) {
     Objects.requireNonNull(newId, "newId must not be null");
     Objects.requireNonNull(now, "now must not be null");

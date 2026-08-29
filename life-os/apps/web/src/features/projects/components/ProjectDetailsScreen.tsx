@@ -8,6 +8,7 @@ import {
   SkeletonCard,
   Surface,
   Text,
+  Link,
   PRIORITY_TONE,
   TASK_STATUS_TONE,
 } from "@components/ui";
@@ -19,16 +20,20 @@ import {
   AttachmentList,
   CommentComposer,
   CommentList,
+  Pagination,
   ActivityFeed,
   type TabItem,
   type DataTableColumn,
   type Attachment,
   type Comment,
+  type CommentListStatus,
   type ActivityEvent,
+  type ActivityFeedStatus,
   type BreadcrumbItem,
   type MenuItemDescriptor,
   type ChartDatum,
 } from "@components/navigation";
+import { ActivityTypeFilterControl, type ActivityTypeFilter } from "@features/activity";
 import { formatLocalDate } from "@lib/localDateTime";
 
 import type { Project } from "../model/project";
@@ -50,11 +55,28 @@ export interface ProjectDetailsScreenProps {
   readonly tasksTotalCount?: number;
   readonly tasksLoading?: boolean;
   readonly activityEvents?: readonly ActivityEvent[];
+  readonly activityTabEvents?: readonly ActivityEvent[];
+  readonly activityStatus?: ActivityFeedStatus;
+  readonly activityCount?: number;
+  readonly activityPage?: number;
+  readonly activityPageSize?: number;
+  readonly activityTotal?: number;
+  readonly onActivityPageChange?: (page: number) => void;
+  readonly activityFilter?: ActivityTypeFilter;
+  readonly onActivityFilterChange?: (filter: ActivityTypeFilter) => void;
+  readonly activityEmptyTitle?: string;
   readonly statusBreakdown?: readonly ChartDatum[];
   readonly priorityBreakdown?: readonly ChartDatum[];
   readonly attachments?: readonly Attachment[];
   readonly comments?: readonly Comment[];
+  readonly commentsStatus?: CommentListStatus;
+  readonly commentsCount?: number;
+  readonly commentsPage?: number;
+  readonly commentsPageSize?: number;
+  readonly commentsTotal?: number;
+  readonly onCommentsPageChange?: (page: number) => void;
   readonly selectedTab?: string;
+  readonly selectedMilestoneId?: string;
   readonly onTabChange?: (tab: string) => void;
   readonly loading?: boolean;
   readonly notFound?: boolean;
@@ -90,7 +112,14 @@ export interface ProjectDetailsScreenProps {
   readonly onDeleteAttachment?: (attachmentId: string) => Promise<void> | void;
   readonly onDownloadAttachment?: (attachmentId: string) => void;
   readonly onAddComment?: (content: string) => Promise<void> | void;
+  readonly addCommentPending?: boolean;
+  readonly addCommentError?: string;
+  readonly onEditComment?: (commentId: string, body: string) => Promise<void> | void;
+  readonly editCommentPending?: boolean;
+  readonly editCommentError?: string;
   readonly onDeleteComment?: (commentId: string) => Promise<void> | void;
+  readonly deleteCommentPending?: boolean;
+  readonly deleteCommentError?: string;
   readonly className?: string;
 }
 
@@ -112,11 +141,28 @@ export function ProjectDetailsScreen({
   tasksTotalCount,
   tasksLoading = false,
   activityEvents = [],
+  activityTabEvents,
+  activityStatus = { type: "ready" },
+  activityCount,
+  activityPage = 1,
+  activityPageSize = 20,
+  activityTotal,
+  onActivityPageChange,
+  activityFilter = "ALL",
+  onActivityFilterChange,
+  activityEmptyTitle = "No activity recorded",
   statusBreakdown = [],
   priorityBreakdown = [],
   attachments = [],
   comments = [],
+  commentsStatus = { type: "ready" },
+  commentsCount,
+  commentsPage = 1,
+  commentsPageSize = 20,
+  commentsTotal,
+  onCommentsPageChange,
   selectedTab: controlledTab,
+  selectedMilestoneId,
   onTabChange,
   loading = false,
   notFound = false,
@@ -146,7 +192,14 @@ export function ProjectDetailsScreen({
   onDeleteAttachment,
   onDownloadAttachment,
   onAddComment,
+  addCommentPending = false,
+  addCommentError,
+  onEditComment,
+  editCommentPending = false,
+  editCommentError,
   onDeleteComment,
+  deleteCommentPending = false,
+  deleteCommentError,
   className,
 }: ProjectDetailsScreenProps) {
   const [internalTab, setInternalTab] = useState("overview");
@@ -164,8 +217,12 @@ export function ProjectDetailsScreen({
 
   const handleCommentSubmit = async () => {
     if (!newCommentText.trim() || !onAddComment) return;
-    await onAddComment(newCommentText.trim());
-    setNewCommentText("");
+    try {
+      await onAddComment(newCommentText.trim());
+      setNewCommentText("");
+    } catch {
+      // The route supplies safe error copy; keep the draft available for retry.
+    }
   };
 
   if (loading) {
@@ -225,11 +282,14 @@ export function ProjectDetailsScreen({
     {
       key: "title",
       header: "Task",
-      render: (task) => (
-        <Text weight="medium" size="sm">
-          {task.title}
-        </Text>
-      ),
+      render: (task) =>
+        task.href ? (
+          <Link href={task.href}>{task.title}</Link>
+        ) : (
+          <Text weight="medium" size="sm">
+            {task.title}
+          </Text>
+        ),
     },
     {
       key: "status",
@@ -284,6 +344,7 @@ export function ProjectDetailsScreen({
           labels={labels}
           topTasks={topTasks}
           activityEvents={activityEvents}
+          activityStatus={activityStatus}
           statusBreakdown={statusBreakdown}
           priorityBreakdown={priorityBreakdown}
           now={now}
@@ -355,6 +416,7 @@ export function ProjectDetailsScreen({
           now={now}
           locale={locale}
           timeZone={timeZone}
+          {...(selectedMilestoneId ? { selectedMilestoneId } : {})}
           isArchived={isArchived}
           {...(project.startDate ? { projectStartDate: project.startDate } : {})}
           {...(project.deadlineDate ? { projectDeadlineDate: project.deadlineDate } : {})}
@@ -404,7 +466,10 @@ export function ProjectDetailsScreen({
     {
       id: "notes",
       label: "Notes",
-      badge: comments.length > 0 ? <Badge tone="neutral">{comments.length}</Badge> : undefined,
+      badge:
+        (commentsCount ?? comments.length) > 0 ? (
+          <Badge tone="neutral">{commentsCount ?? comments.length}</Badge>
+        ) : undefined,
       panel: (
         <Surface
           as="section"
@@ -420,6 +485,8 @@ export function ProjectDetailsScreen({
               value={newCommentText}
               onChange={setNewCommentText}
               onSubmit={() => void handleCommentSubmit()}
+              pending={addCommentPending}
+              {...(addCommentError ? { error: addCommentError } : {})}
             />
           ) : null}
           <CommentList
@@ -429,14 +496,33 @@ export function ProjectDetailsScreen({
             emptyDescription="Record notes, design decisions, or team discussion for this project."
             locale={locale}
             timeZone={timeZone}
+            status={commentsStatus}
+            {...(!isArchived && onEditComment ? { onEdit: onEditComment } : {})}
+            editPending={editCommentPending}
+            {...(editCommentError ? { editError: editCommentError } : {})}
             {...(onDeleteComment ? { onDelete: onDeleteComment } : {})}
+            deletePending={deleteCommentPending}
+            {...(deleteCommentError ? { deleteError: deleteCommentError } : {})}
           />
+          {onCommentsPageChange && (commentsTotal ?? 0) > commentsPageSize ? (
+            <Pagination
+              page={commentsPage}
+              pageSize={commentsPageSize}
+              total={commentsTotal ?? 0}
+              onPageChange={onCommentsPageChange}
+              label="Project comments pagination"
+            />
+          ) : null}
         </Surface>
       ),
     },
     {
       id: "activity",
       label: "Activity",
+      badge:
+        (activityCount ?? activityEvents.length) > 0 ? (
+          <Badge tone="neutral">{activityCount ?? activityEvents.length}</Badge>
+        ) : undefined,
       panel: (
         <Surface
           as="section"
@@ -446,13 +532,29 @@ export function ProjectDetailsScreen({
           <Heading level={2} size="md">
             Recent Activity
           </Heading>
+          {onActivityFilterChange ? (
+            <ActivityTypeFilterControl value={activityFilter} onChange={onActivityFilterChange} />
+          ) : null}
           <ActivityFeed
-            events={activityEvents}
+            events={activityTabEvents ?? activityEvents}
             label="Project event history"
-            emptyTitle="No activity recorded"
+            status={activityStatus}
+            emptyTitle={activityEmptyTitle}
             now={now}
             locale={locale}
             timeZone={timeZone}
+            {...(onActivityPageChange &&
+            activityTotal !== undefined &&
+            activityTotal > activityPageSize
+              ? {
+                  pagination: {
+                    page: activityPage,
+                    pageSize: activityPageSize,
+                    total: activityTotal,
+                    onPageChange: onActivityPageChange,
+                  },
+                }
+              : {})}
           />
         </Surface>
       ),

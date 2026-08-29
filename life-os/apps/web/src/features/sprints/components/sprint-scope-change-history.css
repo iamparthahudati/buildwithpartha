@@ -1,11 +1,11 @@
 .sprint-scope-change-history {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface);
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-4);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  background-color: var(--lifeos-color-surface);
 }
 
 .sprint-scope-change-history__header {
@@ -21,7 +21,7 @@
 .sprint-scope-change-history__items {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--lifeos-space-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -30,30 +30,42 @@
 .sprint-scope-change-history__item {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  border: 1px solid var(--color-border-subtle, var(--color-border));
-  border-radius: var(--radius-sm);
-  background-color: var(--color-surface);
+  gap: var(--lifeos-space-2);
+  padding: var(--lifeos-space-3);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-sm);
+  background-color: var(--lifeos-color-surface);
 }
 
 .sprint-scope-change-history__item-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--lifeos-space-3);
 }
 
 .sprint-scope-change-history__badge-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--lifeos-space-2);
+}
+
+@media (max-width: 40rem) {
+  .sprint-scope-change-history__item-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sprint-scope-change-history__timestamp {
+    white-space: normal;
+  }
 }
 
 .sprint-scope-change-history__task-title {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-main);
+  font-size: var(--lifeos-font-size-sm);
+  font-weight: var(--lifeos-font-weight-medium);
+  color: var(--lifeos-color-text);
 }
 
 .sprint-scope-change-history__timestamp {
@@ -63,7 +75,7 @@
 .sprint-scope-change-history__item-details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--lifeos-space-1);
 }
 
 .sprint-scope-change-history__reason {

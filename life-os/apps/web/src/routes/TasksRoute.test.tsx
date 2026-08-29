@@ -35,6 +35,19 @@ vi.mock("@features/tasks", async () => {
     useDuplicateTask: vi.fn(),
     useToggleTaskMit: vi.fn(),
     useBulkTaskAction: vi.fn(),
+    IntegratedTaskDetails: (props: {
+      readonly taskId: string;
+      readonly backHref: string;
+      readonly selectedTab: string;
+    }) => (
+      <div
+        role="dialog"
+        aria-label="Integrated task details"
+        data-task-id={props.taskId}
+        data-back-href={props.backHref}
+        data-selected-tab={props.selectedTab}
+      />
+    ),
   };
 });
 
@@ -192,10 +205,36 @@ describe("TasksRoute", () => {
     });
   });
 
-  it("opens the detail panel from the selected query parameter", () => {
-    renderTasksRoute(["/life-os/app/tasks?selected=task-weekly-review"]);
+  it("refreshes into the integrated sheet with exact list context and selected tab", () => {
+    renderTasksRoute([
+      "/life-os/app/tasks?status=IN_PROGRESS&q=review&page=2&selected=task-weekly-review&taskTab=subtasks",
+    ]);
 
-    expect(screen.getByRole("link", { name: "Open task details" })).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: "Integrated task details" })).toHaveAttribute(
+      "data-task-id",
+      "task-weekly-review",
+    );
+    expect(screen.getByRole("dialog", { name: "Integrated task details" })).toHaveAttribute(
+      "data-back-href",
+      "/life-os/app/tasks?status=IN_PROGRESS&q=review&page=2",
+    );
+    expect(screen.getByRole("dialog", { name: "Integrated task details" })).toHaveAttribute(
+      "data-selected-tab",
+      "subtasks",
+    );
+  });
+
+  it("opens the list-context sheet without replacing list state", async () => {
+    const user = userEvent.setup();
+    renderTasksRoute(["/life-os/app/tasks?priority=P1"]);
+
+    await user.click(screen.getByRole("button", { name: "Prepare weekly review" }));
+
+    expect(await screen.findByRole("dialog", { name: "Integrated task details" })).toHaveAttribute(
+      "data-back-href",
+      "/life-os/app/tasks?priority=P1",
+    );
+    expect(screen.getByRole("heading", { name: "Tasks", level: 1 })).toBeInTheDocument();
   });
 
   it("renders the loading state while the query is pending", () => {

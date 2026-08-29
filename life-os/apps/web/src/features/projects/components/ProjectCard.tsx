@@ -225,12 +225,48 @@ export function ProjectCard({
         .join(" ")}
     >
       <div className="lifeos-project-card__header">
-        <div
-          className="lifeos-project-card__icon-swatch"
-          style={{ backgroundColor: projectColor }}
-          aria-hidden="true"
-        >
-          <Icon icon={projectIcon} decorative size="md" className="lifeos-project-card__icon" />
+        <div className="lifeos-project-card__identity">
+          {project.coverImageUrl ? (
+            <img
+              src={project.coverImageUrl}
+              alt=""
+              loading="lazy"
+              className="lifeos-project-card__logo"
+            />
+          ) : (
+            <div
+              className="lifeos-project-card__icon-swatch"
+              style={{ backgroundColor: projectColor }}
+              aria-hidden="true"
+            >
+              <Icon icon={projectIcon} decorative size="md" className="lifeos-project-card__icon" />
+            </div>
+          )}
+          <div className="lifeos-project-card__identity-text">
+            <Link
+              href={projectHref}
+              className="lifeos-project-card__name"
+              aria-label={`Open project: ${project.name}`}
+            >
+              {project.name}
+            </Link>
+            <div className="lifeos-project-card__badges">
+              {isArchived ? (
+                <Badge tone="neutral" className="lifeos-project-card__archived-badge">
+                  Archived
+                </Badge>
+              ) : null}
+              {isOverdue ? (
+                <Badge tone="danger" className="lifeos-project-card__overdue-badge">
+                  Overdue
+                </Badge>
+              ) : null}
+              <Badge tone={STATUS_TONES[project.status]}>{STATUS_LABELS[project.status]}</Badge>
+              <Badge tone={PRIORITY_TONES[project.priority]}>
+                {PRIORITY_LABELS[project.priority]}
+              </Badge>
+            </div>
+          </div>
         </div>
         {menuItems.length > 0 ? (
           <div className="lifeos-project-card__actions">
@@ -252,31 +288,6 @@ export function ProjectCard({
       </div>
 
       <div className="lifeos-project-card__content">
-        <div className="lifeos-project-card__title-row">
-          <Link
-            href={projectHref}
-            className="lifeos-project-card__name"
-            aria-label={`Open project: ${project.name}`}
-          >
-            {project.name}
-          </Link>
-        </div>
-
-        <div className="lifeos-project-card__badges">
-          {isArchived ? (
-            <Badge tone="neutral" className="lifeos-project-card__archived-badge">
-              Archived
-            </Badge>
-          ) : null}
-          {isOverdue ? (
-            <Badge tone="danger" className="lifeos-project-card__overdue-badge">
-              Overdue
-            </Badge>
-          ) : null}
-          <Badge tone={STATUS_TONES[project.status]}>{STATUS_LABELS[project.status]}</Badge>
-          <Badge tone={PRIORITY_TONES[project.priority]}>{PRIORITY_LABELS[project.priority]}</Badge>
-        </div>
-
         {project.description ? (
           <Text tone="secondary" size="xs" className="lifeos-project-card__description">
             {project.description}

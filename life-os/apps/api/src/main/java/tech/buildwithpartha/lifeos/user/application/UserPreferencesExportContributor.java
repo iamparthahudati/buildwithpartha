@@ -58,6 +58,12 @@ public class UserPreferencesExportContributor implements UserDataExportContribut
     data.put("dailyFocusTargetMinutes", defaults.dailyFocusTargetMinutes().orElse(null));
     data.put("focusDurationMinutes", defaults.focusDurationMinutes());
     data.put("breakDurationMinutes", defaults.breakDurationMinutes());
+    data.put("longBreakDurationMinutes", defaults.longBreakDurationMinutes());
+    data.put("focusSessionsBeforeLongBreak", defaults.focusSessionsBeforeLongBreak());
+    data.put("autoStartBreaks", defaults.autoStartBreaks());
+    data.put("autoStartFocusSessions", defaults.autoStartFocusSessions());
+    data.put("soundEnabled", defaults.soundEnabled());
+    data.put("browserNotificationsEnabled", defaults.browserNotificationsEnabled());
 
     try {
       return objectMapper.writeValueAsBytes(data);

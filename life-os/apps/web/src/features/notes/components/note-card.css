@@ -1,0 +1,131 @@
+.lifeos-note-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  position: relative;
+  background-color: var(--lifeos-color-surface);
+  border-radius: var(--lifeos-radius-md);
+  transition: box-shadow var(--lifeos-motion-duration-fast) var(--lifeos-motion-duration-normal);
+}
+
+.lifeos-note-card--pinned {
+  border-color: var(--lifeos-color-primary);
+}
+
+.lifeos-note-card--archived {
+  opacity: 0.7;
+  background-color: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-note-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-note-card__title-area {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.lifeos-note-card__pin-btn {
+  flex-shrink: 0;
+  padding: 0;
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-note-card--pinned .lifeos-note-card__pin-btn {
+  color: var(--lifeos-color-primary);
+}
+
+.lifeos-note-card__title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--lifeos-font-size-md);
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-note-card__actions {
+  display: flex;
+  gap: var(--lifeos-space-1);
+  opacity: 0.6;
+  transition: opacity var(--lifeos-motion-duration-fast);
+}
+
+.lifeos-note-card:hover .lifeos-note-card__actions {
+  opacity: 1;
+}
+
+.lifeos-note-card__body {
+  flex: 1;
+  min-height: 2.5rem;
+}
+
+.lifeos-note-card__body-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre-wrap;
+  line-height: 1.4;
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-note-card__labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-1);
+}
+
+.lifeos-note-card__label-badge {
+  font-size: var(--lifeos-font-size-3xs);
+}
+
+.lifeos-note-card__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-1);
+  padding-top: var(--lifeos-space-1);
+  border-top: 1px dashed var(--lifeos-color-surface-muted);
+}
+
+.lifeos-note-card__link-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  font-size: var(--lifeos-font-size-3xs);
+  text-decoration: none;
+  color: var(--lifeos-color-primary);
+}
+
+.lifeos-note-card__link-item:hover {
+  text-decoration: underline;
+}
+
+.lifeos-note-card__link-icon {
+  flex-shrink: 0;
+}
+
+.lifeos-note-card__link-type {
+  font-weight: 500;
+  text-transform: capitalize;
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-note-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--lifeos-font-size-3xs);
+  color: var(--lifeos-color-text-muted);
+}
+
+.lifeos-note-card__draft-badge {
+  font-size: var(--lifeos-font-size-3xs);
+}

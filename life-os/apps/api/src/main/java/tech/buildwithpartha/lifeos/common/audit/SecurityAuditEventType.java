@@ -1,0 +1,19 @@
+package tech.buildwithpartha.lifeos.common.audit;
+
+/** Stable Security Audit Event types. */
+public enum SecurityAuditEventType {
+  ACCOUNT_CREATED,
+  SIGN_IN,
+  SIGN_OUT,
+  EMAIL_VERIFIED,
+  PASSWORD_CHANGED,
+  PASSWORD_RESET,
+  SESSIONS_REVOKED,
+  ACCOUNT_DELETION_REQUESTED,
+  ACCOUNT_DELETION_CANCELLED,
+  ACCOUNT_PURGED,
+  AUTHORIZATION_DENIED,
+  RECORD_DELETED,
+  EXPORT_REQUESTED,
+  EXPORT_DOWNLOADED
+}

@@ -50,6 +50,8 @@ export interface DrawerProps {
   readonly onClose: () => void;
   readonly title: string;
   readonly titleHidden?: boolean;
+  /** Complete accessible name for the close control when several layers may be open. */
+  readonly closeLabel?: string;
   readonly description?: string;
   readonly children: ReactNode;
   readonly initialFocusRef?: RefObject<HTMLElement | null>;
@@ -70,6 +72,7 @@ export function Drawer({
   onClose,
   title,
   titleHidden = false,
+  closeLabel = "Close",
   description,
   children,
   initialFocusRef,
@@ -169,7 +172,7 @@ export function Drawer({
 
             <IconButton
               icon={X}
-              label="Close"
+              label={closeLabel}
               variant="ghost"
               size="sm"
               className="lifeos-drawer__close"

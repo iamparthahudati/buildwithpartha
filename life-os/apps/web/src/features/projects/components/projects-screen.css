@@ -41,7 +41,7 @@
 .lifeos-projects-screen__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
-  gap: 0;
+  gap: var(--lifeos-space-4);
 }
 
 .lifeos-projects-screen__list {

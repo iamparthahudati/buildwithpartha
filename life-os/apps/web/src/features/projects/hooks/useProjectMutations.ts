@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient, type UseMutationResult } from "@tanstack/react-query";
+import { invalidateActivityQueries } from "@features/activity";
 import {
   createProject,
   updateProject,
@@ -19,6 +20,7 @@ export function useCreateProject(): UseMutationResult<Project, Error, CreateProj
     mutationFn: (request: CreateProjectRequestDto) => createProject(request),
     onSuccess: () => {
       void invalidateProjectsQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }
@@ -33,6 +35,7 @@ export function useUpdateProject(): UseMutationResult<
     mutationFn: ({ id, request }) => updateProject(id, request),
     onSuccess: () => {
       void invalidateProjectsQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }
@@ -47,6 +50,7 @@ export function useArchiveProject(): UseMutationResult<
     mutationFn: ({ id, request }) => archiveProject(id, request),
     onSuccess: () => {
       void invalidateProjectsQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }
@@ -61,6 +65,7 @@ export function useRestoreProject(): UseMutationResult<
     mutationFn: ({ id, request }) => restoreProject(id, request),
     onSuccess: () => {
       void invalidateProjectsQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }
@@ -71,6 +76,7 @@ export function useDeleteProject(): UseMutationResult<void, Error, string> {
     mutationFn: (id: string) => deleteProject(id),
     onSuccess: () => {
       void invalidateProjectsQueries(queryClient);
+      void invalidateActivityQueries(queryClient);
     },
   });
 }

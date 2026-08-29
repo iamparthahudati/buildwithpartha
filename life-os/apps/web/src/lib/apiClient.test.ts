@@ -74,6 +74,20 @@ describe("apiRequest", () => {
     expect((init.headers as Headers).get("X-CSRF-TOKEN")).toBe("known-token");
   });
 
+  it("merges endpoint-specific headers with the shared mutation headers", async () => {
+    configureApiClient({ getCsrfToken: () => "known-token", onAuthenticationRequired: vi.fn() });
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(null, { status: 204 }));
+
+    await apiRequest("/tasks/task-1/comments/comment-1", {
+      method: "DELETE",
+      headers: { "If-Match": "3" },
+    });
+
+    const [, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    expect((init.headers as Headers).get("If-Match")).toBe("3");
+    expect((init.headers as Headers).get("X-CSRF-TOKEN")).toBe("known-token");
+  });
+
   it("omits the CSRF header on a mutating request before any token is known", async () => {
     configureApiClient({ getCsrfToken: () => null, onAuthenticationRequired: vi.fn() });
     vi.mocked(fetch).mockResolvedValueOnce(jsonResponse(202, {}));

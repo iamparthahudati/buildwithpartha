@@ -48,6 +48,7 @@ export interface TaskRecord {
   readonly project: TaskProjectContext | null;
   readonly dueAt: string | null;
   readonly estimateMinutes: number | null;
+  readonly spentMinutes?: number | null;
   readonly progress: number;
   readonly mitDate: string | null;
   readonly isMit: boolean;
@@ -55,6 +56,7 @@ export interface TaskRecord {
   readonly blockerCount: number;
   readonly overdue: boolean;
   readonly archivedAt: string | null;
+  readonly deletedAt?: string | null;
   readonly labelIds: readonly string[];
   readonly version: number;
   readonly createdAt: string;

@@ -30,7 +30,7 @@ export function ProjectsRoute() {
   const searchQuery = searchParams.get("q") ?? "";
   const priorityFilter = searchParams.get("priority") ?? "ALL";
   const healthFilter = searchParams.get("health") ?? "ALL";
-  const sortOptionId = searchParams.get("sort") ?? "name";
+  const sortOptionId = searchParams.get("sort") ?? "priority";
   const sortDirection = (searchParams.get("dir") === "desc" ? "desc" : "asc") as "asc" | "desc";
   const pageParam = parseInt(searchParams.get("page") ?? "1", 10);
   const currentPage = Number.isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
@@ -43,7 +43,7 @@ export function ProjectsRoute() {
     const statusArray = statusTab !== "ALL" && !isArchivedTab ? [statusTab] : undefined;
     const priorityArray = priorityFilter !== "ALL" ? [priorityFilter] : undefined;
     const healthArray = healthFilter !== "ALL" ? [healthFilter] : undefined;
-    const sortBy = SORT_FIELD_MAP[sortOptionId] ?? "name";
+    const sortBy = SORT_FIELD_MAP[sortOptionId] ?? "priority";
 
     return {
       ...(searchQuery ? { q: searchQuery } : {}),
@@ -52,7 +52,7 @@ export function ProjectsRoute() {
       ...(healthArray ? { health: healthArray } : {}),
       archived: isArchivedTab ? true : false,
       page: currentPage - 1,
-      size: 6,
+      size: 15,
       sortBy,
       sortDirection: sortDirection.toUpperCase() as "ASC" | "DESC",
     };
@@ -139,7 +139,7 @@ export function ProjectsRoute() {
   const handleSortChange = useCallback(
     (sort: { optionId: string; direction: "asc" | "desc" }) => {
       updateUrlParams({
-        sort: sort.optionId === "name" ? null : sort.optionId,
+        sort: sort.optionId === "priority" ? null : sort.optionId,
         dir: sort.direction === "asc" ? null : sort.direction,
       });
     },
@@ -178,6 +178,7 @@ export function ProjectsRoute() {
         health: formData.health,
         color: formData.color ?? null,
         icon: formData.icon ?? null,
+        coverImageUrl: formData.coverImageUrl ?? null,
         startDate: formData.startDate ?? null,
         deadlineDate: formData.deadlineDate ?? null,
       });
@@ -198,6 +199,7 @@ export function ProjectsRoute() {
           health: formData.health,
           color: formData.color ?? null,
           icon: formData.icon ?? null,
+          coverImageUrl: formData.coverImageUrl ?? null,
           startDate: formData.startDate ?? null,
           deadlineDate: formData.deadlineDate ?? null,
           version: existing?.version ?? formData.version ?? 1,

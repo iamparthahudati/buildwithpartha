@@ -141,6 +141,18 @@ class TaskDependencyIntegrationTests {
   }
 
   @Test
+  void preventsCrossUserDependencyRemoval() {
+    Task userTask = createTask(userId, "User Task", TaskStatus.TO_DO);
+    Task otherTask = createTask(otherUserId, "Other User Task", TaskStatus.TO_DO);
+
+    assertThatThrownBy(
+            () ->
+                taskService.removeDependency(
+                    userId, userTask.id(), otherTask.id(), TaskDependencyType.BLOCKER))
+        .isInstanceOf(ResourceNotFoundException.class);
+  }
+
+  @Test
   void unblocksDependentWhenBlockerCompletes() {
     Task blocker = createTask(userId, "Blocker", TaskStatus.TO_DO);
     Task dependent = createTask(userId, "Dependent", TaskStatus.BLOCKED);

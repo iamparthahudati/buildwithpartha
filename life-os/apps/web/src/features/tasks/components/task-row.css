@@ -21,6 +21,7 @@
   flex-direction: column;
   gap: var(--lifeos-space-1);
   min-width: 0;
+  white-space: nowrap;
 }
 
 .lifeos-task-row__title-line,

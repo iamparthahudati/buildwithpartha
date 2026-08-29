@@ -15,6 +15,7 @@ export interface Project {
   readonly health: ProjectHealth;
   readonly color?: string | null;
   readonly icon?: string | null;
+  readonly coverImageUrl?: string | null; // https URL or root-relative app path
   readonly startDate?: string | null; // LocalDate format: YYYY-MM-DD
   readonly deadlineDate?: string | null; // LocalDate format: YYYY-MM-DD
   readonly completedTasksCount: number;

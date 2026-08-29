@@ -42,7 +42,13 @@ public class JpaUserPreferencesRepository implements UserPreferencesRepository {
             entity.isOvernightSchedule(),
             Optional.ofNullable(entity.getDailyFocusTargetMinutes()),
             entity.getFocusDurationMinutes(),
-            entity.getBreakDurationMinutes());
+            entity.getBreakDurationMinutes(),
+            entity.getLongBreakDurationMinutes(),
+            entity.getFocusSessionsBeforeLongBreak(),
+            entity.isAutoStartBreaks(),
+            entity.isAutoStartFocusSessions(),
+            entity.isSoundEnabled(),
+            entity.isBrowserNotificationsEnabled());
 
     return new UserPreferences(
         entity.getId(),
@@ -75,6 +81,12 @@ public class JpaUserPreferencesRepository implements UserPreferencesRepository {
         defaults.dailyFocusTargetMinutes().orElse(null),
         defaults.focusDurationMinutes(),
         defaults.breakDurationMinutes(),
+        defaults.longBreakDurationMinutes(),
+        defaults.focusSessionsBeforeLongBreak(),
+        defaults.autoStartBreaks(),
+        defaults.autoStartFocusSessions(),
+        defaults.soundEnabled(),
+        defaults.browserNotificationsEnabled(),
         domain.createdAt(),
         domain.updatedAt(),
         domain.version());

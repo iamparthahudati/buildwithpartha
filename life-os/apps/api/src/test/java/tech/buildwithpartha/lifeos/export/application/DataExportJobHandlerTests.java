@@ -116,6 +116,12 @@ class DataExportJobHandlerTests {
     public List<ExportSummary> getExportsForUser(UUID userId) {
       return List.of();
     }
+
+    @Override
+    public tech.buildwithpartha.lifeos.common.export.ExportDownloadPayload openDownloadStream(
+        String rawToken, UUID authenticatedUserId) {
+      return null;
+    }
   }
 
   private static final class FakeTransactionalMailPort implements TransactionalMailPort {

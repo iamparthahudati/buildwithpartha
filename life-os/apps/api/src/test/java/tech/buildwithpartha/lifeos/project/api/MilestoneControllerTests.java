@@ -124,6 +124,7 @@ class MilestoneControllerTests {
             ProjectHealth.NOT_SET,
             Optional.empty(),
             Optional.empty(),
+            Optional.empty(),
             Optional.ofNullable(startDate),
             Optional.ofNullable(deadlineDate),
             Optional.empty(),

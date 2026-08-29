@@ -36,7 +36,6 @@ describe("TaskRow", () => {
     expect(screen.getByText("P1 — High")).toBeInTheDocument();
     expect(screen.getByText("MIT")).toBeInTheDocument();
     expect(screen.getByText("Due Aug 22, 2026, 5:30 PM")).toBeInTheDocument();
-    expect(screen.getByLabelText("3 comments")).toBeInTheDocument();
 
     const progress = screen.getByRole("progressbar", {
       name: "Build TaskRow and TaskCard progress",
@@ -92,7 +91,6 @@ describe("TaskRow", () => {
     rerender(<TaskRow task={{ ...TASK, project: null, dueAt: null, commentCount: 0 }} now={NOW} />);
     expect(screen.getByText("No project")).toBeInTheDocument();
     expect(screen.getByText("No due date")).toBeInTheDocument();
-    expect(screen.getByLabelText("0 comments")).toBeInTheDocument();
   });
 
   it("offers only valid active, blocked, terminal and archived actions", async () => {

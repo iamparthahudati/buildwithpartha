@@ -20,6 +20,7 @@ describe("resolveRouteTitle", () => {
     expect(resolveRouteTitle("/life-os/app/settings/security")).toBe("Settings");
     expect(resolveRouteTitle("/life-os/app/search")).toBe("Search");
     expect(resolveRouteTitle("/life-os/app/notifications")).toBe("Notifications");
+    expect(resolveRouteTitle("/life-os/app/focus")).toBe("Focus Mode");
     expect(resolveRouteTitle("/life-os/app/onboarding")).toBe("Onboarding");
   });
 

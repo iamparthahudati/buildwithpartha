@@ -14,6 +14,8 @@ Supported after the offline tickets land:
 
 Online-only: authentication changes, account deletion, attachments, exports, recurrence-series edits, bulk destructive actions, dependency graph edits, and conflict resolution.
 
+Focus Session transitions are also online-only. LOS-0915 may keep the last confirmed active snapshot visible in the current tab while offline and continue an explicitly estimated display from its server receipt anchor, but controls remain disabled and no Focus Session content or queued transition is written to browser storage. Reconnection reloads the canonical session before further action.
+
 ## Queue model
 
 Each entry stores local ID, user/session binding, operation type, endpoint/resource, safe payload, idempotency key, entity dependencies, created/expiry timestamps, attempt count, last error, and state. Sensitive queue data is minimized and removed on logout/account switch. Device-draft and queue storage, expiry, export and deletion follow `31-PRIVACY-DATA-LIFECYCLE.md`.

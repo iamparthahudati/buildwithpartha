@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Clock } from "lucide-react";
 
-import { Button, IconButton, LiveRegion, ProgressRing, Text } from "@components/ui";
+import { Button, IconButton, Link, LiveRegion, ProgressRing, Text } from "@components/ui";
 import { TimerRing } from "@components/feedback";
 import { useAnnouncer } from "@hooks/useAnnouncer";
 import { useMediaQuery } from "@hooks/useMediaQuery";
 import { useUserPreferences } from "@features/user";
 
 import { useFocusSession } from "../hooks/useFocusSession";
-import { type FocusSessionStatus } from "../api/focusApi";
 import "./focus-mini-player.css";
 
 const MOBILE_QUERY = "(max-width: 767px)";
@@ -27,11 +26,22 @@ const STATUS_TONE = {
 };
 
 export function FocusMiniPlayer({ locale }: FocusMiniPlayerProps) {
-  const { session, isLoading, remainingSeconds, start, pause, resume, cancel, reset } =
-    useFocusSession();
+  const {
+    session,
+    isLoading,
+    online,
+    message: syncMessage,
+    pendingAction,
+    totalSeconds,
+    remainingSeconds,
+    start,
+    pause,
+    resume,
+  } = useFocusSession();
 
   const { data: prefs } = useUserPreferences();
   const defaultMinutes = prefs?.planningDefaults?.focusDurationMinutes ?? 25;
+  const defaultBreakMinutes = prefs?.planningDefaults?.breakDurationMinutes ?? 5;
 
   const [isOpen, setIsOpen] = useState(false);
   const [prevDefaultMinutes, setPrevDefaultMinutes] = useState(defaultMinutes);
@@ -79,8 +89,9 @@ export function FocusMiniPlayer({ locale }: FocusMiniPlayerProps) {
 
   // Transition announcements
   const { announce, message } = useAnnouncer();
-  const prevStatusRef = useRef<FocusSessionStatus | "idle">("idle");
-  const currentStatus = session?.status ?? "idle";
+  const prevStatusRef = useRef<"idle" | "running" | "paused">("idle");
+  const currentStatus =
+    session?.status === "RUNNING" ? "running" : session?.status === "PAUSED" ? "paused" : "idle";
 
   useEffect(() => {
     if (prevStatusRef.current === currentStatus) {
@@ -98,8 +109,6 @@ export function FocusMiniPlayer({ locale }: FocusMiniPlayerProps) {
       announce("Focus session paused.");
     } else if (currentStatus === "running") {
       announce("Focus session resumed.");
-    } else if (currentStatus === "completed") {
-      announce("Focus session completed.");
     }
   }, [currentStatus, isOpen, isMobile, announce]);
 
@@ -112,12 +121,11 @@ export function FocusMiniPlayer({ locale }: FocusMiniPlayerProps) {
 
   const handleStart = async (durationSecs?: number) => {
     const finalSecs = durationSecs ?? (isValid ? minutes * 60 : defaultMinutes * 60);
-    await start(finalSecs);
-  };
-
-  const handleCancel = async () => {
-    await cancel();
-    setIsOpen(false);
+    try {
+      await start(finalSecs, undefined, undefined, defaultBreakMinutes * 60);
+    } catch {
+      // The hook keeps the confirmed state and exposes the actionable message.
+    }
   };
 
   const desktopTriggerContent = () => {
@@ -148,8 +156,8 @@ export function FocusMiniPlayer({ locale }: FocusMiniPlayerProps) {
           <ProgressRing
             label="Focus session progress"
             labelHidden
-            value={session ? session.totalSeconds - remainingSeconds : 0}
-            max={session ? session.totalSeconds : 100}
+            value={session ? totalSeconds - remainingSeconds : 0}
+            max={session ? totalSeconds : 100}
             tone={STATUS_TONE[currentStatus]}
             size="sm"
             valueText={`${remainingSeconds} seconds remaining`}
@@ -185,7 +193,10 @@ export function FocusMiniPlayer({ locale }: FocusMiniPlayerProps) {
             style={{ width: "100%" }}
           />
         </div>
-        <Button disabled={!isValid} onClick={() => handleStart()}>
+        <Button
+          disabled={!isValid || !online || pendingAction !== undefined}
+          onClick={() => handleStart()}
+        >
           Start
         </Button>
       </div>
@@ -195,6 +206,7 @@ export function FocusMiniPlayer({ locale }: FocusMiniPlayerProps) {
             key={p}
             size="sm"
             variant="secondary"
+            disabled={!online || pendingAction !== undefined}
             onClick={async () => {
               await handleStart(p * 60);
               if (!isMobileView) {
@@ -222,23 +234,16 @@ export function FocusMiniPlayer({ locale }: FocusMiniPlayerProps) {
             ) : (
               <>
                 <TimerRing
-                  label="Focus session"
-                  totalSeconds={session ? session.totalSeconds : 0}
+                  label={session?.phase === "BREAK" ? "Break" : "Focus Session"}
+                  totalSeconds={totalSeconds}
                   remainingSeconds={remainingSeconds}
                   status={currentStatus}
                   locale={locale}
                   size="md"
-                  onPause={pause}
-                  onResume={resume}
-                  onReset={reset}
+                  onPause={() => void pause()}
+                  onResume={() => void resume()}
                 />
-                <Button
-                  variant="danger"
-                  className="lifeos-focus-mini-player__cancel-btn"
-                  onClick={handleCancel}
-                >
-                  Cancel Session
-                </Button>
+                <Link href="/life-os/app/focus">Open Focus Mode</Link>
               </>
             )}
           </div>
@@ -252,28 +257,26 @@ export function FocusMiniPlayer({ locale }: FocusMiniPlayerProps) {
         ) : (
           <>
             <TimerRing
-              label="Focus session"
-              totalSeconds={session ? session.totalSeconds : 0}
+              label={session?.phase === "BREAK" ? "Break" : "Focus Session"}
+              totalSeconds={totalSeconds}
               remainingSeconds={remainingSeconds}
               status={currentStatus}
               locale={locale}
               size="md"
-              onPause={pause}
-              onResume={resume}
-              onReset={reset}
+              onPause={() => void pause()}
+              onResume={() => void resume()}
             />
-            <Button
-              variant="danger"
-              className="lifeos-focus-mini-player__cancel-btn"
-              onClick={handleCancel}
-            >
-              Cancel Session
-            </Button>
+            <Link href="/life-os/app/focus">Open Focus Mode</Link>
           </>
         )}
       </div>
 
-      <LiveRegion message={message} />
+      {!online ? (
+        <Text size="xs" tone="secondary">
+          Focus controls require a connection.
+        </Text>
+      ) : null}
+      <LiveRegion message={syncMessage ?? message} />
     </div>
   );
 }

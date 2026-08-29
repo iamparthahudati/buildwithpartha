@@ -9,6 +9,7 @@ import {
   Tag,
   Activity,
   ListTodo,
+  type LucideIcon,
 } from "lucide-react";
 
 import {
@@ -40,6 +41,7 @@ import {
   TableHeaderCell,
   TableRow,
   type ActivityEvent as NavigationActivityEvent,
+  type ActivityFeedStatus,
   type ActivityObjectRef,
   type ChartDatum,
   type DataTableColumn,
@@ -65,6 +67,7 @@ export interface OverviewActivityItem {
   readonly action: string;
   readonly object?: ActivityObjectRef;
   readonly createdAt: string;
+  readonly icon?: LucideIcon;
 }
 
 export interface ProjectOverviewProps {
@@ -75,6 +78,7 @@ export interface ProjectOverviewProps {
   readonly labels?: readonly string[];
   readonly topTasks?: readonly ProjectOverviewTask[];
   readonly activityEvents?: readonly OverviewActivityItem[];
+  readonly activityStatus?: ActivityFeedStatus;
   readonly statusBreakdown?: readonly ChartDatum[];
   readonly priorityBreakdown?: readonly ChartDatum[];
   readonly loading?: boolean;
@@ -126,6 +130,7 @@ export function ProjectOverview({
   labels = [],
   topTasks = [],
   activityEvents = [],
+  activityStatus = { type: "ready" },
   statusBreakdown = [],
   priorityBreakdown = [],
   loading = false,
@@ -209,19 +214,30 @@ export function ProjectOverview({
     project.deadlineDate != null &&
     compareLocalDates(project.deadlineDate, todayStr) < 0;
 
-  const defaultStatusBreakdown: readonly ChartDatum[] =
-    statusBreakdown.length > 0
-      ? statusBreakdown
-      : (
-          [
-            { id: "status-completed", label: "Completed", value: completedTasks },
-            {
-              id: "status-in-progress",
-              label: "In progress",
-              value: Math.max(0, totalTasks - completedTasks),
-            },
-          ] as readonly ChartDatum[]
-        ).filter((d) => d.value > 0);
+  const defaultStatusBreakdown: readonly ChartDatum[] = (() => {
+    if (statusBreakdown.length > 0) return statusBreakdown;
+    if (topTasks.length > 0) {
+      const counts: Record<string, number> = {};
+      for (const t of topTasks) {
+        counts[t.status] = (counts[t.status] ?? 0) + 1;
+      }
+      return Object.entries(counts).map(([statusKey, count]) => ({
+        id: `status-${statusKey}`,
+        label: TASK_STATUS_LABELS[statusKey] ?? statusKey,
+        value: count,
+      }));
+    }
+    return (
+      [
+        { id: "status-completed", label: "Completed", value: completedTasks },
+        {
+          id: "status-in-progress",
+          label: "In progress",
+          value: Math.max(0, totalTasks - completedTasks),
+        },
+      ] as readonly ChartDatum[]
+    ).filter((d) => d.value > 0);
+  })();
 
   const defaultPriorityBreakdown: readonly ChartDatum[] = priorityBreakdown;
 
@@ -232,6 +248,7 @@ export function ProjectOverview({
     action: evt.action,
     ...(evt.object ? { object: evt.object } : {}),
     createdAt: evt.createdAt,
+    ...(evt.icon ? { icon: evt.icon } : {}),
   }));
 
   // Top tasks columns for DataTable
@@ -609,6 +626,7 @@ export function ProjectOverview({
               events={navActivityEvents}
               locale={locale}
               timeZone={timeZone}
+              status={activityStatus}
               emptyTitle="No recent activity"
               emptyDescription="Activity history for this project will appear here."
             />

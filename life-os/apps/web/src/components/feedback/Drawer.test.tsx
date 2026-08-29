@@ -51,6 +51,16 @@ describe("Drawer", () => {
     await expectNoAccessibilityViolations(container);
   });
 
+  it("accepts a context-specific close label", () => {
+    renderWithUser(
+      <Drawer open onClose={() => {}} title="Prepare weekly review" closeLabel="Close task details">
+        <p>Task details.</p>
+      </Drawer>,
+    );
+
+    expect(screen.getByRole("button", { name: "Close task details" })).toBeInTheDocument();
+  });
+
   it("traps focus and returns it to the trigger on close", async () => {
     const { user } = renderWithUser(<OpenableDrawer />);
 

@@ -7,6 +7,50 @@ export {
   type TaskDetailsLabel,
 } from "./components/TaskDetailsHeader";
 export {
+  SubtaskChecklist,
+  type SubtaskChecklistItem,
+  type SubtaskChecklistOperation,
+  type SubtaskChecklistOperationError,
+  type SubtaskChecklistOperationTarget,
+  type SubtaskChecklistProps,
+} from "./components/SubtaskChecklist";
+export {
+  DependencyEditor,
+  type DependencyEditorOperation,
+  type DependencyEditorOperationError,
+  type DependencyEditorProps,
+  type DependencyEditorTask,
+  type DependencyRelationship,
+} from "./components/DependencyEditor";
+export {
+  SchedulingPanel,
+  type SchedulingPanelActiveFocusSession,
+  type SchedulingPanelProps,
+  type SchedulingPanelTask,
+} from "./components/SchedulingPanel";
+export {
+  TaskDetailsScreen,
+  type TaskDetailsActivityConfig,
+  type TaskDetailsAttachmentsConfig,
+  type TaskDetailsAttachmentsStatus,
+  type TaskDetailsCommentsConfig,
+  type TaskDetailsDependenciesConfig,
+  type TaskDetailsHeaderConfig,
+  type TaskDetailsSchedulingConfig,
+  type TaskDetailsScreenProps,
+  type TaskDetailsSubtasksConfig,
+  type TaskDetailsTabId,
+} from "./components/TaskDetailsScreen";
+export { TaskDetailsSheet, type TaskDetailsSheetProps } from "./components/TaskDetailsSheet";
+export {
+  IntegratedTaskDetails,
+  type IntegratedTaskDetailsProps,
+} from "./components/IntegratedTaskDetails";
+export {
+  dependencyEditorErrorMessage,
+  type DependencyEditorErrorReason,
+} from "./model/dependencyEditorErrors";
+export {
   TaskForm,
   type TaskFormData,
   type TaskFormLabelOption,
@@ -52,17 +96,34 @@ export {
 
 export {
   queryTasks,
+  getTaskDetail,
+  addSubtask,
+  updateSubtask,
+  toggleSubtask,
+  reorderSubtasks,
+  deleteSubtask,
+  addTaskDependency,
+  removeTaskDependency,
   mapTaskResponse,
+  mapTaskDetailResponse,
   mapTaskSummary,
   mapBulkOutcome,
   toBulkRequest,
   type TaskQueryParams,
   type TaskQueryResult,
   type TaskResponseDto,
+  type TaskDetail,
+  type TaskDetailResponseDto,
+  type TaskDetailCountsDto,
+  type SubtaskResponseDto,
+  type TaskDependenciesSummaryDto,
   type TaskSummaryCountsDto,
   type CreateTaskRequestDto,
   type UpdateTaskRequestDto,
 } from "./api/tasksApi";
+
+export { useTaskDetail } from "./hooks/useTaskDetail";
+export { useTaskDetailMutations } from "./hooks/useTaskDetailMutations";
 
 export {
   TASKS_QUERY_KEY,

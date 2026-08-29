@@ -7,20 +7,32 @@ import { RequireAuth, useLogout } from "@features/auth";
 import { useAuthSession } from "@state/authSession";
 import {
   CancelDeletionRoute,
+  CalendarRoute,
   ComingSoonRoute,
   ForgotPasswordRoute,
+  FocusRoute,
+  GoalsRoute,
+  GoalDetailsRoute,
   LoginRoute,
   NotFoundRoute,
   OnboardingRoute,
+  NotesRoute,
+  BrainDumpRoute,
+  ProgressRoute,
   ProjectsRoute,
   ProjectDetailsRoute,
+  ReportsRoute,
   ResetPasswordRoute,
   SettingsRoute,
+  SprintsRoute,
   SignupRoute,
   TodayRoute,
   TasksRoute,
+  TaskDetailsRoute,
+  TimeBlocksRoute,
   UnavailableRoute,
   VerifyEmailRoute,
+  WeekPlannerRoute,
 } from "@routes/index";
 
 /**
@@ -124,24 +136,24 @@ export function AppRoutes() {
           <Route index element={<Navigate to="today" replace />} />
           <Route path="today" element={<TodayRoute />} />
           <Route path="tasks" element={<TasksRoute />} />
-          <Route path="tasks/:taskId" element={<ComingSoonRoute />} />
-          <Route path="time-blocks" element={<ComingSoonRoute />} />
-          <Route path="calendar" element={<ComingSoonRoute />} />
-          <Route path="focus" element={<ComingSoonRoute />} />
+          <Route path="tasks/:taskId" element={<TaskDetailsRoute />} />
+          <Route path="time-blocks" element={<TimeBlocksRoute />} />
+          <Route path="calendar" element={<CalendarRoute />} />
+          <Route path="focus" element={<FocusRoute />} />
           <Route path="projects" element={<ProjectsRoute />} />
           <Route path="projects/:projectId" element={<ProjectDetailsRoute />} />
-          <Route path="sprints" element={<ComingSoonRoute />} />
-          <Route path="sprints/:sprintId" element={<ComingSoonRoute />} />
-          <Route path="week-planner" element={<ComingSoonRoute />} />
-          <Route path="goals" element={<ComingSoonRoute />} />
-          <Route path="goals/:goalId" element={<ComingSoonRoute />} />
-          <Route path="notes" element={<ComingSoonRoute />} />
-          <Route path="notes/:noteId" element={<ComingSoonRoute />} />
-          <Route path="brain-dump" element={<ComingSoonRoute />} />
+          <Route path="sprints" element={<SprintsRoute />} />
+          <Route path="sprints/:sprintId" element={<SprintsRoute />} />
+          <Route path="week-planner" element={<WeekPlannerRoute />} />
+          <Route path="goals" element={<GoalsRoute />} />
+          <Route path="goals/:goalId" element={<GoalDetailsRoute />} />
+          <Route path="notes" element={<NotesRoute />} />
+          <Route path="notes/:noteId" element={<NotesRoute />} />
+          <Route path="brain-dump" element={<BrainDumpRoute />} />
           <Route path="habits" element={<ComingSoonRoute />} />
           <Route path="habits/:habitId" element={<ComingSoonRoute />} />
-          <Route path="progress" element={<ComingSoonRoute />} />
-          <Route path="reports" element={<ComingSoonRoute />} />
+          <Route path="progress" element={<ProgressRoute />} />
+          <Route path="reports" element={<ReportsRoute />} />
           <Route path="reviews" element={<ComingSoonRoute />} />
           <Route path="reviews/daily/:date" element={<ComingSoonRoute />} />
           <Route path="reviews/weekly/:weekStart" element={<ComingSoonRoute />} />

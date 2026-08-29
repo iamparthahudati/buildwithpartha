@@ -133,6 +133,10 @@ export interface TodayResponse {
     readonly plannedFocusMinutesToday: number;
     readonly activeSessionTimerSummary: string | null;
     readonly isSessionActive: boolean;
+    readonly dailyFocusTargetMinutes?: number | null;
+    readonly comparisonMinutes?: number | null;
+    readonly comparisonSource?: "PLANNED_FOCUS_BLOCKS" | "DAILY_TARGET" | "NONE";
+    readonly progressPercentage?: number | null;
   }>;
   readonly sprint: TodayWidget<TodaySprintDto>;
   readonly week: TodayWidget<TodayWeekDto>;

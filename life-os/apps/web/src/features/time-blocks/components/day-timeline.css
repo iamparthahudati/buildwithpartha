@@ -1,0 +1,281 @@
+/* DayTimeline (LOS-0905) */
+
+.lifeos-day-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.lifeos-day-timeline__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.lifeos-day-timeline__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lifeos-day-timeline__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.lifeos-day-timeline__density-toggle,
+.lifeos-day-timeline__view-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  background-color: var(--bg-subtle);
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+}
+
+/* Skeleton Loading State */
+.lifeos-day-timeline__header-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.lifeos-day-timeline__skeleton-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.lifeos-day-timeline__skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* List View Mode */
+.lifeos-day-timeline__list-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.lifeos-day-timeline__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-default);
+}
+
+/* Visual Timeline Grid Container */
+.lifeos-day-timeline__grid-container {
+  display: flex;
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  user-select: none;
+}
+
+.lifeos-day-timeline__scale {
+  display: flex;
+  flex-direction: column;
+  min-width: 4rem;
+  padding-right: var(--space-2);
+  border-right: 1px solid var(--border-default);
+}
+
+.lifeos-day-timeline__hour-slot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding-top: var(--space-1);
+}
+
+.lifeos-day-timeline__hour-label {
+  font-size: var(--text-xs-size);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Grid Canvas */
+.lifeos-day-timeline__canvas {
+  position: relative;
+  flex: 1;
+  min-width: 18rem;
+  background-color: var(--bg-surface);
+}
+
+.lifeos-day-timeline__grid-row {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+}
+
+.lifeos-day-timeline__grid-row:hover {
+  background-color: var(--bg-subtle);
+}
+
+.lifeos-day-timeline__grid-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--border-default);
+}
+
+/* Now Line Indicator */
+.lifeos-day-timeline__now-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.lifeos-day-timeline__now-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background-color: var(--lifeos-status-danger-text);
+  margin-left: -0.3125rem;
+}
+
+.lifeos-day-timeline__now-bar {
+  flex: 1;
+  height: 2px;
+  background-color: var(--lifeos-status-danger-text);
+}
+
+.lifeos-day-timeline__now-badge {
+  font-size: var(--text-xs-size);
+  font-weight: 600;
+  background-color: var(--lifeos-status-danger-bg);
+  color: var(--lifeos-status-danger-text);
+  border: 1px solid var(--lifeos-status-danger-border);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  margin-right: var(--space-2);
+  white-space: nowrap;
+}
+
+/* Positioned Time Block Cards */
+.lifeos-day-timeline__block {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: var(--bg-surface-raised);
+  border: 1px solid var(--border-strong);
+  border-left: 4px solid var(--lifeos-chart-1);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.lifeos-day-timeline__block:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 1px;
+}
+
+.lifeos-day-timeline__block--conflict {
+  border-color: var(--lifeos-status-warning-border);
+  border-left-color: var(--lifeos-status-warning-text);
+  background-color: var(--lifeos-status-warning-bg);
+}
+
+.lifeos-day-timeline__block--completed {
+  border-left-color: var(--lifeos-status-success-text);
+  opacity: 0.85;
+}
+
+.lifeos-day-timeline__block--cancelled {
+  border-left-color: var(--lifeos-status-danger-text);
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+
+.lifeos-day-timeline__block--dragging {
+  z-index: 20;
+  box-shadow: var(--shadow-md);
+  opacity: 0.9;
+}
+
+.lifeos-day-timeline__block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+  cursor: grab;
+}
+
+.lifeos-day-timeline__block-header:active {
+  cursor: grabbing;
+}
+
+.lifeos-day-timeline__block-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.lifeos-day-timeline__block-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.lifeos-day-timeline__conflict-icon {
+  color: var(--lifeos-status-warning-text);
+}
+
+.lifeos-day-timeline__block-body {
+  margin-top: var(--space-1);
+  overflow: hidden;
+}
+
+.lifeos-day-timeline__resize-handle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  cursor: ns-resize;
+  background-color: transparent;
+}
+
+.lifeos-day-timeline__resize-handle:hover,
+.lifeos-day-timeline__resize-handle:active {
+  background-color: var(--border-focus);
+}
+
+/* Responsive Media Queries */
+@media (max-width: 640px) {
+  .lifeos-day-timeline__controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

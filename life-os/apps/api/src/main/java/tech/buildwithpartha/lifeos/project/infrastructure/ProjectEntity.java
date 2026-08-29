@@ -56,6 +56,9 @@ class ProjectEntity {
   @Column(name = "icon")
   private String icon;
 
+  @Column(name = "cover_image_url")
+  private String coverImageUrl;
+
   @Column(name = "start_date")
   private LocalDate startDate;
 
@@ -98,6 +101,7 @@ class ProjectEntity {
       ProjectHealth health,
       String color,
       String icon,
+      String coverImageUrl,
       LocalDate startDate,
       LocalDate deadlineDate,
       Integer estimateMinutes,
@@ -115,6 +119,7 @@ class ProjectEntity {
     this.health = health;
     this.color = color;
     this.icon = icon;
+    this.coverImageUrl = coverImageUrl;
     this.startDate = startDate;
     this.deadlineDate = deadlineDate;
     this.estimateMinutes = estimateMinutes;
@@ -159,6 +164,10 @@ class ProjectEntity {
 
   String getIcon() {
     return icon;
+  }
+
+  String getCoverImageUrl() {
+    return coverImageUrl;
   }
 
   LocalDate getStartDate() {

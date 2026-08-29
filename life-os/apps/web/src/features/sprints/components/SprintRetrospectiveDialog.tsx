@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Text, Textarea, Select } from "@components/ui";
+import { Button, Text, Textarea, Select } from "@components/ui";
 import { FormField } from "@components/forms";
-import { FormDialog } from "@components/feedback";
+import { Dialog, FormDialog } from "@components/feedback";
 import type { Sprint } from "../model/sprint";
 import "./sprint-retrospective-dialog.css";
 
@@ -12,6 +12,12 @@ export interface SprintRetrospectiveData {
   readonly whatCouldBeImproved?: string;
   readonly actionItems?: readonly string[];
   readonly carryOverDestination?: "NEXT_SPRINT" | "BACKLOG";
+  readonly targetSprintId?: string;
+}
+
+export interface SprintCarryOverTarget {
+  readonly id: string;
+  readonly name: string;
 }
 
 export interface SprintRetrospectiveDialogProps {
@@ -21,12 +27,8 @@ export interface SprintRetrospectiveDialogProps {
   readonly sprint?: Sprint;
   readonly isPending?: boolean;
   readonly error?: string;
+  readonly carryOverTargets?: readonly SprintCarryOverTarget[];
 }
-
-const CARRY_OVER_OPTIONS = [
-  { value: "NEXT_SPRINT", label: "Carry over open tasks to next sprint" },
-  { value: "BACKLOG", label: "Return open tasks to backlog" },
-];
 
 export function SprintRetrospectiveDialog({
   open,
@@ -35,14 +37,17 @@ export function SprintRetrospectiveDialog({
   sprint,
   isPending = false,
   error,
+  carryOverTargets = [],
 }: SprintRetrospectiveDialogProps) {
   const [whatWentWell, setWhatWentWell] = useState(sprint?.whatWentWell ?? "");
   const [whatCouldBeImproved, setWhatCouldBeImproved] = useState(sprint?.whatCouldBeImproved ?? "");
   const [actionItemsText, setActionItemsText] = useState((sprint?.actionItems ?? []).join("\n"));
   const [retrospectiveNotes, setRetrospectiveNotes] = useState(sprint?.retrospectiveNotes ?? "");
   const [carryOverDestination, setCarryOverDestination] = useState<"NEXT_SPRINT" | "BACKLOG">(
-    "NEXT_SPRINT",
+    carryOverTargets.length > 0 ? "NEXT_SPRINT" : "BACKLOG",
   );
+  const [targetSprintId, setTargetSprintId] = useState(carryOverTargets[0]?.id ?? "");
+  const [targetError, setTargetError] = useState<string | undefined>();
 
   const [prevOpen, setPrevOpen] = useState(open);
   const [prevSprint, setPrevSprint] = useState(sprint);
@@ -55,12 +60,18 @@ export function SprintRetrospectiveDialog({
       setWhatCouldBeImproved(sprint.whatCouldBeImproved ?? "");
       setActionItemsText((sprint.actionItems ?? []).join("\n"));
       setRetrospectiveNotes(sprint.retrospectiveNotes ?? "");
-      setCarryOverDestination("NEXT_SPRINT");
+      setCarryOverDestination(carryOverTargets.length > 0 ? "NEXT_SPRINT" : "BACKLOG");
+      setTargetSprintId(carryOverTargets[0]?.id ?? "");
+      setTargetError(undefined);
     }
   }
 
   function handleSubmit() {
     if (!sprint) return;
+    if (carryOverDestination === "NEXT_SPRINT" && !targetSprintId) {
+      setTargetError("Choose the planned Sprint that should receive open tasks.");
+      return;
+    }
 
     const actionItems = actionItemsText
       .split("\n")
@@ -70,6 +81,7 @@ export function SprintRetrospectiveDialog({
     const payload: SprintRetrospectiveData = {
       sprintId: sprint.id,
       carryOverDestination,
+      ...(carryOverDestination === "NEXT_SPRINT" ? { targetSprintId } : {}),
       ...(whatWentWell.trim() ? { whatWentWell: whatWentWell.trim() } : {}),
       ...(whatCouldBeImproved.trim() ? { whatCouldBeImproved: whatCouldBeImproved.trim() } : {}),
       ...(actionItems.length > 0 ? { actionItems } : {}),
@@ -83,17 +95,41 @@ export function SprintRetrospectiveDialog({
   const completedPts = sprint?.completedStoryPoints ?? 0;
   const totalPts = sprint?.totalStoryPoints ?? 0;
 
+  if (isReadOnly) {
+    return (
+      <Dialog open={open} onClose={onClose} title={`Retrospective — ${sprint?.name ?? "Sprint"}`}>
+        <div className="sprint-retrospective-dialog__content">
+          <div className="sprint-retrospective-dialog__summary">
+            <Text size="sm" weight="semibold">
+              Final Performance
+            </Text>
+            <Text size="sm" tone="muted">
+              {completedPts} of {totalPts} story points completed (
+              {totalPts > 0 ? Math.round((completedPts / totalPts) * 100) : 0}%)
+            </Text>
+          </div>
+          <RetrospectiveSection label="What went well?" value={sprint?.whatWentWell} />
+          <RetrospectiveSection
+            label="What could be improved?"
+            value={sprint?.whatCouldBeImproved}
+          />
+          <RetrospectiveSection label="Action items" value={sprint?.actionItems?.join("\n")} />
+          <RetrospectiveSection label="Summary notes" value={sprint?.retrospectiveNotes} />
+          <div className="sprint-retrospective-dialog__actions">
+            <Button onClick={onClose}>Close retrospective</Button>
+          </div>
+        </div>
+      </Dialog>
+    );
+  }
+
   return (
     <FormDialog
       open={open}
       onClose={onClose}
       onSubmit={handleSubmit}
-      title={
-        isReadOnly
-          ? `Retrospective — ${sprint?.name ?? "Sprint"}`
-          : `Complete Sprint — ${sprint?.name ?? ""}`
-      }
-      submitLabel={isReadOnly ? "Save Notes" : "Complete Sprint"}
+      title={`Complete Sprint — ${sprint?.name ?? ""}`}
+      submitLabel="Complete Sprint"
       pending={isPending}
       {...(error ? { error } : {})}
     >
@@ -161,7 +197,17 @@ export function SprintRetrospectiveDialog({
             {(fieldProps) => (
               <Select
                 {...fieldProps}
-                options={CARRY_OVER_OPTIONS}
+                options={[
+                  ...(carryOverTargets.length > 0
+                    ? [
+                        {
+                          value: "NEXT_SPRINT",
+                          label: "Carry over open Tasks to a planned Sprint",
+                        },
+                      ]
+                    : []),
+                  { value: "BACKLOG", label: "Return open Tasks to backlog" },
+                ]}
                 value={carryOverDestination}
                 onChange={(e) =>
                   setCarryOverDestination(e.target.value as "NEXT_SPRINT" | "BACKLOG")
@@ -170,7 +216,50 @@ export function SprintRetrospectiveDialog({
             )}
           </FormField>
         ) : null}
+
+        {carryOverDestination === "NEXT_SPRINT" ? (
+          <FormField
+            name="targetSprintId"
+            label="Carry Over to Sprint"
+            {...(targetError ? { error: targetError } : {})}
+          >
+            {(fieldProps) => (
+              <Select
+                {...fieldProps}
+                options={carryOverTargets.map((target) => ({
+                  value: target.id,
+                  label: target.name,
+                }))}
+                value={targetSprintId}
+                onChange={(event) => {
+                  setTargetSprintId(event.target.value);
+                  setTargetError(undefined);
+                }}
+                placeholder="Choose a planned Sprint"
+              />
+            )}
+          </FormField>
+        ) : null}
       </div>
     </FormDialog>
+  );
+}
+
+function RetrospectiveSection({
+  label,
+  value,
+}: {
+  readonly label: string;
+  readonly value: string | undefined;
+}) {
+  return (
+    <section className="sprint-retrospective-dialog__read-only-section">
+      <Text size="sm" weight="semibold">
+        {label}
+      </Text>
+      <Text size="sm" tone={value ? "default" : "muted"}>
+        {value || "Not recorded."}
+      </Text>
+    </section>
   );
 }

@@ -33,7 +33,6 @@ import tech.buildwithpartha.lifeos.report.domain.WidgetStatus;
 import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultActiveProjectsWidgetProvider;
 import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultBrainDumpWidgetProvider;
 import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultCurrentNextBlockWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultFocusSummaryWidgetProvider;
 import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultHabitsWidgetProvider;
 import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultMetricsWidgetProvider;
 import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultMitWidgetProvider;
@@ -77,12 +76,14 @@ class TodayServiceTests {
     tasksWidgetProvider = new DefaultTasksWidgetProvider();
     scheduleWidgetProvider = new DefaultScheduleWidgetProvider();
     overdueWidgetProvider = new DefaultOverdueWidgetProvider();
-    focusSummaryWidgetProvider = new DefaultFocusSummaryWidgetProvider();
+    focusSummaryWidgetProvider = mock(FocusSummaryWidgetProvider.class);
+    given(focusSummaryWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.FocusSummaryWidget.empty());
     sprintWidgetProvider = new DefaultSprintWidgetProvider();
     weekWidgetProvider = new DefaultWeekWidgetProvider();
     activeProjectsWidgetProvider = new DefaultActiveProjectsWidgetProvider();
     reviewWidgetProvider = new DefaultReviewWidgetProvider();
-    brainDumpWidgetProvider = new DefaultBrainDumpWidgetProvider();
+    brainDumpWidgetProvider = new DefaultBrainDumpWidgetProvider(userId -> 0);
     habitsWidgetProvider = new DefaultHabitsWidgetProvider();
     metricsWidgetProvider = new DefaultMetricsWidgetProvider();
 

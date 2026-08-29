@@ -1,0 +1,34 @@
+/* BrainDumpCaptureBar (LOS-1205). */
+
+.lifeos-brain-dump-capture-bar {
+  display: grid;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-brain-dump-capture-bar__field {
+  min-width: 0;
+}
+
+.lifeos-brain-dump-capture-bar__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-brain-dump-capture-bar__status-icon {
+  display: flex;
+  align-items: center;
+  color: var(--lifeos-color-text-muted);
+  margin-inline-start: auto;
+}
+
+@media (max-width: 30rem) {
+  .lifeos-brain-dump-capture-bar__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lifeos-brain-dump-capture-bar__status-icon {
+    display: none;
+  }
+}

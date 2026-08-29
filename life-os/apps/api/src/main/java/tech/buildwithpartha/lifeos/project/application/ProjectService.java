@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.buildwithpartha.lifeos.common.activity.ActivityEventType;
+import tech.buildwithpartha.lifeos.common.activity.ActivitySubjectType;
+import tech.buildwithpartha.lifeos.common.activity.ProductActivityCommand;
+import tech.buildwithpartha.lifeos.common.activity.ProductActivityPort;
 import tech.buildwithpartha.lifeos.common.error.ConcurrencyConflictException;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
@@ -26,20 +28,20 @@ import tech.buildwithpartha.lifeos.project.domain.ProjectSummaryCounts;
 @Service
 public class ProjectService {
 
-  private static final Logger AUDIT_LOGGER =
-      LoggerFactory.getLogger("tech.buildwithpartha.lifeos.project.audit");
-
   private final ProjectRepository projectRepository;
   private final LabelOwnershipValidator labelOwnershipValidator;
   private final Clock clock;
+  private final ProductActivityPort activityPort;
 
   public ProjectService(
       ProjectRepository projectRepository,
       LabelOwnershipValidator labelOwnershipValidator,
-      Clock clock) {
+      Clock clock,
+      ProductActivityPort activityPort) {
     this.projectRepository = projectRepository;
     this.labelOwnershipValidator = labelOwnershipValidator;
     this.clock = clock;
+    this.activityPort = activityPort;
   }
 
   @Transactional(readOnly = true)
@@ -84,6 +86,9 @@ public class ProjectService {
             command.health(),
             Optional.ofNullable(command.color()).map(String::trim),
             Optional.ofNullable(command.icon()).map(String::trim),
+            Optional.ofNullable(command.coverImageUrl())
+                .map(String::trim)
+                .filter(s -> !s.isEmpty()),
             Optional.ofNullable(command.startDate()),
             Optional.ofNullable(command.deadlineDate()),
             Optional.ofNullable(command.estimateMinutes()),
@@ -94,7 +99,7 @@ public class ProjectService {
             0L);
 
     Project saved = projectRepository.save(project);
-    AUDIT_LOGGER.info("event=project_created id={} userId={}", saved.id(), userId);
+    recordActivity(saved, ActivityEventType.PROJECT_CREATED);
     return saved;
   }
 
@@ -121,6 +126,9 @@ public class ProjectService {
             command.health(),
             Optional.ofNullable(command.color()).map(String::trim),
             Optional.ofNullable(command.icon()).map(String::trim),
+            Optional.ofNullable(command.coverImageUrl())
+                .map(String::trim)
+                .filter(s -> !s.isEmpty()),
             Optional.ofNullable(command.startDate()),
             Optional.ofNullable(command.deadlineDate()),
             Optional.ofNullable(command.estimateMinutes()),
@@ -128,7 +136,7 @@ public class ProjectService {
             now);
 
     Project saved = projectRepository.save(updated);
-    AUDIT_LOGGER.info("event=project_updated id={} userId={}", saved.id(), userId);
+    recordActivity(saved, ActivityEventType.PROJECT_UPDATED);
     return saved;
   }
 
@@ -148,7 +156,7 @@ public class ProjectService {
     Project archived = existing.archive(now, now);
     Project saved = projectRepository.save(archived);
 
-    AUDIT_LOGGER.info("event=project_archived id={} userId={}", saved.id(), userId);
+    recordActivity(saved, ActivityEventType.PROJECT_ARCHIVED);
     return saved;
   }
 
@@ -168,7 +176,7 @@ public class ProjectService {
     Project restored = existing.restore(now);
     Project saved = projectRepository.save(restored);
 
-    AUDIT_LOGGER.info("event=project_restored id={} userId={}", saved.id(), userId);
+    recordActivity(saved, ActivityEventType.PROJECT_RESTORED);
     return saved;
   }
 
@@ -176,7 +184,17 @@ public class ProjectService {
   public void deleteProject(UUID userId, UUID id) {
     Project existing = getProject(userId, id);
     projectRepository.delete(existing);
-    AUDIT_LOGGER.info("event=project_deleted id={} userId={}", id, userId);
+    recordActivity(existing, ActivityEventType.PROJECT_DELETED);
+  }
+
+  private void recordActivity(Project project, ActivityEventType eventType) {
+    activityPort.record(
+        new ProductActivityCommand(
+            project.userId(),
+            project.userId(),
+            eventType,
+            ActivitySubjectType.PROJECT,
+            project.id()));
   }
 
   private void validateDates(LocalDate startDate, LocalDate deadlineDate) {

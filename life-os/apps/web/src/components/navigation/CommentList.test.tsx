@@ -47,6 +47,32 @@ describe("CommentList", () => {
     expect(screen.getByText("2 hours ago")).toBeInTheDocument();
   });
 
+  it("renders untrusted comment content only as text", () => {
+    const body = '<img src=x onerror="alert(1)"> [Open](javascript:alert(1))';
+    const { container } = renderWithUser(
+      <CommentList {...BASE_PROPS} comments={[{ ...COMMENTS[0]!, body }]} />,
+    );
+
+    expect(screen.getByText(body)).toBeInTheDocument();
+    expect(container.querySelector("img")).not.toBeInTheDocument();
+    expect(container.querySelector("a")).not.toBeInTheDocument();
+  });
+
+  it("announces an optimistic pending row and withholds mutation controls", () => {
+    renderWithUser(
+      <CommentList
+        {...BASE_PROPS}
+        comments={[{ ...COMMENTS[0]!, id: "pending-1", pendingLabel: "Posting…" }]}
+        onEdit={() => {}}
+        onDelete={() => {}}
+      />,
+    );
+
+    expect(screen.getByRole("status")).toHaveTextContent("Posting…");
+    expect(screen.queryByRole("button", { name: /^Edit comment/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Delete comment/ })).not.toBeInTheDocument();
+  });
+
   it("gives the accessible timestamp label the full absolute date", () => {
     renderWithUser(<CommentList {...BASE_PROPS} comments={COMMENTS} />);
     expect(screen.getByText("2 hours ago")).toHaveAttribute("aria-label", "Aug 18, 2026, 10:00 AM");
@@ -97,6 +123,7 @@ describe("CommentList", () => {
     await user.click(screen.getByRole("button", { name: "Edit comment by Ada Lovelace" }));
     const editField = screen.getByRole("textbox", { name: "Edit comment" });
     expect(editField).toHaveValue("Looks good to me.");
+    expect(editField).toHaveFocus();
 
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(screen.queryByRole("textbox", { name: "Edit comment" })).not.toBeInTheDocument();

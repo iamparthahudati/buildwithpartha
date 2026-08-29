@@ -114,6 +114,7 @@ describe("ProjectForm", () => {
       health: "NOT_SET",
       color: "blue",
       icon: "folder",
+      coverImageUrl: null,
       startDate: null,
       deadlineDate: null,
       estimatedMinutes: null,

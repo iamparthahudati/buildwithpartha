@@ -1,0 +1,78 @@
+.lifeos-event-chip {
+  --lifeos-event-accent: var(--lifeos-chart-1);
+
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+  width: 100%;
+  min-width: 0;
+  min-height: 2rem;
+  padding: var(--lifeos-space-1) var(--lifeos-space-2);
+  color: var(--lifeos-color-text);
+  font: inherit;
+  text-align: left;
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-left: var(--lifeos-border-width-thick) solid var(--lifeos-event-accent);
+  border-radius: var(--lifeos-radius-sm);
+  background: var(--lifeos-color-surface-raised);
+}
+
+.lifeos-event-chip--source-2 {
+  --lifeos-event-accent: var(--lifeos-chart-2);
+}
+
+.lifeos-event-chip--source-3 {
+  --lifeos-event-accent: var(--lifeos-chart-3);
+}
+
+.lifeos-event-chip--source-4 {
+  --lifeos-event-accent: var(--lifeos-chart-4);
+}
+
+.lifeos-event-chip--source-5 {
+  --lifeos-event-accent: var(--lifeos-chart-5);
+}
+
+.lifeos-event-chip--compact {
+  min-height: 1.75rem;
+  padding-block: var(--lifeos-space-1);
+}
+
+.lifeos-event-chip.is-interactive {
+  cursor: pointer;
+}
+
+.lifeos-event-chip.is-interactive:hover {
+  border-color: var(--lifeos-color-border-interactive);
+  box-shadow: var(--lifeos-shadow-xs);
+}
+
+.lifeos-event-chip.is-interactive:focus-visible {
+  outline: var(--lifeos-border-width-focus) solid var(--lifeos-color-focus-ring);
+  outline-offset: var(--lifeos-focus-ring-offset);
+}
+
+.lifeos-event-chip.is-completed .lifeos-event-chip__title {
+  text-decoration: line-through;
+}
+
+.lifeos-event-chip__source {
+  flex: 0 0 auto;
+  overflow: hidden;
+  width: var(--lifeos-space-2);
+  height: var(--lifeos-space-2);
+  color: transparent;
+  border-radius: var(--lifeos-radius-pill);
+  background: var(--lifeos-event-accent);
+}
+
+.lifeos-event-chip__time {
+  flex: 0 0 auto;
+  color: var(--lifeos-color-text-secondary);
+  white-space: nowrap;
+}
+
+.lifeos-event-chip__title {
+  min-width: 0;
+  flex: 1;
+}

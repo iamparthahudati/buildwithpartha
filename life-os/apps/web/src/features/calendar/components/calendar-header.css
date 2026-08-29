@@ -1,0 +1,60 @@
+.lifeos-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+  flex-wrap: wrap;
+}
+
+.lifeos-calendar-header__period,
+.lifeos-calendar-header__actions,
+.lifeos-calendar-header__navigation,
+.lifeos-calendar-header__views {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-calendar-header__period {
+  flex-wrap: wrap;
+}
+
+.lifeos-calendar-header__title {
+  margin: 0 0 0 var(--lifeos-space-2);
+}
+
+.lifeos-calendar-header__actions {
+  flex-wrap: wrap;
+}
+
+.lifeos-calendar-header__views {
+  padding: var(--lifeos-space-1);
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  background: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-calendar-header__views .is-pressed {
+  color: var(--lifeos-color-on-primary-soft);
+  background: var(--lifeos-color-primary-soft);
+  box-shadow: var(--lifeos-shadow-xs);
+}
+
+@media (max-width: 639px) {
+  .lifeos-calendar-header,
+  .lifeos-calendar-header__period,
+  .lifeos-calendar-header__actions {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .lifeos-calendar-header__period,
+  .lifeos-calendar-header__actions {
+    justify-content: space-between;
+  }
+
+  .lifeos-calendar-header__title {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}

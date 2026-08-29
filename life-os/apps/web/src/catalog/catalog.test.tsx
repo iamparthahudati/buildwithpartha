@@ -1,5 +1,15 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@features/reports/hooks/useExportCsv", () => ({
+  useExportCsv: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+    isError: false,
+    error: null,
+    reset: vi.fn(),
+  }),
+}));
 
 import { expectNoAccessibilityViolations } from "@test/accessibility";
 import { renderWithUser } from "@test/render";

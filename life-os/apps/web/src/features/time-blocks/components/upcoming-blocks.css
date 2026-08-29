@@ -1,0 +1,66 @@
+.upcoming-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  width: 100%;
+  container-type: inline-size;
+}
+
+.upcoming-blocks__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.upcoming-blocks__title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.upcoming-blocks__icon {
+  color: var(--color-accent);
+}
+
+.upcoming-blocks__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.upcoming-blocks__item {
+  width: 100%;
+  min-width: 0;
+}
+
+@container (max-width: 39.999rem) {
+  .upcoming-blocks .lifeos-time-block-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--lifeos-space-3);
+  }
+
+  .upcoming-blocks .lifeos-time-block-row__left,
+  .upcoming-blocks .lifeos-time-block-row__center {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .upcoming-blocks .lifeos-time-block-row__title,
+  .upcoming-blocks .lifeos-time-block-row__time-info {
+    overflow-wrap: anywhere;
+  }
+
+  .upcoming-blocks .lifeos-time-block-row__time-info,
+  .upcoming-blocks .lifeos-time-block-row__right,
+  .upcoming-blocks .lifeos-time-block-row__actions {
+    flex-wrap: wrap;
+  }
+
+  .upcoming-blocks .lifeos-time-block-row__right {
+    justify-content: flex-start;
+  }
+}

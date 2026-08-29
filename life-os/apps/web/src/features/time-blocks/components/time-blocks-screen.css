@@ -1,0 +1,120 @@
+/* Time Blocks Screen Tokenized Styles (LOS-0907) */
+
+.lifeos-time-blocks-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+.lifeos-time-blocks-screen__controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.lifeos-time-blocks-screen__date-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lifeos-time-blocks-screen__date-text {
+  margin-left: var(--space-2);
+}
+
+.lifeos-time-blocks-screen__toggles-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lifeos-time-blocks-screen__view-switcher {
+  display: flex;
+  align-items: center;
+  padding: var(--space-1);
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  gap: var(--space-1);
+}
+
+.lifeos-time-blocks-screen__alert {
+  margin-bottom: var(--space-2);
+}
+
+.lifeos-time-blocks-screen__grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  .lifeos-time-blocks-screen__grid-layout--with-sidebar {
+    grid-template-columns: 1fr 340px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .lifeos-time-blocks-screen__grid-layout--with-sidebar {
+    grid-template-columns: 1fr 380px;
+  }
+}
+
+.lifeos-time-blocks-screen__main-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lifeos-time-blocks-screen__sidebar-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.lifeos-time-blocks-screen__week-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.lifeos-time-blocks-screen__week-strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+}
+
+.lifeos-time-blocks-screen__week-day-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+  min-width: 70px;
+}
+
+.lifeos-time-blocks-screen__week-day-card:hover {
+  background-color: var(--bg-hover);
+}
+
+.lifeos-time-blocks-screen__week-day-card--selected {
+  border-color: var(--border-focus);
+  background-color: var(--bg-subtle);
+}
+
+.lifeos-time-blocks-screen__week-day-card--today {
+  font-weight: var(--font-weight-semibold);
+}

@@ -31,6 +31,7 @@ class ProjectTests {
             ProjectHealth.ON_TRACK,
             Optional.of("blue"),
             Optional.of("icon"),
+            Optional.empty(),
             Optional.of(start),
             Optional.of(end),
             Optional.of(120),
@@ -79,6 +80,7 @@ class ProjectTests {
                     ProjectHealth.NOT_SET,
                     Optional.empty(),
                     Optional.empty(),
+                    Optional.empty(),
                     Optional.of(start),
                     Optional.of(end),
                     Optional.empty(),
@@ -111,6 +113,7 @@ class ProjectTests {
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
+                    Optional.empty(),
                     Optional.of(-1),
                     Optional.empty(),
                     now,
@@ -119,6 +122,84 @@ class ProjectTests {
                     0L))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("Estimate minutes must not be negative");
+  }
+
+  @Test
+  void rejectsCoverImageUrlExceedingMaxLength() {
+    UUID id = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
+    Instant now = Instant.now();
+    String tooLong = "a".repeat(Project.MAX_COVER_IMAGE_URL_LENGTH + 1);
+
+    assertThatThrownBy(
+            () ->
+                new Project(
+                    id,
+                    userId,
+                    "Test Project",
+                    Optional.empty(),
+                    ProjectStatus.PLANNED,
+                    ProjectPriority.P2,
+                    ProjectHealth.NOT_SET,
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.of(tooLong),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    now,
+                    now,
+                    Set.of(),
+                    0L))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("Cover image URL must not exceed");
+  }
+
+  @Test
+  void withUpdatesReplacesCoverImageUrl() {
+    UUID id = UUID.randomUUID();
+    UUID userId = UUID.randomUUID();
+    Instant now = Instant.now();
+
+    Project project =
+        new Project(
+            id,
+            userId,
+            "Test Project",
+            Optional.empty(),
+            ProjectStatus.PLANNED,
+            ProjectPriority.P2,
+            ProjectHealth.NOT_SET,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.of("/life-os/project-covers/before.jpg"),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            now,
+            now,
+            Set.of(),
+            0L);
+
+    Project updated =
+        project.withUpdates(
+            "Test Project",
+            Optional.empty(),
+            ProjectStatus.PLANNED,
+            ProjectPriority.P2,
+            ProjectHealth.NOT_SET,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.of("https://cdn.example.test/after.png"),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Set.of(),
+            now);
+
+    assertThat(updated.coverImageUrl()).contains("https://cdn.example.test/after.png");
   }
 
   @Test

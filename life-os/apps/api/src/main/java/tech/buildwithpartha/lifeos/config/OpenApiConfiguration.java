@@ -14,6 +14,8 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -54,6 +56,41 @@ public class OpenApiConfiguration {
         .servers(List.of(new Server().url(API_SERVER).description("Same-origin API base")))
         .components(components)
         .security(List.of(new SecurityRequirement().addList(SESSION_SCHEME)));
+  }
+
+  /** Documents the same session+CSRF requirement enforced for authenticated mutations. */
+  @Bean
+  OpenApiCustomizer authenticatedMutationSecurity() {
+    return openApi ->
+        openApi
+            .getPaths()
+            .values()
+            .forEach(
+                pathItem ->
+                    pathItem.readOperationsMap().entrySet().stream()
+                        .filter(entry -> isMutation(entry.getKey()))
+                        .map(Map.Entry::getValue)
+                        .filter(OpenApiConfiguration::requiresSession)
+                        .forEach(
+                            operation ->
+                                operation.setSecurity(
+                                    List.of(
+                                        new SecurityRequirement()
+                                            .addList(SESSION_SCHEME)
+                                            .addList(CSRF_SCHEME)))));
+  }
+
+  private static boolean isMutation(io.swagger.v3.oas.models.PathItem.HttpMethod method) {
+    return method == io.swagger.v3.oas.models.PathItem.HttpMethod.POST
+        || method == io.swagger.v3.oas.models.PathItem.HttpMethod.PUT
+        || method == io.swagger.v3.oas.models.PathItem.HttpMethod.PATCH
+        || method == io.swagger.v3.oas.models.PathItem.HttpMethod.DELETE;
+  }
+
+  private static boolean requiresSession(io.swagger.v3.oas.models.Operation operation) {
+    return operation.getSecurity() != null
+        && operation.getSecurity().stream()
+            .anyMatch(requirement -> requirement.containsKey(SESSION_SCHEME));
   }
 
   private static SecurityScheme sessionScheme() {

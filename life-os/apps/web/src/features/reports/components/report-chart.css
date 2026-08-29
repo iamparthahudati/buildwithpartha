@@ -1,0 +1,22 @@
+.report-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.report-chart__frame {
+  width: 100%;
+}
+
+.report-chart__skeleton-body {
+  height: 240px;
+  background-color: var(--color-surface-subtle);
+  border-radius: var(--radius-md);
+  animation: report-pulse 1.5s infinite ease-in-out;
+}
+
+@media print {
+  .report-chart {
+    page-break-inside: avoid;
+  }
+}

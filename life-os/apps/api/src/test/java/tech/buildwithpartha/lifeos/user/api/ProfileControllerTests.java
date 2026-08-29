@@ -147,7 +147,13 @@ class ProfileControllerTests {
         .perform(get("/user/preferences").cookie(sessionCookie))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.planningDefaults.focusDurationMinutes").value(25))
-        .andExpect(jsonPath("$.planningDefaults.breakDurationMinutes").value(5));
+        .andExpect(jsonPath("$.planningDefaults.breakDurationMinutes").value(5))
+        .andExpect(jsonPath("$.planningDefaults.longBreakDurationMinutes").value(15))
+        .andExpect(jsonPath("$.planningDefaults.focusSessionsBeforeLongBreak").value(4))
+        .andExpect(jsonPath("$.planningDefaults.autoStartBreaks").value(false))
+        .andExpect(jsonPath("$.planningDefaults.autoStartFocusSessions").value(false))
+        .andExpect(jsonPath("$.planningDefaults.soundEnabled").value(false))
+        .andExpect(jsonPath("$.planningDefaults.browserNotificationsEnabled").value(false));
   }
 
   @Test
@@ -161,7 +167,13 @@ class ProfileControllerTests {
           "overnightSchedule": false,
           "dailyFocusTargetMinutes": 240,
           "focusDurationMinutes": 50,
-          "breakDurationMinutes": 10
+          "breakDurationMinutes": 10,
+          "longBreakDurationMinutes": 20,
+          "focusSessionsBeforeLongBreak": 3,
+          "autoStartBreaks": true,
+          "autoStartFocusSessions": true,
+          "soundEnabled": true,
+          "browserNotificationsEnabled": true
         }
         """;
 
@@ -175,6 +187,64 @@ class ProfileControllerTests {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.planningDefaults.workingDays.length()").value(6))
         .andExpect(jsonPath("$.planningDefaults.workStartTime").value("08:00"))
-        .andExpect(jsonPath("$.planningDefaults.focusDurationMinutes").value(50));
+        .andExpect(jsonPath("$.planningDefaults.focusDurationMinutes").value(50))
+        .andExpect(jsonPath("$.planningDefaults.longBreakDurationMinutes").value(20))
+        .andExpect(jsonPath("$.planningDefaults.focusSessionsBeforeLongBreak").value(3))
+        .andExpect(jsonPath("$.planningDefaults.autoStartBreaks").value(true))
+        .andExpect(jsonPath("$.planningDefaults.autoStartFocusSessions").value(true))
+        .andExpect(jsonPath("$.planningDefaults.soundEnabled").value(true))
+        .andExpect(jsonPath("$.planningDefaults.browserNotificationsEnabled").value(true));
+
+    String legacyBody =
+        """
+        {
+          "workingDays": [1, 2, 3, 4, 5],
+          "workStartTime": "09:00",
+          "workEndTime": "17:00",
+          "overnightSchedule": false,
+          "dailyFocusTargetMinutes": 180,
+          "focusDurationMinutes": 30,
+          "breakDurationMinutes": 6
+        }
+        """;
+
+    mockMvc
+        .perform(
+            put("/user/preferences")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(legacyBody))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.planningDefaults.focusDurationMinutes").value(30))
+        .andExpect(jsonPath("$.planningDefaults.longBreakDurationMinutes").value(20))
+        .andExpect(jsonPath("$.planningDefaults.focusSessionsBeforeLongBreak").value(3))
+        .andExpect(jsonPath("$.planningDefaults.autoStartBreaks").value(true))
+        .andExpect(jsonPath("$.planningDefaults.soundEnabled").value(true))
+        .andExpect(jsonPath("$.planningDefaults.browserNotificationsEnabled").value(true));
+  }
+
+  @Test
+  void putPreferencesRejectsUnsafeFocusCycleValues() throws Exception {
+    String body =
+        """
+        {
+          "workingDays": [1, 2, 3, 4, 5],
+          "overnightSchedule": false,
+          "focusDurationMinutes": 25,
+          "breakDurationMinutes": 5,
+          "longBreakDurationMinutes": 181,
+          "focusSessionsBeforeLongBreak": 13
+        }
+        """;
+
+    mockMvc
+        .perform(
+            put("/user/preferences")
+                .cookie(sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken.value())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isBadRequest());
   }
 }

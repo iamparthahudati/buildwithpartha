@@ -14,19 +14,47 @@
   gap: var(--lifeos-space-4);
 }
 
+/* Project logo — replaces the icon swatch as the card's identity mark. */
+.lifeos-project-card__logo {
+  flex-shrink: 0;
+  width: 4rem;
+  height: 4rem;
+  object-fit: cover;
+  border-radius: var(--lifeos-radius-md);
+}
+
 .lifeos-project-card__header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: var(--lifeos-space-2);
   width: 100%;
+}
+
+/* Logo/icon sits beside a stack of the project name and its badges, so the
+   status/priority read directly under the name rather than in a separate
+   full-width row — shorter cards, tighter identity block. */
+.lifeos-project-card__identity {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lifeos-space-3);
+  min-width: 0;
+  flex: 1;
+}
+
+.lifeos-project-card__identity-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  min-width: 0;
 }
 
 .lifeos-project-card__icon-swatch {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: var(--lifeos-radius-md);
   color: var(--lifeos-color-text-on-solid);
 }
@@ -50,6 +78,7 @@
 }
 
 .lifeos-project-card__name {
+  min-width: 0;
   font-size: var(--lifeos-font-size-lg);
   font-weight: var(--lifeos-font-weight-semibold);
   color: var(--lifeos-color-text);

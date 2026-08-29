@@ -13,11 +13,43 @@ public record PlanningDefaults(
     boolean overnightSchedule,
     Optional<Integer> dailyFocusTargetMinutes,
     int focusDurationMinutes,
-    int breakDurationMinutes) {
+    int breakDurationMinutes,
+    int longBreakDurationMinutes,
+    int focusSessionsBeforeLongBreak,
+    boolean autoStartBreaks,
+    boolean autoStartFocusSessions,
+    boolean soundEnabled,
+    boolean browserNotificationsEnabled) {
 
   public static final List<Integer> DEFAULT_WORKING_DAYS = List.of(1, 2, 3, 4, 5);
   public static final int DEFAULT_FOCUS_DURATION_MINUTES = 25;
   public static final int DEFAULT_BREAK_DURATION_MINUTES = 5;
+  public static final int DEFAULT_LONG_BREAK_DURATION_MINUTES = 15;
+  public static final int DEFAULT_FOCUS_SESSIONS_BEFORE_LONG_BREAK = 4;
+
+  public PlanningDefaults(
+      List<Integer> workingDays,
+      Optional<LocalTime> workStartTime,
+      Optional<LocalTime> workEndTime,
+      boolean overnightSchedule,
+      Optional<Integer> dailyFocusTargetMinutes,
+      int focusDurationMinutes,
+      int breakDurationMinutes) {
+    this(
+        workingDays,
+        workStartTime,
+        workEndTime,
+        overnightSchedule,
+        dailyFocusTargetMinutes,
+        focusDurationMinutes,
+        breakDurationMinutes,
+        DEFAULT_LONG_BREAK_DURATION_MINUTES,
+        DEFAULT_FOCUS_SESSIONS_BEFORE_LONG_BREAK,
+        false,
+        false,
+        false,
+        false);
+  }
 
   public PlanningDefaults {
     Objects.requireNonNull(workingDays, "workingDays must not be null");
@@ -35,6 +67,12 @@ public record PlanningDefaults(
     }
     if (breakDurationMinutes <= 0 || breakDurationMinutes > 1440) {
       throw new IllegalArgumentException("breakDurationMinutes must be between 1 and 1440");
+    }
+    if (longBreakDurationMinutes <= 0 || longBreakDurationMinutes > 180) {
+      throw new IllegalArgumentException("longBreakDurationMinutes must be between 1 and 180");
+    }
+    if (focusSessionsBeforeLongBreak <= 0 || focusSessionsBeforeLongBreak > 12) {
+      throw new IllegalArgumentException("focusSessionsBeforeLongBreak must be between 1 and 12");
     }
     dailyFocusTargetMinutes.ifPresent(
         target -> {
@@ -54,6 +92,12 @@ public record PlanningDefaults(
         false,
         Optional.empty(),
         DEFAULT_FOCUS_DURATION_MINUTES,
-        DEFAULT_BREAK_DURATION_MINUTES);
+        DEFAULT_BREAK_DURATION_MINUTES,
+        DEFAULT_LONG_BREAK_DURATION_MINUTES,
+        DEFAULT_FOCUS_SESSIONS_BEFORE_LONG_BREAK,
+        false,
+        false,
+        false,
+        false);
   }
 }

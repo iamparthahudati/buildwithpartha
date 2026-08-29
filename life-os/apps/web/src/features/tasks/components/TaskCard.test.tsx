@@ -21,7 +21,7 @@ const TASK: TaskListItem = {
 const NOW = new Date("2026-08-21T12:00:00Z");
 
 describe("TaskCard", () => {
-  it("renders task content, overdue state, progress, comments and fallback links", () => {
+  it("renders task content, overdue state, progress and fallback links", () => {
     renderWithUser(<TaskCard task={TASK} now={NOW} locale="en-US" timeZone="UTC" />);
 
     expect(
@@ -34,7 +34,6 @@ describe("TaskCard", () => {
     expect(screen.getByText("To Do")).toBeInTheDocument();
     expect(screen.getByText("P2 — Medium")).toBeInTheDocument();
     expect(screen.getByText("Overdue")).toBeInTheDocument();
-    expect(screen.getByLabelText("1 comment")).toBeInTheDocument();
     expect(
       screen.getByRole("progressbar", { name: /responsive task components progress/ }),
     ).toHaveAttribute("aria-valuetext", "25% complete");
