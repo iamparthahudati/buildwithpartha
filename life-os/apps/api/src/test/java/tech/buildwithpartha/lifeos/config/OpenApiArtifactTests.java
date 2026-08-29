@@ -274,6 +274,23 @@ class OpenApiArtifactTests {
             .andExpect(jsonPath("$.paths['/reviews/{id}/reopen'].post").exists())
             .andExpect(jsonPath("$.components.schemas.ReviewResponse").exists())
             .andExpect(jsonPath("$.components.schemas.SaveReviewDraftRequest").exists())
+            .andExpect(jsonPath("$.paths['/habits'].get.operationId").value("listHabits"))
+            .andExpect(jsonPath("$.paths['/habits'].post.operationId").value("createHabit"))
+            .andExpect(jsonPath("$.paths['/habits/{id}'].put.operationId").value("updateHabit"))
+            .andExpect(
+                jsonPath("$.paths['/habits/{id}/entries'].get.operationId")
+                    .value("listHabitEntries"))
+            .andExpect(
+                jsonPath("$.paths['/habits/{id}/entries/increment'].post.operationId")
+                    .value("incrementHabitEntry"))
+            .andExpect(
+                jsonPath("$.paths['/habits/{id}/stats'].get.operationId").value("getHabitStats"))
+            .andExpect(
+                jsonPath("$.paths['/habits/{id}/pauses'].post.operationId")
+                    .value("createHabitPause"))
+            .andExpect(jsonPath("$.components.schemas.HabitResponse").exists())
+            .andExpect(jsonPath("$.components.schemas.HabitEntryResponse").exists())
+            .andExpect(jsonPath("$.components.schemas.HabitStatsResponse").exists())
             .andExpect(jsonPath("$.components.securitySchemes.sessionCookie.in").value("cookie"))
             .andExpect(
                 jsonPath("$.components.securitySchemes.csrfToken.name").value("X-CSRF-TOKEN"))
