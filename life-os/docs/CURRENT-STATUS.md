@@ -9,19 +9,6 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 ## In review
 
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
-- LOS-0701 — Projects, milestones, and labels schema/domain/persistence modeling. See `docs/handoffs/LOS-0701.md`.
-- LOS-0702 — Authenticated, CSRF-protected project CRUD/archive/restore/delete API with ownership, label isolation, optimistic concurrency, problem details, and audit events. See `docs/handoffs/LOS-0702.md`.
-- LOS-0703 — User-scoped project search/filter/sort/pagination query API and summary counts. See `docs/handoffs/LOS-0703.md`.
-- LOS-0704 — Ordered, user-scoped milestone lifecycle API with parent date validation and optimistic concurrency. See `docs/handoffs/LOS-0704.md`.
-- LOS-0705 — Count/weight progress and manual/derived health calculation policy. Automated checks pass, but merge is blocked until the calculation-facing task contract is reconciled with LOS-0801. See `docs/handoffs/LOS-0705.md`.
-- LOS-0706 — Responsive, accessible ProjectRow and ProjectCard components with ready/loading/archived/overdue states and catalog coverage. See `docs/handoffs/LOS-0706.md`.
-- LOS-0707 — Responsive, progressive disclosure ProjectForm dialog with validation, dirty tracking, theme picker, and conflict handling. See `docs/handoffs/LOS-0707.md`.
-- LOS-0708 — Project summary metric strip displaying total/active/completed/on-hold/at-risk/progress metrics with interactive filter triggers. See `docs/handoffs/LOS-0708.md`.
-- LOS-0709 — Composed Projects screen with header/add, metric strip, tabs/search/filter/sort/view controls, cards/table views, form dialog, confirm dialogs, detail panel, and pagination across mock states. See `docs/handoffs/LOS-0709.md`.
-- LOS-0710 — Integrate Projects screen with query/mutation hooks, REST client, URL state, and routing. See `docs/handoffs/LOS-0710.md`.
-- LOS-0711 — Responsive ProjectDetailsHeader component with deep link breadcrumbs, identity, status, health, priority, owner, dates, estimate, task progress, primary/secondary actions, loading skeleton, and archived state. See `docs/handoffs/LOS-0711.md`.
-- LOS-0712 — Project overview components (progress/task/time/health summary cards, status/priority breakdown charts with data table fallback, top tasks list, about/labels metadata, and activity feed). See `docs/handoffs/LOS-0712.md`.
-- LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
 
@@ -239,6 +226,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 ## Not started
 
 - No authentication implementation, product domain tables, product components/screens, VPS configuration, Cloudflare configuration, or production resources have been created.
+
+- LOS-0826 — Link tasks to milestones so tasks are grouped by phase/milestone instead of the label workaround. On `feature/LOS-0826-link-tasks-to-milestones`: backend complete (isolated `task_milestones` table, assign/clear/get + list-by-milestone API, service tests + full backend `test` green); frontend read path complete and wired (tasks grouped under each milestone on the Project Timeline, API client + hook, `verify:quality` + vitest green). Remaining: the in-app assign/clear control. In progress.
 
 - LOS-0302 — Token-driven CSS reset and global foundations added: normalized box sizing, form typography and media without erasing native list, heading or control semantics; a single `:focus-visible` ring; selection, reduced-motion, forced-colors and increased-contrast hooks; and a skip link that stays focusable, is the first tab stop and moves real focus to a `tabindex="-1"` main landmark.
 - LOS-0303 — Development-only component catalog added: a registry that fails loudly on duplicate or stateless entries, per-state specimens for the frozen foundations, and viewport controls that start at the 320px minimum. It is excluded from every production build rather than protected at runtime, with a runtime guard as a second line of defense.

@@ -46,6 +46,41 @@ const MOCK_MILESTONES: readonly Milestone[] = [
 const NOW = new Date("2026-08-20T17:00:00Z");
 
 describe("ProjectTimeline", () => {
+  it("renders tasks assigned to a milestone with a count summary", async () => {
+    renderWithUser(
+      <ProjectTimeline
+        projectId="project-1"
+        milestones={MOCK_MILESTONES}
+        now={NOW}
+        locale="en-US"
+        timeZone="UTC"
+        tasksByMilestone={{
+          m3: [
+            {
+              taskId: "t1",
+              title: "Wire Today MIT provider",
+              status: "IN_PROGRESS",
+              priority: "P1",
+              estimateMinutes: 360,
+            },
+            {
+              taskId: "t2",
+              title: "Wire Today tasks provider",
+              status: "TO_DO",
+              priority: "P2",
+              estimateMinutes: 360,
+            },
+          ],
+        }}
+        onAddMilestone={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("Wire Today MIT provider")).toBeInTheDocument();
+    expect(screen.getByText("Wire Today tasks provider")).toBeInTheDocument();
+    expect(screen.getByText("2 tasks · 12h")).toBeInTheDocument();
+  });
+
   it("renders populated milestones timeline with stats and statuses", async () => {
     const { container } = renderWithUser(
       <ProjectTimeline

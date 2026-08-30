@@ -23,6 +23,7 @@ import {
 import { formatLocalDate, todayLocalDate, compareLocalDates } from "@lib/localDateTime";
 
 import type { Milestone, MilestoneStatus } from "../model/milestone";
+import type { TasksByMilestone } from "../model/milestoneTask";
 import { MilestoneFormDialog, type MilestoneFormData } from "./MilestoneFormDialog";
 import "./project-timeline.css";
 
@@ -40,6 +41,7 @@ export interface ProjectTimelineProps {
   readonly projectStartDate?: string | null;
   readonly projectDeadlineDate?: string | null;
   readonly selectedMilestoneId?: string;
+  readonly tasksByMilestone?: TasksByMilestone;
   readonly onAddMilestone?: (data: MilestoneFormData) => Promise<void> | void;
   readonly onUpdateMilestone?: (
     milestoneId: string,
@@ -75,6 +77,7 @@ export function ProjectTimeline({
   projectStartDate,
   projectDeadlineDate,
   selectedMilestoneId,
+  tasksByMilestone = {},
   onAddMilestone,
   onUpdateMilestone,
   onStatusChange,
@@ -286,6 +289,10 @@ export function ProjectTimeline({
               ? formatLocalDate(milestone.date, locale)
               : "No date target";
 
+            const assignedTasks = tasksByMilestone[milestone.id] ?? [];
+            const assignedEstimateHours =
+              assignedTasks.reduce((sum, task) => sum + task.estimateMinutes, 0) / 60;
+
             const menuItems: MenuItemDescriptor[] = [];
             if (isInteractive) {
               if (onUpdateMilestone) {
@@ -364,6 +371,24 @@ export function ProjectTimeline({
                   <Text tone={isOverdue ? "danger" : "secondary"} size="sm">
                     Target: {formattedDate}
                   </Text>
+                  {assignedTasks.length > 0 ? (
+                    <div className="lifeos-project-timeline__item-tasks">
+                      <Text tone="secondary" size="sm">
+                        {assignedTasks.length} {assignedTasks.length === 1 ? "task" : "tasks"}
+                        {assignedEstimateHours > 0
+                          ? ` · ${Number.isInteger(assignedEstimateHours) ? assignedEstimateHours : assignedEstimateHours.toFixed(1)}h`
+                          : ""}
+                      </Text>
+                      <ul className="lifeos-project-timeline__task-list">
+                        {assignedTasks.map((task) => (
+                          <li key={task.taskId} className="lifeos-project-timeline__task-item">
+                            <Text size="sm">{task.title}</Text>
+                            <Badge tone="neutral">{task.priority}</Badge>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
                 </div>
 
                 {menuItems.length > 0 ? (

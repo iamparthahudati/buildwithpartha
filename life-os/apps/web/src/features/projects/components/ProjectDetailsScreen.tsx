@@ -38,6 +38,7 @@ import { formatLocalDate } from "@lib/localDateTime";
 
 import type { Project } from "../model/project";
 import type { Milestone, MilestoneStatus } from "../model/milestone";
+import type { TasksByMilestone } from "../model/milestoneTask";
 import { ProjectDetailsHeader } from "./ProjectDetailsHeader";
 import { ProjectOverview, type ProjectOverviewTask } from "./ProjectOverview";
 import { ProjectTimeline } from "./ProjectTimeline";
@@ -47,6 +48,7 @@ import "./project-details-screen.css";
 export interface ProjectDetailsScreenProps {
   readonly project?: Project;
   readonly milestones?: readonly Milestone[];
+  readonly tasksByMilestone?: TasksByMilestone;
   readonly ownerName?: string;
   readonly estimatedHours?: number;
   readonly actualHours?: number;
@@ -163,6 +165,7 @@ export function ProjectDetailsScreen({
   onCommentsPageChange,
   selectedTab: controlledTab,
   selectedMilestoneId,
+  tasksByMilestone = {},
   onTabChange,
   loading = false,
   notFound = false,
@@ -413,6 +416,7 @@ export function ProjectDetailsScreen({
         <ProjectTimeline
           projectId={project.id}
           milestones={milestones}
+          tasksByMilestone={tasksByMilestone}
           now={now}
           locale={locale}
           timeZone={timeZone}

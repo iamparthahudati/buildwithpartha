@@ -261,6 +261,16 @@ CREATE TABLE IF NOT EXISTS task_dependencies (
     PRIMARY KEY (blocking_task_id, blocked_task_id)
 );
 
+-- Added by LOS-0826: Task-to-milestone assignments.
+CREATE TABLE IF NOT EXISTS task_milestones (
+    task_id      UUID                     NOT NULL PRIMARY KEY,
+    user_id      UUID                     NOT NULL,
+    milestone_id UUID                     NOT NULL,
+    created_at   TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at   TIMESTAMP WITH TIME ZONE NOT NULL,
+    version      BIGINT                   NOT NULL
+);
+
 -- Added by LOS-1404: product Activity Events and restricted Security Audit Events.
 CREATE TABLE IF NOT EXISTS product_activity_events (
     id             UUID                     NOT NULL PRIMARY KEY,

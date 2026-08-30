@@ -20,7 +20,7 @@ Gate: verified users can securely enter/leave a private empty LifeOS shell; unve
 
 ## Phase 3 — Core execution
 
-Epics 07–09. Projects, tasks, calendar/time blocks, and focus sessions.
+Epics 07–09. Projects, tasks, calendar/time blocks, and focus sessions. Includes linking tasks to milestones so work is grouped by phase/milestone (LOS-0826).
 
 Gate: create project -> create task -> schedule -> focus -> complete works end to end with correct ownership and timezone behavior.
 

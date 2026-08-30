@@ -85,6 +85,24 @@ export {
 export { milestonesQueryKeys, useMilestones } from "./hooks/useMilestones";
 
 export {
+  milestoneTasksQueryKeys,
+  useMilestoneTasks,
+  type UseMilestoneTasksResult,
+} from "./hooks/useMilestoneTasks";
+export type {
+  MilestoneTaskSummary,
+  MilestoneTaskStatus,
+  MilestoneTaskPriority,
+  TasksByMilestone,
+} from "./model/milestoneTask";
+export {
+  getMilestoneTasks,
+  mapMilestoneTaskItem,
+  type MilestoneTaskItemDto,
+  type MilestoneTasksResponseDto,
+} from "./api/milestoneTasksApi";
+
+export {
   useCreateMilestone,
   useUpdateMilestone,
   useUpdateMilestoneStatus,

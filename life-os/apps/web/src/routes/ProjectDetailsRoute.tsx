@@ -15,6 +15,7 @@ import {
   useUpdateMilestone,
   useUpdateMilestoneStatus,
   useDeleteMilestone,
+  useMilestoneTasks,
   useArchiveProject,
   useRestoreProject,
   useDeleteProject,
@@ -89,6 +90,11 @@ export function ProjectDetailsRoute() {
   );
 
   const { data, isLoading, isError, error, refetch } = useProjectDetail(projectId);
+  const milestoneIds = useMemo(
+    () => (data?.milestones ?? []).map((milestone) => milestone.id),
+    [data?.milestones],
+  );
+  const { tasksByMilestone } = useMilestoneTasks(milestoneIds, milestoneIds.length > 0);
   const tasksEnabled = user !== null && projectId !== "";
   const timeZone = user?.timeZone ?? "UTC";
   const locale = user?.locale ?? "en-US";
@@ -307,6 +313,7 @@ export function ProjectDetailsRoute() {
     <ProjectDetailsScreen
       {...(projectWithTaskCounts ? { project: projectWithTaskCounts } : {})}
       milestones={data?.milestones ?? []}
+      tasksByMilestone={tasksByMilestone}
       topTasks={topTasks}
       activityEvents={allActivityEvents}
       activityTabEvents={filteredActivityEvents}
