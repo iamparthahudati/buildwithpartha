@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="DigitalSanctuary">
+  <defs>
+    <linearGradient id="dsc" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" fill="url(#dsc)"/>
+  <path d="M64 30l26 10v22c0 18-11 30-26 36-15-6-26-18-26-36V40z" fill="#ffffff" opacity="0.95"/>
+  <path d="M56 66l6 6 12-14" fill="none" stroke="#7c3aed" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="64" y="120" font-family="system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle" opacity="0.85">DS</text>
+</svg>
