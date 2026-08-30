@@ -62,16 +62,19 @@ export function SprintsRoute() {
   const taskContextById = useMemo(() => {
     const map = new Map<string, SprintTaskContext>();
     for (const task of tasksQuery.data?.items ?? []) {
+      const projectName = task.project
+        ? (projectById.get(task.project.id)?.name ?? task.project.name)
+        : undefined;
       map.set(task.id, {
         id: task.id,
         title: task.title,
         status: task.status,
         priority: task.priority,
-        ...(task.project ? { projectName: task.project.name } : {}),
+        ...(projectName ? { projectName } : {}),
       });
     }
     return map;
-  }, [tasksQuery.data?.items]);
+  }, [tasksQuery.data?.items, projectById]);
 
   const records = useMemo(() => {
     const byId = new Map((sprintsQuery.data ?? []).map((sprint) => [sprint.id, sprint]));
@@ -147,11 +150,16 @@ export function SprintsRoute() {
       selectedSprintId={selectedSprintId}
       taskOptions={(tasksQuery.data?.items ?? [])
         .filter((task) => task.status !== "DONE" && task.status !== "CANCELLED")
-        .map((task) => ({
-          id: task.id,
-          label: task.project ? `${task.title} — ${task.project.name}` : task.title,
-          ...(task.project ? { projectId: task.project.id, projectName: task.project.name } : {}),
-        }))}
+        .map((task) => {
+          const projectName = task.project
+            ? (projectById.get(task.project.id)?.name ?? task.project.name)
+            : undefined;
+          return {
+            id: task.id,
+            label: projectName ? `${task.title} — ${projectName}` : task.title,
+            ...(task.project && projectName ? { projectId: task.project.id, projectName } : {}),
+          };
+        })}
       actionPending={actionPending}
       {...(actionError ? { actionError } : {})}
       locale={user.locale}
