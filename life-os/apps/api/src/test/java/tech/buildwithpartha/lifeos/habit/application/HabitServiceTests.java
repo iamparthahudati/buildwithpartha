@@ -325,6 +325,11 @@ class HabitServiceTests {
       assertThat(stats.daysMeetingTarget()).isEqualTo(1);
       assertThat(stats.totalCompletions()).isEqualTo(11);
       assertThat(stats.completionRate()).isEqualTo(1.0 / 5.0);
+      assertThat(stats.streak().currentStreak()).isZero();
+      assertThat(stats.streak().longestStreak()).isEqualTo(1);
+      assertThat(stats.streak().eligiblePeriods()).isEqualTo(5);
+      assertThat(stats.streak().metTargetPeriods()).isEqualTo(1);
+      assertThat(stats.streak().completionRate()).isEqualTo(1.0 / 5.0);
     }
 
     @Test

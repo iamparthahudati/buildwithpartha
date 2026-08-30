@@ -464,7 +464,12 @@ class HabitControllerTests {
         .andExpect(jsonPath("$.totalDays").value(5))
         .andExpect(jsonPath("$.daysWithEntry").value(2))
         .andExpect(jsonPath("$.daysMeetingTarget").value(1))
-        .andExpect(jsonPath("$.totalCompletions").value(12));
+        .andExpect(jsonPath("$.totalCompletions").value(12))
+        .andExpect(jsonPath("$.currentStreak").value(0))
+        .andExpect(jsonPath("$.longestStreak").value(1))
+        .andExpect(jsonPath("$.eligiblePeriods").value(5))
+        .andExpect(jsonPath("$.metTargetPeriods").value(1))
+        .andExpect(jsonPath("$.cadenceCompletionRate").value(0.2));
   }
 
   @Test

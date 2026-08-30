@@ -14,7 +14,12 @@ public record HabitStatsResponse(
     long daysWithEntry,
     long daysMeetingTarget,
     long totalCompletions,
-    double completionRate) {
+    double completionRate,
+    int currentStreak,
+    int longestStreak,
+    int eligiblePeriods,
+    int metTargetPeriods,
+    double cadenceCompletionRate) {
 
   public static HabitStatsResponse fromDomain(UUID habitId, HabitStatistics stats) {
     Objects.requireNonNull(habitId, "habitId must not be null");
@@ -27,6 +32,11 @@ public record HabitStatsResponse(
         stats.daysWithEntry(),
         stats.daysMeetingTarget(),
         stats.totalCompletions(),
-        stats.completionRate());
+        stats.completionRate(),
+        stats.streak().currentStreak(),
+        stats.streak().longestStreak(),
+        stats.streak().eligiblePeriods(),
+        stats.streak().metTargetPeriods(),
+        stats.streak().completionRate());
   }
 }

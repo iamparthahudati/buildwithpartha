@@ -18,6 +18,7 @@ import {
   OnboardingRoute,
   NotesRoute,
   BrainDumpRoute,
+  HabitsRoute,
   ProgressRoute,
   ProjectsRoute,
   ProjectDetailsRoute,
@@ -150,8 +151,8 @@ export function AppRoutes() {
           <Route path="notes" element={<NotesRoute />} />
           <Route path="notes/:noteId" element={<NotesRoute />} />
           <Route path="brain-dump" element={<BrainDumpRoute />} />
-          <Route path="habits" element={<ComingSoonRoute />} />
-          <Route path="habits/:habitId" element={<ComingSoonRoute />} />
+          <Route path="habits" element={<HabitsRoute />} />
+          <Route path="habits/:habitId" element={<HabitsRoute />} />
           <Route path="progress" element={<ProgressRoute />} />
           <Route path="reports" element={<ReportsRoute />} />
           <Route path="reviews" element={<ComingSoonRoute />} />
