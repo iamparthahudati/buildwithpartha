@@ -150,6 +150,7 @@ export function SprintsRoute() {
         .map((task) => ({
           id: task.id,
           label: task.project ? `${task.title} — ${task.project.name}` : task.title,
+          ...(task.project ? { projectId: task.project.id, projectName: task.project.name } : {}),
         }))}
       actionPending={actionPending}
       {...(actionError ? { actionError } : {})}
