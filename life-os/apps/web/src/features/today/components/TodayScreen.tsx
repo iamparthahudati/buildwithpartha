@@ -5,6 +5,7 @@ import { SprintWeekSummary, type SprintWeekSummaryProps } from "./SprintWeekSumm
 import { TodayActiveProjects, type TodayActiveProjectsProps } from "./TodayActiveProjects";
 import { TodayBrainCapture, type TodayBrainCaptureProps } from "./TodayBrainCapture";
 import { TodayHeaderSection } from "./TodayHeaderSection";
+import { TodayHabits, type TodayHabitsProps } from "./TodayHabits";
 import { TodayNextUp, type TodayNextUpProps } from "./TodayNextUp";
 import { TodayPlan, type TodayPlanProps } from "./TodayPlan";
 import { TodayReviewPrompt, type TodayReviewPromptProps } from "./TodayReviewPrompt";
@@ -27,6 +28,7 @@ export interface TodayScreenProps extends TodayHeaderProps, TodayMetricsData {
   readonly sprintWeek: Omit<SprintWeekSummaryProps, "locale">;
   readonly activeProjects: TodayActiveProjectsProps;
   readonly brainCapture: TodayBrainCaptureProps;
+  readonly habits: TodayHabitsProps;
   readonly connectionState?: TodayConnectionState;
   readonly planningState?: TodayPlanningState;
   readonly className?: string;
@@ -61,6 +63,7 @@ export function TodayScreen({
   sprintWeek,
   activeProjects,
   brainCapture,
+  habits,
   connectionState = { type: "online" },
   planningState = { type: "balanced" },
   className,
@@ -115,6 +118,7 @@ export function TodayScreen({
           className="lifeos-today-screen__sprint-week"
         />
         <TodayActiveProjects {...activeProjects} className="lifeos-today-screen__projects" />
+        <TodayHabits {...habits} className="lifeos-today-screen__habits" />
         <TodayBrainCapture {...brainCapture} className="lifeos-today-screen__brain-capture" />
       </div>
     </div>

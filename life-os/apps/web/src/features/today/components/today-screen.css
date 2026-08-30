@@ -8,6 +8,10 @@
   gap: var(--lifeos-space-5);
 }
 
+.lifeos-today-screen__habits {
+  min-width: 0;
+}
+
 .lifeos-today-screen__notices:empty {
   display: none;
 }

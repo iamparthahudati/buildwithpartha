@@ -7,6 +7,7 @@ import {
   type UseMutationResult,
 } from "@tanstack/react-query";
 import { invalidateActivityQueries } from "@features/activity";
+import { invalidateTodayQueries } from "@features/today";
 import {
   queryBrainDumpItems,
   captureBrainDumpItem,
@@ -39,6 +40,12 @@ export function invalidateBrainDumpQueries(queryClient: QueryClient): Promise<vo
   return queryClient.invalidateQueries({ queryKey: BRAIN_DUMP_QUERY_KEY });
 }
 
+function invalidateBrainDumpCountEffects(queryClient: QueryClient): void {
+  void invalidateBrainDumpQueries(queryClient);
+  void invalidateTodayQueries(queryClient);
+  void invalidateActivityQueries(queryClient);
+}
+
 export function useBrainDumpItems(
   params: BrainDumpQueryParams = {},
   enabled = true,
@@ -61,8 +68,7 @@ export function useCaptureBrainDumpItem(): UseMutationResult<
   return useMutation({
     mutationFn: (request: CaptureBrainDumpRequestDto) => captureBrainDumpItem(request),
     onSuccess: () => {
-      void invalidateBrainDumpQueries(queryClient);
-      void invalidateActivityQueries(queryClient);
+      invalidateBrainDumpCountEffects(queryClient);
     },
   });
 }
@@ -90,7 +96,7 @@ export function useDeferBrainDumpItem(): UseMutationResult<
   return useMutation({
     mutationFn: ({ id, version }) => deferBrainDumpItem(id, version),
     onSuccess: () => {
-      void invalidateBrainDumpQueries(queryClient);
+      invalidateBrainDumpCountEffects(queryClient);
     },
   });
 }
@@ -104,7 +110,7 @@ export function useArchiveBrainDumpItem(): UseMutationResult<
   return useMutation({
     mutationFn: ({ id, version }) => archiveBrainDumpItem(id, version),
     onSuccess: () => {
-      void invalidateBrainDumpQueries(queryClient);
+      invalidateBrainDumpCountEffects(queryClient);
     },
   });
 }
@@ -118,7 +124,7 @@ export function useRestoreBrainDumpItem(): UseMutationResult<
   return useMutation({
     mutationFn: ({ id, version }) => restoreBrainDumpItem(id, version),
     onSuccess: () => {
-      void invalidateBrainDumpQueries(queryClient);
+      invalidateBrainDumpCountEffects(queryClient);
     },
   });
 }
@@ -128,8 +134,7 @@ export function useDeleteBrainDumpItem(): UseMutationResult<void, Error, string>
   return useMutation({
     mutationFn: (id: string) => deleteBrainDumpItem(id),
     onSuccess: () => {
-      void invalidateBrainDumpQueries(queryClient);
-      void invalidateActivityQueries(queryClient);
+      invalidateBrainDumpCountEffects(queryClient);
     },
   });
 }
@@ -150,8 +155,7 @@ export function useConvertBrainDumpItem(): UseMutationResult<
   return useMutation({
     mutationFn: ({ id, ...payload }) => convertBrainDumpByTarget(id, payload),
     onSuccess: () => {
-      void invalidateBrainDumpQueries(queryClient);
-      void invalidateActivityQueries(queryClient);
+      invalidateBrainDumpCountEffects(queryClient);
     },
   });
 }
@@ -229,8 +233,7 @@ export function useBrainDumpBatchConvert(): UseMutationResult<
   return useMutation({
     mutationFn: runBatchConvert,
     onSuccess: () => {
-      void invalidateBrainDumpQueries(queryClient);
-      void invalidateActivityQueries(queryClient);
+      invalidateBrainDumpCountEffects(queryClient);
     },
   });
 }

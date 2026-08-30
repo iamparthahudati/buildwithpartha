@@ -22,6 +22,25 @@ const todayMocks = vi.hoisted(() => ({
   online: true,
 }));
 
+vi.mock("@features/brain-dump", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@features/brain-dump")>()),
+  useCaptureBrainDumpItem: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useBrainDumpCaptureQueue: () => ({
+    queuedItems: [],
+    queuedCount: 0,
+    isFlushing: false,
+    enqueue: vi.fn(),
+    flush: vi.fn(),
+    discardAll: vi.fn(),
+  }),
+}));
+
+vi.mock("@features/habits", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@features/habits")>()),
+  useHabits: () => ({ data: [], isPending: false }),
+  useSetHabitEntry: () => ({ mutateAsync: vi.fn(), isPending: false, variables: undefined }),
+}));
+
 vi.mock("@features/today", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@features/today")>()),
   useToday: todayMocks.query,

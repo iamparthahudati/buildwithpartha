@@ -332,7 +332,15 @@ public record TodayQueryResult(
   public record HabitsData(List<TodayHabitDto> habits) {}
 
   public record TodayHabitDto(
-      UUID id, String title, String frequency, boolean completedToday, int streakDays) {}
+      UUID id,
+      String name,
+      String cadence,
+      int targetCount,
+      int completedCount,
+      LocalDate localDate,
+      String timeZone,
+      boolean paused,
+      int currentStreak) {}
 
   // --- 13. Metrics ---
 

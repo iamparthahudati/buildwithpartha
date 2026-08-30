@@ -16,9 +16,9 @@ export type TodayBrainCaptureStatus =
   | { readonly type: "saving" }
   | { readonly type: "saved"; readonly message?: string }
   | { readonly type: "error"; readonly message: string }
-  | { readonly type: "offline-draft"; readonly message?: string };
+  | { readonly type: "queued"; readonly message?: string };
 
-export type TodayBrainCaptureMode = "create" | "device-draft";
+export type TodayBrainCaptureMode = "create" | "queue";
 
 export interface TodayBrainCaptureRequest {
   readonly content: string;
@@ -28,13 +28,13 @@ export interface TodayBrainCaptureRequest {
 export interface TodayBrainCaptureProps {
   readonly value: string;
   readonly onValueChange: (value: string) => void;
-  /** The caller persists online creates or user/session-scoped device drafts. */
+  /** The caller persists online creates or user/session-scoped queued captures. */
   readonly onCapture: (request: TodayBrainCaptureRequest) => void;
   readonly countStatus: TodayBrainDumpCountStatus;
   readonly captureStatus: TodayBrainCaptureStatus;
   readonly isOnline: boolean;
-  /** True only when the caller actually persists an account/session-scoped device draft. */
-  readonly offlineDraftSupported?: boolean;
+  /** True only when the caller persists an Account-scoped offline queue. */
+  readonly offlineQueueSupported?: boolean;
   readonly brainDumpHref: string;
   readonly onRetryCount?: () => void;
   readonly disabled?: boolean;
@@ -58,10 +58,10 @@ function CaptureFeedback({ status }: { readonly status: TodayBrainCaptureStatus 
     );
   }
 
-  if (status.type === "offline-draft") {
+  if (status.type === "queued") {
     return (
       <InlineMessage tone="info" announce="status">
-        {status.message ?? "Saved on this device. Sync is not confirmed yet."}
+        {status.message ?? "Queued on this device. Sync is not confirmed yet."}
       </InlineMessage>
     );
   }
@@ -74,7 +74,7 @@ function CaptureFeedback({ status }: { readonly status: TodayBrainCaptureStatus 
  *
  * Text is controlled by the caller so request failures cannot erase it. This
  * component never writes private content to browser storage itself; offline
- * persistence is an explicit `device-draft` request for the integration layer,
+ * persistence is an explicit `queue` request for the integration layer,
  * which must apply the privacy contract's user/session scoping and retention.
  */
 export function TodayBrainCapture({
@@ -84,7 +84,7 @@ export function TodayBrainCapture({
   countStatus,
   captureStatus,
   isOnline,
-  offlineDraftSupported = true,
+  offlineQueueSupported = true,
   brainDumpHref,
   onRetryCount,
   disabled = false,
@@ -92,7 +92,7 @@ export function TodayBrainCapture({
 }: TodayBrainCaptureProps) {
   const [validationError, setValidationError] = useState<string | undefined>(undefined);
   const isSaving = captureStatus.type === "saving";
-  const captureUnavailableOffline = !isOnline && !offlineDraftSupported;
+  const captureUnavailableOffline = !isOnline && !offlineQueueSupported;
   const rootClassName = ["lifeos-today-brain-capture", className].filter(Boolean).join(" ");
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -106,7 +106,7 @@ export function TodayBrainCapture({
 
     setValidationError(undefined);
     if (!captureUnavailableOffline) {
-      onCapture({ content, mode: isOnline ? "create" : "device-draft" });
+      onCapture({ content, mode: isOnline ? "create" : "queue" });
     }
   };
 
@@ -142,10 +142,10 @@ export function TodayBrainCapture({
           }}
         />
 
-        {!isOnline && captureStatus.type !== "offline-draft" ? (
+        {!isOnline && captureStatus.type !== "queued" ? (
           <InlineMessage tone="warning">
-            {offlineDraftSupported
-              ? "Offline. Save a device draft to keep this text on this device."
+            {offlineQueueSupported
+              ? "Offline. Queue this capture on this device to sync when online."
               : "Offline. Keep this page open and reconnect to add this Brain Dump Item."}
           </InlineMessage>
         ) : null}
@@ -171,13 +171,13 @@ export function TodayBrainCapture({
             size="sm"
             iconStart={Plus}
             loading={isSaving}
-            loadingLabel={isOnline ? "Adding Brain Dump Item" : "Saving device draft"}
+            loadingLabel={isOnline ? "Adding Brain Dump Item" : "Queueing Brain Dump Item"}
             disabled={disabled || captureUnavailableOffline}
           >
             {isOnline
               ? "Capture"
-              : offlineDraftSupported
-                ? "Save device draft"
+              : offlineQueueSupported
+                ? "Queue capture"
                 : "Capture unavailable offline"}
           </Button>
           <Link href={brainDumpHref} quiet>

@@ -21,6 +21,31 @@ export interface QuickAddDialogProps {
   readonly onClose: () => void;
   readonly timeZone: string;
   readonly initialType?: QuickAddType;
+  readonly onCreateNote?: (request: QuickAddNoteRequest) => Promise<void>;
+  readonly onCaptureBrainDump?: (request: QuickAddBrainDumpRequest) => Promise<void> | void;
+  readonly habitOptions?: readonly QuickAddHabitOption[];
+  readonly onLogHabit?: (request: QuickAddHabitRequest) => Promise<void>;
+}
+
+export interface QuickAddNoteRequest {
+  readonly title: string;
+  readonly body: string;
+}
+
+export interface QuickAddBrainDumpRequest {
+  readonly content: string;
+  readonly mode: "create" | "queue";
+}
+
+export interface QuickAddHabitOption {
+  readonly id: string;
+  readonly label: string;
+  readonly targetCount: number;
+}
+
+export interface QuickAddHabitRequest {
+  readonly habitId: string;
+  readonly count: number;
 }
 
 export type QuickAddType =
@@ -31,19 +56,6 @@ const PROJECT_OPTIONS = [
   { value: "personal", label: "Personal" },
   { value: "health", label: "Health" },
   { value: "leisure", label: "Leisure" },
-];
-
-const HABIT_OPTIONS = [
-  { value: "meditation", label: "Morning Meditation" },
-  { value: "reading", label: "Read 10 pages" },
-  { value: "workout", label: "Workout" },
-  { value: "water", label: "Drink 3L water" },
-];
-
-const HABIT_STATUS_OPTIONS = [
-  { value: "completed", label: "Completed" },
-  { value: "skipped", label: "Skipped" },
-  { value: "not-done", label: "Not Done" },
 ];
 
 const GOAL_OPTIONS = [
@@ -72,6 +84,10 @@ export function QuickAddDialog({
   onClose,
   timeZone,
   initialType = "task",
+  onCreateNote,
+  onCaptureBrainDump,
+  habitOptions = [],
+  onLogHabit,
 }: QuickAddDialogProps) {
   const navigate = useNavigate();
   const toast = useToast();
@@ -136,7 +152,7 @@ export function QuickAddDialog({
 
   // 6. Habit fields
   const [habitId, setHabitId] = useState("");
-  const [habitStatus, setHabitStatus] = useState("");
+  const [habitCount, setHabitCount] = useState("");
 
   // 7. Goal fields
   const [goalId, setGoalId] = useState("");
@@ -172,7 +188,7 @@ export function QuickAddDialog({
         break;
       case "habit":
         setHabitId("");
-        setHabitStatus("");
+        setHabitCount("");
         break;
       case "goal":
         setGoalId("");
@@ -216,7 +232,7 @@ export function QuickAddDialog({
             : taskBtnRef;
 
   // If the active type becomes unavailable due to offline transition, handle it
-  const isTypeOfflineSafe = ["task", "note", "brain-dump"].includes(activeType);
+  const isTypeOfflineSafe = ["task", "brain-dump"].includes(activeType);
   const isCurrentTypeDisabledOffline = !isOnline && !isTypeOfflineSafe;
 
   const getIsActiveDirty = () => {
@@ -244,7 +260,7 @@ export function QuickAddDialog({
       case "project":
         return projectName !== "" || projectColor !== "" || projectIcon !== "";
       case "habit":
-        return habitId !== "" || habitStatus !== "";
+        return habitId !== "" || habitCount !== "";
       case "goal":
         return goalId !== "" || goalProgress !== "" || goalNotes !== "";
       default:
@@ -267,7 +283,7 @@ export function QuickAddDialog({
       case "project":
         return projectName;
       case "habit":
-        return HABIT_OPTIONS.find((h) => h.value === habitId)?.label || habitId;
+        return habitOptions.find((habit) => habit.id === habitId)?.label || habitId;
       case "goal":
         return GOAL_OPTIONS.find((g) => g.value === goalId)?.label || goalId;
       default:
@@ -309,7 +325,7 @@ export function QuickAddDialog({
       case "project":
         return "Create project";
       case "habit":
-        return "Record habit entry";
+        return "Log habit";
       case "goal":
         return "Log goal check-in";
       default:
@@ -356,8 +372,10 @@ export function QuickAddDialog({
       if (!habitId) {
         errors.habitId = "Habit is required.";
       }
-      if (!habitStatus) {
-        errors.habitStatus = "Status is required.";
+      if (!habitCount.trim()) {
+        errors.habitCount = "Completed count is required.";
+      } else if (!Number.isInteger(Number(habitCount)) || Number(habitCount) <= 0) {
+        errors.habitCount = "Completed count must be a positive whole number.";
       }
     } else if (activeType === "goal") {
       if (!goalId) {
@@ -391,10 +409,39 @@ export function QuickAddDialog({
     setSubmitError(undefined);
 
     try {
-      // Simulate network request
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const recordName = getActiveRecordName();
+
+      if (activeType === "note" && onCreateNote) {
+        await onCreateNote({ title: noteTitle.trim(), body: noteContent });
+        toast.push({ tone: "success", message: "Note saved." });
+        resetFields(activeType);
+        onClose();
+        return;
+      }
+
+      if (activeType === "brain-dump" && onCaptureBrainDump) {
+        const mode = isOnline ? "create" : "queue";
+        await onCaptureBrainDump({ content: brainContent.trim(), mode });
+        toast.push({
+          tone: mode === "queue" ? "info" : "success",
+          message:
+            mode === "queue" ? "Brain Dump Item queued on this device." : "Brain Dump Item saved.",
+        });
+        resetFields(activeType);
+        onClose();
+        return;
+      }
+
+      if (activeType === "habit" && onLogHabit) {
+        await onLogHabit({ habitId, count: Number(habitCount) });
+        toast.push({ tone: "success", message: "Habit Entry saved." });
+        resetFields(activeType);
+        onClose();
+        return;
+      }
+
+      // Legacy Quick Add types remain owned by their later integration tickets.
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Implement simulated failures for testing
       if (recordName === "force-fail" || recordName === "force-fail...") {
@@ -419,8 +466,8 @@ export function QuickAddDialog({
 
       resetFields(activeType);
       onClose();
-    } catch (err: any) {
-      setSubmitError(err.message || "An unexpected error occurred.");
+    } catch {
+      setSubmitError(`We couldn't save this ${getActiveTypeName()}. Your fields remain here.`);
     } finally {
       setIsPending(false);
     }
@@ -506,7 +553,8 @@ export function QuickAddDialog({
             <Button
               ref={noteBtnRef}
               variant={activeType === "note" ? "primary" : "secondary"}
-              disabled={isPending}
+              disabled={!isOnline || isPending}
+              title={!isOnline ? "Unavailable offline" : undefined}
               onClick={() => {
                 setActiveType("note");
                 setFieldErrors({});
@@ -865,30 +913,41 @@ export function QuickAddDialog({
                     disabled={isPending || isCurrentTypeDisabledOffline}
                     placeholder="Select habit..."
                     value={habitId}
-                    options={HABIT_OPTIONS}
+                    options={habitOptions.map((habit) => ({
+                      value: habit.id,
+                      label: habit.label,
+                    }))}
                     onChange={(e) => {
-                      setHabitId(e.target.value);
+                      const nextId = e.target.value;
+                      setHabitId(nextId);
+                      const selected = habitOptions.find((habit) => habit.id === nextId);
+                      setHabitCount(selected ? String(selected.targetCount) : "");
                       setFieldErrors((prev) => ({ ...prev, habitId: "" }));
                     }}
                   />
                 )}
               </FormField>
 
-              <FormField name="habitStatus" label="Status" error={fieldErrors.habitStatus}>
+              <FormField name="habitCount" label="Completed count" error={fieldErrors.habitCount}>
                 {(field) => (
-                  <Select
+                  <TextInput
                     {...field}
                     disabled={isPending || isCurrentTypeDisabledOffline}
-                    placeholder="Select status..."
-                    value={habitStatus}
-                    options={HABIT_STATUS_OPTIONS}
+                    type="number"
+                    min={1}
+                    step={1}
+                    value={habitCount}
                     onChange={(e) => {
-                      setHabitStatus(e.target.value);
-                      setFieldErrors((prev) => ({ ...prev, habitStatus: "" }));
+                      setHabitCount(e.target.value);
+                      setFieldErrors((prev) => ({ ...prev, habitCount: "" }));
                     }}
                   />
                 )}
               </FormField>
+
+              {habitOptions.length === 0 ? (
+                <InlineMessage tone="info">No active Habits are available.</InlineMessage>
+              ) : null}
             </div>
           )}
 

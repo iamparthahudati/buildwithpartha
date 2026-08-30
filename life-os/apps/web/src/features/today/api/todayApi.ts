@@ -148,10 +148,14 @@ export interface TodayResponse {
   readonly habits: TodayWidget<{
     readonly habits: readonly {
       readonly id: string;
-      readonly title: string;
-      readonly frequency: string;
-      readonly completedToday: boolean;
-      readonly streakDays: number;
+      readonly name: string;
+      readonly cadence: "DAILY" | "WEEKLY" | "MONTHLY";
+      readonly targetCount: number;
+      readonly completedCount: number;
+      readonly localDate: LocalDate;
+      readonly timeZone: string;
+      readonly paused: boolean;
+      readonly currentStreak: number;
     }[];
   }>;
   readonly metrics: TodayWidget<{ readonly metrics: readonly TodayMetricDto[] }>;

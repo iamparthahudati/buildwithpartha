@@ -85,6 +85,7 @@ export interface AppShellProps {
   /** No canonical route exists for Quick Add (LOS-0604) — it is a dialog, not a page. */
   readonly onQuickAddTriggerClick: (type?: QuickAddType) => void;
   readonly onSignOut: () => void;
+  readonly brainDumpCaptureQueue?: BrainDumpCaptureQueueContext;
   /** Injected for deterministic tests; forwarded to `TopBar`. */
   readonly now?: Date;
 }
@@ -92,6 +93,15 @@ export interface AppShellProps {
 /** Actions owned by the application shell that routed screens may invoke. */
 export interface AppShellOutletContext {
   readonly onQuickAddClick: (type?: QuickAddType) => void;
+  readonly brainDumpCaptureQueue?: BrainDumpCaptureQueueContext;
+}
+
+export interface BrainDumpCaptureQueueContext {
+  readonly queuedCount: number;
+  readonly isFlushing: boolean;
+  readonly enqueue: (content: string) => void;
+  readonly flush: () => Promise<{ readonly sent: number; readonly remaining: number }>;
+  readonly discardAll: () => void;
 }
 
 export function AppShell({
@@ -101,6 +111,7 @@ export function AppShell({
   locale,
   onQuickAddTriggerClick,
   onSignOut,
+  brainDumpCaptureQueue,
   now,
 }: AppShellProps) {
   const location = useLocation();
@@ -209,6 +220,7 @@ export function AppShell({
               context={
                 {
                   onQuickAddClick: onQuickAddTriggerClick,
+                  ...(brainDumpCaptureQueue ? { brainDumpCaptureQueue } : {}),
                 } satisfies AppShellOutletContext
               }
             />

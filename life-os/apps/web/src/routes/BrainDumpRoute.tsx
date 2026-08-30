@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useOutletContext, useSearchParams } from "react-router-dom";
 
+import type { AppShellOutletContext } from "@components/layout";
 import { useToast } from "@state/toastQueue";
 import { useAuthSession } from "@state/authSession";
 import {
@@ -34,6 +35,7 @@ import {
  */
 export function BrainDumpRoute() {
   const { user } = useAuthSession();
+  const outletContext = useOutletContext<AppShellOutletContext | null>();
   const toast = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -112,11 +114,12 @@ export function BrainDumpRoute() {
 
   // Offline capture queue (LOS-1207): persists captures made while offline and
   // flushes them automatically when connectivity returns.
-  const captureQueue = useBrainDumpCaptureQueue({
+  const localCaptureQueue = useBrainDumpCaptureQueue({
     userId: user?.id ?? "",
     isOnline,
-    enabled: user !== null,
+    enabled: user !== null && outletContext?.brainDumpCaptureQueue === undefined,
   });
+  const captureQueue = outletContext?.brainDumpCaptureQueue ?? localCaptureQueue;
 
   // Handlers
   const handleCapture = async (content: string) => {

@@ -7,6 +7,7 @@ import * as brainDumpApi from "../api/brainDumpApi";
 import { useBrainDumpCaptureQueue } from "../hooks/useBrainDumpCaptureQueue";
 import { readCaptureQueue } from "../model/captureQueue";
 import type { BrainDumpItem } from "../model/brainDumpItem";
+import { TODAY_QUERY_KEY } from "@features/today";
 
 vi.mock("@features/activity", () => ({ invalidateActivityQueries: vi.fn() }));
 
@@ -91,6 +92,27 @@ describe("useBrainDumpCaptureQueue", () => {
     await waitFor(() => expect(result.current.queuedCount).toBe(0));
     expect(mockCapture).toHaveBeenCalledTimes(2);
     expect(readCaptureQueue(USER)).toEqual([]);
+  });
+
+  it("invalidates Today after a queued capture is confirmed by the server", async () => {
+    window.localStorage.setItem(
+      "lifeos.brain-dump.capture-queue.user-1",
+      JSON.stringify([{ id: "a", content: "one", queuedAt: "t1" }]),
+    );
+    mockCapture.mockResolvedValue(madeItem("one"));
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+    const Wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+
+    renderHook(() => useBrainDumpCaptureQueue({ userId: USER, isOnline: true }), {
+      wrapper: Wrapper,
+    });
+
+    await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: TODAY_QUERY_KEY }));
   });
 
   it("keeps captures that fail to send and reports the remainder", async () => {

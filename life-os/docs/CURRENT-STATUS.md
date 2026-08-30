@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-30 (LOS-1212 Habits integration)
+Last updated: 2026-08-30 (LOS-1213 Today capture/Habit integration)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1213 — Connected Quick Add and Today to the shared Notes, Brain Dump, and Habit services. Quick Add now uses real Habit choices and confirmed Note/Brain/Habit writes; Today exposes an owner-scoped, timezone-aware Habit projection with absolute entry controls; and one shell-owned Brain Dump queue reports honest saved/queued outcomes across capture surfaces. Confirmed Brain changes invalidate Brain Dump, Today, and Activity precisely, while content-only edits stay local to Brain Dump. The full backend suite, web quality/build/structural checks, and 218 focused frontend tests pass; the full web suite retains only the documented unrelated Projects page-size assertion. See `docs/handoffs/LOS-1213.md`.
 
 - LOS-1212 — Composed and integrated the authenticated Habits experience at `/life-os/app/habits` and `/life-os/app/habits/:habitId`: URL-owned local entry dates and bounded history ranges; Today, all, archived, overview, history, and statistics views; create/edit/pause/resume/archive/restore flows; exact optimistic entry rollback; precise Habit/Today/activity invalidation; responsive, accessible loading/empty/error/conflict states; and server-authoritative cadence-aware streak statistics with fully paused periods excluded. Focused frontend (27 tests), frontend quality/build/structural checks, and focused backend Habit/OpenAPI suites pass. The full frontend and backend runs retain only the previously documented unrelated Projects page-size mismatch and two Today/Brain Dump expectations. See `docs/handoffs/LOS-1212.md`.
 

@@ -8,15 +8,17 @@ import { renderWithUser } from "@test/render";
 import { ToastProvider } from "@state/ToastProvider";
 import { ToastViewport } from "./ToastViewport";
 
-import { QuickAddDialog, type QuickAddType } from "./QuickAddDialog";
+import { QuickAddDialog, type QuickAddDialogProps, type QuickAddType } from "./QuickAddDialog";
 import { useQuickAddShortcut } from "./useQuickAddShortcut";
 
 function QuickAddHarness({
   initialOpen = true,
   initialType,
+  dialogProps = {},
 }: {
   readonly initialOpen?: boolean;
   readonly initialType?: QuickAddType;
+  readonly dialogProps?: Partial<QuickAddDialogProps>;
 }) {
   const [open, setOpen] = useState(initialOpen);
   return (
@@ -30,6 +32,7 @@ function QuickAddHarness({
           onClose={() => setOpen(false)}
           timeZone="Asia/Kolkata"
           {...(initialType ? { initialType } : {})}
+          {...dialogProps}
         />
         <ToastViewport />
       </MemoryRouter>
@@ -154,7 +157,11 @@ describe("QuickAddDialog", () => {
     await user.click(submitBtn);
 
     // Wait for server error display
-    await screen.findByText("Server error: Failed to save record due to a database constraint.");
+    await screen.findByText(
+      "We couldn't save this Task. Your fields remain here.",
+      {},
+      { timeout: 2000 },
+    );
 
     // Dialog stays open and title value is preserved
     expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -179,6 +186,63 @@ describe("QuickAddDialog", () => {
     // Switch to Brain Dump, verify content is retained
     await user.click(screen.getByRole("button", { name: "Brain Dump" }));
     expect(screen.getByLabelText("Content")).toHaveValue("A quick floating idea");
+  });
+
+  it("uses the canonical Note create service and closes only after confirmation", async () => {
+    const onCreateNote = vi.fn().mockResolvedValue(undefined);
+    const { user } = renderWithUser(
+      <QuickAddHarness initialType="note" dialogProps={{ onCreateNote }} />,
+    );
+
+    await user.type(screen.getByLabelText("Title"), "Release notes");
+    await user.type(screen.getByLabelText("Content (optional)"), "Confirmed details");
+    await user.click(screen.getByRole("button", { name: "Add note" }));
+
+    await waitFor(() =>
+      expect(onCreateNote).toHaveBeenCalledWith({
+        title: "Release notes",
+        body: "Confirmed details",
+      }),
+    );
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Note saved.");
+  });
+
+  it("queues Brain Dump content through the shared queue while offline", async () => {
+    onlineSpy.mockReturnValue(false);
+    const onCaptureBrainDump = vi.fn();
+    const { user } = renderWithUser(
+      <QuickAddHarness initialType="brain-dump" dialogProps={{ onCaptureBrainDump }} />,
+    );
+
+    await user.type(screen.getByLabelText("Content"), "Follow up later");
+    await user.click(screen.getByRole("button", { name: "Add brain dump item" }));
+
+    expect(onCaptureBrainDump).toHaveBeenCalledWith({
+      content: "Follow up later",
+      mode: "queue",
+    });
+    expect(screen.getByRole("status")).toHaveTextContent("queued on this device");
+  });
+
+  it("loads real Habit options and writes the selected absolute count", async () => {
+    const onLogHabit = vi.fn().mockResolvedValue(undefined);
+    const { user } = renderWithUser(
+      <QuickAddHarness
+        initialType="habit"
+        dialogProps={{
+          habitOptions: [{ id: "habit-1", label: "Read", targetCount: 2 }],
+          onLogHabit,
+        }}
+      />,
+    );
+
+    await user.selectOptions(screen.getByLabelText("Habit"), "habit-1");
+    expect(screen.getByLabelText("Completed count")).toHaveValue(2);
+    await user.click(screen.getByRole("button", { name: "Log habit" }));
+
+    expect(onLogHabit).toHaveBeenCalledWith({ habitId: "habit-1", count: 2 });
+    expect(screen.getByRole("status")).toHaveTextContent("Habit Entry saved.");
   });
 
   it("disables unsafe offline types and options when offline, but queues safe ones", async () => {

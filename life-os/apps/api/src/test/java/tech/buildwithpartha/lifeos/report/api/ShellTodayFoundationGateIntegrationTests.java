@@ -114,7 +114,10 @@ class ShellTodayFoundationGateIntegrationTests {
             .andExpect(jsonPath("$.activeProjects.status").value("EMPTY"))
             .andExpect(jsonPath("$.activeProjects.data.projects").isEmpty())
             .andExpect(jsonPath("$.review.status").value("EMPTY"))
-            .andExpect(jsonPath("$.brainDump.status").value("EMPTY"))
+            .andExpect(jsonPath("$.brainDump.status").value("SUCCESS"))
+            .andExpect(jsonPath("$.brainDump.data.unprocessedCount").value(0))
+            .andExpect(jsonPath("$.habits.status").value("EMPTY"))
+            .andExpect(jsonPath("$.habits.data.habits").isEmpty())
             .andExpect(jsonPath("$.metrics.status").value("EMPTY"))
             .andExpect(jsonPath("$.metrics.data.metrics").isEmpty())
             .andReturn();

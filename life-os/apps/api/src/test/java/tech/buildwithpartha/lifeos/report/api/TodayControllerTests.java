@@ -24,6 +24,10 @@ import tech.buildwithpartha.lifeos.auth.domain.Session;
 import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
 import tech.buildwithpartha.lifeos.auth.domain.User;
 import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
+import tech.buildwithpartha.lifeos.habit.application.CreateHabitCommand;
+import tech.buildwithpartha.lifeos.habit.application.HabitService;
+import tech.buildwithpartha.lifeos.habit.domain.Habit;
+import tech.buildwithpartha.lifeos.habit.domain.HabitCadence;
 import tech.buildwithpartha.lifeos.user.domain.UserProfile;
 import tech.buildwithpartha.lifeos.user.domain.UserProfileRepository;
 
@@ -37,6 +41,7 @@ class TodayControllerTests {
   private final UserProfileRepository userProfileRepository;
   private final SessionRepository sessionRepository;
   private final SecureTokenGenerator tokenGenerator;
+  private final HabitService habitService;
 
   private UUID userId;
   private Cookie sessionCookie;
@@ -47,12 +52,14 @@ class TodayControllerTests {
       UserRepository userRepository,
       UserProfileRepository userProfileRepository,
       SessionRepository sessionRepository,
-      SecureTokenGenerator tokenGenerator) {
+      SecureTokenGenerator tokenGenerator,
+      HabitService habitService) {
     this.mockMvc = mockMvc;
     this.userRepository = userRepository;
     this.userProfileRepository = userProfileRepository;
     this.sessionRepository = sessionRepository;
     this.tokenGenerator = tokenGenerator;
+    this.habitService = habitService;
   }
 
   @BeforeEach
@@ -151,7 +158,7 @@ class TodayControllerTests {
         .andExpect(jsonPath("$.review.data.eveningReviewState").value("NOT_STARTED"))
         .andExpect(jsonPath("$.review.error").isEmpty())
         // Brain dump widget
-        .andExpect(jsonPath("$.brainDump.status").value("EMPTY"))
+        .andExpect(jsonPath("$.brainDump.status").value("SUCCESS"))
         .andExpect(jsonPath("$.brainDump.data.unprocessedCount").value(0))
         .andExpect(jsonPath("$.brainDump.error").isEmpty())
         // Habits widget
@@ -176,5 +183,35 @@ class TodayControllerTests {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.userTimeZone").value("America/New_York"))
         .andExpect(jsonPath("$.localDate").isNotEmpty());
+  }
+
+  @Test
+  void getTodayReturnsCanonicalHabitCountsForTheHabitLocalDate() throws Exception {
+    Habit habit =
+        habitService.createHabit(
+            userId,
+            new CreateHabitCommand(
+                "Read",
+                Optional.empty(),
+                HabitCadence.DAILY,
+                2,
+                "Asia/Kolkata",
+                Optional.empty(),
+                false,
+                Optional.empty()));
+    habitService.setCount(userId, habit.id(), Optional.empty(), 1);
+
+    mockMvc
+        .perform(get("/today").cookie(sessionCookie))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.habits.status").value("SUCCESS"))
+        .andExpect(jsonPath("$.habits.data.habits[0].id").value(habit.id().toString()))
+        .andExpect(jsonPath("$.habits.data.habits[0].name").value("Read"))
+        .andExpect(jsonPath("$.habits.data.habits[0].cadence").value("DAILY"))
+        .andExpect(jsonPath("$.habits.data.habits[0].targetCount").value(2))
+        .andExpect(jsonPath("$.habits.data.habits[0].completedCount").value(1))
+        .andExpect(jsonPath("$.habits.data.habits[0].localDate").isNotEmpty())
+        .andExpect(jsonPath("$.habits.data.habits[0].timeZone").value("Asia/Kolkata"))
+        .andExpect(jsonPath("$.habits.data.habits[0].paused").value(false));
   }
 }
