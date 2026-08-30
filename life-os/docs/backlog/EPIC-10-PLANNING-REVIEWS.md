@@ -18,3 +18,4 @@
 | LOS-1014 | Integrate review flows and dashboard prompts | Connect review APIs, source navigation, carry-over actions and Today review status without double applying mutations. | LOS-1010–LOS-1013, LOS-0613 | M | Backlog |
 | LOS-1015 | Run planning/review gate | Sprint and week lifecycle plus daily/weekly/monthly draft/final/history; rollover, snapshots, timezone, concurrency, accessibility and responsive tests pass. | LOS-1001–LOS-1014 | S | Done |
 | LOS-1016 | Review flows and planning handoff | Complete Epic 10 Planning and Reviews handoff, documentation, status updates, and develop branch synchronization. | LOS-1015 | S | Done |
+| LOS-1017 | Filter Add-Task-to-Sprint by project | Add a Project filter to the Add Task to Sprint dialog that narrows the task list to the chosen project; auto-hidden when tasks span a single project or when editing a commitment. Frontend only. | LOS-1003 | XS | Done |

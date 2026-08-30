@@ -9,7 +9,11 @@ import type { SprintTask } from "../model/sprint";
 export interface SprintTaskOption {
   readonly id: string;
   readonly label: string;
+  readonly projectId?: string;
+  readonly projectName?: string;
 }
+
+const NO_PROJECT_FILTER = "__none__";
 
 export interface SprintTaskFormData {
   readonly taskId: string;
@@ -39,6 +43,7 @@ export function SprintTaskDialog({
   const [taskId, setTaskId] = useState(initialTask?.taskId ?? "");
   const [storyPoints, setStoryPoints] = useState<number | undefined>(initialTask?.storyPoints ?? 1);
   const [reason, setReason] = useState("");
+  const [projectFilter, setProjectFilter] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [previousOpen, setPreviousOpen] = useState(open);
   const [previousTask, setPreviousTask] = useState(initialTask);
@@ -50,9 +55,36 @@ export function SprintTaskDialog({
       setTaskId(initialTask?.taskId ?? "");
       setStoryPoints(initialTask?.storyPoints ?? 1);
       setReason("");
+      setProjectFilter("");
       setErrors({});
     }
   }
+
+  const editing = initialTask != null;
+
+  const projectFilterOptions = (() => {
+    const seen = new Map<string, string>();
+    let hasProjectless = false;
+    for (const option of taskOptions) {
+      if (option.projectId) {
+        if (!seen.has(option.projectId)) {
+          seen.set(option.projectId, option.projectName ?? "Untitled project");
+        }
+      } else {
+        hasProjectless = true;
+      }
+    }
+    const options = [{ value: "", label: "All projects" }];
+    for (const [value, label] of seen) options.push({ value, label });
+    if (hasProjectless) options.push({ value: NO_PROJECT_FILTER, label: "No project" });
+    return options;
+  })();
+
+  const filteredTaskOptions = taskOptions.filter((option) => {
+    if (projectFilter === "") return true;
+    if (projectFilter === NO_PROJECT_FILTER) return !option.projectId;
+    return option.projectId === projectFilter;
+  });
 
   function handleSubmit() {
     const nextErrors: Record<string, string> = {};
@@ -70,7 +102,6 @@ export function SprintTaskDialog({
     });
   }
 
-  const editing = initialTask != null;
   return (
     <FormDialog
       open={open}
@@ -82,12 +113,39 @@ export function SprintTaskDialog({
       {...(error ? { error } : {})}
     >
       {Object.keys(errors).length > 0 ? <FormErrorSummary /> : null}
+      {!editing && projectFilterOptions.length > 2 ? (
+        <FormField name="projectFilter" label="Project" required={false}>
+          {(fieldProps) => (
+            <Select
+              {...fieldProps}
+              value={projectFilter}
+              options={projectFilterOptions}
+              onChange={(event) => {
+                const nextProject = event.target.value;
+                setProjectFilter(nextProject);
+                setTaskId((current) => {
+                  if (!current) return current;
+                  const stillVisible = taskOptions.some(
+                    (option) =>
+                      option.id === current &&
+                      (nextProject === "" ||
+                        (nextProject === NO_PROJECT_FILTER
+                          ? !option.projectId
+                          : option.projectId === nextProject)),
+                  );
+                  return stillVisible ? current : "";
+                });
+              }}
+            />
+          )}
+        </FormField>
+      ) : null}
       <FormField name="taskId" label="Task" {...(errors.taskId ? { error: errors.taskId } : {})}>
         {(fieldProps) => (
           <Select
             {...fieldProps}
             value={taskId}
-            options={taskOptions.map((task) => ({ value: task.id, label: task.label }))}
+            options={filteredTaskOptions.map((task) => ({ value: task.id, label: task.label }))}
             placeholder="Choose a Task"
             disabled={editing}
             onChange={(event) => {
