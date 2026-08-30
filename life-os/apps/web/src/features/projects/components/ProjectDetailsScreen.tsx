@@ -41,7 +41,7 @@ import type { Milestone, MilestoneStatus } from "../model/milestone";
 import type { TasksByMilestone } from "../model/milestoneTask";
 import { ProjectDetailsHeader } from "./ProjectDetailsHeader";
 import { ProjectOverview, type ProjectOverviewTask } from "./ProjectOverview";
-import { ProjectTimeline } from "./ProjectTimeline";
+import { ProjectTimeline, type AssignableTask } from "./ProjectTimeline";
 import type { MilestoneFormData } from "./MilestoneFormDialog";
 import "./project-details-screen.css";
 
@@ -49,6 +49,9 @@ export interface ProjectDetailsScreenProps {
   readonly project?: Project;
   readonly milestones?: readonly Milestone[];
   readonly tasksByMilestone?: TasksByMilestone;
+  readonly assignableTasks?: readonly AssignableTask[];
+  readonly onAssignTaskToMilestone?: (milestoneId: string, taskId: string) => Promise<void> | void;
+  readonly onUnassignTaskFromMilestone?: (taskId: string) => Promise<void> | void;
   readonly ownerName?: string;
   readonly estimatedHours?: number;
   readonly actualHours?: number;
@@ -166,6 +169,9 @@ export function ProjectDetailsScreen({
   selectedTab: controlledTab,
   selectedMilestoneId,
   tasksByMilestone = {},
+  assignableTasks = [],
+  onAssignTaskToMilestone,
+  onUnassignTaskFromMilestone,
   onTabChange,
   loading = false,
   notFound = false,
@@ -417,6 +423,9 @@ export function ProjectDetailsScreen({
           projectId={project.id}
           milestones={milestones}
           tasksByMilestone={tasksByMilestone}
+          assignableTasks={assignableTasks}
+          {...(onAssignTaskToMilestone ? { onAssignTask: onAssignTaskToMilestone } : {})}
+          {...(onUnassignTaskFromMilestone ? { onUnassignTask: onUnassignTaskFromMilestone } : {})}
           now={now}
           locale={locale}
           timeZone={timeZone}
