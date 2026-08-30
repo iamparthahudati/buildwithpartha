@@ -89,6 +89,12 @@ export {
   useMilestoneTasks,
   type UseMilestoneTasksResult,
 } from "./hooks/useMilestoneTasks";
+export {
+  useMilestoneTaskAssignment,
+  type AssignTaskToMilestoneVariables,
+  type UseMilestoneTaskAssignmentResult,
+} from "./hooks/useMilestoneTaskAssignment";
+export { type AssignableTask } from "./components/ProjectTimeline";
 export type {
   MilestoneTaskSummary,
   MilestoneTaskStatus,

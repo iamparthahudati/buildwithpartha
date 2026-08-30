@@ -16,6 +16,7 @@ import {
   useUpdateMilestoneStatus,
   useDeleteMilestone,
   useMilestoneTasks,
+  useMilestoneTaskAssignment,
   useArchiveProject,
   useRestoreProject,
   useDeleteProject,
@@ -95,6 +96,8 @@ export function ProjectDetailsRoute() {
     [data?.milestones],
   );
   const { tasksByMilestone } = useMilestoneTasks(milestoneIds, milestoneIds.length > 0);
+  const { assign: assignTaskMutation, unassign: unassignTaskMutation } =
+    useMilestoneTaskAssignment();
   const tasksEnabled = user !== null && projectId !== "";
   const timeZone = user?.timeZone ?? "UTC";
   const locale = user?.locale ?? "en-US";
@@ -147,6 +150,30 @@ export function ProjectDetailsRoute() {
 
   const totalTasksCount = projectTasksQuery.data?.page.totalItems ?? 0;
   const completedTasksCount = completedProjectTasksQuery.data?.page.totalItems ?? 0;
+
+  const assignableTasks = useMemo(
+    () => (projectTasksQuery.data?.items ?? []).map((task) => ({ id: task.id, title: task.title })),
+    [projectTasksQuery.data?.items],
+  );
+
+  const handleAssignTaskToMilestone = useCallback(
+    (milestoneId: string, taskId: string) =>
+      assignTaskMutation
+        .mutateAsync({ milestoneId, taskId })
+        .then(() => undefined)
+        .catch(() => undefined),
+    [assignTaskMutation],
+  );
+
+  const handleUnassignTaskFromMilestone = useCallback(
+    (taskId: string) =>
+      unassignTaskMutation
+        .mutateAsync(taskId)
+        .then(() => undefined)
+        .catch(() => undefined),
+    [unassignTaskMutation],
+  );
+
   const project = data?.project;
   const commentRecords = commentsQuery.data?.items ?? [];
   const commentById = new Map(commentRecords.map((comment) => [comment.id, comment]));
@@ -314,6 +341,9 @@ export function ProjectDetailsRoute() {
       {...(projectWithTaskCounts ? { project: projectWithTaskCounts } : {})}
       milestones={data?.milestones ?? []}
       tasksByMilestone={tasksByMilestone}
+      assignableTasks={assignableTasks}
+      onAssignTaskToMilestone={handleAssignTaskToMilestone}
+      onUnassignTaskFromMilestone={handleUnassignTaskFromMilestone}
       topTasks={topTasks}
       activityEvents={allActivityEvents}
       activityTabEvents={filteredActivityEvents}

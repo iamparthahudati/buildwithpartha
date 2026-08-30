@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Plus, MoreHorizontal, Flag } from "lucide-react";
+import { Plus, MoreHorizontal, Flag, X } from "lucide-react";
 
 import {
   Badge,
@@ -27,6 +27,11 @@ import type { TasksByMilestone } from "../model/milestoneTask";
 import { MilestoneFormDialog, type MilestoneFormData } from "./MilestoneFormDialog";
 import "./project-timeline.css";
 
+export interface AssignableTask {
+  readonly id: string;
+  readonly title: string;
+}
+
 export interface ProjectTimelineProps {
   readonly projectId?: string;
   readonly milestones?: readonly Milestone[];
@@ -42,6 +47,9 @@ export interface ProjectTimelineProps {
   readonly projectDeadlineDate?: string | null;
   readonly selectedMilestoneId?: string;
   readonly tasksByMilestone?: TasksByMilestone;
+  readonly assignableTasks?: readonly AssignableTask[];
+  readonly onAssignTask?: (milestoneId: string, taskId: string) => Promise<void> | void;
+  readonly onUnassignTask?: (taskId: string) => Promise<void> | void;
   readonly onAddMilestone?: (data: MilestoneFormData) => Promise<void> | void;
   readonly onUpdateMilestone?: (
     milestoneId: string,
@@ -78,6 +86,9 @@ export function ProjectTimeline({
   projectDeadlineDate,
   selectedMilestoneId,
   tasksByMilestone = {},
+  assignableTasks = [],
+  onAssignTask,
+  onUnassignTask,
   onAddMilestone,
   onUpdateMilestone,
   onStatusChange,
@@ -292,6 +303,11 @@ export function ProjectTimeline({
             const assignedTasks = tasksByMilestone[milestone.id] ?? [];
             const assignedEstimateHours =
               assignedTasks.reduce((sum, task) => sum + task.estimateMinutes, 0) / 60;
+            const assignedIds = new Set(assignedTasks.map((task) => task.taskId));
+            const assignCandidates = assignableTasks.filter((task) => !assignedIds.has(task.id));
+            const canAssign = isInteractive && Boolean(onAssignTask);
+            const canUnassign = isInteractive && Boolean(onUnassignTask);
+            const showTasksSection = assignedTasks.length > 0 || canAssign;
 
             const menuItems: MenuItemDescriptor[] = [];
             if (isInteractive) {
@@ -371,22 +387,57 @@ export function ProjectTimeline({
                   <Text tone={isOverdue ? "danger" : "secondary"} size="sm">
                     Target: {formattedDate}
                   </Text>
-                  {assignedTasks.length > 0 ? (
+                  {showTasksSection ? (
                     <div className="lifeos-project-timeline__item-tasks">
-                      <Text tone="secondary" size="sm">
-                        {assignedTasks.length} {assignedTasks.length === 1 ? "task" : "tasks"}
-                        {assignedEstimateHours > 0
-                          ? ` · ${Number.isInteger(assignedEstimateHours) ? assignedEstimateHours : assignedEstimateHours.toFixed(1)}h`
-                          : ""}
-                      </Text>
-                      <ul className="lifeos-project-timeline__task-list">
-                        {assignedTasks.map((task) => (
-                          <li key={task.taskId} className="lifeos-project-timeline__task-item">
-                            <Text size="sm">{task.title}</Text>
-                            <Badge tone="neutral">{task.priority}</Badge>
-                          </li>
-                        ))}
-                      </ul>
+                      {assignedTasks.length > 0 ? (
+                        <>
+                          <Text tone="secondary" size="sm">
+                            {assignedTasks.length} {assignedTasks.length === 1 ? "task" : "tasks"}
+                            {assignedEstimateHours > 0
+                              ? ` · ${Number.isInteger(assignedEstimateHours) ? assignedEstimateHours : assignedEstimateHours.toFixed(1)}h`
+                              : ""}
+                          </Text>
+                          <ul className="lifeos-project-timeline__task-list">
+                            {assignedTasks.map((task) => (
+                              <li key={task.taskId} className="lifeos-project-timeline__task-item">
+                                <Text size="sm">{task.title}</Text>
+                                <div className="lifeos-project-timeline__task-meta">
+                                  <Badge tone="neutral">{task.priority}</Badge>
+                                  {canUnassign ? (
+                                    <IconButton
+                                      icon={X}
+                                      label={`Remove ${task.title} from ${milestone.title}`}
+                                      variant="ghost"
+                                      onClick={() => void onUnassignTask?.(task.taskId)}
+                                    />
+                                  ) : null}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      ) : (
+                        <Text tone="muted" size="sm">
+                          No tasks assigned yet.
+                        </Text>
+                      )}
+                      {canAssign && assignCandidates.length > 0 ? (
+                        <Menu
+                          trigger={
+                            <Button variant="ghost" size="sm" iconStart={Plus}>
+                              Add task
+                            </Button>
+                          }
+                          items={assignCandidates.map((task) => ({
+                            type: "item",
+                            id: task.id,
+                            label: task.title,
+                            onSelect: () => void onAssignTask?.(milestone.id, task.id),
+                          }))}
+                          label={`Assign a task to ${milestone.title}`}
+                          align="start"
+                        />
+                      ) : null}
                     </div>
                   ) : null}
                 </div>

@@ -81,6 +81,50 @@ describe("ProjectTimeline", () => {
     expect(screen.getByText("2 tasks · 12h")).toBeInTheDocument();
   });
 
+  it("assigns and unassigns tasks via the milestone card controls", async () => {
+    const onAssignTask = vi.fn();
+    const onUnassignTask = vi.fn();
+    const { user } = renderWithUser(
+      <ProjectTimeline
+        projectId="project-1"
+        milestones={MOCK_MILESTONES}
+        now={NOW}
+        locale="en-US"
+        timeZone="UTC"
+        tasksByMilestone={{
+          m3: [
+            {
+              taskId: "t1",
+              title: "Wire Today MIT provider",
+              status: "IN_PROGRESS",
+              priority: "P1",
+              estimateMinutes: 360,
+            },
+          ],
+        }}
+        assignableTasks={[
+          { id: "t1", title: "Wire Today MIT provider" },
+          { id: "t2", title: "Add integration tests" },
+        ]}
+        onAssignTask={onAssignTask}
+        onUnassignTask={onUnassignTask}
+        onAddMilestone={vi.fn()}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Remove Wire Today MIT provider from Production Gate",
+      }),
+    );
+    expect(onUnassignTask).toHaveBeenCalledWith("t1");
+
+    const addButtons = screen.getAllByRole("button", { name: /Add task/ });
+    await user.click(addButtons[2]!);
+    await user.click(screen.getByRole("menuitem", { name: "Add integration tests" }));
+    expect(onAssignTask).toHaveBeenCalledWith("m3", "t2");
+  });
+
   it("renders populated milestones timeline with stats and statuses", async () => {
     const { container } = renderWithUser(
       <ProjectTimeline

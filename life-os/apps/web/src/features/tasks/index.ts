@@ -146,3 +146,12 @@ export {
   useBulkTaskAction,
   isConflict,
 } from "./hooks/useTaskMutations";
+
+export {
+  assignTaskMilestone,
+  clearTaskMilestone,
+  getTaskMilestone,
+  type TaskMilestone,
+  type TaskMilestoneDto,
+  type TaskMilestoneAssignmentDto,
+} from "./api/taskMilestoneApi";
