@@ -77,6 +77,16 @@ import {
 } from "./ComposedDemos";
 
 import { GoalsScreenDemo, GoalDetailsScreenDemo } from "./GoalsDemos";
+import {
+  HabitCardDemo,
+  HabitEntryControlDemo,
+  HabitFormDialogDemo,
+  HabitHeatmapDemo,
+  HabitLifecycleDialogsDemo,
+  HabitRowDemo,
+  HabitStatesDemo,
+  HabitStreakSummaryDemo,
+} from "./HabitsDemos";
 import { NoteCardDemo, NoteFormDemo } from "./NotesDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
@@ -1241,6 +1251,68 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Full composed Reports screen with selector, filter bar, summary, charts, data tables, and print action.",
         render: () => <ReportsScreenDemo />,
+      },
+    ],
+  },
+  {
+    id: "habit-components",
+    name: "Habit components",
+    group: "Composed",
+    summary:
+      "Habit cards and rows, local-date entry controls, pause-aware streak and consistency displays, reminder-aware forms, and recoverable lifecycle actions.",
+    states: [
+      {
+        id: "habit-card",
+        name: "HabitCard",
+        description:
+          "Habit identity, target, timezone, reminder, statistics, entry, and lifecycle actions.",
+        render: () => <HabitCardDemo />,
+      },
+      {
+        id: "habit-row",
+        name: "HabitRow",
+        description: "Compact responsive Habit row with exact accessible action names.",
+        render: () => <HabitRowDemo />,
+      },
+      {
+        id: "habit-entry-control",
+        name: "HabitEntryControl",
+        description: "Target-aware local-date entry control with increment and decrement actions.",
+        render: () => <HabitEntryControlDemo />,
+      },
+      {
+        id: "habit-streak-summary",
+        name: "HabitStreakSummary",
+        description:
+          "Pause-aware current streak, longest streak, completion rate, and eligible periods.",
+        render: () => <HabitStreakSummaryDemo />,
+      },
+      {
+        id: "habit-heatmap",
+        name: "HabitHeatmap",
+        description:
+          "Consistency heatmap with an accessible table alternative and paused-date treatment.",
+        render: () => <HabitHeatmapDemo />,
+      },
+      {
+        id: "habit-form-dialog",
+        name: "HabitFormDialog",
+        description:
+          "Habit form with cadence, target, timezone, color, reminder, validation, and conflict recovery.",
+        render: () => <HabitFormDialogDemo />,
+      },
+      {
+        id: "habit-lifecycle-dialogs",
+        name: "Habit pause and archive dialogs",
+        description:
+          "Bounded or open-ended pause form and explicit recoverable archive confirmation.",
+        render: () => <HabitLifecycleDialogsDemo />,
+      },
+      {
+        id: "habit-states",
+        name: "Habit states",
+        description: "Paused, archived, loading, and recoverable region-error states.",
+        render: () => <HabitStatesDemo />,
       },
     ],
   },
