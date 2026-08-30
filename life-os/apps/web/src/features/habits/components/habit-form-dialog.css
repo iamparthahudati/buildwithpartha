@@ -1,0 +1,11 @@
+.habit-form-dialog__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lifeos-space-4);
+}
+
+@media (max-width: 639px) {
+  .habit-form-dialog__grid {
+    grid-template-columns: 1fr;
+  }
+}

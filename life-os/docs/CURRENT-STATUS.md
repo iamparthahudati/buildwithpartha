@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-30 (LOS-1210 habit streak calculations)
+Last updated: 2026-08-30 (LOS-1211 Habit components)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1211 — Built the complete responsive Habit component suite under `features/habits`: canonical API-aligned models and formatters; `HabitCard` and `HabitRow`; target-aware local-date `HabitEntryControl`; pause-aware `HabitStreakSummary`; `HabitHeatmap` with a real accessible table alternative; validated create/edit form with reminder, optimistic-version, conflict, and pending states; and explicit pause/archive dialogs. Added eight catalog specimens and 16 focused model/component/accessibility tests. The focused suite, quality gate, production test build, repository structural checks, and live 320px/1280px overflow/interaction/console checks pass. The full 2,300-test frontend run retains one pre-existing Projects route page-size expectation mismatch reproduced on untouched `develop`; 2,299 tests pass. See `docs/handoffs/LOS-1211.md`.
 
 - LOS-1210 — Defined canonical habit/streak calculation rules in `docs/34-HABIT-STREAK-CALCULATIONS.md`: DAILY/WEEKLY/MONTHLY period grids (ISO week, calendar month), full-pause exclusion semantics (paused periods invisible to streak counter, partly-paused remain eligible), backward current-streak scan, longestStreak tracking, target-count evaluation with multi-entry date summing, late-edit repair semantics, timezone-change non-retroactivity, and completion-rate rounding policy. Added `HabitStreakCalculator` pure stateless domain service and `HabitStreakResult` record in `habit/domain`; 23 deterministic boundary-fixture tests pass with zero failures or skips. All LOS-1210 files pass Spotless and Checkstyle; pre-existing Brain Dump/Today failures are unrelated. See `docs/handoffs/LOS-1210.md`.
 

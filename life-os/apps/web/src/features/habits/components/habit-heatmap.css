@@ -1,0 +1,84 @@
+.habit-heatmap {
+  width: 100%;
+}
+
+.habit-heatmap__visual {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 10rem;
+  gap: var(--lifeos-space-4);
+  overflow-x: auto;
+}
+
+.habit-heatmap__days {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 0.875rem);
+  grid-auto-columns: 0.875rem;
+  gap: var(--lifeos-space-1);
+  width: max-content;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.habit-heatmap__day {
+  width: 0.875rem;
+  height: 0.875rem;
+  border: var(--lifeos-border-width-hairline) solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-xs);
+  background: var(--lifeos-color-surface-muted);
+}
+
+.habit-heatmap__day--level-1 {
+  background: var(--lifeos-color-primary-soft);
+  border-color: var(--lifeos-color-primary-border);
+}
+
+.habit-heatmap__day--level-2 {
+  background: var(--lifeos-color-primary-border);
+  border-color: var(--lifeos-color-primary);
+}
+
+.habit-heatmap__day--level-3 {
+  background: var(--lifeos-color-primary);
+  border-color: var(--lifeos-color-primary-active);
+}
+
+.habit-heatmap__day--level-4 {
+  background: var(--lifeos-color-success-accent);
+  border-color: var(--lifeos-color-success);
+}
+
+.habit-heatmap__day.is-paused {
+  border-style: dashed;
+  background: var(--lifeos-color-warning-soft);
+  border-color: var(--lifeos-color-warning);
+}
+
+.habit-heatmap__legend {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-1);
+}
+
+@media (forced-colors: active) {
+  .habit-heatmap__day--level-1,
+  .habit-heatmap__day--level-2,
+  .habit-heatmap__day--level-3,
+  .habit-heatmap__day--level-4 {
+    forced-color-adjust: none;
+  }
+}
+
+@media (max-width: 359px) {
+  .habit-heatmap > .lifeos-surface__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .habit-heatmap > .lifeos-surface__header .lifeos-surface__header-action {
+    align-self: flex-start;
+  }
+}
