@@ -16,8 +16,7 @@ public record BrainDumpItem(
     Optional<Instant> archivedAt,
     Instant createdAt,
     Instant updatedAt,
-    long version
-) {
+    long version) {
 
   public BrainDumpItem {
     Objects.requireNonNull(id, "id must not be null");
@@ -38,21 +37,61 @@ public record BrainDumpItem(
 
   public BrainDumpItem archive(Instant now) {
     return new BrainDumpItem(
-        id, userId, content, status, convertedToType, convertedToId, convertedAt, Optional.of(now), createdAt, now, version);
+        id,
+        userId,
+        content,
+        status,
+        convertedToType,
+        convertedToId,
+        convertedAt,
+        Optional.of(now),
+        createdAt,
+        now,
+        version);
   }
 
   public BrainDumpItem restore(Instant now) {
     return new BrainDumpItem(
-        id, userId, content, status, convertedToType, convertedToId, convertedAt, Optional.empty(), createdAt, now, version);
+        id,
+        userId,
+        content,
+        status,
+        convertedToType,
+        convertedToId,
+        convertedAt,
+        Optional.empty(),
+        createdAt,
+        now,
+        version);
   }
 
   public BrainDumpItem defer(Instant now) {
     return new BrainDumpItem(
-        id, userId, content, BrainDumpItemStatus.DEFERRED, convertedToType, convertedToId, convertedAt, archivedAt, createdAt, now, version);
+        id,
+        userId,
+        content,
+        BrainDumpItemStatus.DEFERRED,
+        convertedToType,
+        convertedToId,
+        convertedAt,
+        archivedAt,
+        createdAt,
+        now,
+        version);
   }
 
   public BrainDumpItem convert(String targetType, UUID targetId, Instant now) {
     return new BrainDumpItem(
-        id, userId, content, BrainDumpItemStatus.CONVERTED, Optional.of(targetType), Optional.of(targetId), Optional.of(now), archivedAt, createdAt, now, version);
+        id,
+        userId,
+        content,
+        BrainDumpItemStatus.CONVERTED,
+        Optional.of(targetType),
+        Optional.of(targetId),
+        Optional.of(now),
+        archivedAt,
+        createdAt,
+        now,
+        version);
   }
 }

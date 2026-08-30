@@ -1,7 +1,6 @@
 package tech.buildwithpartha.lifeos.braindump.api;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Optional;
@@ -19,10 +18,18 @@ public record ConvertToTaskRequest(
     long version) {
 
   public ConvertToTaskRequest {
-    if (description == null) description = Optional.empty();
-    if (projectId == null) projectId = Optional.empty();
-    if (dueAt == null) dueAt = Optional.empty();
-    if (labelIds == null) labelIds = Set.of();
+    if (description == null) {
+      description = Optional.empty();
+    }
+    if (projectId == null) {
+      projectId = Optional.empty();
+    }
+    if (dueAt == null) {
+      dueAt = Optional.empty();
+    }
+    if (labelIds == null) {
+      labelIds = Set.of();
+    }
   }
 
   public ConvertToTaskCommand toCommand() {

@@ -1,7 +1,9 @@
 package tech.buildwithpartha.lifeos.habit.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -11,7 +13,9 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,8 +67,9 @@ class HabitTodayProjectionAdapterTests {
 
     when(habitRepository.findByUserIdAndArchived(HabitDomainFixture.USER_ID, false))
         .thenReturn(List.of(habit));
-    when(entryRepository.findByHabitId(habit.id())).thenReturn(List.of(yesterday, todayEntry));
-    when(pauseRepository.findByHabitId(habit.id())).thenReturn(List.of(pause));
+    when(entryRepository.findByHabitIds(Set.of(habit.id())))
+        .thenReturn(List.of(yesterday, todayEntry));
+    when(pauseRepository.findByHabitIds(Set.of(habit.id()))).thenReturn(List.of(pause));
 
     List<HabitTodayProjection> result = adapter.getTodayHabits(HabitDomainFixture.USER_ID);
 
@@ -80,6 +85,60 @@ class HabitTodayProjectionAdapterTests {
               assertThat(projection.currentStreak()).isEqualTo(1);
             });
     verify(habitRepository).findByUserIdAndArchived(HabitDomainFixture.USER_ID, false);
+  }
+
+  @Test
+  void keepsLargeAccountProjectionToThreeBulkRepositoryReads() {
+    List<Habit> habits =
+        IntStream.range(0, 100)
+            .mapToObj(index -> habit(index, String.format("Habit %03d", index)))
+            .toList();
+    Set<UUID> habitIds =
+        habits.stream().map(Habit::id).collect(java.util.stream.Collectors.toSet());
+
+    when(habitRepository.findByUserIdAndArchived(HabitDomainFixture.USER_ID, false))
+        .thenReturn(habits);
+    when(entryRepository.findByHabitIds(habitIds)).thenReturn(List.of());
+    when(pauseRepository.findByHabitIds(habitIds)).thenReturn(List.of());
+
+    List<HabitTodayProjection> result = adapter.getTodayHabits(HabitDomainFixture.USER_ID);
+
+    assertThat(result).hasSize(100);
+    verify(entryRepository).findByHabitIds(habitIds);
+    verify(pauseRepository).findByHabitIds(habitIds);
+    verify(entryRepository, never()).findByHabitId(any());
+    verify(pauseRepository, never()).findByHabitId(any());
+  }
+
+  @Test
+  void avoidsHistoryReadsWhenTheOwnerHasNoActiveHabits() {
+    when(habitRepository.findByUserIdAndArchived(HabitDomainFixture.USER_ID, false))
+        .thenReturn(List.of());
+
+    assertThat(adapter.getTodayHabits(HabitDomainFixture.USER_ID)).isEmpty();
+
+    verify(entryRepository, never()).findByHabitIds(any());
+    verify(pauseRepository, never()).findByHabitIds(any());
+  }
+
+  private static Habit habit(int index, String name) {
+    Habit base = HabitDomainFixture.sampleDailyHabit();
+    return new Habit(
+        UUID.nameUUIDFromBytes(
+            ("habit-" + index).getBytes(java.nio.charset.StandardCharsets.UTF_8)),
+        base.userId(),
+        name,
+        base.description(),
+        base.cadence(),
+        base.targetCount(),
+        base.timeZone(),
+        base.color(),
+        base.reminderEnabled(),
+        base.reminderTime(),
+        base.archived(),
+        base.createdAt(),
+        base.updatedAt(),
+        base.version());
   }
 
   private static HabitEntry entry(Habit habit, LocalDate date, int count, String id) {

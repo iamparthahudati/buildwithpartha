@@ -20,12 +20,24 @@ public record ConvertToProjectRequest(
     long version) {
 
   public ConvertToProjectRequest {
-    if (description == null) description = Optional.empty();
-    if (startDate == null) startDate = Optional.empty();
-    if (deadlineDate == null) deadlineDate = Optional.empty();
-    if (color == null) color = Optional.empty();
-    if (icon == null) icon = Optional.empty();
-    if (labelIds == null) labelIds = Set.of();
+    if (description == null) {
+      description = Optional.empty();
+    }
+    if (startDate == null) {
+      startDate = Optional.empty();
+    }
+    if (deadlineDate == null) {
+      deadlineDate = Optional.empty();
+    }
+    if (color == null) {
+      color = Optional.empty();
+    }
+    if (icon == null) {
+      icon = Optional.empty();
+    }
+    if (labelIds == null) {
+      labelIds = Set.of();
+    }
   }
 
   public ConvertToProjectCommand toCommand() {

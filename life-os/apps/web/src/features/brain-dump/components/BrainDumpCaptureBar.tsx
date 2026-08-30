@@ -105,7 +105,7 @@ export function BrainDumpCaptureBar({
       {!isOnline && (
         <InlineMessage tone="warning">
           <WifiOff size={14} aria-hidden="true" />
-          Offline — this item will be queued. Keep this page open until you reconnect.
+          Offline — this item will be stored on this device and sent when you reconnect.
         </InlineMessage>
       )}
 
@@ -123,7 +123,7 @@ export function BrainDumpCaptureBar({
 
       {captureStatus.type === "offline-queued" && (
         <InlineMessage tone="info" announce="status">
-          Queued. Will sync when you reconnect.
+          Queued on this device. Will sync when you reconnect.
         </InlineMessage>
       )}
 

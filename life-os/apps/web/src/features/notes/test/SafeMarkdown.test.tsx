@@ -87,6 +87,17 @@ Second line`}
     expect(screen.getByText(/\[Script\]\(javascript:alert\(1\)\)/)).toBeInTheDocument();
   });
 
+  it("renders raw HTML as inert text without executable elements", () => {
+    const { container } = render(
+      <SafeMarkdown text={'<img src=x onerror="alert(1)"> <script>alert(2)</script>'} />,
+    );
+
+    expect(container.querySelector("img")).toBeNull();
+    expect(container.querySelector("script")).toBeNull();
+    expect(container).toHaveTextContent('<img src=x onerror="alert(1)">');
+    expect(container).toHaveTextContent("<script>alert(2)</script>");
+  });
+
   it("passes accessibility audits", async () => {
     const { container } = render(
       <SafeMarkdown

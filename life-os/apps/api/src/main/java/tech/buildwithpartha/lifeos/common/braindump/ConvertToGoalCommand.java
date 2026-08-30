@@ -11,5 +11,4 @@ public record ConvertToGoalCommand(
     String progressType,
     Optional<BigDecimal> targetValue,
     Optional<LocalDate> targetDate,
-    String checkInCadence
-) {}
+    String checkInCadence) {}

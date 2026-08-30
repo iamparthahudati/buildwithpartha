@@ -13,7 +13,9 @@ public record ConvertToNoteRequest(
     long version) {
 
   public ConvertToNoteRequest {
-    if (labelIds == null) labelIds = Set.of();
+    if (labelIds == null) {
+      labelIds = Set.of();
+    }
   }
 
   public ConvertToNoteCommand toCommand() {

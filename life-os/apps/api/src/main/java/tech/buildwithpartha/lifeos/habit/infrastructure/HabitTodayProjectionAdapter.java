@@ -4,8 +4,11 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import tech.buildwithpartha.lifeos.common.habit.HabitTodayProjection;
@@ -45,16 +48,37 @@ public class HabitTodayProjectionAdapter implements HabitTodayProjectionProvider
   @Transactional(readOnly = true)
   public List<HabitTodayProjection> getTodayHabits(UUID userId) {
     Objects.requireNonNull(userId, "userId must not be null");
-    return habitRepository.findByUserIdAndArchived(userId, false).stream()
-        .sorted(Comparator.comparing(Habit::name, String.CASE_INSENSITIVE_ORDER))
-        .map(this::toProjection)
+    List<Habit> habits =
+        habitRepository.findByUserIdAndArchived(userId, false).stream()
+            .sorted(Comparator.comparing(Habit::name, String.CASE_INSENSITIVE_ORDER))
+            .toList();
+    if (habits.isEmpty()) {
+      return List.of();
+    }
+
+    Set<UUID> habitIds = habits.stream().map(Habit::id).collect(Collectors.toUnmodifiableSet());
+    Map<UUID, List<HabitEntry>> entriesByHabit =
+        entryRepository.findByHabitIds(habitIds).stream()
+            .filter(entry -> entry.isOwnedBy(userId))
+            .collect(Collectors.groupingBy(HabitEntry::habitId));
+    Map<UUID, List<HabitPausePeriod>> pausesByHabit =
+        pauseRepository.findByHabitIds(habitIds).stream()
+            .filter(pause -> pause.isOwnedBy(userId))
+            .collect(Collectors.groupingBy(HabitPausePeriod::habitId));
+
+    return habits.stream()
+        .map(
+            habit ->
+                toProjection(
+                    habit,
+                    entriesByHabit.getOrDefault(habit.id(), List.of()),
+                    pausesByHabit.getOrDefault(habit.id(), List.of())))
         .toList();
   }
 
-  private HabitTodayProjection toProjection(Habit habit) {
+  private HabitTodayProjection toProjection(
+      Habit habit, List<HabitEntry> entries, List<HabitPausePeriod> pauses) {
     LocalDate localDate = habit.localDateFor(clock.instant());
-    List<HabitEntry> entries = entryRepository.findByHabitId(habit.id());
-    List<HabitPausePeriod> pauses = pauseRepository.findByHabitId(habit.id());
     int completedCount =
         entries.stream()
             .filter(entry -> entry.localDate().equals(localDate))

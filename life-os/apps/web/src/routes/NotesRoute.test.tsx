@@ -333,4 +333,28 @@ describe("NotesRoute", () => {
       expect(spyRefetch).toHaveBeenCalled();
     });
   });
+
+  it("keeps an offline edit in the open tab without claiming it was queued", async () => {
+    const onlineSpy = vi.spyOn(window.navigator, "onLine", "get").mockReturnValue(false);
+    try {
+      mockUseNote.mockReturnValue({
+        data: MOCK_NOTE_1,
+        isPending: false,
+        isError: false,
+        error: null,
+        refetch: spyRefetch,
+      } as any);
+
+      renderNotesRoute(["/life-os/app/notes/note-1"]);
+      await userEvent.type(screen.getByLabelText("Title"), " offline edit");
+      await userEvent.click(screen.getByRole("button", { name: "Save note" }));
+
+      expect(spyUpdate).not.toHaveBeenCalled();
+      expect(screen.getByText("Not saved — reconnect and choose Save note")).toBeInTheDocument();
+      expect(screen.queryByText(/queued|saved on this device/i)).not.toBeInTheDocument();
+      expect(screen.getByLabelText("Title")).toHaveValue("Read LifeOS Docs offline edit");
+    } finally {
+      onlineSpy.mockRestore();
+    }
+  });
 });

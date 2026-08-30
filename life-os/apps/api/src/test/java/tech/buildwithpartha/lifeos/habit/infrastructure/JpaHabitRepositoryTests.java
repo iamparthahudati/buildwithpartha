@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,8 @@ class JpaHabitRepositoryTests {
         entryRepository.findByHabitIdAndLocalDateBetween(
             habit.id(), LocalDate.of(2026, 3, 1), LocalDate.of(2026, 3, 31));
     assertThat(outOfRange).isEmpty();
+    assertThat(entryRepository.findByHabitIds(Set.of(habit.id()))).containsExactly(saved);
+    assertThat(entryRepository.findByHabitIds(Set.of())).isEmpty();
 
     entryRepository.delete(entry);
     assertThat(entryRepository.findById(entry.id())).isEmpty();
@@ -94,6 +97,8 @@ class JpaHabitRepositoryTests {
     assertThat(saved.endDate()).contains(LocalDate.of(2026, 3, 10));
 
     assertThat(pauseRepository.findByHabitId(habit.id())).hasSize(1);
+    assertThat(pauseRepository.findByHabitIds(Set.of(habit.id()))).containsExactly(saved);
+    assertThat(pauseRepository.findByHabitIds(Set.of())).isEmpty();
     assertThat(pauseRepository.findById(pause.id())).isPresent();
 
     pauseRepository.delete(pause);

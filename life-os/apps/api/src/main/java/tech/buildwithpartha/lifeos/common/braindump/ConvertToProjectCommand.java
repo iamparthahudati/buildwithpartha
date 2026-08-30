@@ -13,5 +13,4 @@ public record ConvertToProjectCommand(
     String priority,
     Optional<String> color,
     Optional<String> icon,
-    Set<UUID> labelIds
-) {}
+    Set<UUID> labelIds) {}

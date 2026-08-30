@@ -3,11 +3,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { apiRequest } from "@lib/apiClient";
 
 import {
+  archiveHabit,
+  createHabit,
+  createHabitPause,
   getHabitStatistics,
+  listHabitPauses,
   listHabitEntries,
   mapHabitStatistics,
+  removeHabitPause,
   removeHabitEntry,
+  restoreHabit,
   setHabitEntry,
+  updateHabit,
+  type HabitResponseDto,
+  type HabitPauseResponseDto,
   type HabitStatsResponseDto,
 } from "../api/habitsApi";
 
@@ -29,6 +38,28 @@ const STATS_DTO: HabitStatsResponseDto = {
   eligiblePeriods: 26,
   metTargetPeriods: 16,
   cadenceCompletionRate: 16 / 26,
+};
+
+const HABIT_DTO: HabitResponseDto = {
+  id: "habit-1",
+  userId: "user-1",
+  name: "Read",
+  cadence: "DAILY",
+  targetCount: 1,
+  timeZone: "UTC",
+  reminderEnabled: false,
+  archived: false,
+  createdAt: "2026-08-01T00:00:00Z",
+  updatedAt: "2026-08-01T00:00:00Z",
+  version: 0,
+};
+
+const PAUSE_DTO: HabitPauseResponseDto = {
+  id: "pause-1",
+  habitId: "habit-1",
+  userId: "user-1",
+  startDate: "2026-08-30",
+  createdAt: "2026-08-30T00:00:00Z",
 };
 
 describe("habitsApi", () => {
@@ -86,5 +117,45 @@ describe("habitsApi", () => {
       "/habits/habit-1/stats?from=2026-08-01&to=2026-08-30",
       { method: "GET" },
     );
+  });
+
+  it("uses the canonical Habit lifecycle and pause endpoints", async () => {
+    const request = {
+      name: "Read",
+      cadence: "DAILY" as const,
+      targetCount: 1,
+      timeZone: "UTC",
+      reminderEnabled: false,
+    };
+    mockApiRequest
+      .mockResolvedValueOnce(HABIT_DTO)
+      .mockResolvedValueOnce(HABIT_DTO)
+      .mockResolvedValueOnce(HABIT_DTO)
+      .mockResolvedValueOnce(HABIT_DTO)
+      .mockResolvedValueOnce([PAUSE_DTO])
+      .mockResolvedValueOnce(PAUSE_DTO)
+      .mockResolvedValueOnce(undefined);
+
+    await createHabit(request);
+    await updateHabit("habit-1", { ...request, version: 0 });
+    await archiveHabit("habit-1", 0);
+    await restoreHabit("habit-1", 1);
+    expect(await listHabitPauses("habit-1")).toEqual([
+      expect.objectContaining({ id: "pause-1", endDate: null, reason: null }),
+    ]);
+    await createHabitPause("habit-1", { startDate: "2026-08-30" });
+    await removeHabitPause("habit-1", "pause-1");
+
+    expect(mockApiRequest).toHaveBeenNthCalledWith(1, "/habits", {
+      method: "POST",
+      body: request,
+    });
+    expect(mockApiRequest).toHaveBeenNthCalledWith(3, "/habits/habit-1/archive", {
+      method: "POST",
+      body: { version: 0 },
+    });
+    expect(mockApiRequest).toHaveBeenNthCalledWith(7, "/habits/habit-1/pauses/pause-1", {
+      method: "DELETE",
+    });
   });
 });
