@@ -157,6 +157,9 @@ export function SprintsRoute() {
           return {
             id: task.id,
             label: projectName ? `${task.title} — ${projectName}` : task.title,
+            ...(typeof task.estimateMinutes === "number"
+              ? { estimateMinutes: task.estimateMinutes }
+              : {}),
             ...(task.project && projectName ? { projectId: task.project.id, projectName } : {}),
           };
         })}

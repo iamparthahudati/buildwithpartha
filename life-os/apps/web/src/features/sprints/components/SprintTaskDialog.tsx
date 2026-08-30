@@ -11,9 +11,17 @@ export interface SprintTaskOption {
   readonly label: string;
   readonly projectId?: string;
   readonly projectName?: string;
+  readonly estimateMinutes?: number;
 }
 
 const NO_PROJECT_FILTER = "__none__";
+
+/** Default story points for a task, using the 1 point = 1 hour convention (min 1). */
+function defaultStoryPoints(option: SprintTaskOption | undefined): number {
+  const minutes = option?.estimateMinutes ?? 0;
+  if (minutes <= 0) return 1;
+  return Math.max(1, Math.round(minutes / 60));
+}
 
 export interface SprintTaskFormData {
   readonly taskId: string;
@@ -149,8 +157,14 @@ export function SprintTaskDialog({
             placeholder="Choose a Task"
             disabled={editing}
             onChange={(event) => {
-              setTaskId(event.target.value);
+              const nextTaskId = event.target.value;
+              setTaskId(nextTaskId);
               setErrors((current) => ({ ...current, taskId: "" }));
+              if (!editing && nextTaskId) {
+                setStoryPoints(
+                  defaultStoryPoints(taskOptions.find((option) => option.id === nextTaskId)),
+                );
+              }
             }}
           />
         )}

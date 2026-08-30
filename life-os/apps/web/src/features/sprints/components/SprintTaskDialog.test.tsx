@@ -32,6 +32,30 @@ describe("SprintTaskDialog project filter", () => {
     ]);
   });
 
+  it("auto-fills story points from the task estimate on selection (1pt = 1hr)", async () => {
+    const user = userEvent.setup();
+    render(
+      <SprintTaskDialog
+        open
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+        taskOptions={[
+          { id: "big", label: "Big task", estimateMinutes: 180 },
+          { id: "small", label: "Small task", estimateMinutes: 20 },
+        ]}
+      />,
+    );
+
+    const points = screen.getByRole("spinbutton");
+    expect(points).toHaveValue(1);
+
+    await user.selectOptions(screen.getByRole("combobox"), "big");
+    expect(points).toHaveValue(3);
+
+    await user.selectOptions(screen.getByRole("combobox"), "small");
+    expect(points).toHaveValue(1);
+  });
+
   it("hides the project filter when only one project is present", () => {
     render(
       <SprintTaskDialog open onClose={vi.fn()} onSubmit={vi.fn()} taskOptions={[OPTIONS[0]!]} />,
