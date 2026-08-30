@@ -11,7 +11,10 @@ import {
   useToday,
   useTodayOnlineStatus,
   type TodayBrainCaptureStatus,
+  type TodayHabitItem,
 } from "@features/today";
+import { useBrainDumpCaptureQueue, useCaptureBrainDumpItem } from "@features/brain-dump";
+import { useHabits, useSetHabitEntry } from "@features/habits";
 import { useAuthSession } from "@state/authSession";
 
 import "./today-route.css";
@@ -40,13 +43,23 @@ const TODAY_HELPER = "See what needs attention and choose what to do next.";
 
 export function TodayRoute() {
   const { user } = useAuthSession();
-  const { onQuickAddClick } = useOutletContext<AppShellOutletContext>();
+  const { onQuickAddClick, brainDumpCaptureQueue } = useOutletContext<AppShellOutletContext>();
   const navigate = useNavigate();
   const [captureValue, setCaptureValue] = useState("");
   const [captureStatus, setCaptureStatus] = useState<TodayBrainCaptureStatus>({ type: "idle" });
+  const [habitMutationError, setHabitMutationError] = useState<string | null>(null);
   const todayQuery = useToday(user?.timeZone ?? "UTC", user !== null);
   const { refetch: refetchToday } = todayQuery;
   const isOnline = useTodayOnlineStatus();
+  const captureMutation = useCaptureBrainDumpItem();
+  const localCaptureQueue = useBrainDumpCaptureQueue({
+    userId: user?.id ?? "",
+    isOnline,
+    enabled: user !== null && brainDumpCaptureQueue === undefined,
+  });
+  const captureQueue = brainDumpCaptureQueue ?? localCaptureQueue;
+  const habitsQuery = useHabits(false, user !== null);
+  const setHabitEntryMutation = useSetHabitEntry();
 
   const viewModel = useMemo(() => {
     if (todayQuery.data && user) return mapTodayResponse(todayQuery.data, user.locale);
@@ -58,6 +71,52 @@ export function TodayRoute() {
   const retryToday = useCallback(() => {
     void refetchToday();
   }, [refetchToday]);
+
+  const captureBrainDump = useCallback(
+    async ({ content, mode }: { readonly content: string; readonly mode: "create" | "queue" }) => {
+      if (mode === "queue") {
+        captureQueue.enqueue(content);
+        setCaptureValue("");
+        setCaptureStatus({
+          type: "queued",
+          message: `Queued on this device. ${captureQueue.queuedCount + 1} ${captureQueue.queuedCount === 0 ? "capture" : "captures"} waiting to sync.`,
+        });
+        return;
+      }
+
+      setCaptureStatus({ type: "saving" });
+      try {
+        await captureMutation.mutateAsync({ content });
+        setCaptureValue("");
+        setCaptureStatus({ type: "saved", message: "Brain Dump Item added." });
+      } catch {
+        setCaptureStatus({
+          type: "error",
+          message: "We couldn't add this Brain Dump Item. Your text remains here.",
+        });
+      }
+    },
+    [captureMutation, captureQueue],
+  );
+
+  const setTodayHabitCount = useCallback(
+    async (item: TodayHabitItem, count: number) => {
+      const habit = habitsQuery.data?.find((candidate) => candidate.id === item.id);
+      if (!habit) {
+        setHabitMutationError("This Habit changed. Refresh Today before trying again.");
+        return;
+      }
+      setHabitMutationError(null);
+      try {
+        await setHabitEntryMutation.mutateAsync({ habit, date: item.localDate, count });
+      } catch {
+        setHabitMutationError(
+          "We couldn't save this Habit Entry. The previous count was restored.",
+        );
+      }
+    },
+    [habitsQuery.data, setHabitEntryMutation],
+  );
 
   // RequireAuth guarantees this but TypeScript cannot see it from here.
   if (user === null) return null;
@@ -144,21 +203,31 @@ export function TodayRoute() {
           onAddProject: () => onQuickAddClick("project"),
           onRetry: retryToday,
         }}
+        habits={{
+          status: viewModel.habitsStatus,
+          habitsHref: "/life-os/app/habits",
+          onSetCount: (habit, count) => void setTodayHabitCount(habit, count),
+          pendingHabitId:
+            setHabitEntryMutation.isPending && setHabitEntryMutation.variables
+              ? setHabitEntryMutation.variables.habit.id
+              : null,
+          mutationError: habitMutationError,
+          onRetry: retryToday,
+          disabled: !isOnline || habitsQuery.isPending,
+        }}
         brainCapture={{
           value: captureValue,
           onValueChange: (value) => {
             setCaptureValue(value);
-            if (captureStatus.type === "error") setCaptureStatus({ type: "idle" });
+            if (captureStatus.type !== "idle" && captureStatus.type !== "saving") {
+              setCaptureStatus({ type: "idle" });
+            }
           },
-          onCapture: () =>
-            setCaptureStatus({
-              type: "error",
-              message: "Brain Dump capture isn't connected yet. Your text remains here.",
-            }),
+          onCapture: (request) => void captureBrainDump(request),
           countStatus: viewModel.brainDumpCountStatus,
           captureStatus,
           isOnline,
-          offlineDraftSupported: false,
+          offlineQueueSupported: brainDumpCaptureQueue !== undefined,
           brainDumpHref: "/life-os/app/brain-dump",
           onRetryCount: retryToday,
         }}

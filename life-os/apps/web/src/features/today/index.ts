@@ -74,6 +74,12 @@ export {
   type TodayBrainDumpCountStatus,
 } from "./components/TodayBrainCapture";
 export {
+  TodayHabits,
+  type TodayHabitItem,
+  type TodayHabitsProps,
+  type TodayHabitsStatus,
+} from "./components/TodayHabits";
+export {
   TodayScreen,
   type TodayConnectionState,
   type TodayPlanningState,

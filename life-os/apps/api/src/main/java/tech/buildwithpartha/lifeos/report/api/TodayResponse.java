@@ -606,13 +606,29 @@ public record TodayResponse(
   }
 
   public record TodayHabitDto(
-      UUID id, String title, String frequency, boolean completedToday, int streakDays) {
+      UUID id,
+      String name,
+      String cadence,
+      int targetCount,
+      int completedCount,
+      LocalDate localDate,
+      String timeZone,
+      boolean paused,
+      int currentStreak) {
     public static TodayHabitDto fromQueryResult(TodayQueryResult.TodayHabitDto h) {
       if (h == null) {
         return null;
       }
       return new TodayHabitDto(
-          h.id(), h.title(), h.frequency(), h.completedToday(), h.streakDays());
+          h.id(),
+          h.name(),
+          h.cadence(),
+          h.targetCount(),
+          h.completedCount(),
+          h.localDate(),
+          h.timeZone(),
+          h.paused(),
+          h.currentStreak());
     }
   }
 

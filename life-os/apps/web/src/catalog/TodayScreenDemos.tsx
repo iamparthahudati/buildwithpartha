@@ -147,6 +147,11 @@ function firstUseProps(
       projectsHref: "#projects",
       onAddProject: NOOP,
     },
+    habits: {
+      status: { type: "ready", habits: [] },
+      habitsHref: "#habits",
+      onSetCount: NOOP,
+    },
     brainCapture: {
       value: captureValue,
       onValueChange: onCaptureValueChange,
@@ -361,8 +366,8 @@ function TodayScreenDemo({ state }: { readonly state: TodayScreenDemoState }) {
     ({ mode }) => {
       setCaptureValue("");
       setCaptureStatus(
-        mode === "device-draft"
-          ? { type: "offline-draft" }
+        mode === "queue"
+          ? { type: "queued" }
           : { type: "saved", message: "Brain Dump Item added in this mock state." },
       );
     },

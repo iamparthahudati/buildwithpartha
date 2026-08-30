@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { invalidateActivityQueries } from "@features/activity";
+import { invalidateTodayQueries } from "@features/today";
 import { captureBrainDumpItem } from "../api/brainDumpApi";
 import {
   clearCaptureQueue,
@@ -105,6 +106,7 @@ export function useBrainDumpCaptureQueue({
       setIsFlushing(false);
       if (sent > 0) {
         void invalidateBrainDumpQueries(queryClient);
+        void invalidateTodayQueries(queryClient);
         void invalidateActivityQueries(queryClient);
       }
     }

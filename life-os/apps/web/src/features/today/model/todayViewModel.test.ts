@@ -183,7 +183,30 @@ describe("todayViewModel", () => {
     expect(view.weekState).toEqual({ type: "empty" });
     expect(view.projectsStatus).toEqual({ type: "empty" });
     expect(view.brainDumpCountStatus).toEqual({ type: "ready", unprocessedCount: 0 });
+    expect(view.habitsStatus).toEqual({ type: "ready", habits: [] });
     expect(view.reviewStatus.type).toBe("ready");
+  });
+
+  it("maps canonical Habit counts, local dates, and pause state", () => {
+    const response = emptyResponse();
+    const habit = {
+      id: "habit-1",
+      name: "Read",
+      cadence: "DAILY" as const,
+      targetCount: 2,
+      completedCount: 1,
+      localDate: "2026-08-20" as const,
+      timeZone: "Asia/Kolkata",
+      paused: false,
+      currentStreak: 3,
+    };
+
+    const view = mapTodayResponse(
+      { ...response, habits: widget("SUCCESS", { habits: [habit] }) },
+      "en-IN",
+    );
+
+    expect(view.habitsStatus).toEqual({ type: "ready", habits: [habit] });
   });
 
   it("maps populated providers without changing the composed screen contract", () => {

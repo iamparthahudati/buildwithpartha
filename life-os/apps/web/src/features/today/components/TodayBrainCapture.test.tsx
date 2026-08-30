@@ -63,24 +63,24 @@ describe("TodayBrainCapture", () => {
     });
   });
 
-  it("uses an explicit device-draft path while offline", async () => {
+  it("uses the Account-scoped queue while offline", async () => {
     const onCapture = vi.fn();
     const { user } = renderWithUser(
       <ControlledCapture value="Remember this" isOnline={false} onCapture={onCapture} />,
     );
 
-    expect(screen.getByText(/Offline\. Save a device draft/)).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Save device draft" }));
-    expect(onCapture).toHaveBeenCalledWith({ content: "Remember this", mode: "device-draft" });
+    expect(screen.getByText(/Offline\. Queue this capture/)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Queue capture" }));
+    expect(onCapture).toHaveBeenCalledWith({ content: "Remember this", mode: "queue" });
   });
 
-  it("disables offline capture when the integration has no approved device-draft storage", () => {
+  it("disables offline capture when the integration has no approved queue", () => {
     const onCapture = vi.fn();
     renderWithUser(
       <ControlledCapture
         value="Keep this visible"
         isOnline={false}
-        offlineDraftSupported={false}
+        offlineQueueSupported={false}
         onCapture={onCapture}
       />,
     );
@@ -91,7 +91,7 @@ describe("TodayBrainCapture", () => {
     expect(onCapture).not.toHaveBeenCalled();
   });
 
-  it("announces saved, failed, and offline-draft outcomes without clearing caller text", () => {
+  it("announces saved, failed, and queued outcomes without clearing caller text", () => {
     const { rerender } = renderWithUser(
       <TodayBrainCapture {...BASE_PROPS} value="Draft remains" captureStatus={{ type: "saved" }} />,
     );
@@ -115,7 +115,7 @@ describe("TodayBrainCapture", () => {
         {...BASE_PROPS}
         value="Draft remains"
         isOnline={false}
-        captureStatus={{ type: "offline-draft" }}
+        captureStatus={{ type: "queued" }}
       />,
     );
     expect(screen.getByRole("status")).toHaveTextContent("Sync is not confirmed yet");
@@ -167,7 +167,7 @@ describe("TodayBrainCapture", () => {
         {...BASE_PROPS}
         value="A thought"
         isOnline={false}
-        captureStatus={{ type: "offline-draft" }}
+        captureStatus={{ type: "queued" }}
       />,
     );
     await expectNoAccessibilityViolations(container);

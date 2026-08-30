@@ -17,6 +17,7 @@ import type {
 } from "../api/todayApi";
 import type { TodayActiveProjectsStatus } from "../components/TodayActiveProjects";
 import type { TodayBrainDumpCountStatus } from "../components/TodayBrainCapture";
+import type { TodayHabitsStatus } from "../components/TodayHabits";
 import type { ProductPriority, TodayNextUpStatus } from "../components/TodayNextUp";
 import type { TodayMetricsData } from "../components/TodayMetricStrip";
 import type { TodayPlanningState } from "../components/TodayScreen";
@@ -43,6 +44,7 @@ export interface TodayViewModel extends TodayMetricsData {
   readonly weekState: TodayWeekState;
   readonly projectsStatus: TodayActiveProjectsStatus;
   readonly brainDumpCountStatus: TodayBrainDumpCountStatus;
+  readonly habitsStatus: TodayHabitsStatus;
   readonly planningState: TodayPlanningState;
 }
 
@@ -65,6 +67,7 @@ export function createLoadingTodayViewModel(): TodayViewModel {
     weekState: { type: "loading" },
     projectsStatus: { type: "loading" },
     brainDumpCountStatus: { type: "loading" },
+    habitsStatus: { type: "loading" },
     planningState: { type: "balanced" },
   };
 }
@@ -99,6 +102,7 @@ export function createErrorTodayViewModel(): TodayViewModel {
     weekState: { type: "error", message: RETRY_SECTION_MESSAGE },
     projectsStatus: { type: "error", message: RETRY_SECTION_MESSAGE },
     brainDumpCountStatus: { type: "error", message: "Brain Dump count couldn't load." },
+    habitsStatus: { type: "error", message: "Habits couldn't load." },
     planningState: { type: "balanced" },
   };
 }
@@ -132,11 +136,19 @@ export function mapTodayResponse(
     weekState: mapWeek(response),
     projectsStatus: activeProjectsStatus,
     brainDumpCountStatus: mapBrainDump(response),
+    habitsStatus: mapHabits(response),
     planningState:
       response.schedule.status === "SUCCESS" && (response.schedule.data?.conflicts.length ?? 0) > 0
         ? { type: "overloaded", reviewPlanHref: "/life-os/app/week-planner" }
         : { type: "balanced" },
   };
+}
+
+function mapHabits(response: TodayResponse): TodayHabitsStatus {
+  if (response.habits.status === "ERROR") {
+    return { type: "error", message: "Habits couldn't load." };
+  }
+  return { type: "ready", habits: response.habits.data?.habits ?? [] };
 }
 
 export function formatTodayLastUpdated(

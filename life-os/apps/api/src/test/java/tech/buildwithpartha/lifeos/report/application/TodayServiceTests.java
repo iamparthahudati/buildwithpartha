@@ -84,7 +84,7 @@ class TodayServiceTests {
     activeProjectsWidgetProvider = new DefaultActiveProjectsWidgetProvider();
     reviewWidgetProvider = new DefaultReviewWidgetProvider();
     brainDumpWidgetProvider = new DefaultBrainDumpWidgetProvider(userId -> 0);
-    habitsWidgetProvider = new DefaultHabitsWidgetProvider();
+    habitsWidgetProvider = new DefaultHabitsWidgetProvider(userId -> List.of());
     metricsWidgetProvider = new DefaultMetricsWidgetProvider();
 
     todayService =
@@ -223,7 +223,8 @@ class TodayServiceTests {
         TodayQueryResult.BrainDumpWidget.success(new TodayQueryResult.BrainDumpData(3));
 
     TodayQueryResult.TodayHabitDto habit =
-        new TodayQueryResult.TodayHabitDto(id, "Habit", "DAILY", true, 5);
+        new TodayQueryResult.TodayHabitDto(
+            id, "Habit", "DAILY", 1, 1, LocalDate.of(2026, 2, 1), "UTC", false, 5);
     TodayQueryResult.HabitsWidget habits =
         TodayQueryResult.HabitsWidget.success(new TodayQueryResult.HabitsData(List.of(habit)));
 

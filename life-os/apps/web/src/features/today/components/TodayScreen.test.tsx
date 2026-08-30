@@ -64,6 +64,11 @@ function firstUseProps(): TodayScreenProps {
       projectsHref: "/life-os/app/projects",
       onAddProject: noop,
     },
+    habits: {
+      status: { type: "ready", habits: [] },
+      habitsHref: "/life-os/app/habits",
+      onSetCount: noop,
+    },
     brainCapture: {
       value: "",
       onValueChange: noop,
@@ -224,7 +229,7 @@ describe("TodayScreen", () => {
     expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
   });
 
-  it("shows the last update offline and keeps device-draft language explicit", () => {
+  it("shows the last update offline and keeps queue language explicit", () => {
     const props = firstUseProps();
     renderWithUser(
       <TodayScreen
@@ -236,8 +241,8 @@ describe("TodayScreen", () => {
 
     expect(screen.getByText("You're offline")).toBeInTheDocument();
     expect(screen.getByText(/last available Today data from 10:42 AM/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Save device draft" })).toBeInTheDocument();
-    expect(screen.getByText(/Save a device draft to keep this text/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Queue capture" })).toBeInTheDocument();
+    expect(screen.getByText(/Queue this capture on this device/)).toBeInTheDocument();
   });
 
   it("preserves the documented narrow-screen source order and has no accessibility violations", async () => {
@@ -253,6 +258,7 @@ describe("TodayScreen", () => {
       "review",
       "sprint-week",
       "projects",
+      "habits",
       "brain-capture",
     ]);
     await expectNoAccessibilityViolations(container);

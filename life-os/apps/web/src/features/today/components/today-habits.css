@@ -1,0 +1,52 @@
+.lifeos-today-habits,
+.lifeos-today-habits__list,
+.lifeos-today-habits__details,
+.lifeos-today-habits__empty {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.lifeos-today-habits__list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.lifeos-today-habits__item {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--space-3);
+  border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.lifeos-today-habits__item:last-child {
+  border-block-end: 0;
+}
+
+.lifeos-today-habits__details {
+  min-width: 0;
+  gap: var(--space-1);
+}
+
+.lifeos-today-habits__controls {
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--space-2);
+}
+
+.lifeos-today-habits__loading {
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 30rem) {
+  .lifeos-today-habits__item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .lifeos-today-habits__controls > * {
+    flex: 1;
+  }
+}

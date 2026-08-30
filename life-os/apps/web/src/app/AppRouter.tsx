@@ -4,6 +4,11 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "@components/layout";
 import { QuickAddDialog, useQuickAddShortcut, type QuickAddType } from "@components/feedback";
 import { RequireAuth, useLogout } from "@features/auth";
+import { useBrainDumpCaptureQueue, useCaptureBrainDumpItem } from "@features/brain-dump";
+import { useHabits, useSetHabitEntry } from "@features/habits";
+import { useCreateNote } from "@features/notes";
+import { useTodayOnlineStatus } from "@features/today";
+import { todayLocalDate } from "@lib/localDateTime";
 import { useAuthSession } from "@state/authSession";
 import {
   CancelDeletionRoute,
@@ -53,6 +58,16 @@ function ProtectedShell() {
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [quickAddType, setQuickAddType] = useState<QuickAddType>("task");
   const [quickAddRequestId, setQuickAddRequestId] = useState(0);
+  const isOnline = useTodayOnlineStatus();
+  const createNote = useCreateNote();
+  const captureBrainDump = useCaptureBrainDumpItem();
+  const habitsQuery = useHabits(false, user !== null);
+  const setHabitEntry = useSetHabitEntry();
+  const brainDumpCaptureQueue = useBrainDumpCaptureQueue({
+    userId: user?.id ?? "",
+    isOnline,
+    enabled: user !== null,
+  });
 
   const openQuickAdd = (type: QuickAddType = "task") => {
     setQuickAddType(type);
@@ -79,6 +94,7 @@ function ProtectedShell() {
         locale={user.locale}
         onQuickAddTriggerClick={openQuickAdd}
         onSignOut={() => logout.mutate()}
+        brainDumpCaptureQueue={brainDumpCaptureQueue}
       />
       <QuickAddDialog
         key={quickAddRequestId}
@@ -86,6 +102,30 @@ function ProtectedShell() {
         onClose={() => setQuickAddOpen(false)}
         timeZone={user.timeZone}
         initialType={quickAddType}
+        onCreateNote={async ({ title, body }) => {
+          await createNote.mutateAsync({ title, body, labelIds: [], links: [] });
+        }}
+        onCaptureBrainDump={async ({ content, mode }) => {
+          if (mode === "queue") {
+            brainDumpCaptureQueue.enqueue(content);
+            return;
+          }
+          await captureBrainDump.mutateAsync({ content });
+        }}
+        habitOptions={(habitsQuery.data ?? []).map((habit) => ({
+          id: habit.id,
+          label: habit.name,
+          targetCount: habit.targetCount,
+        }))}
+        onLogHabit={async ({ habitId, count }) => {
+          const habit = habitsQuery.data?.find((candidate) => candidate.id === habitId);
+          if (!habit) throw new Error("Habit unavailable");
+          await setHabitEntry.mutateAsync({
+            habit,
+            date: todayLocalDate(habit.timeZone),
+            count,
+          });
+        }}
       />
     </>
   );
