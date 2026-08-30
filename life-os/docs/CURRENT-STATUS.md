@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-30 (LOS-1209 habits API)
+Last updated: 2026-08-30 (LOS-1210 habit streak calculations)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1210 — Defined canonical habit/streak calculation rules in `docs/34-HABIT-STREAK-CALCULATIONS.md`: DAILY/WEEKLY/MONTHLY period grids (ISO week, calendar month), full-pause exclusion semantics (paused periods invisible to streak counter, partly-paused remain eligible), backward current-streak scan, longestStreak tracking, target-count evaluation with multi-entry date summing, late-edit repair semantics, timezone-change non-retroactivity, and completion-rate rounding policy. Added `HabitStreakCalculator` pure stateless domain service and `HabitStreakResult` record in `habit/domain`; 23 deterministic boundary-fixture tests pass with zero failures or skips. All LOS-1210 files pass Spotless and Checkstyle; pre-existing Brain Dump/Today failures are unrelated. See `docs/handoffs/LOS-1210.md`.
 
 - LOS-1209 — Implemented the authenticated Habits REST API: owner-scoped CRUD with reminder preferences and optimistic versions, idempotent archive/restore, permanent cascade delete, timezone-aware today entries, bounded 366-day entry/statistics ranges, increment/set/idempotent remove, inclusive pause periods, and plain window completion statistics. Added stable OpenAPI operation contracts plus integration coverage for authentication, CSRF, validation, cross-user isolation, conflicts, daily-entry uniqueness, retry-safe lifecycle/removal behavior, and database cascades. All 54 Habit tests and both OpenAPI artifact tests pass. The full 995-test backend run retains the two pre-existing Today/Brain Dump expectation failures, and whole-tree Spotless/Checkstyle retains only the pre-existing Brain Dump violations already documented by LOS-1208. See `docs/handoffs/LOS-1209.md`.
 
