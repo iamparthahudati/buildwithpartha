@@ -51,6 +51,17 @@ export interface HabitStreakStatistics {
   readonly completionRate: number;
 }
 
+export interface HabitStatisticsWindow extends HabitStreakStatistics {
+  readonly habitId: string;
+  readonly from: LocalDate;
+  readonly to: LocalDate;
+  readonly totalDays: number;
+  readonly daysWithEntry: number;
+  readonly daysMeetingTarget: number;
+  readonly totalCompletions: number;
+  readonly dayCompletionRate: number;
+}
+
 export interface HabitHeatmapDay {
   readonly localDate: LocalDate;
   readonly completedCount: number;
@@ -147,4 +158,13 @@ export function habitHeatmapLevel(day: HabitHeatmapDay): 0 | 1 | 2 | 3 | 4 {
   if (ratio >= 0.75) return 3;
   if (ratio >= 0.5) return 2;
   return 1;
+}
+
+export function habitIsPausedOn(
+  pauses: readonly Pick<HabitPausePeriod, "startDate" | "endDate">[],
+  date: LocalDate,
+): boolean {
+  return pauses.some(
+    (pause) => pause.startDate <= date && (pause.endDate == null || pause.endDate >= date),
+  );
 }

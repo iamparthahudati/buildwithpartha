@@ -22,6 +22,7 @@ export { ProgressRoute } from "./ProgressRoute";
 export { ReportsRoute } from "./ReportsRoute";
 export { NotesRoute } from "./NotesRoute";
 export { BrainDumpRoute } from "./BrainDumpRoute";
+export { HabitsRoute } from "./HabitsRoute";
 export { ComingSoonRoute } from "./ComingSoonRoute";
 export { NotFoundRoute, type NotFoundRouteProps } from "./NotFoundRoute";
 export { UnavailableRoute } from "./UnavailableRoute";

@@ -271,7 +271,8 @@ public class HabitController {
       operationId = "getHabitStats",
       summary = "Habit statistics",
       description =
-          "Window-based completion statistics across an inclusive range of at most 366 days.")
+          "Window-based completion statistics across an inclusive range of at most 366 days, "
+              + "including authoritative cadence-aware streaks with fully paused periods excluded.")
   @ApiResponse(responseCode = "200", description = "Statistics.")
   @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
   @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")

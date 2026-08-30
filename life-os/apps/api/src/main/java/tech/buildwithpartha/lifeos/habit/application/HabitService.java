@@ -20,6 +20,8 @@ import tech.buildwithpartha.lifeos.habit.domain.HabitEntryRepository;
 import tech.buildwithpartha.lifeos.habit.domain.HabitPausePeriod;
 import tech.buildwithpartha.lifeos.habit.domain.HabitPausePeriodRepository;
 import tech.buildwithpartha.lifeos.habit.domain.HabitRepository;
+import tech.buildwithpartha.lifeos.habit.domain.HabitStreakCalculator;
+import tech.buildwithpartha.lifeos.habit.domain.HabitStreakResult;
 
 /**
  * Transactional service for the Habit lifecycle (LOS-1209): CRUD, archive/restore, pause periods,
@@ -305,15 +307,25 @@ public class HabitService {
 
     List<HabitEntry> entries =
         habitEntryRepository.findByHabitIdAndLocalDateBetween(habitId, from, to);
+    List<HabitPausePeriod> pausePeriods = habitPausePeriodRepository.findByHabitId(habitId);
     long totalDays = ChronoUnit.DAYS.between(from, to) + 1;
     long daysWithEntry = entries.size();
     long daysMeetingTarget =
         entries.stream().filter(entry -> entry.completedCount() >= habit.targetCount()).count();
     long totalCompletions = entries.stream().mapToLong(HabitEntry::completedCount).sum();
     double completionRate = totalDays <= 0 ? 0.0 : (double) daysMeetingTarget / (double) totalDays;
+    HabitStreakResult streak =
+        HabitStreakCalculator.calculate(habit, entries, pausePeriods, from, to);
 
     return new HabitStatistics(
-        from, to, totalDays, daysWithEntry, daysMeetingTarget, totalCompletions, completionRate);
+        from,
+        to,
+        totalDays,
+        daysWithEntry,
+        daysMeetingTarget,
+        totalCompletions,
+        completionRate,
+        streak);
   }
 
   // --- Helpers --------------------------------------------------------------

@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-30 (LOS-1211 Habit components)
+Last updated: 2026-08-30 (LOS-1212 Habits integration)
 
 ## Phase
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1212 — Composed and integrated the authenticated Habits experience at `/life-os/app/habits` and `/life-os/app/habits/:habitId`: URL-owned local entry dates and bounded history ranges; Today, all, archived, overview, history, and statistics views; create/edit/pause/resume/archive/restore flows; exact optimistic entry rollback; precise Habit/Today/activity invalidation; responsive, accessible loading/empty/error/conflict states; and server-authoritative cadence-aware streak statistics with fully paused periods excluded. Focused frontend (27 tests), frontend quality/build/structural checks, and focused backend Habit/OpenAPI suites pass. The full frontend and backend runs retain only the previously documented unrelated Projects page-size mismatch and two Today/Brain Dump expectations. See `docs/handoffs/LOS-1212.md`.
 
 - LOS-1211 — Built the complete responsive Habit component suite under `features/habits`: canonical API-aligned models and formatters; `HabitCard` and `HabitRow`; target-aware local-date `HabitEntryControl`; pause-aware `HabitStreakSummary`; `HabitHeatmap` with a real accessible table alternative; validated create/edit form with reminder, optimistic-version, conflict, and pending states; and explicit pause/archive dialogs. Added eight catalog specimens and 16 focused model/component/accessibility tests. The focused suite, quality gate, production test build, repository structural checks, and live 320px/1280px overflow/interaction/console checks pass. The full 2,300-test frontend run retains one pre-existing Projects route page-size expectation mismatch reproduced on untouched `develop`; 2,299 tests pass. See `docs/handoffs/LOS-1211.md`.
 

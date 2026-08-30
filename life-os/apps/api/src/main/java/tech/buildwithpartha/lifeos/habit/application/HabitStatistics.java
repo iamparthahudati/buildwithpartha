@@ -2,11 +2,11 @@ package tech.buildwithpartha.lifeos.habit.application;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import tech.buildwithpartha.lifeos.habit.domain.HabitStreakResult;
 
 /**
- * Window-based aggregate statistics for a habit (LOS-1209). Streak and cadence-eligibility math is
- * intentionally out of scope here — that is defined in LOS-1210. These figures are plain counts
- * over an inclusive {@code [from, to]} local-date window.
+ * Window-based aggregate statistics for a habit. Plain day counts support history visualisation;
+ * {@code streak} is the authoritative cadence-aware, pause-aware result defined in LOS-1210.
  *
  * @param totalDays number of calendar days in the inclusive window
  * @param daysWithEntry days that have at least one recorded completion
@@ -21,10 +21,12 @@ public record HabitStatistics(
     long daysWithEntry,
     long daysMeetingTarget,
     long totalCompletions,
-    double completionRate) {
+    double completionRate,
+    HabitStreakResult streak) {
 
   public HabitStatistics {
     Objects.requireNonNull(from, "from must not be null");
     Objects.requireNonNull(to, "to must not be null");
+    Objects.requireNonNull(streak, "streak must not be null");
   }
 }
