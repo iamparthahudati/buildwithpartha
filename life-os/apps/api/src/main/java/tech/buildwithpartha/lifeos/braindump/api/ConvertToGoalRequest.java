@@ -18,9 +18,15 @@ public record ConvertToGoalRequest(
     long version) {
 
   public ConvertToGoalRequest {
-    if (description == null) description = Optional.empty();
-    if (targetValue == null) targetValue = Optional.empty();
-    if (targetDate == null) targetDate = Optional.empty();
+    if (description == null) {
+      description = Optional.empty();
+    }
+    if (targetValue == null) {
+      targetValue = Optional.empty();
+    }
+    if (targetDate == null) {
+      targetDate = Optional.empty();
+    }
   }
 
   public ConvertToGoalCommand toCommand() {

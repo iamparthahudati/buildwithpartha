@@ -44,8 +44,7 @@ public class BrainDumpService {
         Objects.requireNonNull(brainDumpItemRepository, "brainDumpItemRepository must not be null");
     this.taskCreator = Objects.requireNonNull(taskCreator, "taskCreator must not be null");
     this.noteCreator = Objects.requireNonNull(noteCreator, "noteCreator must not be null");
-    this.projectCreator =
-        Objects.requireNonNull(projectCreator, "projectCreator must not be null");
+    this.projectCreator = Objects.requireNonNull(projectCreator, "projectCreator must not be null");
     this.goalCreator = Objects.requireNonNull(goalCreator, "goalCreator must not be null");
     this.clock = Objects.requireNonNull(clock, "clock must not be null");
   }
@@ -76,8 +75,7 @@ public class BrainDumpService {
   public BrainDumpItem getItem(UUID userId, UUID itemId) {
     return brainDumpItemRepository
         .findByIdAndUserId(itemId, userId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Brain dump item not found: " + itemId));
+        .orElseThrow(() -> new ResourceNotFoundException("Brain dump item not found: " + itemId));
   }
 
   @Transactional(readOnly = true)
@@ -240,8 +238,7 @@ public class BrainDumpService {
   private BrainDumpItem requireOwnedItem(UUID userId, UUID itemId) {
     return brainDumpItemRepository
         .findByIdAndUserId(itemId, userId)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Brain dump item not found: " + itemId));
+        .orElseThrow(() -> new ResourceNotFoundException("Brain dump item not found: " + itemId));
   }
 
   private void checkVersion(BrainDumpItem item, long expectedVersion) {

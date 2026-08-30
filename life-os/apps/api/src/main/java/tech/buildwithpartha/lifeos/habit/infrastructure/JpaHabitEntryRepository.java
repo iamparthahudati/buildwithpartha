@@ -1,6 +1,7 @@
 package tech.buildwithpartha.lifeos.habit.infrastructure;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,6 +44,17 @@ public class JpaHabitEntryRepository implements HabitEntryRepository {
   public List<HabitEntry> findByHabitId(UUID habitId) {
     Objects.requireNonNull(habitId, "habitId must not be null");
     return jpaRepository.findByHabitId(habitId).stream().map(HabitEntryEntity::toDomain).toList();
+  }
+
+  @Override
+  public List<HabitEntry> findByHabitIds(Collection<UUID> habitIds) {
+    Objects.requireNonNull(habitIds, "habitIds must not be null");
+    if (habitIds.isEmpty()) {
+      return List.of();
+    }
+    return jpaRepository.findByHabitIdIn(habitIds).stream()
+        .map(HabitEntryEntity::toDomain)
+        .toList();
   }
 
   @Override

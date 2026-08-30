@@ -158,7 +158,7 @@ export function NotesRoute() {
 
   const handleSubmitNote = async (data: NoteFormData) => {
     if (!isOnline) {
-      setAutosaveStatusState({ type: "queued" });
+      setAutosaveStatusState({ type: "offline-unsaved" });
       return;
     }
 

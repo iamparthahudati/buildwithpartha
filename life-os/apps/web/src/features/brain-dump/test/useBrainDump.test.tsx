@@ -1,11 +1,22 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { TODAY_QUERY_KEY } from "@features/today";
 import * as brainDumpApi from "../api/brainDumpApi";
-import { useCaptureBrainDumpItem, useUpdateBrainDumpContent } from "../hooks/useBrainDump";
+import {
+  runBatchConvert,
+  useArchiveBrainDumpItem,
+  useBrainDumpBatchConvert,
+  useBrainDumpItems,
+  useCaptureBrainDumpItem,
+  useConvertBrainDumpItem,
+  useDeferBrainDumpItem,
+  useDeleteBrainDumpItem,
+  useRestoreBrainDumpItem,
+  useUpdateBrainDumpContent,
+} from "../hooks/useBrainDump";
 import type { BrainDumpItem } from "../model/brainDumpItem";
 
 vi.mock("@features/activity", () => ({ invalidateActivityQueries: vi.fn() }));
@@ -13,8 +24,14 @@ vi.mock("../api/brainDumpApi", async () => {
   const actual = await vi.importActual<typeof brainDumpApi>("../api/brainDumpApi");
   return {
     ...actual,
+    queryBrainDumpItems: vi.fn(),
     captureBrainDumpItem: vi.fn(),
     updateBrainDumpContent: vi.fn(),
+    deferBrainDumpItem: vi.fn(),
+    archiveBrainDumpItem: vi.fn(),
+    restoreBrainDumpItem: vi.fn(),
+    deleteBrainDumpItem: vi.fn(),
+    convertBrainDumpByTarget: vi.fn(),
   };
 });
 
@@ -46,8 +63,26 @@ function harness() {
 
 describe("Brain Dump mutation invalidation", () => {
   beforeEach(() => {
+    vi.resetAllMocks();
+    vi.mocked(brainDumpApi.queryBrainDumpItems).mockResolvedValue({
+      items: [ITEM],
+      page: 0,
+      size: 20,
+      totalItems: 1,
+      totalPages: 1,
+    });
     vi.mocked(brainDumpApi.captureBrainDumpItem).mockResolvedValue(ITEM);
     vi.mocked(brainDumpApi.updateBrainDumpContent).mockResolvedValue(ITEM);
+    vi.mocked(brainDumpApi.deferBrainDumpItem).mockResolvedValue(ITEM);
+    vi.mocked(brainDumpApi.archiveBrainDumpItem).mockResolvedValue(ITEM);
+    vi.mocked(brainDumpApi.restoreBrainDumpItem).mockResolvedValue(ITEM);
+    vi.mocked(brainDumpApi.deleteBrainDumpItem).mockResolvedValue(undefined);
+    vi.mocked(brainDumpApi.convertBrainDumpByTarget).mockResolvedValue({
+      ...ITEM,
+      status: "CONVERTED",
+      convertedToType: "NOTE",
+      convertedToId: "note-1",
+    });
   });
 
   it("invalidates Today after a capture changes the unprocessed count", async () => {
@@ -73,5 +108,59 @@ describe("Brain Dump mutation invalidation", () => {
     });
 
     expect(invalidate).not.toHaveBeenCalledWith({ queryKey: TODAY_QUERY_KEY });
+  });
+
+  it("runs the query and every lifecycle mutation through the canonical API", async () => {
+    const { wrapper } = harness();
+    const query = renderHook(() => useBrainDumpItems({ status: "UNPROCESSED" }), { wrapper });
+    await waitFor(() => expect(query.result.current.isSuccess).toBe(true));
+
+    const deferMutation = renderHook(() => useDeferBrainDumpItem(), { wrapper });
+    const archiveMutation = renderHook(() => useArchiveBrainDumpItem(), { wrapper });
+    const restoreMutation = renderHook(() => useRestoreBrainDumpItem(), { wrapper });
+    const deleteMutation = renderHook(() => useDeleteBrainDumpItem(), { wrapper });
+    const convertMutation = renderHook(() => useConvertBrainDumpItem(), { wrapper });
+
+    await act(async () => {
+      await deferMutation.result.current.mutateAsync({ id: ITEM.id, version: 0 });
+      await archiveMutation.result.current.mutateAsync({ id: ITEM.id, version: 0 });
+      await restoreMutation.result.current.mutateAsync({ id: ITEM.id, version: 0 });
+      await deleteMutation.result.current.mutateAsync(ITEM.id);
+      await convertMutation.result.current.mutateAsync({
+        id: ITEM.id,
+        target: "NOTE",
+        request: { title: "Thought", body: "Thought", labelIds: [], version: 0 },
+      });
+    });
+
+    expect(brainDumpApi.queryBrainDumpItems).toHaveBeenCalled();
+    expect(brainDumpApi.deferBrainDumpItem).toHaveBeenCalledWith(ITEM.id, 0);
+    expect(brainDumpApi.archiveBrainDumpItem).toHaveBeenCalledWith(ITEM.id, 0);
+    expect(brainDumpApi.restoreBrainDumpItem).toHaveBeenCalledWith(ITEM.id, 0);
+    expect(brainDumpApi.deleteBrainDumpItem).toHaveBeenCalledWith(ITEM.id);
+    expect(brainDumpApi.convertBrainDumpByTarget).toHaveBeenCalled();
+  });
+
+  it("reports partial batch results and runs the batch mutation invalidation", async () => {
+    vi.mocked(brainDumpApi.convertBrainDumpByTarget)
+      .mockResolvedValueOnce({ ...ITEM, status: "CONVERTED" })
+      .mockRejectedValueOnce(new Error("second failed"));
+    const second = { ...ITEM, id: "item-2", content: "Second" };
+
+    const direct = await runBatchConvert({ items: [ITEM, second], target: "NOTE" });
+    expect(direct.successCount).toBe(1);
+    expect(direct.failureCount).toBe(1);
+    expect(direct.results[1]).toMatchObject({ ok: false, error: "second failed" });
+
+    vi.mocked(brainDumpApi.convertBrainDumpByTarget).mockResolvedValue({
+      ...ITEM,
+      status: "CONVERTED",
+    });
+    const { wrapper } = harness();
+    const mutation = renderHook(() => useBrainDumpBatchConvert(), { wrapper });
+    await act(async () => {
+      await mutation.result.current.mutateAsync({ items: [ITEM], target: "TASK" });
+    });
+    await waitFor(() => expect(mutation.result.current.data?.successCount).toBe(1));
   });
 });

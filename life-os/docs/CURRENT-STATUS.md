@@ -1,10 +1,10 @@
 # Current status
 
-Last updated: 2026-08-30 (LOS-1213 Today capture/Habit integration)
+Last updated: 2026-08-30 (LOS-1214 Knowledge and Habits phase gate)
 
 ## Phase
 
-Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), and Epic 10 (Sprints, week planning, and reviews) completed. Epic 11 (Goals, progress, reports, and analytics) completed.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), Epic 10 (Sprints, week planning, and reviews), Epic 11 (Goals, progress, reports, and analytics), and Epic 12 (Notes, Brain Dump, and Habits) completed.
 
 ## In review
 
@@ -24,6 +24,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0713 — Build ProjectTimeline and milestones (accessible milestone timeline/list, add/edit form dialog, status transitions, deletion confirmation, REST API integration, React Query hooks, and catalog coverage). See `docs/handoffs/LOS-0713.md`.
 
 ## Completed
+
+- LOS-1214 — Passed the Epic 12 Knowledge and Habits phase gate. The gate revalidated Notes autosave/conflict handling and safe Markdown; Brain Dump owner-scoped, retry-safe conversion and honest persistent offline queue; Habit cadence, streak, pause, timezone, ownership, and Today integration; responsive accessibility; and bounded large-account behavior. It corrected Notes copy that falsely implied offline persistence, replaced the Today Habit per-Habit history reads with three bounded bulk reads, closed Brain Dump quality/coverage debt, and repaired the stale Projects pagination assertion. Full backend, frontend, and documentation gates pass. See `docs/gates/KNOWLEDGE-HABITS-PHASE-GATE.md` and `docs/handoffs/LOS-1214.md`.
 
 - LOS-1213 — Connected Quick Add and Today to the shared Notes, Brain Dump, and Habit services. Quick Add now uses real Habit choices and confirmed Note/Brain/Habit writes; Today exposes an owner-scoped, timezone-aware Habit projection with absolute entry controls; and one shell-owned Brain Dump queue reports honest saved/queued outcomes across capture surfaces. Confirmed Brain changes invalidate Brain Dump, Today, and Activity precisely, while content-only edits stay local to Brain Dump. The full backend suite, web quality/build/structural checks, and 218 focused frontend tests pass; the full web suite retains only the documented unrelated Projects page-size assertion. See `docs/handoffs/LOS-1213.md`.
 

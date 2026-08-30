@@ -19,8 +19,7 @@ export interface NoteFormData {
 export type NoteAutosaveStatus =
   | { readonly type: "saved" }
   | { readonly type: "saving" }
-  | { readonly type: "device-draft" }
-  | { readonly type: "queued" }
+  | { readonly type: "offline-unsaved" }
   | { readonly type: "conflict"; readonly message?: string }
   | { readonly type: "idle" };
 
@@ -196,16 +195,10 @@ export function NoteForm({
             Saved
           </InlineMessage>
         );
-      case "device-draft":
+      case "offline-unsaved":
         return (
-          <InlineMessage tone="info" announce="status">
-            Device draft
-          </InlineMessage>
-        );
-      case "queued":
-        return (
-          <InlineMessage tone="info" announce="status">
-            Queued — will sync when online
+          <InlineMessage tone="warning" announce="status">
+            Not saved — reconnect and choose Save note
           </InlineMessage>
         );
       case "conflict":
@@ -340,9 +333,9 @@ export function NoteForm({
         <div className="lifeos-note-form__status-area">
           {renderStatus()}
 
-          {!isOnline && status.type !== "device-draft" && status.type !== "queued" && (
+          {!isOnline && status.type !== "offline-unsaved" && (
             <InlineMessage tone="warning">
-              Offline. Draft changes saved on this device.
+              Offline. Changes stay in this tab until you save them online.
             </InlineMessage>
           )}
         </div>

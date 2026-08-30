@@ -45,7 +45,7 @@ describe("BrainDumpCaptureBar", () => {
 
     expect(
       screen.getByText(
-        "Offline — this item will be queued. Keep this page open until you reconnect.",
+        "Offline — this item will be stored on this device and sent when you reconnect.",
       ),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /queue item/i })).toBeInTheDocument();

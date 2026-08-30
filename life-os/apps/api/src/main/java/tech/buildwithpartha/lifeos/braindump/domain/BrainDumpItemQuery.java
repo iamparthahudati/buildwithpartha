@@ -10,5 +10,4 @@ public record BrainDumpItemQuery(
     int page,
     int size,
     String sortBy,
-    String sortDirection
-) {}
+    String sortDirection) {}

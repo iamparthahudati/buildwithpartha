@@ -90,7 +90,8 @@ public class BrainDumpController {
     }
 
     BrainDumpItemQuery query =
-        new BrainDumpItemQuery(userId, q, parsedStatus, archived, page, size, sortBy, sortDirection);
+        new BrainDumpItemQuery(
+            userId, q, parsedStatus, archived, page, size, sortBy, sortDirection);
     BrainDumpItemQueryResult result = brainDumpService.listItems(query);
 
     List<BrainDumpItemResponse> items =
@@ -105,8 +106,7 @@ public class BrainDumpController {
   @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
   @PostMapping
   public ResponseEntity<BrainDumpItemResponse> capture(
-      @AuthenticationPrincipal UUID userId,
-      @Valid @RequestBody CaptureBrainDumpRequest request) {
+      @AuthenticationPrincipal UUID userId, @Valid @RequestBody CaptureBrainDumpRequest request) {
     BrainDumpItem created = brainDumpService.capture(userId, request.toCommand());
     BrainDumpItemResponse response = BrainDumpItemResponse.fromDomain(created);
     URI location = URI.create("/life-os/api/v1/brain-dump-items/" + created.id());

@@ -11,5 +11,4 @@ public record ConvertToTaskCommand(
     Optional<UUID> projectId,
     Optional<Instant> dueAt,
     String priority,
-    Set<UUID> labelIds
-) {}
+    Set<UUID> labelIds) {}

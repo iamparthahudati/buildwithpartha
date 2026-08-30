@@ -142,4 +142,17 @@ describe("NoteForm", () => {
     await userEvent.click(screen.getByRole("button", { name: "Use My Draft" }));
     expect(onResolveConflict).toHaveBeenCalledWith("draft");
   });
+
+  it("labels offline edits as unsaved instead of implying durable storage", async () => {
+    const { container } = renderForm({
+      isOnline: false,
+      status: { type: "offline-unsaved" },
+    });
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Not saved — reconnect and choose Save note",
+    );
+    expect(screen.queryByText(/queued|saved on this device/i)).not.toBeInTheDocument();
+    await expectNoAccessibilityViolations(container);
+  });
 });

@@ -116,7 +116,8 @@ public class JpaBrainDumpItemRepository implements BrainDumpItemRepository {
     TypedQuery<BrainDumpItemEntity> typedQuery = entityManager.createQuery(cq);
     typedQuery.setFirstResult(query.page() * query.size());
     typedQuery.setMaxResults(query.size());
-    List<BrainDumpItem> items = typedQuery.getResultList().stream().map(BrainDumpItemEntity::toDomain).toList();
+    List<BrainDumpItem> items =
+        typedQuery.getResultList().stream().map(BrainDumpItemEntity::toDomain).toList();
 
     // Count query
     CriteriaQuery<Long> countCq = cb.createQuery(Long.class);
