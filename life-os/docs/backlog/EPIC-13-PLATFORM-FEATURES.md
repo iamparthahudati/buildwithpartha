@@ -2,7 +2,7 @@
 
 | ID | Ticket | Description and acceptance contract | Depends on | Estimate | Status |
 | --- | --- | --- | --- | --- | --- |
-| LOS-1301 | Implement global search backend | User-scoped indexed search across approved entities, grouped result DTO, type filters, safe highlights, ranking, pagination and performance. Queries/bodies are not logged. | LOS-0702, LOS-0802, LOS-1201, LOS-1204, LOS-1102 | M | Backlog |
+| LOS-1301 | Implement global search backend | User-scoped indexed search across approved entities, grouped result DTO, type filters, safe highlights, ranking, pagination and performance. Queries/bodies are not logged. | LOS-0702, LOS-0802, LOS-1201, LOS-1204, LOS-1102 | M | Done |
 | LOS-1302 | Build and integrate global search | SearchField/CommandPalette and full results route with keyboard navigation, grouped results, recents, loading/no results/offline, deep links and query privacy. | LOS-0402, LOS-0426, LOS-1301 | M | Backlog |
 | LOS-1303 | Model and implement notifications | Notification/preferences schema, list/unread count/read/unread/clear endpoints, source URLs, retention and ownership; security notices are not user-clearable if policy requires. | LOS-0216 | M | Backlog |
 | LOS-1304 | Build notification center/settings | Bell/count, grouped list, mark/clear/open, loading/empty/error, quiet hours/category/channel preferences and mobile drawer; counts stay consistent. | LOS-0414, LOS-1303 | M | Backlog |
