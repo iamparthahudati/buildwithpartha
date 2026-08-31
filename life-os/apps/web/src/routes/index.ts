@@ -24,6 +24,7 @@ export { NotesRoute } from "./NotesRoute";
 export { BrainDumpRoute } from "./BrainDumpRoute";
 export { HabitsRoute } from "./HabitsRoute";
 export { SearchRoute } from "./SearchRoute";
+export { NotificationsRoute } from "./NotificationsRoute";
 export { ComingSoonRoute } from "./ComingSoonRoute";
 export { NotFoundRoute, type NotFoundRouteProps } from "./NotFoundRoute";
 export { UnavailableRoute } from "./UnavailableRoute";

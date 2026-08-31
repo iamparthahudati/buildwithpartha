@@ -5,6 +5,8 @@ import { PageHeader, Tabs, type TabItem } from "@components/navigation";
 import { Skeleton } from "@components/ui";
 import { useUserProfile, type UserProfileResponse } from "@features/user";
 
+import { NotificationPreferencesPanel } from "@features/notifications";
+
 import { LocalizationSettingsPanel } from "./LocalizationSettingsPanel";
 import { FocusPreferencesPanel } from "./FocusPreferencesPanel";
 import { PrivacySettingsPanel } from "./PrivacySettingsPanel";
@@ -92,6 +94,11 @@ export function SettingsScreen({
       id: "localization",
       label: "Localization",
       panel: <LocalizationSettingsPanel profile={profile} />,
+    },
+    {
+      id: "notifications",
+      label: "Notifications",
+      panel: <NotificationPreferencesPanel />,
     },
     {
       id: "focus",

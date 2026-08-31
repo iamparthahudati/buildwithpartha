@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-31 (LOS-1303 Notifications backend)
+Last updated: 2026-09-01 (LOS-1304 Notification center & settings frontend)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1304 — Built and integrated the notification center and settings frontend module (`@features/notifications`): domain models (`NotificationItem`, `NotificationCategory`, `NotificationPreferences`, `UpdateNotificationPreferencesRequest`), category metadata helpers (`getCategoryLabel`, `getCategoryIcon`, `getCategoryBadgeTone`), date-grouping utility (`groupNotificationsByDate`), REST API client wrapper over `apiRequest`, React Query hooks (`useNotifications`, `useNotificationUnreadCount`, `useMarkNotificationRead`, `useMarkNotificationUnread`, `useMarkAllNotificationsRead`, `useClearNotification`, `useClearAllNotifications`, `useNotificationPreferences`, `useUpdateNotificationPreferences`), `NotificationRow` with accessible unread indicator (`aria-hidden="true"` + screen reader text) and category badges, `NotificationGroupedList` ("Today", "Yesterday", "Earlier"), `NotificationCenter` container with unread badge, category filter, unread filter toggle, pagination (1-indexed), empty/loading/error states, `NotificationDrawer` responsive mobile/quick drawer, `NotificationPreferencesPanel` settings panel with quiet hours, category switches, and delivery channel switches, `NotificationsScreen` route component, `/life-os/app/notifications` route, TopBar bell unread counter badge, and Notifications tab in SettingsScreen. 100% unit and axe accessibility tests passed. See `docs/handoffs/LOS-1304.md`.
 
 - LOS-1303 — Implemented authenticated, user-scoped in-app notification center REST API (`/notifications`) and JPA infrastructure (`V30__notifications_schema.sql`). Implemented `GET /notifications` with unread and category filters, `GET /notifications/unread-count`, `PUT /notifications/{id}/read` and `/unread`, `PUT /notifications/read-all`, `DELETE /notifications/{id}` (protecting non-clearable `SECURITY` notices with `NotificationNotClearableException`), `DELETE /notifications` bulk clear, `GET /notifications/preferences` and `PUT /notifications/preferences` (with quiet hours `HH:mm` format validation and defaults), `NotificationRetentionJob` 90-day retention cleanup (`@Scheduled`), and `[REDACTED]` `toString()` privacy redaction. See `docs/handoffs/LOS-1303.md`.
 

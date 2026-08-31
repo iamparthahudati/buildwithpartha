@@ -1,112 +1,87 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { SearchRoute } from "./SearchRoute";
+import { renderWithUser } from "@test/render";
 import { AuthSessionContext, type AuthSessionValue } from "@state/authSession";
-import * as useGlobalSearchModule from "../features/search/hooks/useGlobalSearch";
+import { SearchRoute } from "./SearchRoute";
 
-vi.mock("../features/search/hooks/useGlobalSearch", () => ({
-  useGlobalSearch: vi.fn(),
-}));
-
-const mockUseGlobalSearch = vi.mocked(useGlobalSearchModule.useGlobalSearch);
-
-const MOCK_AUTH: AuthSessionValue = {
+const mockAuth: AuthSessionValue = {
   user: {
     id: "user-123",
-    email: "user@example.com",
+    email: "user@example.test",
     displayName: "Test User",
     timeZone: "UTC",
     locale: "en-US",
     weekStart: 1,
   },
-  csrfToken: "mock-csrf-token",
+  csrfToken: "test-csrf-token",
   isBootstrapping: false,
   setSession: vi.fn(),
   clearSession: vi.fn(),
 };
 
+vi.mock("@features/search", () => ({
+  SEARCH_ENTITY_TYPES: [
+    "TASK",
+    "PROJECT",
+    "NOTE",
+    "HABIT",
+    "TIME_BLOCK",
+    "GOAL",
+    "SPRINT",
+    "BRAIN_DUMP",
+  ],
+  SearchScreen: (props: {
+    query?: string;
+    type?: string;
+    page?: number;
+    onQueryChange: (q: string) => void;
+    onTypeChange: (t?: string) => void;
+  }) => (
+    <div>
+      <p data-testid="search-query">Query: {props.query}</p>
+      <p data-testid="search-type">Type: {props.type ?? "none"}</p>
+      <button type="button" onClick={() => props.onQueryChange("newquery")}>
+        Change Query
+      </button>
+      <button type="button" onClick={() => props.onTypeChange("TASK")}>
+        Filter Tasks
+      </button>
+    </div>
+  ),
+}));
+
 describe("SearchRoute", () => {
-  let queryClient: QueryClient;
+  it("reads q and type parameters from URL and passes to SearchScreen", () => {
+    renderWithUser(
+      <AuthSessionContext.Provider value={mockAuth}>
+        <MemoryRouter initialEntries={["/life-os/app/search?q=project&type=TASK"]}>
+          <Routes>
+            <Route path="/life-os/app/search" element={<SearchRoute />} />
+          </Routes>
+        </MemoryRouter>
+      </AuthSessionContext.Provider>,
+    );
 
-  beforeEach(() => {
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: { retry: false },
-      },
-    });
-    vi.clearAllMocks();
+    expect(screen.getByTestId("search-query")).toHaveTextContent("Query: project");
+    expect(screen.getByTestId("search-type")).toHaveTextContent("Type: TASK");
   });
 
-  function renderWithProviders(initialEntries = ["/life-os/app/search?q=project"]) {
-    return render(
-      <QueryClientProvider client={queryClient}>
-        <AuthSessionContext.Provider value={MOCK_AUTH}>
-          <MemoryRouter initialEntries={initialEntries}>
-            <Routes>
-              <Route path="/life-os/app/search" element={<SearchRoute />} />
-            </Routes>
-          </MemoryRouter>
-        </AuthSessionContext.Provider>
-      </QueryClientProvider>,
+  it("updates URL when query and type filters change", async () => {
+    const { user } = renderWithUser(
+      <AuthSessionContext.Provider value={mockAuth}>
+        <MemoryRouter initialEntries={["/life-os/app/search?q=test"]}>
+          <Routes>
+            <Route path="/life-os/app/search" element={<SearchRoute />} />
+          </Routes>
+        </MemoryRouter>
+      </AuthSessionContext.Provider>,
     );
-  }
 
-  it("reads q parameter from URL and invokes search hook", () => {
-    mockUseGlobalSearch.mockReturnValue({
-      data: {
-        query: "project",
-        totalItems: 0,
-        page: 0,
-        size: 20,
-        totalPages: 0,
-        counts: {},
-        groups: [],
-        items: [],
-      },
-      isLoading: false,
-      isError: false,
-      refetch: vi.fn(),
-    } as unknown as ReturnType<typeof useGlobalSearchModule.useGlobalSearch>);
+    expect(screen.getByTestId("search-query")).toHaveTextContent("Query: test");
 
-    renderWithProviders(["/life-os/app/search?q=project"]);
-
-    expect(screen.getByDisplayValue("project")).toBeInTheDocument();
-    expect(mockUseGlobalSearch).toHaveBeenCalledWith(
-      expect.objectContaining({ q: "project", page: 0 }),
-      true,
-    );
-  });
-
-  it("updates URL when filtering by entity type", async () => {
-    mockUseGlobalSearch.mockReturnValue({
-      data: {
-        query: "test",
-        totalItems: 1,
-        page: 0,
-        size: 20,
-        totalPages: 1,
-        counts: { TASK: 1 },
-        groups: [],
-        items: [],
-      },
-      isLoading: false,
-      isError: false,
-      refetch: vi.fn(),
-    } as unknown as ReturnType<typeof useGlobalSearchModule.useGlobalSearch>);
-
-    renderWithProviders(["/life-os/app/search?q=test"]);
-
-    const user = userEvent.setup();
-    const tasksBtn = screen.getByRole("button", { name: /Tasks/i });
-    await user.click(tasksBtn);
-
-    expect(mockUseGlobalSearch).toHaveBeenLastCalledWith(
-      expect.objectContaining({ q: "test", type: "TASK" }),
-      true,
-    );
+    await user.click(screen.getByRole("button", { name: "Filter Tasks" }));
+    expect(screen.getByTestId("search-type")).toHaveTextContent("Type: TASK");
   });
 });

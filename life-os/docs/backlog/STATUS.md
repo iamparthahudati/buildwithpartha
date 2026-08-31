@@ -233,7 +233,10 @@ Last updated: 2026-08-30
 | LOS-1214 | Done gate     | `feature/LOS-1214-run-knowledge-habits-gate` | Epic 12 passed its Notes, Brain Dump, Habits, Today, security, offline-honesty, sanitization, accessibility, and bounded large-account gate. See `docs/gates/KNOWLEDGE-HABITS-PHASE-GATE.md` and `docs/handoffs/LOS-1214.md`. |
 | LOS-1301 | Done          | `feature/LOS-1301-implement-global-search-backend` | Implemented global search backend REST API, indexing, safe HTML highlighting, entity filtering, relevance ranking, and query logging redaction. See `docs/handoffs/LOS-1301.md`. |
 | LOS-1302 | Done          | `feature/LOS-1302-build-and-integrate-global-search` | Built and integrated global search frontend UI with GlobalCommandPalette overlay, /life-os/app/search route, entity type filter pills, safe highlight rendering, per-user recent searches, deep links, loading/empty/offline states, and full accessibility. See `docs/handoffs/LOS-1302.md`. |
+| LOS-1303 | Done          | `feature/LOS-1303-model-and-implement-notifications` | Modeled notifications schema (V28 Flyway migration), REST API endpoints (/notifications, /unread-count, /mark-read, /mark-unread, /clear, /clear-all, /preferences), category metadata, retention cleanup, and audit. See `docs/handoffs/LOS-1303.md`. |
+| LOS-1304 | Done          | `feature/LOS-1304-build-notification-center-settings` | Built notification center frontend (`@features/notifications`), bell badge, unread count hook, date-grouped list, category/unread filters, mark read/unread, clear/clear-all, target URL navigation, quiet hours & category/channel preferences panel, mobile drawer, and NotificationsRoute. See `docs/handoffs/LOS-1304.md`. |
 
 
 
 All unlisted tickets remain Backlog until explicitly added or promoted.
+

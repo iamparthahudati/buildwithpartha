@@ -82,9 +82,11 @@ export interface AppShellProps {
   readonly email: string;
   readonly timeZone: string;
   readonly locale: string;
+  readonly notificationCount?: number;
   readonly onSearchTriggerClick?: () => void;
   /** No canonical route exists for Quick Add (LOS-0604) — it is a dialog, not a page. */
   readonly onQuickAddTriggerClick: (type?: QuickAddType) => void;
+  readonly onNotificationsTriggerClick?: () => void;
   readonly onSignOut: () => void;
   readonly brainDumpCaptureQueue?: BrainDumpCaptureQueueContext;
   /** Injected for deterministic tests; forwarded to `TopBar`. */
@@ -110,8 +112,10 @@ export function AppShell({
   email,
   timeZone,
   locale,
+  notificationCount,
   onSearchTriggerClick,
   onQuickAddTriggerClick,
+  onNotificationsTriggerClick,
   onSignOut,
   brainDumpCaptureQueue,
   now,
@@ -205,13 +209,16 @@ export function AppShell({
             contextLabel={title}
             timeZone={timeZone}
             locale={locale}
+            {...(notificationCount !== undefined ? { notificationCount } : {})}
             {...(now ? { now } : {})}
             focusSlot={
               <FocusMiniPlayer timeZone={timeZone} locale={locale} {...(now ? { now } : {})} />
             }
             onSearchTriggerClick={onSearchTriggerClick ?? (() => navigate("/life-os/app/search"))}
             onQuickAddTriggerClick={() => onQuickAddTriggerClick()}
-            onNotificationsTriggerClick={() => navigate("/life-os/app/notifications")}
+            onNotificationsTriggerClick={
+              onNotificationsTriggerClick ?? (() => navigate("/life-os/app/notifications"))
+            }
             account={{ name: displayName, email, items: accountItems }}
           />
         </div>

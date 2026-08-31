@@ -11,6 +11,7 @@ import { useTodayOnlineStatus } from "@features/today";
 import { todayLocalDate } from "@lib/localDateTime";
 import { useAuthSession } from "@state/authSession";
 import { GlobalCommandPalette } from "@features/search";
+import { useNotificationUnreadCount } from "@features/notifications";
 import {
   CancelDeletionRoute,
   CalendarRoute,
@@ -21,6 +22,7 @@ import {
   GoalDetailsRoute,
   LoginRoute,
   NotFoundRoute,
+  NotificationsRoute,
   OnboardingRoute,
   NotesRoute,
   BrainDumpRoute,
@@ -66,6 +68,7 @@ function ProtectedShell() {
   const captureBrainDump = useCaptureBrainDumpItem();
   const habitsQuery = useHabits(false, user !== null);
   const setHabitEntry = useSetHabitEntry();
+  const unreadCountQuery = useNotificationUnreadCount(user !== null);
   const brainDumpCaptureQueue = useBrainDumpCaptureQueue({
     userId: user?.id ?? "",
     isOnline,
@@ -95,6 +98,7 @@ function ProtectedShell() {
         email={user.email}
         timeZone={user.timeZone}
         locale={user.locale}
+        notificationCount={unreadCountQuery.data?.count ?? 0}
         onSearchTriggerClick={() => setCommandPaletteOpen(true)}
         onQuickAddTriggerClick={openQuickAdd}
         onSignOut={() => logout.mutate()}
@@ -210,7 +214,7 @@ export function AppRoutes() {
           <Route path="reviews/weekly/:weekStart" element={<ComingSoonRoute />} />
           <Route path="reviews/monthly/:month" element={<ComingSoonRoute />} />
           <Route path="search" element={<SearchRoute />} />
-          <Route path="notifications" element={<ComingSoonRoute />} />
+          <Route path="notifications" element={<NotificationsRoute />} />
           <Route path="settings/:section?" element={<SettingsRoute />} />
           <Route path="*" element={<NotFoundRoute variant="private" />} />
         </Route>
