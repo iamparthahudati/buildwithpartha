@@ -88,6 +88,7 @@ import {
   HabitStreakSummaryDemo,
 } from "./HabitsDemos";
 import { NoteCardDemo, NoteFormDemo } from "./NotesDemos";
+import { SearchScreenDemo, SearchScreenEmptyDemo } from "./SearchDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
 import { TasksScreenDemo } from "./TasksScreenDemos";
@@ -1335,6 +1336,27 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         description:
           "Interactive title/body editor with autosaving status, label selector, and entity link controls.",
         render: () => <NoteFormDemo />,
+      },
+    ],
+  },
+  {
+    id: "search-screen",
+    name: "SearchScreen",
+    group: "Composed",
+    summary:
+      "Full user-scoped global search screen with entity type filters, recents, loading/empty/error states, and deep link result cards.",
+    states: [
+      {
+        id: "search-screen-demo",
+        name: "Populated search results",
+        description: "Interactive search screen with query, type filters, and result cards.",
+        render: () => <SearchScreenDemo />,
+      },
+      {
+        id: "search-screen-empty-demo",
+        name: "Initial empty search state",
+        description: "Prompt state before typing a search query.",
+        render: () => <SearchScreenEmptyDemo />,
       },
     ],
   },

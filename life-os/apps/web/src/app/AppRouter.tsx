@@ -10,6 +10,7 @@ import { useCreateNote } from "@features/notes";
 import { useTodayOnlineStatus } from "@features/today";
 import { todayLocalDate } from "@lib/localDateTime";
 import { useAuthSession } from "@state/authSession";
+import { GlobalCommandPalette } from "@features/search";
 import {
   CancelDeletionRoute,
   CalendarRoute,
@@ -29,6 +30,7 @@ import {
   ProjectDetailsRoute,
   ReportsRoute,
   ResetPasswordRoute,
+  SearchRoute,
   SettingsRoute,
   SprintsRoute,
   SignupRoute,
@@ -58,6 +60,7 @@ function ProtectedShell() {
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [quickAddType, setQuickAddType] = useState<QuickAddType>("task");
   const [quickAddRequestId, setQuickAddRequestId] = useState(0);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const isOnline = useTodayOnlineStatus();
   const createNote = useCreateNote();
   const captureBrainDump = useCaptureBrainDumpItem();
@@ -92,9 +95,16 @@ function ProtectedShell() {
         email={user.email}
         timeZone={user.timeZone}
         locale={user.locale}
+        onSearchTriggerClick={() => setCommandPaletteOpen(true)}
         onQuickAddTriggerClick={openQuickAdd}
         onSignOut={() => logout.mutate()}
         brainDumpCaptureQueue={brainDumpCaptureQueue}
+      />
+      <GlobalCommandPalette
+        open={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        userId={user.id}
+        onOpenQuickAdd={() => openQuickAdd()}
       />
       <QuickAddDialog
         key={quickAddRequestId}
@@ -199,7 +209,7 @@ export function AppRoutes() {
           <Route path="reviews/daily/:date" element={<ComingSoonRoute />} />
           <Route path="reviews/weekly/:weekStart" element={<ComingSoonRoute />} />
           <Route path="reviews/monthly/:month" element={<ComingSoonRoute />} />
-          <Route path="search" element={<ComingSoonRoute />} />
+          <Route path="search" element={<SearchRoute />} />
           <Route path="notifications" element={<ComingSoonRoute />} />
           <Route path="settings/:section?" element={<SettingsRoute />} />
           <Route path="*" element={<NotFoundRoute variant="private" />} />

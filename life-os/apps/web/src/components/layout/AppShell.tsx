@@ -82,6 +82,7 @@ export interface AppShellProps {
   readonly email: string;
   readonly timeZone: string;
   readonly locale: string;
+  readonly onSearchTriggerClick?: () => void;
   /** No canonical route exists for Quick Add (LOS-0604) — it is a dialog, not a page. */
   readonly onQuickAddTriggerClick: (type?: QuickAddType) => void;
   readonly onSignOut: () => void;
@@ -109,6 +110,7 @@ export function AppShell({
   email,
   timeZone,
   locale,
+  onSearchTriggerClick,
   onQuickAddTriggerClick,
   onSignOut,
   brainDumpCaptureQueue,
@@ -207,7 +209,7 @@ export function AppShell({
             focusSlot={
               <FocusMiniPlayer timeZone={timeZone} locale={locale} {...(now ? { now } : {})} />
             }
-            onSearchTriggerClick={() => navigate("/life-os/app/search")}
+            onSearchTriggerClick={onSearchTriggerClick ?? (() => navigate("/life-os/app/search"))}
             onQuickAddTriggerClick={() => onQuickAddTriggerClick()}
             onNotificationsTriggerClick={() => navigate("/life-os/app/notifications")}
             account={{ name: displayName, email, items: accountItems }}

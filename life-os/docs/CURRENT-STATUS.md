@@ -12,6 +12,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-1302 — Built and integrated global search frontend UI: `GlobalCommandPalette` overlay with live `GET /search` results, keyboard navigation (`Cmd/Ctrl+K`), quick actions, and recent queries; full `/life-os/app/search` route; entity filter pills; safe HTML mark rendering; per-user `localStorage` recents (`lifeos_recent_searches_{userId}`); loading/empty/offline states; and 100% accessible UI. See `docs/handoffs/LOS-1302.md`.
+
 - LOS-1301 — Implemented authenticated, owner-scoped, indexed global search REST API (`GET /life-os/api/v1/search`) across approved entities: Projects, Tasks, Notes, Brain Dump items, Goals, and Habits. Implemented `V29__global_search_indexes.sql` migration, entity type filters, relevance ranking (title exact/prefix/contains > body match), safe HTML escaping and `<mark>` highlighting, pagination envelope, grouped result DTO (`groups`), type breakdown (`counts`), soft-deleted task exclusion, and redaction of query/text content in `toString()` implementations across all DTOs and commands. See `docs/handoffs/LOS-1301.md`.
 
 - LOS-1017 — Added a Project filter to the Add Task to Sprint dialog so the task list narrows to the chosen project (with All projects / No project options), auto-hidden when tasks share a single project or when editing a commitment. Frontend only; story points unchanged. `apps/web` `verify:quality` and the 26-test sprint suite pass. See `docs/handoffs/LOS-1017.md`.

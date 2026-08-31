@@ -1,0 +1,185 @@
+.lifeos-search-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-6);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--lifeos-space-4);
+}
+
+.lifeos-search-screen__search-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-search-screen__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-2);
+  align-items: center;
+}
+
+.lifeos-search-screen__filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-full);
+  background-color: var(--lifeos-color-surface);
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.lifeos-search-screen__filter-btn:hover {
+  background-color: var(--lifeos-color-surface-muted);
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-search-screen__filter-btn.is-active {
+  background-color: var(--lifeos-color-primary);
+  border-color: var(--lifeos-color-primary);
+  color: var(--lifeos-color-text-on-solid);
+}
+
+.lifeos-search-screen__recents {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-4);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-lg);
+  background-color: var(--lifeos-color-surface);
+}
+
+.lifeos-search-screen__recents-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lifeos-search-screen__recents-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lifeos-search-screen__recent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  border-radius: var(--lifeos-radius-md);
+  background-color: var(--lifeos-color-surface-muted);
+}
+
+.lifeos-search-screen__recent-link {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+  color: var(--lifeos-color-text);
+  text-decoration: none;
+  font-size: var(--lifeos-font-size-sm);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+}
+
+.lifeos-search-screen__recent-link:hover {
+  color: var(--lifeos-color-primary);
+}
+
+.lifeos-search-screen__results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-6);
+}
+
+.lifeos-search-screen__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-search-screen__group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--lifeos-space-2);
+  border-bottom: 1px solid var(--lifeos-color-border);
+}
+
+.lifeos-search-screen__group-title {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-search-screen__item-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lifeos-search-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+  padding: var(--lifeos-space-4);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-md);
+  background-color: var(--lifeos-color-surface);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.lifeos-search-card:hover {
+  border-color: var(--lifeos-color-primary);
+}
+
+.lifeos-search-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-search-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-search-card__title {
+  font-size: var(--lifeos-font-size-md);
+  font-weight: 600;
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-search-card__snippet {
+  font-size: var(--lifeos-font-size-sm);
+  color: var(--lifeos-color-text-secondary);
+  line-height: 1.5;
+}
+
+.lifeos-search-highlight {
+  background-color: var(--lifeos-color-warning-soft);
+  color: var(--lifeos-color-text);
+  padding: 0 0.125rem;
+  border-radius: var(--lifeos-radius-sm);
+  font-weight: 600;
+}
