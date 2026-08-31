@@ -538,3 +538,40 @@ CREATE TABLE IF NOT EXISTS habit_pause_periods (
     start_date DATE NOT NULL, end_date DATE, reason TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+-- Added by LOS-1303: Notifications and Notification Preferences schema.
+CREATE TABLE IF NOT EXISTS notifications (
+    id            UUID                     NOT NULL PRIMARY KEY,
+    user_id       UUID                     NOT NULL,
+    category      VARCHAR(64)              NOT NULL,
+    title         TEXT                     NOT NULL,
+    body          TEXT                     NOT NULL,
+    target_url    TEXT,
+    read_at       TIMESTAMP WITH TIME ZONE,
+    is_clearable  BOOLEAN                  NOT NULL DEFAULT TRUE,
+    created_at    TIMESTAMP WITH TIME ZONE NOT NULL,
+    version       BIGINT                   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS notification_preferences (
+    id                             UUID                     NOT NULL PRIMARY KEY,
+    user_id                        UUID                     NOT NULL,
+    quiet_hours_enabled            BOOLEAN                  NOT NULL DEFAULT FALSE,
+    quiet_hours_start              VARCHAR(8)               NOT NULL DEFAULT '22:00',
+    quiet_hours_end                VARCHAR(8)               NOT NULL DEFAULT '07:00',
+    due_reminders_enabled          BOOLEAN                  NOT NULL DEFAULT TRUE,
+    overdue_reminders_enabled      BOOLEAN                  NOT NULL DEFAULT TRUE,
+    time_block_reminders_enabled   BOOLEAN                  NOT NULL DEFAULT TRUE,
+    focus_reminders_enabled        BOOLEAN                  NOT NULL DEFAULT TRUE,
+    habit_reminders_enabled        BOOLEAN                  NOT NULL DEFAULT TRUE,
+    review_prompts_enabled         BOOLEAN                  NOT NULL DEFAULT TRUE,
+    security_notices_enabled       BOOLEAN                  NOT NULL DEFAULT TRUE,
+    system_notices_enabled         BOOLEAN                  NOT NULL DEFAULT TRUE,
+    in_app_channel_enabled         BOOLEAN                  NOT NULL DEFAULT TRUE,
+    email_channel_enabled          BOOLEAN                  NOT NULL DEFAULT TRUE,
+    push_channel_enabled           BOOLEAN                  NOT NULL DEFAULT FALSE,
+    created_at                     TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at                     TIMESTAMP WITH TIME ZONE NOT NULL,
+    version                        BIGINT                   NOT NULL
+);
+

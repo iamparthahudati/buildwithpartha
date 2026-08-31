@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-08-30 (LOS-1214 Knowledge and Habits phase gate)
+Last updated: 2026-08-31 (LOS-1303 Notifications backend)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1303 — Implemented authenticated, user-scoped in-app notification center REST API (`/notifications`) and JPA infrastructure (`V30__notifications_schema.sql`). Implemented `GET /notifications` with unread and category filters, `GET /notifications/unread-count`, `PUT /notifications/{id}/read` and `/unread`, `PUT /notifications/read-all`, `DELETE /notifications/{id}` (protecting non-clearable `SECURITY` notices with `NotificationNotClearableException`), `DELETE /notifications` bulk clear, `GET /notifications/preferences` and `PUT /notifications/preferences` (with quiet hours `HH:mm` format validation and defaults), `NotificationRetentionJob` 90-day retention cleanup (`@Scheduled`), and `[REDACTED]` `toString()` privacy redaction. See `docs/handoffs/LOS-1303.md`.
 
 - LOS-1302 — Built and integrated global search frontend UI: `GlobalCommandPalette` overlay with live `GET /search` results, keyboard navigation (`Cmd/Ctrl+K`), quick actions, and recent queries; full `/life-os/app/search` route; entity filter pills; safe HTML mark rendering; per-user `localStorage` recents (`lifeos_recent_searches_{userId}`); loading/empty/offline states; and 100% accessible UI. See `docs/handoffs/LOS-1302.md`.
 

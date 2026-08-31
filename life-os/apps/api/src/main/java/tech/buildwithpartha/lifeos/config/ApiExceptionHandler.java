@@ -212,6 +212,20 @@ public final class ApiExceptionHandler {
                 : "Refresh the Review and try again."));
   }
 
+  @ExceptionHandler(
+      tech.buildwithpartha.lifeos.notification.domain.NotificationNotClearableException.class)
+  ResponseEntity<ApiProblem> handleNotificationNotClearable(
+      tech.buildwithpartha.lifeos.notification.domain.NotificationNotClearableException exception,
+      HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.BAD_REQUEST,
+            StandardErrorCodes.NOTIFICATION_NOT_CLEARABLE,
+            "Notification not clearable",
+            exception.getMessage()));
+  }
+
   @ExceptionHandler(CodedException.class)
   ResponseEntity<ApiProblem> handleCoded(CodedException exception, HttpServletRequest request) {
     return response(
