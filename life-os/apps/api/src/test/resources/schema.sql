@@ -575,3 +575,45 @@ CREATE TABLE IF NOT EXISTS notification_preferences (
     version                        BIGINT                   NOT NULL
 );
 
+-- Added by LOS-1305: Recurring task series, occurrence links, and exceptions.
+CREATE TABLE IF NOT EXISTS recurring_task_series (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    user_id          UUID                     NOT NULL,
+    title            TEXT                     NOT NULL,
+    description      TEXT,
+    status           VARCHAR(32)              NOT NULL,
+    priority         VARCHAR(32)              NOT NULL,
+    project_id       UUID,
+    estimate_minutes INT                      NOT NULL,
+    frequency        VARCHAR(32)              NOT NULL,
+    interval_value   INT                      NOT NULL,
+    days_of_week     TEXT,
+    day_of_month     INT,
+    end_mode         VARCHAR(32)              NOT NULL,
+    end_date         DATE,
+    end_count        INT,
+    start_date       DATE                     NOT NULL,
+    time_zone        VARCHAR(64)              NOT NULL,
+    archived_at      TIMESTAMP WITH TIME ZONE,
+    deleted_at       TIMESTAMP WITH TIME ZONE,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at       TIMESTAMP WITH TIME ZONE NOT NULL,
+    version          BIGINT                   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS recurring_task_exceptions (
+    id               UUID                     NOT NULL PRIMARY KEY,
+    series_id        UUID                     NOT NULL,
+    user_id          UUID                     NOT NULL,
+    occurrence_date  DATE                     NOT NULL,
+    exception_type   VARCHAR(32)              NOT NULL,
+    rescheduled_date DATE,
+    override_task_id UUID,
+    reason           TEXT,
+    created_at       TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurring_series_id UUID;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurrence_occurrence_date DATE;
+
+

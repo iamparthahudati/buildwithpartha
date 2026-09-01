@@ -78,6 +78,12 @@ class TaskEntity {
   @Column(name = "updated_at", nullable = false)
   private Instant updatedAt;
 
+  @Column(name = "recurring_series_id")
+  private UUID recurringSeriesId;
+
+  @Column(name = "recurrence_occurrence_date")
+  private LocalDate recurrenceOccurrenceDate;
+
   @Version
   @Column(name = "version", nullable = false)
   private long version;
@@ -130,6 +136,8 @@ class TaskEntity {
         createdAt,
         updatedAt,
         new HashSet<>(),
+        null,
+        null,
         version);
   }
 
@@ -153,6 +161,52 @@ class TaskEntity {
       Instant updatedAt,
       Set<UUID> labelIds,
       long version) {
+    this(
+        id,
+        userId,
+        projectId,
+        title,
+        description,
+        status,
+        priority,
+        dueAt,
+        estimateMinutes,
+        spentMinutes,
+        progress,
+        mitDate,
+        position,
+        archivedAt,
+        deletedAt,
+        createdAt,
+        updatedAt,
+        labelIds,
+        null,
+        null,
+        version);
+  }
+
+  TaskEntity(
+      UUID id,
+      UUID userId,
+      UUID projectId,
+      String title,
+      String description,
+      TaskStatus status,
+      TaskPriority priority,
+      Instant dueAt,
+      int estimateMinutes,
+      int spentMinutes,
+      int progress,
+      LocalDate mitDate,
+      int position,
+      Instant archivedAt,
+      Instant deletedAt,
+      Instant createdAt,
+      Instant updatedAt,
+      Set<UUID> labelIds,
+      UUID recurringSeriesId,
+      LocalDate recurrenceOccurrenceDate,
+      long version) {
 
     this.id = id;
     this.userId = userId;
@@ -172,6 +226,8 @@ class TaskEntity {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.labelIds = labelIds != null ? labelIds : new HashSet<>();
+    this.recurringSeriesId = recurringSeriesId;
+    this.recurrenceOccurrenceDate = recurrenceOccurrenceDate;
     this.version = version;
   }
 
@@ -245,6 +301,14 @@ class TaskEntity {
 
   Set<UUID> getLabelIds() {
     return labelIds;
+  }
+
+  UUID getRecurringSeriesId() {
+    return recurringSeriesId;
+  }
+
+  LocalDate getRecurrenceOccurrenceDate() {
+    return recurrenceOccurrenceDate;
   }
 
   long getVersion() {

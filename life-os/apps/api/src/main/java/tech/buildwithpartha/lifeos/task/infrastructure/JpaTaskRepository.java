@@ -256,6 +256,8 @@ public class JpaTaskRepository implements TaskRepository {
         entity.getUpdatedAt(),
         subtasks,
         entity.getLabelIds(),
+        Optional.ofNullable(entity.getRecurringSeriesId()),
+        Optional.ofNullable(entity.getRecurrenceOccurrenceDate()),
         entity.getVersion());
   }
 
@@ -279,6 +281,8 @@ public class JpaTaskRepository implements TaskRepository {
         domain.createdAt(),
         domain.updatedAt(),
         domain.labelIds(),
+        domain.recurringSeriesId().orElse(null),
+        domain.recurrenceOccurrenceDate().orElse(null),
         domain.version());
   }
 

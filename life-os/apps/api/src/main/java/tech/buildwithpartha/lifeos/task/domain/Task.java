@@ -29,6 +29,8 @@ public record Task(
     Instant updatedAt,
     List<Subtask> subtasks,
     Set<UUID> labelIds,
+    Optional<UUID> recurringSeriesId,
+    Optional<LocalDate> recurrenceOccurrenceDate,
     long version) {
 
   public Task {
@@ -47,6 +49,8 @@ public record Task(
     Objects.requireNonNull(updatedAt, "updatedAt must not be null");
     Objects.requireNonNull(subtasks, "subtasks must not be null");
     Objects.requireNonNull(labelIds, "labelIds must not be null");
+    Objects.requireNonNull(recurringSeriesId, "recurringSeriesId must not be null");
+    Objects.requireNonNull(recurrenceOccurrenceDate, "recurrenceOccurrenceDate must not be null");
 
     if (title.isBlank()) {
       throw new IllegalArgumentException("Task title must not be blank");
@@ -63,6 +67,52 @@ public record Task(
 
     subtasks = List.copyOf(subtasks);
     labelIds = Set.copyOf(labelIds);
+  }
+
+  public Task(
+      UUID id,
+      UUID userId,
+      Optional<UUID> projectId,
+      String title,
+      Optional<String> description,
+      TaskStatus status,
+      TaskPriority priority,
+      Optional<Instant> dueAt,
+      int estimateMinutes,
+      int spentMinutes,
+      int progress,
+      Optional<LocalDate> mitDate,
+      int position,
+      Optional<Instant> archivedAt,
+      Optional<Instant> deletedAt,
+      Instant createdAt,
+      Instant updatedAt,
+      List<Subtask> subtasks,
+      Set<UUID> labelIds,
+      long version) {
+    this(
+        id,
+        userId,
+        projectId,
+        title,
+        description,
+        status,
+        priority,
+        dueAt,
+        estimateMinutes,
+        spentMinutes,
+        progress,
+        mitDate,
+        position,
+        archivedAt,
+        deletedAt,
+        createdAt,
+        updatedAt,
+        subtasks,
+        labelIds,
+        Optional.empty(),
+        Optional.empty(),
+        version);
   }
 
   public Task(
@@ -105,11 +155,12 @@ public record Task(
         updatedAt,
         subtasks,
         Set.of(),
+        Optional.empty(),
+        Optional.empty(),
         version);
   }
 
   public boolean isArchived() {
-
     return archivedAt.isPresent();
   }
 
@@ -189,6 +240,8 @@ public record Task(
         newUpdatedAt,
         subtasks,
         newLabelIds != null ? newLabelIds : labelIds,
+        recurringSeriesId,
+        recurrenceOccurrenceDate,
         version);
   }
 
@@ -213,6 +266,8 @@ public record Task(
         newUpdatedAt,
         subtasks,
         labelIds,
+        recurringSeriesId,
+        recurrenceOccurrenceDate,
         version);
   }
 
@@ -237,6 +292,8 @@ public record Task(
         newUpdatedAt,
         subtasks,
         labelIds,
+        recurringSeriesId,
+        recurrenceOccurrenceDate,
         version);
   }
 
@@ -261,6 +318,8 @@ public record Task(
         newUpdatedAt,
         subtasks,
         labelIds,
+        recurringSeriesId,
+        recurrenceOccurrenceDate,
         version);
   }
 
@@ -285,6 +344,8 @@ public record Task(
         newUpdatedAt,
         newSubtasks,
         labelIds,
+        recurringSeriesId,
+        recurrenceOccurrenceDate,
         version);
   }
 
@@ -344,6 +405,8 @@ public record Task(
         now,
         duplicatedSubtasks,
         labelIds,
+        recurringSeriesId,
+        recurrenceOccurrenceDate,
         0L);
   }
 }
