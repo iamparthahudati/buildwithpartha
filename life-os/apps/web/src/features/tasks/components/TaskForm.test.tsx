@@ -228,4 +228,28 @@ describe("TaskForm", () => {
     await user.click(screen.getByRole("button", { name: "Discard changes" }));
     expect(onClose).toHaveBeenCalledOnce();
   });
+
+  it("renders recurrence editor when repeat checkbox is checked and passes recurrenceRule on submit", async () => {
+    const onSubmit = vi.fn();
+    const { user } = renderTaskForm({ onSubmit });
+
+    await user.type(screen.getByLabelText("Task title"), "Daily Workout");
+    await user.click(screen.getByRole("checkbox", { name: /Repeat this task/ }));
+
+    expect(screen.getByText("Rule Summary")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Add task" }));
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Daily Workout",
+        isRecurring: true,
+        recurrenceRule: expect.objectContaining({
+          frequency: "DAILY",
+          intervalValue: 1,
+          endMode: "NEVER",
+        }),
+      }),
+    );
+  });
 });

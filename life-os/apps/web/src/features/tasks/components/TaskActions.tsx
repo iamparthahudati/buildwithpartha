@@ -16,6 +16,7 @@ export interface TaskActionCallbacks {
   readonly onArchive?: () => void;
   readonly onRestore?: () => void;
   readonly onDelete?: () => void;
+  readonly onSkipOccurrence?: () => void;
 }
 
 interface TaskActionsProps extends TaskActionCallbacks {
@@ -34,6 +35,7 @@ export function TaskActions({
   onArchive,
   onRestore,
   onDelete,
+  onSkipOccurrence,
   className,
 }: TaskActionsProps) {
   const isArchived = Boolean(task.archivedAt);
@@ -68,6 +70,14 @@ export function TaskActions({
         id: "toggle-mit",
         label: task.isMit ? "Remove MIT" : "Set as MIT",
         onSelect: onToggleMit,
+      });
+    }
+    if (onSkipOccurrence && task.recurringSeriesId && !isTerminal) {
+      items.push({
+        type: "item",
+        id: "skip-occurrence",
+        label: "Skip occurrence",
+        onSelect: onSkipOccurrence,
       });
     }
     if (onMarkDone && !isTerminal) {

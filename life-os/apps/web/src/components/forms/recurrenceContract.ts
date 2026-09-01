@@ -62,17 +62,16 @@ export function validateRecurrenceRule(rule: RecurrenceRule): RecurrenceValidati
   }
 
   if (rule.frequency === "WEEKLY") {
-    if (!rule.daysOfWeek || rule.daysOfWeek.length === 0) {
+    if (rule.daysOfWeek !== undefined && rule.daysOfWeek.length === 0) {
       errors.daysOfWeek = "At least one day of the week must be selected for weekly recurrence.";
     }
   }
 
   if (rule.frequency === "MONTHLY") {
     if (
-      rule.dayOfMonth === undefined ||
-      rule.dayOfMonth === null ||
-      rule.dayOfMonth < 1 ||
-      rule.dayOfMonth > 31
+      rule.dayOfMonth !== undefined &&
+      rule.dayOfMonth !== null &&
+      (rule.dayOfMonth < 1 || rule.dayOfMonth > 31)
     ) {
       errors.dayOfMonth = "Day of month must be between 1 and 31.";
     }

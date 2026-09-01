@@ -17,8 +17,9 @@ import {
   useRestoreTask,
   useTasks,
   useTaskLabels,
-  useToggleTaskMit,
   useUpdateTask,
+  useToggleTaskMit,
+  useCreateRecurringSeries,
   isConflict,
   IntegratedTaskDetails,
   type BulkActionOutcome,
@@ -130,6 +131,7 @@ export function TasksRoute() {
   const labelsQuery = useTaskLabels(user !== null);
 
   const createMutation = useCreateTask();
+  const createSeriesMutation = useCreateRecurringSeries();
   const updateMutation = useUpdateTask();
   const completeMutation = useCompleteTask();
   const changeStatusMutation = useChangeTaskStatus();
@@ -308,8 +310,28 @@ export function TasksRoute() {
           void tasksQuery.refetch();
         }}
         onCreateTask={async (data) => {
-          await createMutation.mutateAsync(toCreateRequest(data));
-          toast.push({ tone: "success", message: "Task added." });
+          if (data.isRecurring && data.recurrenceRule) {
+            await createSeriesMutation.mutateAsync({
+              title: data.title,
+              description: data.description,
+              priority: data.priority,
+              projectId: data.projectId,
+              estimateMinutes: data.estimateMinutes ?? 0,
+              frequency: data.recurrenceRule.frequency,
+              intervalValue: data.recurrenceRule.intervalValue,
+              daysOfWeek: data.recurrenceRule.daysOfWeek ?? null,
+              dayOfMonth: data.recurrenceRule.dayOfMonth ?? null,
+              endMode: data.recurrenceRule.endMode,
+              endDate: data.recurrenceRule.endDate ?? null,
+              endCount: data.recurrenceRule.endCount ?? null,
+              startDate: data.recurrenceRule.startDate || todayLocalDate(user.timeZone),
+              timeZone: user.timeZone,
+            });
+            toast.push({ tone: "success", message: "Recurring task series created." });
+          } else {
+            await createMutation.mutateAsync(toCreateRequest(data));
+            toast.push({ tone: "success", message: "Task added." });
+          }
         }}
         onUpdateTask={async (id, data) => {
           const existing = tasksList.find((task) => task.id === id);

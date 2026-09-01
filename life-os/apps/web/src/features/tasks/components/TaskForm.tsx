@@ -8,8 +8,10 @@ import {
   FormErrorSummary,
   FormField,
   FormFieldGroup,
+  RecurrenceEditor,
   type ComboboxOption,
   type DateTimeValue,
+  type RecurrenceRule,
 } from "@components/forms";
 import { Button, Checkbox, NumberInput, Select, TextInput, Textarea } from "@components/ui";
 import {
@@ -50,6 +52,9 @@ export interface TaskFormData {
   readonly mitDate: LocalDate | null;
   readonly labelIds: readonly string[];
   readonly version?: number;
+  readonly isRecurring?: boolean;
+  readonly recurrenceRule?: RecurrenceRule | null;
+  readonly recurringSeriesId?: string | null;
 }
 
 export interface TaskFormProps {
@@ -82,6 +87,8 @@ interface TaskFormState {
   readonly labelIds: readonly string[];
   readonly isMit: boolean;
   readonly mitDate: LocalDate;
+  readonly isRecurring: boolean;
+  readonly recurrenceRule: RecurrenceRule;
 }
 
 type FieldErrors = Partial<Record<"title" | "dueAt" | "estimateMinutes" | "progress", string>>;
@@ -223,6 +230,15 @@ export function TaskForm({
       progress: form.progress === "" ? 0 : form.progress,
       mitDate: form.isMit && !terminal ? form.mitDate : null,
       labelIds: form.labelIds,
+      ...(form.isRecurring
+        ? {
+            isRecurring: true,
+            recurrenceRule: form.recurrenceRule,
+          }
+        : {}),
+      ...(initialValues?.recurringSeriesId
+        ? { recurringSeriesId: initialValues.recurringSeriesId }
+        : {}),
       ...(initialValues?.version === undefined ? {} : { version: initialValues.version }),
     });
   }
@@ -442,6 +458,31 @@ export function TaskForm({
                   disabled={terminal}
                   onChange={(event) => updateForm({ isMit: event.target.checked })}
                 />
+
+                <Checkbox
+                  label="Repeat this task (Recurring task series)"
+                  description="Automatically generate task occurrences based on a schedule."
+                  checked={form.isRecurring}
+                  onChange={(event) => {
+                    const isRecurring = event.target.checked;
+                    const startDate = form.due.date ?? todayLocalDate(timeZone);
+                    updateForm({
+                      isRecurring,
+                      recurrenceRule: {
+                        ...form.recurrenceRule,
+                        startDate: form.recurrenceRule.startDate || startDate,
+                      },
+                    });
+                  }}
+                />
+
+                {form.isRecurring && (
+                  <RecurrenceEditor
+                    value={form.recurrenceRule}
+                    onChange={(rule) => updateForm({ recurrenceRule: rule })}
+                    disabled={controlsDisabled}
+                  />
+                )}
               </div>
             ) : null}
           </div>
@@ -456,6 +497,16 @@ function createFormState(
   timeZone: string,
 ): TaskFormState {
   const today = todayLocalDate(timeZone);
+  const defaultStartDate = initial?.dueAt
+    ? (dueAtToDateTimeValue(initial.dueAt, timeZone).date ?? today)
+    : today;
+  const defaultRule: RecurrenceRule = initial?.recurrenceRule ?? {
+    frequency: "DAILY",
+    intervalValue: 1,
+    endMode: "NEVER",
+    startDate: defaultStartDate,
+    timeZone,
+  };
   return {
     title: initial?.title ?? "",
     projectId: initial?.projectId ?? null,
@@ -468,6 +519,9 @@ function createFormState(
     labelIds: initial?.labelIds ?? [],
     isMit: initial?.mitDate != null,
     mitDate: initial?.mitDate ?? today,
+    isRecurring:
+      initial?.isRecurring ?? Boolean(initial?.recurrenceRule || initial?.recurringSeriesId),
+    recurrenceRule: defaultRule,
   };
 }
 
@@ -479,7 +533,10 @@ function hasAdvancedValues(initial: Partial<TaskFormData> | null | undefined): b
     initial?.estimateMinutes != null ||
     (initial?.progress != null && initial.progress !== 0) ||
     (initial?.labelIds && initial.labelIds.length > 0) ||
-    initial?.mitDate,
+    initial?.mitDate ||
+    initial?.isRecurring ||
+    initial?.recurrenceRule ||
+    initial?.recurringSeriesId,
   );
 }
 
@@ -545,6 +602,8 @@ function sameFormState(left: TaskFormState, right: TaskFormState): boolean {
     left.progress === right.progress &&
     left.isMit === right.isMit &&
     left.mitDate === right.mitDate &&
+    left.isRecurring === right.isRecurring &&
+    JSON.stringify(left.recurrenceRule) === JSON.stringify(right.recurrenceRule) &&
     left.labelIds.length === right.labelIds.length &&
     left.labelIds.every((value, index) => value === right.labelIds[index])
   );

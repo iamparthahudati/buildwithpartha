@@ -33,6 +33,7 @@ import {
 import { useTaskDetail } from "../hooks/useTaskDetail";
 import { useTaskDetailMutations } from "../hooks/useTaskDetailMutations";
 import { useTaskLabels, useTasks } from "../hooks/useTasks";
+import { useSkipOccurrence } from "../hooks/useRecurringSeries";
 import type { TaskProjectContext, TaskRecord } from "../model/task";
 
 export interface IntegratedTaskDetailsProps {
@@ -204,6 +205,7 @@ export function IntegratedTaskDetails({
   const deleteMutation = useDeleteTask();
   const duplicateMutation = useDuplicateTask();
   const mitMutation = useToggleTaskMit();
+  const skipMutation = useSkipOccurrence();
 
   const detail = detailQuery.data;
   const detailError = detailQuery.error;
@@ -340,6 +342,22 @@ export function IntegratedTaskDetails({
                 }),
               canonicalTask.isMit ? "MIT removed." : "MIT set for today.",
             ),
+          ...(canonicalTask?.recurringSeriesId
+            ? {
+                onSkipOccurrence: () =>
+                  void runAction(
+                    () =>
+                      skipMutation.mutateAsync({
+                        seriesId: canonicalTask.recurringSeriesId!,
+                        request: {
+                          occurrenceDate:
+                            canonicalTask.recurrenceOccurrenceDate ?? todayLocalDate(timeZone),
+                        },
+                      }),
+                    "Occurrence skipped.",
+                  ),
+              }
+            : {}),
           onMarkDone: () =>
             void runAction(
               () => completeMutation.mutateAsync({ id: taskId, version: detail?.version ?? 0 }),

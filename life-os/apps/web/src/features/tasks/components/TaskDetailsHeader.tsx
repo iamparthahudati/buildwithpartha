@@ -1,8 +1,10 @@
+import { RefreshCw } from "lucide-react";
 import { Alert } from "@components/feedback";
 import { PageHeader, type BreadcrumbItem } from "@components/navigation";
 import {
   Badge,
   Button,
+  Icon,
   Link,
   ProgressBar,
   Skeleton,
@@ -55,6 +57,8 @@ export interface TaskDetailsHeaderTask {
   readonly overdue?: boolean;
   readonly archivedAt?: string | null;
   readonly deletedAt?: string | null;
+  readonly recurringSeriesId?: string | null;
+  readonly recurrenceOccurrenceDate?: string | null;
 }
 
 export interface TaskDetailsHeaderProps extends TaskActionCallbacks {
@@ -132,6 +136,10 @@ export function TaskDetailsHeader({
     ...(task.blockerCount !== undefined ? { blockerCount: task.blockerCount } : {}),
     ...(task.overdue !== undefined ? { overdue: task.overdue } : {}),
     ...(task.archivedAt !== undefined ? { archivedAt: task.archivedAt } : {}),
+    ...(task.recurringSeriesId !== undefined ? { recurringSeriesId: task.recurringSeriesId } : {}),
+    ...(task.recurrenceOccurrenceDate !== undefined
+      ? { recurrenceOccurrenceDate: task.recurrenceOccurrenceDate }
+      : {}),
   };
   const isOverdue = !isDeleted && isTaskOverdue(taskForPresentation, now);
   const progress = readTaskProgress(task.progress);
@@ -180,6 +188,11 @@ export function TaskDetailsHeader({
                 {TASK_PRIORITY_LABEL[task.priority]}
               </Badge>
               {task.isMit ? <Badge tone="accent">MIT — Most Important Task</Badge> : null}
+              {task.recurringSeriesId ? (
+                <Badge tone="info">
+                  <Icon icon={RefreshCw} size="sm" decorative /> Recurring
+                </Badge>
+              ) : null}
               {isArchived ? <Badge tone="warning">Archived</Badge> : null}
               {isDeleted ? <Badge tone="danger">Deleted</Badge> : null}
               {isOverdue ? <Badge tone="danger">Overdue</Badge> : null}
