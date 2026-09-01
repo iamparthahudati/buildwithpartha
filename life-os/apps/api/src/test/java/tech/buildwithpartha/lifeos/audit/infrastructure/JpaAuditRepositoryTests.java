@@ -27,6 +27,12 @@ class JpaAuditRepositoryTests {
   @Autowired private ProductActivityEventJpaRepository activityJpa;
   @Autowired private SecurityAuditEventJpaRepository auditJpa;
 
+  @org.junit.jupiter.api.BeforeEach
+  void setUp() {
+    auditJpa.deleteAll();
+    activityJpa.deleteAll();
+  }
+
   @Test
   void activityRoundTripsAndQueriesRemainUserScoped() {
     JpaProductActivityRepository repository = new JpaProductActivityRepository(activityJpa);

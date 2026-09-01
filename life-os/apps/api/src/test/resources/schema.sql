@@ -616,4 +616,23 @@ CREATE TABLE IF NOT EXISTS recurring_task_exceptions (
 ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurring_series_id UUID;
 ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurrence_occurrence_date DATE;
 
+-- Added by LOS-1310 alongside AttachmentEntity.
+CREATE TABLE IF NOT EXISTS attachments (
+    id                         UUID                     NOT NULL PRIMARY KEY,
+    user_id                    UUID                     NOT NULL,
+    entity_type                VARCHAR(32)              NOT NULL,
+    entity_id                  UUID                     NOT NULL,
+    file_name                  TEXT                     NOT NULL,
+    sanitized_file_name        TEXT                     NOT NULL,
+    content_type               TEXT                     NOT NULL,
+    file_size_bytes            BIGINT                   NOT NULL,
+    storage_key                TEXT                     NOT NULL,
+    status                     VARCHAR(32)              NOT NULL,
+    scan_result                TEXT,
+    created_at                 TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at                 TIMESTAMP WITH TIME ZONE NOT NULL,
+    deleted_at                 TIMESTAMP WITH TIME ZONE
+);
+
+
 

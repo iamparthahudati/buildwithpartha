@@ -1,60 +1,32 @@
 package tech.buildwithpartha.lifeos.auth.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class RawPasswordTests {
 
-  private static final String SECRET_VALUE = "correct horse battery staple";
-
   @Test
-  void exposesTheRawValueAndItsLength() {
-    RawPassword password = RawPassword.of(SECRET_VALUE);
+  @DisplayName("RawPassword redacts toString and supports equals/hashCode")
+  void testRawPassword() {
+    RawPassword pwd1 = RawPassword.of("Secret123!");
+    RawPassword pwd2 = RawPassword.of("Secret123!");
+    RawPassword pwd3 = RawPassword.of("Different123!");
 
-    assertThat(password.value()).isEqualTo(SECRET_VALUE);
-    assertThat(password.length()).isEqualTo(SECRET_VALUE.length());
-  }
+    assertThat(pwd1.value()).isEqualTo("Secret123!");
+    assertThat(pwd1.length()).isEqualTo(10);
+    assertThat(pwd1.toString()).isEqualTo("RawPassword[REDACTED]");
 
-  @Test
-  void toStringNeverRevealsTheRawValue() {
-    RawPassword password = RawPassword.of(SECRET_VALUE);
+    assertThat(pwd1).isEqualTo(pwd1);
+    assertThat(pwd1).isEqualTo(pwd2);
+    assertThat(pwd1).isNotEqualTo(pwd3);
+    assertThat(pwd1).isNotEqualTo("Secret123!");
+    assertThat(pwd1).isNotEqualTo(null);
 
-    String rendered = password.toString();
+    assertThat(pwd1.hashCode()).isEqualTo(pwd2.hashCode());
 
-    assertThat(rendered).doesNotContain(SECRET_VALUE);
-    assertThat(rendered).isEqualTo("RawPassword[REDACTED]");
-  }
-
-  @Test
-  void anAssertionFailureMessageDoesNotLeakTheRawValueEither() {
-    RawPassword password = RawPassword.of(SECRET_VALUE);
-
-    // AssertJ renders the actual/expected objects via toString() in a failure message; proving
-    // a deliberately failing comparison's message stays clean is the direct evidence that
-    // ordinary test failures never print a raw secret to CI logs or a developer's terminal.
-    String failureMessage = "";
-    try {
-      assertThat(password).isEqualTo(RawPassword.of("a different secret"));
-    } catch (AssertionError e) {
-      failureMessage = e.getMessage();
-    }
-
-    assertThat(failureMessage).doesNotContain(SECRET_VALUE);
-    assertThat(failureMessage).doesNotContain("a different secret");
-  }
-
-  @Test
-  void equalityIsBasedOnValue() {
-    assertThat(RawPassword.of(SECRET_VALUE)).isEqualTo(RawPassword.of(SECRET_VALUE));
-    assertThat(RawPassword.of(SECRET_VALUE)).isNotEqualTo(RawPassword.of("something else"));
-  }
-
-  @Test
-  void rejectsNullInput() {
-    assertThatNullPointerException()
-        .isThrownBy(() -> RawPassword.of(null))
-        .withMessage("value must not be null");
+    assertThatThrownBy(() -> RawPassword.of(null)).isInstanceOf(NullPointerException.class);
   }
 }

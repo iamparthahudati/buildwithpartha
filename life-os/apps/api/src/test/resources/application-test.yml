@@ -22,3 +22,8 @@ lifeos:
   session-cookie-secure: true
   mail-from: lifeos@example.test
   export-storage-path: build/tmp/test-exports
+  features:
+    attachments:
+      enabled: true
+  attachments:
+    storage-path: build/tmp/test-attachments

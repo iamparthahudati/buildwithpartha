@@ -33,7 +33,8 @@ final class PackageBoundaryRules {
           "comment",
           "audit",
           "job",
-          "export");
+          "export",
+          "attachment");
 
   private static final List<String> DOMAIN_LAYERS =
       List.of("api", "application", "domain", "infrastructure");

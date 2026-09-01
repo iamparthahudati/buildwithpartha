@@ -2,7 +2,7 @@
 
 Package root: `tech.buildwithpartha.lifeos`.
 
-Domains: `auth`, `user`, `project`, `task`, `calendar`, `timeblock`, `focus`, `sprint`, `goal`, `note`, `braindump`, `habit`, `report`, `search`, `notification`, `audit`.
+Domains: `auth`, `user`, `project`, `task`, `calendar`, `timeblock`, `focus`, `sprint`, `goal`, `note`, `braindump`, `habit`, `report`, `search`, `notification`, `audit`, `attachment`.
 
 Cross-cutting packages: `common` for stable domain-neutral primitives/errors and `config` for Spring configuration. Avoid a global controller/service/repository layout.
 

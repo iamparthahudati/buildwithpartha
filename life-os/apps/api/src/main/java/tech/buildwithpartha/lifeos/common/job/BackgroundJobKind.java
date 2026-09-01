@@ -9,5 +9,8 @@ public enum BackgroundJobKind {
   DATA_EXPORT,
 
   /** Executes the full account deletion lifecycle for a user (LOS-0518). */
-  ACCOUNT_DELETION
+  ACCOUNT_DELETION,
+
+  /** Scans an uploaded attachment for malware asynchronously (LOS-1310). */
+  ATTACHMENT_SCAN
 }
