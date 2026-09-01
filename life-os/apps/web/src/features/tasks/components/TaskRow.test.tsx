@@ -152,6 +152,26 @@ describe("TaskRow", () => {
     expect(onDelete).toHaveBeenCalledOnce();
   });
 
+  it("renders recurring badge and offers skip occurrence action when recurringSeriesId is present", async () => {
+    const onSkipOccurrence = vi.fn();
+    const { user } = renderWithUser(
+      <TaskRow
+        task={{ ...TASK, recurringSeriesId: "series-123", recurrenceOccurrenceDate: "2026-09-01" }}
+        now={NOW}
+        onSkipOccurrence={onSkipOccurrence}
+      />,
+    );
+
+    expect(screen.getByText("Recurring")).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Actions for Build TaskRow and TaskCard" }),
+    );
+    const skipItem = screen.getByRole("menuitem", { name: "Skip occurrence" });
+    expect(skipItem).toBeInTheDocument();
+    await user.click(skipItem);
+    expect(onSkipOccurrence).toHaveBeenCalledOnce();
+  });
+
   it("has no accessibility violations", async () => {
     const { container } = renderWithUser(
       <TaskRow

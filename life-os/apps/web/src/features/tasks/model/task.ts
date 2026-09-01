@@ -31,6 +31,8 @@ export interface TaskListItem {
   /** Server-derived when available. The component derives it only as a mock fallback. */
   readonly overdue?: boolean;
   readonly archivedAt?: string | null;
+  readonly recurringSeriesId?: string | null;
+  readonly recurrenceOccurrenceDate?: string | null;
   readonly href?: string;
 }
 
@@ -58,6 +60,8 @@ export interface TaskRecord {
   readonly archivedAt: string | null;
   readonly deletedAt?: string | null;
   readonly labelIds: readonly string[];
+  readonly recurringSeriesId?: string | null;
+  readonly recurrenceOccurrenceDate?: string | null;
   readonly version: number;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -78,6 +82,8 @@ export function toTaskListItem(task: TaskRecord): TaskListItem {
     blockerCount: task.blockerCount,
     overdue: task.overdue,
     archivedAt: task.archivedAt,
+    recurringSeriesId: task.recurringSeriesId ?? null,
+    recurrenceOccurrenceDate: task.recurrenceOccurrenceDate ?? null,
     ...(task.href ? { href: task.href } : {}),
   };
 }

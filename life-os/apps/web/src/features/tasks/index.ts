@@ -155,3 +155,29 @@ export {
   type TaskMilestoneDto,
   type TaskMilestoneAssignmentDto,
 } from "./api/taskMilestoneApi";
+
+export {
+  createRecurringSeries,
+  deleteRecurringSeries,
+  getRecurringSeries,
+  listRecurringSeries,
+  listRecurringSeriesExceptions,
+  skipOccurrence,
+  updateRecurringSeries,
+  type CreateRecurringSeriesRequestDto,
+  type RecurringSeriesResponseDto,
+  type RecurringTaskExceptionDto,
+  type SkipOccurrenceRequestDto,
+  type UpdateRecurringSeriesRequestDto,
+} from "./api/recurringSeriesApi";
+
+export {
+  RECURRING_SERIES_QUERY_KEY,
+  recurringSeriesQueryKeys,
+  useCreateRecurringSeries,
+  useDeleteRecurringSeries,
+  useRecurringSeries,
+  useRecurringSeriesList,
+  useSkipOccurrence,
+  useUpdateRecurringSeries,
+} from "./hooks/useRecurringSeries";

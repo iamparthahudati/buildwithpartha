@@ -341,4 +341,22 @@ describe("IntegratedTaskDetails", () => {
     resolveAdd?.();
     await waitFor(() => expect(screen.queryByText("(Posting…)")).not.toBeInTheDocument());
   });
+
+  it("renders recurring badge and triggers skip occurrence from actions menu", async () => {
+    const recurringTaskDetail = {
+      ...DETAIL,
+      task: {
+        ...DETAIL.task,
+        recurringSeriesId: "series-123",
+        recurrenceOccurrenceDate: "2026-09-01",
+      },
+    };
+    mocks.getTaskDetail.mockResolvedValue(recurringTaskDetail);
+    const { user } = renderIntegrated();
+
+    expect(await screen.findByText("Recurring")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Actions for Prepare weekly review" }));
+    const skipItem = screen.getByRole("menuitem", { name: "Skip occurrence" });
+    expect(skipItem).toBeInTheDocument();
+  });
 });

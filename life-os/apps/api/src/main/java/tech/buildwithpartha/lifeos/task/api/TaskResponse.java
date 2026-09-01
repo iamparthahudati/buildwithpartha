@@ -34,6 +34,8 @@ public record TaskResponse(
     int subtaskCount,
     int completedSubtaskCount,
     Set<UUID> labelIds,
+    UUID recurringSeriesId,
+    LocalDate recurrenceOccurrenceDate,
     long version) {
 
   public static TaskResponse fromDomain(Task task) {
@@ -72,6 +74,8 @@ public record TaskResponse(
         totalSubtasks,
         completedSubtasks,
         task.labelIds(),
+        task.recurringSeriesId().orElse(null),
+        task.recurrenceOccurrenceDate().orElse(null),
         task.version());
   }
 }

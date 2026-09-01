@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -35,6 +35,7 @@ vi.mock("@features/tasks", async () => {
     useDuplicateTask: vi.fn(),
     useToggleTaskMit: vi.fn(),
     useBulkTaskAction: vi.fn(),
+    useCreateRecurringSeries: vi.fn(),
     IntegratedTaskDetails: (props: {
       readonly taskId: string;
       readonly backHref: string;
@@ -55,6 +56,7 @@ const mockUseProjects = vi.mocked(projectsFeature.useProjects);
 const mockUseTasks = vi.mocked(tasksFeature.useTasks);
 const mockUseTaskLabels = vi.mocked(tasksFeature.useTaskLabels);
 const mockUseCreateTask = vi.mocked(tasksFeature.useCreateTask);
+const mockUseCreateRecurringSeries = vi.mocked(tasksFeature.useCreateRecurringSeries);
 const mockUseUpdateTask = vi.mocked(tasksFeature.useUpdateTask);
 const mockUseCompleteTask = vi.mocked(tasksFeature.useCompleteTask);
 const mockUseChangeTaskStatus = vi.mocked(tasksFeature.useChangeTaskStatus);
@@ -155,6 +157,11 @@ describe("TasksRoute", () => {
       refetch: vi.fn(),
     } as never);
     mockUseCreateTask.mockReturnValue({ mutateAsync, isPending: false, error: null } as never);
+    mockUseCreateRecurringSeries.mockReturnValue({
+      mutateAsync,
+      isPending: false,
+      error: null,
+    } as never);
     mockUseUpdateTask.mockReturnValue({ mutateAsync, isPending: false, error: null } as never);
     mockUseCompleteTask.mockReturnValue({ mutateAsync } as never);
     mockUseChangeTaskStatus.mockReturnValue({ mutateAsync } as never);
@@ -267,5 +274,24 @@ describe("TasksRoute", () => {
     expect(screen.getByText("Couldn't load this list.")).toBeInTheDocument();
     await user.click(screen.getAllByRole("button", { name: "Try again" })[0]!);
     expect(refetch).toHaveBeenCalled();
+  });
+
+  it("creates a recurring task series when task form submits recurring rule", async () => {
+    const user = userEvent.setup();
+    renderTasksRoute();
+
+    await user.click(screen.getAllByRole("button", { name: /Add task/i })[0]!);
+    await user.type(screen.getByLabelText("Task title"), "Daily Review");
+    await user.click(screen.getByRole("checkbox", { name: /Repeat this task/ }));
+    const dialog = screen.getByRole("dialog", { name: "Create task" });
+    await user.click(within(dialog).getByRole("button", { name: "Add task" }));
+
+    expect(mutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Daily Review",
+        frequency: "DAILY",
+        timeZone: "UTC",
+      }),
+    );
   });
 });

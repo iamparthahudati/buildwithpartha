@@ -1,6 +1,8 @@
+import { RefreshCw } from "lucide-react";
 import {
   Badge,
   Checkbox,
+  Icon,
   Link,
   ProgressBar,
   Skeleton,
@@ -113,6 +115,11 @@ export function TaskRow({
           {task.isMit ? (
             <Badge tone="accent">
               MIT<VisuallyHidden> — Most Important Task</VisuallyHidden>
+            </Badge>
+          ) : null}
+          {task.recurringSeriesId ? (
+            <Badge tone="info">
+              <Icon icon={RefreshCw} size="sm" decorative /> Recurring
             </Badge>
           ) : null}
           {isArchived ? <Badge tone="neutral">Archived</Badge> : null}

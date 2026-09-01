@@ -40,6 +40,8 @@ export interface TaskResponseDto {
   readonly completedSubtaskCount?: number;
   readonly subtasks?: readonly SubtaskResponseDto[];
   readonly labelIds?: readonly string[];
+  readonly recurringSeriesId?: string | null;
+  readonly recurrenceOccurrenceDate?: string | null;
   readonly version: number;
 }
 
@@ -229,6 +231,8 @@ export function mapTaskResponse(
     spentMinutes: dto.spentMinutes ?? null,
     deletedAt: dto.deletedAt ?? null,
     labelIds: dto.labelIds ?? [],
+    recurringSeriesId: dto.recurringSeriesId ?? null,
+    recurrenceOccurrenceDate: dto.recurrenceOccurrenceDate ?? null,
     version: dto.version,
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
