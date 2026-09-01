@@ -79,6 +79,13 @@ public class JpaTaskRepository implements TaskRepository {
   }
 
   @Override
+  public List<Task> findByRecurringSeriesId(UUID recurringSeriesId) {
+    return taskJpaRepository.findByRecurringSeriesId(recurringSeriesId).stream()
+        .map(this::loadTaskWithSubtasks)
+        .toList();
+  }
+
+  @Override
   public List<Task> findByUserIdAndMitDate(UUID userId, LocalDate mitDate) {
     return taskJpaRepository.findByUserIdAndMitDate(userId, mitDate).stream()
         .map(this::loadTaskWithSubtasks)

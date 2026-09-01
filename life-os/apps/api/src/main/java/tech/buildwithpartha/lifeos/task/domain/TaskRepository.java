@@ -19,6 +19,8 @@ public interface TaskRepository {
 
   List<Task> findByProjectId(UUID projectId);
 
+  List<Task> findByRecurringSeriesId(UUID recurringSeriesId);
+
   List<Task> findByUserIdAndMitDate(UUID userId, LocalDate mitDate);
 
   void deleteById(UUID id);

@@ -47,18 +47,21 @@ public class TaskService {
   private final TaskDependencyRepository taskDependencyRepository;
   private final ProjectOwnershipValidator projectOwnershipValidator;
   private final ProductActivityPort activityPort;
+  private final RecurrenceGenerationService recurrenceGenerationService;
 
   public TaskService(
       TaskRepository taskRepository,
       LabelOwnershipValidator labelOwnershipValidator,
       TaskDependencyRepository taskDependencyRepository,
       ProjectOwnershipValidator projectOwnershipValidator,
-      ProductActivityPort activityPort) {
+      ProductActivityPort activityPort,
+      RecurrenceGenerationService recurrenceGenerationService) {
     this.taskRepository = taskRepository;
     this.labelOwnershipValidator = labelOwnershipValidator;
     this.taskDependencyRepository = taskDependencyRepository;
     this.projectOwnershipValidator = projectOwnershipValidator;
     this.activityPort = activityPort;
+    this.recurrenceGenerationService = recurrenceGenerationService;
   }
 
   public Task createTask(UUID userId, CreateTaskCommand command) {
@@ -194,6 +197,9 @@ public class TaskService {
     recordTaskActivity(saved, ActivityEventType.TASK_STATUS_CHANGED);
     if (status.isTerminal()) {
       unblockDependentsIfAllBlockersResolved(userId, taskId);
+    }
+    if (status == TaskStatus.DONE && recurrenceGenerationService != null) {
+      recurrenceGenerationService.handleTaskCompletion(saved);
     }
     return saved;
   }

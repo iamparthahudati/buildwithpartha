@@ -236,6 +236,7 @@ Last updated: 2026-08-30
 | LOS-1303 | Done          | `feature/LOS-1303-model-and-implement-notifications` | Modeled notifications schema (V28 Flyway migration), REST API endpoints (/notifications, /unread-count, /mark-read, /mark-unread, /clear, /clear-all, /preferences), category metadata, retention cleanup, and audit. See `docs/handoffs/LOS-1303.md`. |
 | LOS-1304 | Done          | `feature/LOS-1304-build-notification-center-settings` | Built notification center frontend (`@features/notifications`), bell badge, unread count hook, date-grouped list, category/unread filters, mark read/unread, clear/clear-all, target URL navigation, quiet hours & category/channel preferences panel, mobile drawer, and NotificationsRoute. See `docs/handoffs/LOS-1304.md`. |
 | LOS-1305 | Done          | `feature/LOS-1305-implement-recurring-task-model` | Modeled recurring task series, occurrence links, and exception records: Flyway `V31__recurring_tasks_schema.sql`, JPA entities and repositories, and domain aggregates with 100% test pass. See `docs/handoffs/LOS-1305.md`. |
+| LOS-1306 | Done          | `feature/LOS-1306-implement-recurrence-generation-edit-api` | Implemented recurrence calculation engine, idempotent occurrence generation service and background job, edit scopes (THIS_OCCURRENCE, THIS_AND_FUTURE, SERIES), skip/delete/complete occurrence exception handling, REST endpoints, and product activity integration. See `docs/handoffs/LOS-1306.md`. |
 
 
 

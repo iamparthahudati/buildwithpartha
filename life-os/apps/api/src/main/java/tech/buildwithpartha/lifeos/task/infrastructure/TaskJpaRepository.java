@@ -19,6 +19,8 @@ interface TaskJpaRepository extends JpaRepository<TaskEntity, UUID> {
 
   List<TaskEntity> findByProjectId(UUID projectId);
 
+  List<TaskEntity> findByRecurringSeriesId(UUID recurringSeriesId);
+
   List<TaskEntity> findByUserIdAndMitDate(UUID userId, LocalDate mitDate);
 
   @Query(
