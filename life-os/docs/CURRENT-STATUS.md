@@ -1,16 +1,24 @@
 # Current status
 
-Last updated: 2026-09-01 (LOS-1304 Notification center & settings frontend)
+Last updated: 2026-09-01 (LOS-1308 Integrate recurring tasks)
 
 ## Phase
 
-Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), Epic 10 (Sprints, week planning, and reviews), Epic 11 (Goals, progress, reports, and analytics), and Epic 12 (Notes, Brain Dump, and Habits) completed.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), Epic 10 (Sprints, week planning, and reviews), Epic 11 (Goals, progress, reports, and analytics), Epic 12 (Notes, Brain Dump, and Habits), and Epic 13 (Platform features) completed.
 
 ## In review
 
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1308 — Integrated recurring task series into TaskForm, TaskRow, TaskCard, TaskDetailsHeader, TaskActions, IntegratedTaskDetails, and TasksRoute; added DTO mapping for `recurringSeriesId` and `recurrenceOccurrenceDate`; created `recurringSeriesApi` client and `useRecurringSeries` TanStack Query hooks; and verified quality suite (`npm run verify:quality`, `npm run build:test`, `./gradlew check`) passed 100%. See `docs/handoffs/LOS-1308.md`.
+
+- LOS-1307 — Built recurrence editor and series UX components (`RecurrenceEditor.tsx` & `RecurrenceEditScopeDialog.tsx`) and `recurrenceContract.ts` domain logic for frequency, cadence, days of week, end rules, and preview occurrence calculations with 100% test coverage and axe accessibility compliance. See `docs/handoffs/LOS-1307.md`.
+
+- LOS-1306 — Implemented pure domain recurrence occurrence engine (`RecurrenceOccurrenceEngine`), scheduled generation job (`RecurrenceGenerationJob`), completion triggers for `AFTER_COMPLETION` series, and series mutation scope handlers (`THIS_OCCURRENCE`, `THIS_AND_FUTURE`, `SERIES`) with complete OpenAPI REST controllers and JPA persistence logic. See `docs/handoffs/LOS-1306.md`.
+
+- LOS-1305 — Modeled recurring task series aggregate (`RecurringTaskSeries`), exception rules (`RecurringTaskException`), frequency/end mode/exception enums, Flyway database schema migration (`V31__recurring_tasks_schema.sql`), and JPA repository adapters. See `docs/handoffs/LOS-1305.md`.
 
 - LOS-1304 — Built and integrated the notification center and settings frontend module (`@features/notifications`): domain models (`NotificationItem`, `NotificationCategory`, `NotificationPreferences`, `UpdateNotificationPreferencesRequest`), category metadata helpers (`getCategoryLabel`, `getCategoryIcon`, `getCategoryBadgeTone`), date-grouping utility (`groupNotificationsByDate`), REST API client wrapper over `apiRequest`, React Query hooks (`useNotifications`, `useNotificationUnreadCount`, `useMarkNotificationRead`, `useMarkNotificationUnread`, `useMarkAllNotificationsRead`, `useClearNotification`, `useClearAllNotifications`, `useNotificationPreferences`, `useUpdateNotificationPreferences`), `NotificationRow` with accessible unread indicator (`aria-hidden="true"` + screen reader text) and category badges, `NotificationGroupedList` ("Today", "Yesterday", "Earlier"), `NotificationCenter` container with unread badge, category filter, unread filter toggle, pagination (1-indexed), empty/loading/error states, `NotificationDrawer` responsive mobile/quick drawer, `NotificationPreferencesPanel` settings panel with quiet hours, category switches, and delivery channel switches, `NotificationsScreen` route component, `/life-os/app/notifications` route, TopBar bell unread counter badge, and Notifications tab in SettingsScreen. 100% unit and axe accessibility tests passed. See `docs/handoffs/LOS-1304.md`.
 
