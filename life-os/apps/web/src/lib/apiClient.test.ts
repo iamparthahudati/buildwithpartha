@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ApiError, apiRequest, configureApiClient, resetApiClientConfiguration } from "./apiClient";
+import {
+  ApiError,
+  apiBlobRequest,
+  apiRequest,
+  configureApiClient,
+  resetApiClientConfiguration,
+} from "./apiClient";
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -105,6 +111,31 @@ describe("apiRequest", () => {
 
     const [, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
     expect((init.headers as Headers).has("X-CSRF-TOKEN")).toBe(false);
+  });
+
+  it("passes FormData without forcing application/json content type", async () => {
+    configureApiClient({ getCsrfToken: () => "known-token", onAuthenticationRequired: vi.fn() });
+    vi.mocked(fetch).mockResolvedValueOnce(jsonResponse(201, { id: "att-1" }));
+
+    const formData = new FormData();
+    formData.append("file", new Blob(["test"]), "test.txt");
+
+    await apiRequest("/attachments", { method: "POST", body: formData });
+
+    const [, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    expect((init.headers as Headers).has("Content-Type")).toBe(false);
+    expect((init.headers as Headers).get("X-CSRF-TOKEN")).toBe("known-token");
+    expect(init.body).toBe(formData);
+  });
+
+  it("apiBlobRequest fetches binary blob response successfully", async () => {
+    const blob = new Blob(["content"], { type: "text/plain" });
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(blob, { status: 200, headers: { "Content-Type": "text/plain" } }),
+    );
+
+    const result = await apiBlobRequest("/attachments/att-1/download");
+    expect(result).toBeInstanceOf(Blob);
   });
 
   it("rejects with an ApiError carrying the parsed problem on failure", async () => {

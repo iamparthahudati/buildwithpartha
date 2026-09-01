@@ -72,6 +72,7 @@ export interface ProjectDetailsScreenProps {
   readonly activityEmptyTitle?: string;
   readonly statusBreakdown?: readonly ChartDatum[];
   readonly priorityBreakdown?: readonly ChartDatum[];
+  readonly attachmentsEnabled?: boolean;
   readonly attachments?: readonly Attachment[];
   readonly comments?: readonly Comment[];
   readonly commentsStatus?: CommentListStatus;
@@ -158,6 +159,7 @@ export function ProjectDetailsScreen({
   activityEmptyTitle = "No activity recorded",
   statusBreakdown = [],
   priorityBreakdown = [],
+  attachmentsEnabled,
   attachments = [],
   comments = [],
   commentsStatus = { type: "ready" },
@@ -440,42 +442,48 @@ export function ProjectDetailsScreen({
         />
       ),
     },
-    {
-      id: "files",
-      label: "Files",
-      badge:
-        attachments.length > 0 ? <Badge tone="neutral">{attachments.length}</Badge> : undefined,
-      panel: (
-        <Surface
-          as="section"
-          aria-label="Project files"
-          className="lifeos-project-details-screen__files-tab"
-        >
-          <Heading level={2} size="md">
-            Files & Attachments
-          </Heading>
-          {!isArchived && onUploadAttachment ? (
-            <AttachmentUploader
-              label="Upload project attachment"
-              acceptedTypes={["image/png", "image/jpeg", "application/pdf"]}
-              acceptedTypesLabel="PNG, JPEG, or PDF"
-              maxFileSizeBytes={10 * 1024 * 1024}
-              locale={locale}
-              onFilesSelected={(files) => void onUploadAttachment(files)}
-            />
-          ) : null}
-          <AttachmentList
-            attachments={attachments}
-            label="Project attachments list"
-            emptyTitle="No files attached"
-            emptyDescription="Upload documents, specifications, or assets linked to this project."
-            locale={locale}
-            {...(onDeleteAttachment ? { onDelete: onDeleteAttachment } : {})}
-            {...(onDownloadAttachment ? { onDownload: onDownloadAttachment } : {})}
-          />
-        </Surface>
-      ),
-    },
+    ...((attachmentsEnabled ?? true)
+      ? [
+          {
+            id: "files",
+            label: "Files",
+            badge:
+              attachments.length > 0 ? (
+                <Badge tone="neutral">{attachments.length}</Badge>
+              ) : undefined,
+            panel: (
+              <Surface
+                as="section"
+                aria-label="Project files"
+                className="lifeos-project-details-screen__files-tab"
+              >
+                <Heading level={2} size="md">
+                  Files & Attachments
+                </Heading>
+                {!isArchived && onUploadAttachment ? (
+                  <AttachmentUploader
+                    label="Upload project attachment"
+                    acceptedTypes={["image/png", "image/jpeg", "application/pdf"]}
+                    acceptedTypesLabel="PNG, JPEG, or PDF"
+                    maxFileSizeBytes={10 * 1024 * 1024}
+                    locale={locale}
+                    onFilesSelected={(files) => void onUploadAttachment(files)}
+                  />
+                ) : null}
+                <AttachmentList
+                  attachments={attachments}
+                  label="Project attachments list"
+                  emptyTitle="No files attached"
+                  emptyDescription="Upload documents, specifications, or assets linked to this project."
+                  locale={locale}
+                  {...(onDeleteAttachment ? { onDelete: onDeleteAttachment } : {})}
+                  {...(onDownloadAttachment ? { onDownload: onDownloadAttachment } : {})}
+                />
+              </Surface>
+            ),
+          },
+        ]
+      : []),
     {
       id: "notes",
       label: "Notes",

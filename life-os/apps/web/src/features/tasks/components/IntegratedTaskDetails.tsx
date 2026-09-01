@@ -8,6 +8,7 @@ import {
   useActivity,
   type ActivityTypeFilter,
 } from "@features/activity";
+import { useAttachments, useAttachmentMutations } from "@features/attachments";
 import { useCommentMutations, useComments } from "@features/comments";
 import { useProjects } from "@features/projects";
 import { ApiError } from "@lib/apiClient";
@@ -190,6 +191,8 @@ export function IntegratedTaskDetails({
     Boolean(taskId) && selectedTab === "comments",
   );
   const commentMutations = useCommentMutations("TASK", taskId);
+  const attachmentsQuery = useAttachments("TASK", taskId, { enabled: Boolean(taskId) });
+  const attachmentMutations = useAttachmentMutations("TASK", taskId);
   const activityQuery = useActivity(
     "TASK",
     taskId,
@@ -464,8 +467,28 @@ export function IntegratedTaskDetails({
       onPageChange: setCommentPage,
     },
     attachments: {
-      enabled: false,
-      count: detail?.counts.attachmentCount ?? 0,
+      enabled: attachmentsQuery.enabled,
+      attachments: [...attachmentsQuery.attachments, ...attachmentMutations.inFlightAttachments],
+      count:
+        detail?.counts.attachmentCount ??
+        attachmentsQuery.attachments.length + attachmentMutations.inFlightAttachments.length,
+      status: attachmentsQuery.isError
+        ? {
+            type: "error",
+            message: "Task attachments couldn't load. Task details are still available.",
+            onRetry: () => void attachmentsQuery.refetch(),
+          }
+        : attachmentsQuery.isLoading
+          ? { type: "loading" }
+          : { type: "ready" },
+      uploading: attachmentMutations.isUploading,
+      onUpload: (files) => void attachmentMutations.uploadFiles(files),
+      onCancel: (id) => attachmentMutations.cancelUpload(id),
+      onRetryUpload: (id) => void attachmentMutations.retryUpload(id),
+      onDownload: (id) => void attachmentMutations.downloadFile(id),
+      onDelete: (id) => void attachmentMutations.deleteFile(id),
+      deletePending: attachmentMutations.isDeleting,
+      ...(attachmentMutations.deleteError ? { deleteError: attachmentMutations.deleteError } : {}),
     },
     activity: {
       events: activityEvents,

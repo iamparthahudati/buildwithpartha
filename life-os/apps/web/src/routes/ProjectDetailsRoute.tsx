@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useCommentMutations, useComments } from "@features/comments";
+import { useAttachments, useAttachmentMutations } from "@features/attachments";
 import {
   activityFilterEmptyTitle,
   activityMatchesFilter,
@@ -109,6 +110,10 @@ export function ProjectDetailsRoute() {
     user !== null && projectId !== "",
   );
   const commentMutations = useCommentMutations("PROJECT", projectId);
+  const attachmentsQuery = useAttachments("PROJECT", projectId, {
+    enabled: user !== null && projectId !== "",
+  });
+  const attachmentMutations = useAttachmentMutations("PROJECT", projectId);
   const activityQuery = useActivity(
     "PROJECT",
     projectId,
@@ -436,6 +441,11 @@ export function ProjectDetailsRoute() {
       onArchiveProject={handleArchiveProject}
       onRestoreProject={handleRestoreProject}
       onDeleteProject={handleDeleteProject}
+      attachmentsEnabled={attachmentsQuery.enabled}
+      attachments={[...attachmentsQuery.attachments, ...attachmentMutations.inFlightAttachments]}
+      onUploadAttachment={(files) => void attachmentMutations.uploadFiles(files)}
+      onDownloadAttachment={(id) => void attachmentMutations.downloadFile(id)}
+      onDeleteAttachment={(id) => void attachmentMutations.deleteFile(id)}
     />
   );
 }

@@ -628,4 +628,23 @@ describe("ProjectDetailsRoute", () => {
     expect(mockRestoreProject).toHaveBeenCalled();
     expect(mockDeleteProject).toHaveBeenCalled();
   });
+
+  it("passes attachment status and handles upload/download/delete on ProjectDetailsScreen props", async () => {
+    mockUseProjectDetail.mockReturnValue({
+      data: { project: MOCK_PROJECT, milestones: [] },
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as any);
+
+    renderRoute("/life-os/app/projects/proj-123");
+    const props = (globalThis as Record<string, any>).__lastDetailsProps;
+
+    expect(props.attachmentsEnabled).toBeDefined();
+    expect(props.attachments).toEqual([]);
+    expect(typeof props.onUploadAttachment).toBe("function");
+    expect(typeof props.onDownloadAttachment).toBe("function");
+    expect(typeof props.onDeleteAttachment).toBe("function");
+  });
 });

@@ -111,7 +111,9 @@ export async function apiRequest<TResponse = void>(
   const headers = new Headers(init.headers);
 
   if (init.body !== undefined) {
-    headers.set("Content-Type", "application/json");
+    if (!(init.body instanceof FormData)) {
+      headers.set("Content-Type", "application/json");
+    }
   }
   headers.set("Accept", "application/json");
 
@@ -128,7 +130,9 @@ export async function apiRequest<TResponse = void>(
       method,
       headers,
       credentials: "same-origin",
-      ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }),
+      ...(init.body === undefined
+        ? {}
+        : { body: init.body instanceof FormData ? init.body : JSON.stringify(init.body) }),
       ...(init.signal === undefined ? {} : { signal: init.signal }),
     });
   } catch (cause) {
@@ -137,6 +141,45 @@ export async function apiRequest<TResponse = void>(
 
   if (response.ok) {
     return (await readBody(response)) as TResponse;
+  }
+
+  const problem = await readProblem(response);
+  if (problem?.code === "AUTHENTICATION_REQUIRED" && !init.suppressAuthenticationRecovery) {
+    configuration?.onAuthenticationRequired();
+  }
+  throw new ApiError(response.status, problem);
+}
+
+/**
+ * Issues one same-origin request against the LifeOS API and returns the response as a Blob.
+ * Used for binary attachment downloads.
+ */
+export async function apiBlobRequest(path: string, init: ApiRequestInit = {}): Promise<Blob> {
+  const method = init.method ?? "GET";
+  const { apiBasePath } = readPublicEnvironment();
+  const headers = new Headers(init.headers);
+
+  if (MUTATING_METHODS.has(method)) {
+    const csrfToken = configuration?.getCsrfToken() ?? null;
+    if (csrfToken !== null) {
+      headers.set(CSRF_HEADER_NAME, csrfToken);
+    }
+  }
+
+  let response: Response;
+  try {
+    response = await fetch(`${apiBasePath}${path}`, {
+      method,
+      headers,
+      credentials: "same-origin",
+      ...(init.signal === undefined ? {} : { signal: init.signal }),
+    });
+  } catch (cause) {
+    throw new ApiError(0, undefined, { cause });
+  }
+
+  if (response.ok) {
+    return await response.blob();
   }
 
   const problem = await readProblem(response);

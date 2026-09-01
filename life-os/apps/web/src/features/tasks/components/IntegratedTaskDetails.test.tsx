@@ -22,12 +22,37 @@ const mocks = vi.hoisted(() => ({
   refetchComments: vi.fn(),
   useActivity: vi.fn(),
   refetchActivity: vi.fn(),
+  useAttachments: vi.fn().mockReturnValue({
+    enabled: false,
+    attachments: [],
+    isLoading: false,
+    isError: false,
+    error: null,
+    refetch: vi.fn(),
+  }),
+  useAttachmentMutations: vi.fn().mockReturnValue({
+    uploadFiles: vi.fn(),
+    isUploading: false,
+    uploadError: null,
+    downloadFile: vi.fn(),
+    deleteFile: vi.fn(),
+    isDeleting: false,
+    deleteError: null,
+    inFlightAttachments: [],
+    retryUpload: vi.fn(),
+    cancelUpload: vi.fn(),
+  }),
 }));
 
 vi.mock("@features/activity", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@features/activity")>();
   return { ...actual, useActivity: mocks.useActivity };
 });
+
+vi.mock("@features/attachments", () => ({
+  useAttachments: mocks.useAttachments,
+  useAttachmentMutations: mocks.useAttachmentMutations,
+}));
 
 vi.mock("@features/comments", () => ({
   useComments: mocks.useComments,
@@ -129,6 +154,26 @@ function renderIntegrated(props: Partial<ComponentProps<typeof IntegratedTaskDet
 describe("IntegratedTaskDetails", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    mocks.useAttachments.mockReturnValue({
+      enabled: false,
+      attachments: [],
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+    mocks.useAttachmentMutations.mockReturnValue({
+      uploadFiles: vi.fn(),
+      isUploading: false,
+      uploadError: null,
+      downloadFile: vi.fn(),
+      deleteFile: vi.fn(),
+      isDeleting: false,
+      deleteError: null,
+      inFlightAttachments: [],
+      retryUpload: vi.fn(),
+      cancelUpload: vi.fn(),
+    });
     mocks.getTaskDetail.mockResolvedValue(DETAIL);
     mocks.queryTasks.mockResolvedValue({
       items: [],
@@ -358,5 +403,29 @@ describe("IntegratedTaskDetails", () => {
     await user.click(screen.getByRole("button", { name: "Actions for Prepare weekly review" }));
     const skipItem = screen.getByRole("menuitem", { name: "Skip occurrence" });
     expect(skipItem).toBeInTheDocument();
+  });
+
+  it("renders the Attachments tab and list when attachment feature is enabled", async () => {
+    mocks.useAttachments.mockReturnValue({
+      enabled: true,
+      attachments: [
+        {
+          id: "att-1",
+          fileName: "notes.pdf",
+          fileSizeBytes: 1024,
+          status: "ready",
+        },
+      ],
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    renderIntegrated({ selectedTab: "attachments" });
+
+    expect(await screen.findByRole("tab", { name: /Attachments/ })).toBeInTheDocument();
+    expect(screen.getByRole("list", { name: "Task attachments" })).toBeInTheDocument();
+    expect(screen.getByText("notes.pdf")).toBeInTheDocument();
   });
 });
