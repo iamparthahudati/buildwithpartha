@@ -24,3 +24,7 @@ export {
 export { TimerRing, type TimerRingProps, type TimerRingStatus } from "./TimerRing";
 export { QuickAddDialog, type QuickAddDialogProps, type QuickAddType } from "./QuickAddDialog";
 export { useQuickAddShortcut, type UseQuickAddShortcutOptions } from "./useQuickAddShortcut";
+export {
+  RecurrenceEditScopeDialog,
+  type RecurrenceEditScopeDialogProps,
+} from "./RecurrenceEditScopeDialog";

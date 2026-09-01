@@ -27,3 +27,17 @@ export {
   type IconOption,
   type IconOptionName,
 } from "./colorIconPalette";
+export { RecurrenceEditor, type RecurrenceEditorProps } from "./RecurrenceEditor";
+export {
+  ALL_DAYS_OF_WEEK,
+  DAY_OF_WEEK_LABELS,
+  calculateNextOccurrences,
+  formatRecurrenceRuleSummary,
+  validateRecurrenceRule,
+  type RecurrenceDayOfWeek,
+  type RecurrenceEditScope,
+  type RecurrenceEndMode,
+  type RecurrenceFrequency,
+  type RecurrenceRule,
+  type RecurrenceValidationResult,
+} from "./recurrenceContract";

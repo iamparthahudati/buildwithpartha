@@ -1,6 +1,8 @@
 import { useState } from "react";
 
-import { DateInput, RadioGroup, Textarea, TextInput, TimeInput } from "@components/ui";
+import { Button, DateInput, RadioGroup, Textarea, TextInput, TimeInput } from "@components/ui";
+import { RecurrenceEditor, type RecurrenceRule } from "@components/forms";
+import { RecurrenceEditScopeDialog } from "@components/feedback";
 import { addLocalDays, formatLocalDate, todayLocalDate } from "@lib/localDateTime";
 
 import { PRIORITY_OPTIONS } from "./formFixtures";
@@ -98,6 +100,39 @@ export function StartTimeDemo() {
       <p className="lifeos-field__description">
         Stored value: <code>{value === "" ? "(none)" : value}</code>
       </p>
+    </div>
+  );
+}
+
+export function RecurrenceEditorDemo() {
+  const [rule, setRule] = useState<RecurrenceRule>({
+    frequency: "WEEKLY",
+    intervalValue: 1,
+    daysOfWeek: ["MONDAY", "WEDNESDAY", "FRIDAY"],
+    endMode: "NEVER",
+    startDate: "2026-09-01",
+    timeZone: "UTC",
+  });
+
+  return <RecurrenceEditor value={rule} onChange={setRule} />;
+}
+
+export function RecurrenceEditScopeDialogDemo() {
+  const [open, setOpen] = useState(false);
+  const [lastScope, setLastScope] = useState<string | null>(null);
+
+  return (
+    <div className="specimen-stack">
+      <Button onClick={() => setOpen(true)}>Open Recurrence Edit Scope Dialog</Button>
+      {lastScope && <p className="lifeos-field__description">Chosen scope: {lastScope}</p>}
+      <RecurrenceEditScopeDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={(scope) => {
+          setLastScope(scope);
+          setOpen(false);
+        }}
+      />
     </div>
   );
 }

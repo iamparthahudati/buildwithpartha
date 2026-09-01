@@ -89,6 +89,7 @@ import {
 } from "./HabitsDemos";
 import { NoteCardDemo, NoteFormDemo } from "./NotesDemos";
 import { SearchScreenDemo, SearchScreenEmptyDemo } from "./SearchDemos";
+import { RecurrenceEditorDemo, RecurrenceEditScopeDialogDemo } from "./FormDemos";
 
 import { ProjectsScreenDemo } from "./ProjectsScreenDemos";
 import { TasksScreenDemo } from "./TasksScreenDemos";
@@ -1357,6 +1358,37 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Initial empty search state",
         description: "Prompt state before typing a search query.",
         render: () => <SearchScreenEmptyDemo />,
+      },
+    ],
+  },
+  {
+    id: "recurrence-editor",
+    name: "RecurrenceEditor",
+    group: "Composed",
+    summary:
+      "Interactive recurrence rule builder with human-readable summary, frequency/cadence options, end modes, next occurrence date previews, and offline warning support.",
+    states: [
+      {
+        id: "recurrence-editor-demo",
+        name: "Recurrence pattern editor",
+        description:
+          "Rule builder for daily, weekly, monthly, weekday, interval, and completion cadence.",
+        render: () => <RecurrenceEditorDemo />,
+      },
+    ],
+  },
+  {
+    id: "recurrence-edit-scope-dialog",
+    name: "RecurrenceEditScopeDialog",
+    group: "Composed",
+    summary:
+      "Modal selection dialog for recurring task edit scopes (this occurrence, this and future, series).",
+    states: [
+      {
+        id: "recurrence-edit-scope-dialog-demo",
+        name: "Edit scope modal",
+        description: "Scope selector for updating or deleting recurring task series.",
+        render: () => <RecurrenceEditScopeDialogDemo />,
       },
     ],
   },

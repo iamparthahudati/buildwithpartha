@@ -237,6 +237,8 @@ Last updated: 2026-08-30
 | LOS-1304 | Done          | `feature/LOS-1304-build-notification-center-settings` | Built notification center frontend (`@features/notifications`), bell badge, unread count hook, date-grouped list, category/unread filters, mark read/unread, clear/clear-all, target URL navigation, quiet hours & category/channel preferences panel, mobile drawer, and NotificationsRoute. See `docs/handoffs/LOS-1304.md`. |
 | LOS-1305 | Done          | `feature/LOS-1305-implement-recurring-task-model` | Modeled recurring task series, occurrence links, and exception records: Flyway `V31__recurring_tasks_schema.sql`, JPA entities and repositories, and domain aggregates with 100% test pass. See `docs/handoffs/LOS-1305.md`. |
 | LOS-1306 | Done          | `feature/LOS-1306-implement-recurrence-generation-edit-api` | Implemented recurrence calculation engine, idempotent occurrence generation service and background job, edit scopes (THIS_OCCURRENCE, THIS_AND_FUTURE, SERIES), skip/delete/complete occurrence exception handling, REST endpoints, and product activity integration. See `docs/handoffs/LOS-1306.md`. |
+| LOS-1307 | Done          | `feature/LOS-1307-build-recurrence-editor-series-ux` | Built recurrence contract (types, validator, summary generator, next occurrence calculator), `RecurrenceEditor` component, `RecurrenceEditScopeDialog` modal, design catalog specimens, offline warning banner, and full accessibility test pass. See `docs/handoffs/LOS-1307.md`. |
+
 
 
 

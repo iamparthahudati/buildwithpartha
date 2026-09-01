@@ -1,0 +1,62 @@
+.lifeos-recurrence-edit-scope-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.lifeos-recurrence-edit-scope-dialog__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.lifeos-recurrence-edit-scope-dialog__option-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.lifeos-recurrence-edit-scope-dialog__option-card:hover {
+  border-color: var(--color-border-hover);
+  background-color: var(--color-surface-subtle);
+}
+
+.lifeos-recurrence-edit-scope-dialog__option-card--selected {
+  border-color: var(--color-brand-primary);
+  background-color: var(--color-brand-muted);
+}
+
+.lifeos-recurrence-edit-scope-dialog__radio {
+  grid-row: 1 / 3;
+  align-self: flex-start;
+  margin-top: var(--space-1);
+}
+
+.lifeos-recurrence-edit-scope-dialog__option-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.lifeos-recurrence-edit-scope-dialog__option-desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.lifeos-recurrence-edit-scope-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
