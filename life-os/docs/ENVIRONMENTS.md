@@ -64,6 +64,7 @@ These values are not secrets and may appear in the client bundle.
 | Local PostgreSQL port and Compose names | Engineering owner | Resolved by LOS-0204: loopback `55432`, project `life-os-local` |
 | Local same-origin UI/API gateway ports | Engineering owner | Resolved by LOS-0210: browser/Vite `5173`, API upstream `8080`, preview `4173` |
 | Frontend/backend startup validation and safe examples | Engineering owner | Resolved by LOS-0211; later feature tickets extend the required-key inventory |
+| Production secrets & configuration | Partha | Resolved by LOS-1602: Inventory, 256-bit generation standards, filesystem permissions (0600), staging separation, rotation policies, non-logging validation contract; see [`36-PRODUCTION-CONFIGURATION-AND-SECRETS.md`](./36-PRODUCTION-CONFIGURATION-AND-SECRETS.md) |
 | Staging hostname and access | Partha | LOS-1605 |
 | VPS OS/resources/deploy user | Partha | Resolved by LOS-1601: Ubuntu 24.04 LTS, 2 vCPU / 4 GB RAM / 80 GB NVMe, `lifeos-deploy` user, SSH key-only auth, UFW, fail2ban, time sync; see [`35-VPS-INVENTORY-AND-HARDENING.md`](./35-VPS-INVENTORY-AND-HARDENING.md) |
 | Cloudflare zone/API/origin path | Partha | LOS-1606 |

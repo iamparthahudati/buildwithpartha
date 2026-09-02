@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-02 (LOS-1601 Inventory and harden VPS)
+Last updated: 2026-09-03 (LOS-1602 Define production configuration/secrets)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1602 — Defined production and staging configuration & secrets specification (`docs/36-PRODUCTION-CONFIGURATION-AND-SECRETS.md`), cryptographically secure 256-bit generation standards, host directory permissions (`0600`/`0700`), staging environment isolation, routine/emergency rotation runbooks, non-logging validation contracts, master backup recovery material security, and automated verification script (`life-os/scripts/validate-production-secrets.sh`). See `docs/36-PRODUCTION-CONFIGURATION-AND-SECRETS.md` and `docs/handoffs/LOS-1602.md`.
 
 - LOS-1601 — Defined VPS hardware and OS inventory (Ubuntu 24.04 LTS x86_64, 2 vCPU / 4 GB RAM / 80 GB NVMe), non-root `lifeos-deploy` user, SSH key authentication policy, UFW default-deny firewall rules, automated unattended-upgrades, UTC systemd time sync, fail2ban intrusion prevention, emergency serial console access, and automated verification script (`life-os/scripts/verify-vps-hardening.sh`). See `docs/35-VPS-INVENTORY-AND-HARDENING.md` and `docs/handoffs/LOS-1601.md`.
 
