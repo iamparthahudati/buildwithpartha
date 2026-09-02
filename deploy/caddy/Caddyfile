@@ -1,0 +1,49 @@
+# Build with Partha — Caddy site config (Hostinger VPS)
+# Caddy provisions and renews HTTPS certificates automatically via Let's Encrypt
+# once the domain's DNS points at this server (ports 80 + 443 must be open).
+#
+# Install to: /etc/caddy/Caddyfile   then:  sudo systemctl reload caddy
+
+# Redirect www -> apex
+www.buildwithpartha.tech {
+	redir https://buildwithpartha.tech{uri} permanent
+}
+
+buildwithpartha.tech {
+	encode zstd gzip
+
+	# --- Security headers ---
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+	}
+
+	# ------------------------------------------------------------------
+	# LifeOS (Epic 16) — Active container reverse proxy (LOS-1604)
+	# ------------------------------------------------------------------
+	handle /life-os/api/* {
+		reverse_proxy 127.0.0.1:8080 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	handle /life-os/* {
+		reverse_proxy 127.0.0.1:8081 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# --- Root: the static "Coming soon" site ---
+	root * /var/www/buildwithpartha/site
+	try_files {path} /index.html
+	file_server
+}

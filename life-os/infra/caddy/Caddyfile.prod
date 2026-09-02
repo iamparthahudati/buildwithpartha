@@ -1,0 +1,62 @@
+# Build with Partha & LifeOS — Production Caddy Configuration
+# Specification reference: life-os/docs/38-PRODUCTION-COMPOSE-AND-CADDY.md
+
+# Redirect www -> apex domain
+www.buildwithpartha.tech {
+	redir https://buildwithpartha.tech{uri} permanent
+}
+
+buildwithpartha.tech {
+	encode zstd gzip
+
+	# --- Logging ---
+	log {
+		output stdout
+		format json
+	}
+
+	# --- Request limits ---
+	request_body {
+		max_size 10MB
+	}
+
+	# --- Security headers policy ---
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'self';"
+	}
+
+	# --- Path-first routing matrix ---
+
+	# 1. LifeOS API Proxy (/life-os/api/*) -> Backend API Container
+	handle /life-os/api/* {
+		reverse_proxy api:8080 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# 2. LifeOS SPA Frontend (/life-os/*) -> Static Web Nginx Container
+	handle /life-os/* {
+		reverse_proxy web:8080 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# 3. Main Site Root (/) -> Host Static Site Files
+	handle {
+		root * /var/www/buildwithpartha/site
+		try_files {path} /index.html
+		file_server
+	}
+}
