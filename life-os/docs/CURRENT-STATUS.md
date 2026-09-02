@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-02 (LOS-1312 Implement offline draft storage)
+Last updated: 2026-09-02 (LOS-1313 Implement offline mutation queue)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1313 — Implemented frontend `@features/offline-mutation-queue` module (`mutationQueue.ts`, `queueStorage.ts`, `queueReplayer.ts`, `useOfflineMutationQueue.ts`, `OfflineQueueBadge.tsx`), encrypted session-bound storage, stable client IDs, 8–64 character idempotency keys, 7-day TTL expiration, lost-response replay handling, HTTP 409 conflict detection, QuickAddDialog offline queueing integration, and session logout/account switch purge in `AuthSessionProvider.tsx`. See `docs/handoffs/LOS-1313.md`.
 
 - LOS-1312 — Implemented frontend `@features/offline-drafts` module (`draftStorage.ts`, `useOfflineDraft.ts`, `DeviceDraftBadge.tsx`), session-scoped storage key namespacing, encrypted-where-practical payloads, 7-day TTL expiration, quota/eviction handling, logout/account switch draft purge in `AuthSessionProvider.tsx`, and `NoteForm.tsx` `Device draft` status integration. See `docs/handoffs/LOS-1312.md`.
 

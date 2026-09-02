@@ -358,8 +358,15 @@ export async function listLabels(signal?: AbortSignal): Promise<readonly TaskFor
   return labels.map((label) => ({ id: label.id, name: label.name }));
 }
 
-export async function createTask(request: CreateTaskRequestDto): Promise<TaskRecord> {
-  const dto = await apiRequest<TaskResponseDto>("/tasks", { method: "POST", body: request });
+export async function createTask(
+  request: CreateTaskRequestDto,
+  headers?: Record<string, string>,
+): Promise<TaskRecord> {
+  const dto = await apiRequest<TaskResponseDto>("/tasks", {
+    method: "POST",
+    body: request,
+    ...(headers ? { headers } : {}),
+  });
   return mapTaskResponse(dto);
 }
 

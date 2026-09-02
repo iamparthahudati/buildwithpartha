@@ -97,6 +97,7 @@ export {
 export {
   queryTasks,
   getTaskDetail,
+  createTask,
   addSubtask,
   updateSubtask,
   toggleSubtask,

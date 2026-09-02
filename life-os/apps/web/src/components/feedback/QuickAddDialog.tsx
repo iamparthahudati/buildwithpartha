@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Button, DateInput, Select, Text, TextInput, Textarea, TimeInput } from "@components/ui";
 import { useToast } from "@state/toastQueue";
+import { useOfflineMutationQueue } from "@features/offline-mutation-queue";
 import {
   FormErrorSummary,
   FormField,
@@ -96,6 +97,8 @@ export function QuickAddDialog({
   const [isPending, setIsPending] = useState(false);
   const [submitError, setSubmitError] = useState<string | undefined>(undefined);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const { enqueueMutation } = useOfflineMutationQueue();
 
   const [isOnline, setIsOnline] = useState(() =>
     typeof navigator !== "undefined" ? navigator.onLine : true,
@@ -453,6 +456,13 @@ export function QuickAddDialog({
       const isQueued = !isOnline && isTypeOfflineSafe;
 
       if (isQueued) {
+        if (activeType === "task") {
+          enqueueMutation("CREATE_TASK", "/tasks", { title: taskTitle.trim() });
+        } else if (activeType === "brain-dump") {
+          enqueueMutation("CREATE_BRAIN_DUMP_ITEM", "/brain-dump-items", {
+            content: brainContent.trim(),
+          });
+        }
         toast.push({
           tone: "info",
           message: `${typeName} "${recordName}" queued — will sync when online`,

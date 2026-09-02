@@ -140,10 +140,12 @@ export async function getBrainDumpItem(id: string, signal?: AbortSignal): Promis
 
 export async function captureBrainDumpItem(
   request: CaptureBrainDumpRequestDto,
+  headers?: Record<string, string>,
 ): Promise<BrainDumpItem> {
   const dto = await apiRequest<BrainDumpItemResponseDto>("/brain-dump-items", {
     method: "POST",
     body: request,
+    ...(headers ? { headers } : {}),
   });
   return mapBrainDumpItemDto(dto);
 }
