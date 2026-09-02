@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-03 (LOS-1603 Build production containers)
+Last updated: 2026-09-03 (LOS-1604 Build production Compose and Caddy routing)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1604 — Authored production Compose and Caddy routing specification (`docs/38-PRODUCTION-COMPOSE-AND-CADDY.md`), created production multi-container Compose definition (`life-os/infra/compose/compose.prod.yml`) with caddy, web, api, and postgres services, private network isolation (`frontend-net`, `backend-net`, `db-net`), volume persistence (`lifeos-prod-postgres-data`), resource boundaries (3.5 vCPU / 3GB RAM total), security options (user 10001, read_only, no-new-privileges), production Caddy ingress routing (`life-os/infra/caddy/Caddyfile.prod` and `deploy/caddy/Caddyfile`), security headers, request body size limits, zstd/gzip compression, structured JSON logging, and automated verification script (`life-os/scripts/validate-production-compose.sh`). See `docs/38-PRODUCTION-COMPOSE-AND-CADDY.md` and `docs/handoffs/LOS-1604.md`.
 
 - LOS-1603 — Created multi-stage production Dockerfiles for Spring Boot API (`apps/api/Dockerfile`) and React SPA (`apps/web/Dockerfile`), Nginx SPA configuration (`apps/web/nginx.conf`), non-root execution model (UID/GID 10001), Actuator/Nginx health probes, read-only root filesystem compatibility, capability dropping, SBOM generation standards (`docs/37-PRODUCTION-CONTAINERS.md`), and automated container verification script (`life-os/scripts/validate-container-builds.sh`). See `docs/37-PRODUCTION-CONTAINERS.md` and `docs/handoffs/LOS-1603.md`.
 

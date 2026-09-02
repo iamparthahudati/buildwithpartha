@@ -1,0 +1,174 @@
+# LifeOS production Docker Compose stack
+# Specification reference: life-os/docs/38-PRODUCTION-COMPOSE-AND-CADDY.md
+
+name: life-os-production
+
+services:
+  caddy:
+    image: caddy:2.9.1-alpine
+    container_name: lifeos-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../caddy/Caddyfile.prod:/etc/caddy/Caddyfile:ro
+      - /var/www/buildwithpartha/site:/var/www/buildwithpartha/site:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - frontend-net
+      - backend-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /config/caddy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    healthcheck:
+      test: ["CMD-SHELL", "caddy version || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  web:
+    image: life-os-web:prod
+    build:
+      context: ../../../
+      dockerfile: life-os/apps/web/Dockerfile
+    container_name: lifeos-web
+    restart: unless-stopped
+    expose:
+      - "8080"
+    networks:
+      - frontend-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    user: "10001:10001"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  api:
+    image: life-os-api:prod
+    build:
+      context: ../../../
+      dockerfile: life-os/apps/api/Dockerfile
+    container_name: lifeos-api
+    restart: unless-stopped
+    expose:
+      - "8080"
+    env_file:
+      - /etc/life-os/secrets/.env.production
+    networks:
+      - backend-net
+      - db-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    user: "10001:10001"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.50'
+          memory: 1536M
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/life-os/api/v1/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18.4-alpine
+    container_name: lifeos-postgres
+    restart: unless-stopped
+    expose:
+      - "5432"
+    env_file:
+      - /etc/life-os/secrets/.env.production
+    volumes:
+      - lifeos-prod-postgres-data:/var/lib/postgresql/data
+    networks:
+      - db-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 1024M
+        reservations:
+          cpus: '0.20'
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-lifeos_app} -d ${DATABASE_NAME:-lifeos_prod} || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+networks:
+  frontend-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
+  db-net:
+    driver: bridge
+    internal: true
+
+volumes:
+  lifeos-prod-postgres-data:
+    name: lifeos-prod-postgres-data
+  caddy-data:
+    name: lifeos-caddy-data
+  caddy-config:
+    name: lifeos-caddy-config
