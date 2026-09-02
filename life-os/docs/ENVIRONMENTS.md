@@ -65,7 +65,7 @@ These values are not secrets and may appear in the client bundle.
 | Local same-origin UI/API gateway ports | Engineering owner | Resolved by LOS-0210: browser/Vite `5173`, API upstream `8080`, preview `4173` |
 | Frontend/backend startup validation and safe examples | Engineering owner | Resolved by LOS-0211; later feature tickets extend the required-key inventory |
 | Staging hostname and access | Partha | LOS-1605 |
-| VPS OS/resources/deploy user | Partha | LOS-1601 |
+| VPS OS/resources/deploy user | Partha | Resolved by LOS-1601: Ubuntu 24.04 LTS, 2 vCPU / 4 GB RAM / 80 GB NVMe, `lifeos-deploy` user, SSH key-only auth, UFW, fail2ban, time sync; see [`35-VPS-INVENTORY-AND-HARDENING.md`](./35-VPS-INVENTORY-AND-HARDENING.md) |
 | Cloudflare zone/API/origin path | Partha | LOS-1606 |
 | SMTP provider/sending domain | Partha | Before LOS-0503 staging verification |
 | Backup destination/retention/RPO/RTO | Partha | LOS-1608 |

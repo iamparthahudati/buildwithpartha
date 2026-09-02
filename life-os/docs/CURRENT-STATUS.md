@@ -1,16 +1,18 @@
 # Current status
 
-Last updated: 2026-09-02 (LOS-1313 Implement offline mutation queue)
+Last updated: 2026-09-02 (LOS-1601 Inventory and harden VPS)
 
 ## Phase
 
-Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), Epic 10 (Sprints, week planning, and reviews), Epic 11 (Goals, progress, reports, and analytics), Epic 12 (Notes, Brain Dump, and Habits), and Epic 13 (Platform features) completed.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), Epic 10 (Sprints, week planning, and reviews), Epic 11 (Goals, progress, reports, and analytics), Epic 12 (Notes, Brain Dump, and Habits), Epic 13 (Platform features), and Epic 16 (VPS, Cloudflare, deployment, and launch) in progress.
 
 ## In review
 
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1601 — Defined VPS hardware and OS inventory (Ubuntu 24.04 LTS x86_64, 2 vCPU / 4 GB RAM / 80 GB NVMe), non-root `lifeos-deploy` user, SSH key authentication policy, UFW default-deny firewall rules, automated unattended-upgrades, UTC systemd time sync, fail2ban intrusion prevention, emergency serial console access, and automated verification script (`life-os/scripts/verify-vps-hardening.sh`). See `docs/35-VPS-INVENTORY-AND-HARDENING.md` and `docs/handoffs/LOS-1601.md`.
 
 - LOS-1313 — Implemented frontend `@features/offline-mutation-queue` module (`mutationQueue.ts`, `queueStorage.ts`, `queueReplayer.ts`, `useOfflineMutationQueue.ts`, `OfflineQueueBadge.tsx`), encrypted session-bound storage, stable client IDs, 8–64 character idempotency keys, 7-day TTL expiration, lost-response replay handling, HTTP 409 conflict detection, QuickAddDialog offline queueing integration, and session logout/account switch purge in `AuthSessionProvider.tsx`. See `docs/handoffs/LOS-1313.md`.
 

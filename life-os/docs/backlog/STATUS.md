@@ -1,6 +1,6 @@
 # LifeOS ticket status ledger
 
-Last updated: 2026-08-30
+Last updated: 2026-09-02
 
 | Ticket   | Status        | Branch                                          | Notes                                                                                                                                                                          |
 | -------- | ------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -244,6 +244,7 @@ Last updated: 2026-08-30
 | LOS-1311 | Done          | `feature/LOS-1311-integrate-attachments`        | Integrated frontend `@features/attachments` module, `apiClient` FormData/Blob binary stream support, task and project details screen integration, dynamic Files tab feature toggle gating, upload progress / virus scanning status / error recovery, private binary download proxy, and 100% quality gate pass. See `docs/handoffs/LOS-1311.md`. |
 | LOS-1312 | Done          | `feature/LOS-1312-offline-draft-storage`        | Implemented frontend `@features/offline-drafts` module (`draftStorage.ts`, `useOfflineDraft.ts`, `DeviceDraftBadge.tsx`), session-scoped storage key namespacing, encrypted-where-practical payloads, 7-day TTL expiration, quota/eviction handling, logout/account switch draft purge in `AuthSessionProvider.tsx`, and `NoteForm.tsx` `Device draft` status integration. See `docs/handoffs/LOS-1312.md`. |
 | LOS-1313 | Done          | `feature/LOS-1313-offline-mutation-queue`        | Implemented frontend `@features/offline-mutation-queue` module (`mutationQueue.ts`, `queueStorage.ts`, `queueReplayer.ts`, `useOfflineMutationQueue.ts`, `OfflineQueueBadge.tsx`), encrypted session-bound storage, stable client IDs, 8–64 character idempotency keys, 7-day TTL expiration, lost-response replay handling, HTTP 409 conflict detection, QuickAddDialog offline queueing integration, and session logout/account switch purge in `AuthSessionProvider.tsx`. See `docs/handoffs/LOS-1313.md`. |
+| LOS-1601 | Done          | `feature/LOS-1601-inventory-and-harden-vps`      | Defined VPS hardware/OS inventory (Ubuntu 24.04 LTS, 2 vCPU / 4 GB RAM / 80 GB NVMe), non-root `lifeos-deploy` user, SSH key authentication policy, UFW default-deny firewall rules, automated unattended-upgrades, UTC systemd time sync, fail2ban intrusion prevention, emergency serial console access, and automated verification script (`scripts/verify-vps-hardening.sh`). See `docs/handoffs/LOS-1601.md`. |
 
 
 

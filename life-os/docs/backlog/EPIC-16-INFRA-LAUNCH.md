@@ -2,7 +2,7 @@
 
 | ID | Ticket | Description and acceptance contract | Depends on | Estimate | Status |
 | --- | --- | --- | --- | --- | --- |
-| LOS-1601 | Inventory and harden VPS | Record OS/resources/storage/network, create least-privilege deploy user, SSH key policy, firewall, updates, time sync, fail2ban/alternative and emergency access. No app deploy yet. | LOS-0008 | M | Backlog |
+| LOS-1601 | Inventory and harden VPS | Record OS/resources/storage/network, create least-privilege deploy user, SSH key policy, firewall, updates, time sync, fail2ban/alternative and emergency access. No app deploy yet. | LOS-0008 | M | Done |
 | LOS-1602 | Define production configuration/secrets | Inventory values, secret generation/storage/rotation/owners and staging separation. Validate presence without logging; backups include required recovery material securely. | LOS-1601, LOS-0211 | S | Backlog |
 | LOS-1603 | Build production containers | Multi-stage pinned images for web/API, non-root, health checks, read-only/capabilities/resource limits where practical, SBOM and reproducible builds. | LOS-0216 | M | Backlog |
 | LOS-1604 | Build production Compose and Caddy routing | Web/API/Postgres/private networks/volumes, `/life-os` SPA fallback, `/life-os/api` proxy, headers/compression/request limits/logs. Existing root website remains reachable. | LOS-1603 | M | Backlog |
