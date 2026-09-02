@@ -149,9 +149,7 @@ describe("NoteForm", () => {
       status: { type: "offline-unsaved" },
     });
 
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Not saved — reconnect and choose Save note",
-    );
+    expect(screen.getByRole("status")).toHaveTextContent("Device draft — reconnect to save");
     expect(screen.queryByText(/queued|saved on this device/i)).not.toBeInTheDocument();
     await expectNoAccessibilityViolations(container);
   });

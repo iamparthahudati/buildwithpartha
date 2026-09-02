@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { configureApiClient } from "@lib/apiClient";
 import { buildLoginPathWithReturnTo, currentPathForReturnTo } from "@lib/returnPath";
 import { getSession } from "@features/auth";
+import { clearAllDrafts, clearUserDrafts } from "@features/offline-drafts";
 
 import { AuthSessionContext, type AuthSessionValue, type AuthUser } from "./authSession";
 
@@ -78,6 +79,10 @@ export function AuthSessionProvider({
   });
 
   const clearSession = useCallback(() => {
+    if (sessionRef.current.user) {
+      clearUserDrafts(sessionRef.current.user.id);
+    }
+    clearAllDrafts();
     setSessionState(LOGGED_OUT_STATE);
     queryClient.clear();
   }, [queryClient]);
@@ -86,6 +91,7 @@ export function AuthSessionProvider({
     (user: AuthUser, csrfToken: string) => {
       setSessionState((current) => {
         if (current.user !== null && current.user.id !== user.id) {
+          clearUserDrafts(current.user.id);
           queryClient.clear();
         }
         return { user, csrfToken };

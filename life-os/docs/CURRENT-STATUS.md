@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-01 (LOS-1308 Integrate recurring tasks)
+Last updated: 2026-09-02 (LOS-1312 Implement offline draft storage)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1312 — Implemented frontend `@features/offline-drafts` module (`draftStorage.ts`, `useOfflineDraft.ts`, `DeviceDraftBadge.tsx`), session-scoped storage key namespacing, encrypted-where-practical payloads, 7-day TTL expiration, quota/eviction handling, logout/account switch draft purge in `AuthSessionProvider.tsx`, and `NoteForm.tsx` `Device draft` status integration. See `docs/handoffs/LOS-1312.md`.
 
 - LOS-1308 — Integrated recurring task series into TaskForm, TaskRow, TaskCard, TaskDetailsHeader, TaskActions, IntegratedTaskDetails, and TasksRoute; added DTO mapping for `recurringSeriesId` and `recurrenceOccurrenceDate`; created `recurringSeriesApi` client and `useRecurringSeries` TanStack Query hooks; and verified quality suite (`npm run verify:quality`, `npm run build:test`, `./gradlew check`) passed 100%. See `docs/handoffs/LOS-1308.md`.
 

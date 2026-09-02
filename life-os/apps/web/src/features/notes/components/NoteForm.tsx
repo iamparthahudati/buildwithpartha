@@ -3,6 +3,7 @@ import { Link2, Plus, Trash2, AlertTriangle, Check, RotateCcw } from "lucide-rea
 import { Button, IconButton, Select, Text, TextInput, Textarea } from "@components/ui";
 import { Combobox } from "@components/forms";
 import { InlineMessage } from "@components/feedback";
+import { DeviceDraftBadge } from "@features/offline-drafts";
 import type { Note } from "../model/note";
 import "./note-form.css";
 
@@ -196,11 +197,7 @@ export function NoteForm({
           </InlineMessage>
         );
       case "offline-unsaved":
-        return (
-          <InlineMessage tone="warning" announce="status">
-            Not saved — reconnect and choose Save note
-          </InlineMessage>
-        );
+        return <DeviceDraftBadge label="Device draft — reconnect to save" showTimestamp={false} />;
       case "conflict":
         return (
           <div className="lifeos-note-form__conflict-alert" role="alert">

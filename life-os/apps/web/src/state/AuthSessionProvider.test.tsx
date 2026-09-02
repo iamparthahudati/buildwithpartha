@@ -85,7 +85,7 @@ describe("AuthSessionProvider", () => {
     expect(result.current.csrfToken).toBe("csrf-token-a");
   });
 
-  it("clears every cached query result on logout", () => {
+  it("clears every cached query result and offline draft on logout", () => {
     const queryClient = new QueryClient();
     queryClient.setQueryData(["tasks"], ["a private task"]);
     const { result } = renderAuthSession(queryClient);
@@ -95,6 +95,8 @@ describe("AuthSessionProvider", () => {
     });
     expect(queryClient.getQueryData(["tasks"])).toEqual(["a private task"]);
 
+    window.localStorage.setItem("lifeos.drafts.1.test-note", "encrypted-payload");
+
     act(() => {
       result.current.clearSession();
     });
@@ -102,6 +104,7 @@ describe("AuthSessionProvider", () => {
     expect(result.current.user).toBeNull();
     expect(result.current.csrfToken).toBeNull();
     expect(queryClient.getQueryData(["tasks"])).toBeUndefined();
+    expect(window.localStorage.getItem("lifeos.drafts.1.test-note")).toBeNull();
   });
 
   it("clears the cache when a different account signs in without an intervening logout", () => {
