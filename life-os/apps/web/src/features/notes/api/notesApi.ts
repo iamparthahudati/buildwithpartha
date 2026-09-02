@@ -127,10 +127,14 @@ export async function getNote(id: string, signal?: AbortSignal): Promise<Note> {
   return mapNoteResponse(dto);
 }
 
-export async function createNote(request: CreateNoteRequestDto): Promise<Note> {
+export async function createNote(
+  request: CreateNoteRequestDto,
+  headers?: Record<string, string>,
+): Promise<Note> {
   const dto = await apiRequest<NoteResponseDto>("/notes", {
     method: "POST",
     body: request,
+    ...(headers ? { headers } : {}),
   });
   return mapNoteResponse(dto);
 }

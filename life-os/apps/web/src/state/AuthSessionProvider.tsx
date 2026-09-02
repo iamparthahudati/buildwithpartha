@@ -6,6 +6,7 @@ import { configureApiClient } from "@lib/apiClient";
 import { buildLoginPathWithReturnTo, currentPathForReturnTo } from "@lib/returnPath";
 import { getSession } from "@features/auth";
 import { clearAllDrafts, clearUserDrafts } from "@features/offline-drafts";
+import { clearAllMutationQueues, clearUserMutationQueue } from "@features/offline-mutation-queue";
 
 import { AuthSessionContext, type AuthSessionValue, type AuthUser } from "./authSession";
 
@@ -81,8 +82,10 @@ export function AuthSessionProvider({
   const clearSession = useCallback(() => {
     if (sessionRef.current.user) {
       clearUserDrafts(sessionRef.current.user.id);
+      clearUserMutationQueue(sessionRef.current.user.id);
     }
     clearAllDrafts();
+    clearAllMutationQueues();
     setSessionState(LOGGED_OUT_STATE);
     queryClient.clear();
   }, [queryClient]);
@@ -92,6 +95,7 @@ export function AuthSessionProvider({
       setSessionState((current) => {
         if (current.user !== null && current.user.id !== user.id) {
           clearUserDrafts(current.user.id);
+          clearUserMutationQueue(current.user.id);
           queryClient.clear();
         }
         return { user, csrfToken };

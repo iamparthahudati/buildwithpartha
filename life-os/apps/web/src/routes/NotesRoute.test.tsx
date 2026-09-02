@@ -350,7 +350,7 @@ describe("NotesRoute", () => {
       await userEvent.click(screen.getByRole("button", { name: "Save note" }));
 
       expect(spyUpdate).not.toHaveBeenCalled();
-      expect(screen.getByText("Not saved — reconnect and choose Save note")).toBeInTheDocument();
+      expect(screen.getByText("Device draft — reconnect to save")).toBeInTheDocument();
       expect(screen.queryByText(/queued|saved on this device/i)).not.toBeInTheDocument();
       expect(screen.getByLabelText("Title")).toHaveValue("Read LifeOS Docs offline edit");
     } finally {
