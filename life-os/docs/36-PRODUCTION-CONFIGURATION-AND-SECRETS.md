@@ -170,8 +170,9 @@ In accordance with [LOS-0211](file:///Users/parthahudati/Workspace/Website/build
 ## 10. Backup & master recovery material security
 
 1. **Encrypted Backup Pipeline**:
-   - Nightly database dumps (LOS-1608) and attachment archives (LOS-1609) are encrypted before off-site transmission using AES-256 (`gpg --symmetric --cipher-algo AES256`).
+   - Nightly database dumps ([LOS-1608](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/42-POSTGRESQL-BACKUP-AND-RESTORE.md)) and application data/attachment archives ([LOS-1609](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/43-APPLICATION-DATA-AND-FILE-BACKUP.md)) are encrypted before off-site transmission using AES-256 (`gpg --symmetric --cipher-algo AES256`).
    - Symmetric key is derived from `BACKUP_ENCRYPTION_PASSPHRASE`.
+   - Backup scripts (`backup-postgres.sh`, `backup-app-files.sh`) enforce non-logging secret redaction standards.
 
 2. **Master Recovery Material Storage**:
    - Master passphrases and decryption keys are stored **out-of-band** in a secure, encrypted password vault (e.g., Bitwarden / 1Password) with 2FA protection.

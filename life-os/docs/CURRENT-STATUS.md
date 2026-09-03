@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-03 (LOS-1608 Implement PostgreSQL backup/restore)
+Last updated: 2026-09-03 (LOS-1609 Implement application data/file backup)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1609 — Authored application data and file backup specification (`docs/43-APPLICATION-DATA-AND-FILE-BACKUP.md`), created automated file backup execution script (`life-os/scripts/backup-app-files.sh`), created automated file restoration execution script (`life-os/scripts/restore-app-files-backup.sh`), established persistent versus transient data categorization taxonomy, AES-256 GPG symmetric encryption standard, SHA-256 checksum verification, structured JSON metadata manifests (`<backup>.json`), database-file restore ordering protocols (DB first, files second), post-restoration orphan reconciliation, 30-day nightly retention and 35-day backup expiry ceiling matching privacy lifecycle rules, file backup status JSON recording (`/var/log/life-os/app-files-backup-status.json`), failure alert notification schema, disaster recovery runbooks, secret-safe non-logging contract, and created automated verification script (`life-os/scripts/validate-app-files-backups.sh`). See `docs/43-APPLICATION-DATA-AND-FILE-BACKUP.md` and `docs/handoffs/LOS-1609.md`.
 
 - LOS-1608 — Authored PostgreSQL backup and restore specification (`docs/42-POSTGRESQL-BACKUP-AND-RESTORE.md`), created automated database backup execution script (`life-os/scripts/backup-postgres.sh`), created automated database restoration execution script (`life-os/scripts/restore-postgres-backup.sh`), established AES-256 GPG symmetric encryption standard, SHA-256 checksum verification, structured JSON metadata manifests, off-VPS copy replication hooks, 30-day nightly retention and 35-day backup expiry ceiling matching user account deletion grace, deletion-ledger replay policy post-restoration, backup status JSON recording (`/var/log/life-os/postgres-backup-status.json`), failure alert dispatching schema, full/partial disaster recovery runbooks, secret-safe non-logging contract, and created automated verification script (`life-os/scripts/validate-postgres-backups.sh`). See `docs/42-POSTGRESQL-BACKUP-AND-RESTORE.md` and `docs/handoffs/LOS-1608.md`.
 

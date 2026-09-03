@@ -434,9 +434,9 @@ Maintain legal entity, service, purpose, data categories, locations, transfer me
 | --- | --- | --- |
 | Legal operator/controller identity and privacy/grievance contact | Owner + LOS-0114/LOS-1614 | Verified publishable values recorded |
 | Applicable-law review including DPDP commencement/CERT-In/operator form | Owner/legal + LOS-0114/LOS-1515 | Written scope/deadlines/log requirements recorded |
-| VPS, backup, SMTP, monitoring provider/regions/contracts | LOS-0008, LOS-1402, LOS-1601, LOS-1604, LOS-1608 | Processor register entries complete |
+| VPS, backup, SMTP, monitoring provider/regions/contracts | LOS-0008, LOS-1402, LOS-1601, LOS-1604, LOS-1608, LOS-1609 | Processor register entries complete |
 | Exact session/token/email/privacy-request retention | LOS-0501–LOS-0507, LOS-1402, LOS-0517–LOS-0519 | Schema/job/policy tests match approved classes |
-| Account deletion grace and backup expiry implementation | LOS-0518, LOS-1608 | Backup expiry (35-day default ceiling) and deletion-ledger replay resolved by LOS-1608; jobs, restore, policy and tests match the accepted 30/35-day defaults |
+| Account deletion grace and backup expiry implementation | LOS-0518, LOS-1608, LOS-1609 | Backup expiry (35-day default ceiling), application file backup (LOS-1609), and deletion-ledger replay resolved by LOS-1608/LOS-1609; jobs, restore, policy and tests match the accepted 30/35-day defaults |
 | Privacy notice/terms and versioned consent UI | LOS-0503, LOS-0509, LOS-1614 | Counsel-reviewed copy matches implementation |
 | Export schema/deletion propagation | LOS-0517–LOS-0519, LOS-1512 | Automated cross-user/completeness/purge tests pass |
 | Incident contact/reporting runbook | LOS-1504, LOS-1610, LOS-1613 | Tabletop proves applicable clocks/contact paths |
