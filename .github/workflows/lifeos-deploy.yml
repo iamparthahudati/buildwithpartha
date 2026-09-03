@@ -1,0 +1,83 @@
+name: LifeOS Deployment Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Deployment target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+concurrency:
+  group: lifeos-deploy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-test:
+    name: LifeOS / Build, Test & Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+      - name: Validate documentation & scripts
+        run: node life-os/scripts/validate-docs.mjs
+      - name: Run deployment pipeline audit
+        run: sh life-os/scripts/validate-deployment-pipeline.sh --dry-run
+
+  container-and-sbom:
+    name: LifeOS / Container Build & SBOM
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Validate container builds & security parameters
+        run: sh life-os/scripts/validate-container-builds.sh --dry-run
+      - name: Execute dry-run build pipeline
+        run: sh life-os/scripts/deploy-pipeline.sh --target=staging --dry-run
+
+  deploy-staging:
+    name: LifeOS / Deploy Staging
+    needs: container-and-sbom
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: staging
+      url: https://staging.buildwithpartha.tech/life-os
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Execute staging deployment pipeline
+        run: sh life-os/scripts/deploy-pipeline.sh --target=staging --dry-run
+
+  deploy-production:
+    name: LifeOS / Deploy Production
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.target_environment == 'production')
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: https://buildwithpartha.tech/life-os
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Execute production deployment pipeline
+        run: sh life-os/scripts/deploy-pipeline.sh --target=production --tag="${{ github.ref_name }}" --dry-run

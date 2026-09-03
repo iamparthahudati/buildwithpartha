@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-03 (LOS-1606 Configure Cloudflare DNS/proxy/TLS)
+Last updated: 2026-09-03 (LOS-1607 Create deployment pipeline)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1607 — Authored deployment pipeline specification (`docs/41-DEPLOYMENT-PIPELINE.md`), created executable deployment pipeline script (`life-os/scripts/deploy-pipeline.sh`), created declarative GitHub Actions deployment workflow (`.github/workflows/lifeos-deploy.yml`), established immutable container image tagging (`lifeos-web:<git-sha>`, `lifeos-api:<git-sha>`), image digest verification (`@sha256:...`), SPDX/CycloneDX SBOM artifact generation, staging candidate deployment and smoke verification contract, manual release approval gate for tagged `master` production releases, pre-rollout Flyway database migration ordering, deployment audit record logging (`/var/log/life-os/deployments.json`), secret-safe logging redaction rules, and created automated verification script (`life-os/scripts/validate-deployment-pipeline.sh`). See `docs/41-DEPLOYMENT-PIPELINE.md` and `docs/handoffs/LOS-1607.md`.
 
 - LOS-1606 — Authored Cloudflare DNS, proxy, TLS, and WAF specification (`docs/40-CLOUDFLARE-DNS-PROXY-AND-TLS.md`), created declarative Cloudflare ruleset (`life-os/infra/cloudflare/cloudflare-ruleset.json`), created host UFW origin firewall restriction script (`life-os/infra/cloudflare/configure-cloudflare-origin-firewall.sh`), established Full (strict) TLS with Cloudflare Origin CA certificate standard, configured cache bypass matrix for `/life-os/api/*`, `/life-os/app/*`, and authentication headers, configured WAF rate limiting rules (10 req/min on auth), and created automated verification script (`life-os/scripts/validate-cloudflare-configuration.sh`). See `docs/40-CLOUDFLARE-DNS-PROXY-AND-TLS.md` and `docs/handoffs/LOS-1606.md`.
 
