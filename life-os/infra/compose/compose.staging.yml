@@ -1,0 +1,173 @@
+# LifeOS staging Docker Compose stack
+# Specification reference: life-os/docs/39-STAGING-ENVIRONMENT.md
+
+name: life-os-staging
+
+services:
+  caddy-staging:
+    image: caddy:2.9.1-alpine
+    container_name: lifeos-caddy-staging
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../caddy/Caddyfile.staging:/etc/caddy/Caddyfile:ro
+      - caddy-staging-data:/data
+      - caddy-staging-config:/config
+    networks:
+      - staging-frontend-net
+      - staging-backend-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /config/caddy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.02'
+          memory: 32M
+    healthcheck:
+      test: ["CMD-SHELL", "caddy version || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  web-staging:
+    image: life-os-web:prod
+    build:
+      context: ../../../
+      dockerfile: life-os/apps/web/Dockerfile
+    container_name: lifeos-web-staging
+    restart: unless-stopped
+    expose:
+      - "8080"
+    networks:
+      - staging-frontend-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    user: "10001:10001"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.02'
+          memory: 32M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  api-staging:
+    image: life-os-api:prod
+    build:
+      context: ../../../
+      dockerfile: life-os/apps/api/Dockerfile
+    container_name: lifeos-api-staging
+    restart: unless-stopped
+    expose:
+      - "8080"
+    env_file:
+      - /etc/life-os/secrets/.env.staging
+    networks:
+      - staging-backend-net
+      - staging-db-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    user: "10001:10001"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 768M
+        reservations:
+          cpus: '0.15'
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/life-os/api/v1/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      postgres-staging:
+        condition: service_healthy
+
+  postgres-staging:
+    image: postgres:18.4-alpine
+    container_name: lifeos-postgres-staging
+    restart: unless-stopped
+    expose:
+      - "5432"
+    env_file:
+      - /etc/life-os/secrets/.env.staging
+    volumes:
+      - lifeos-staging-postgres-data:/var/lib/postgresql/data
+    networks:
+      - staging-db-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.10'
+          memory: 128M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-lifeos_staging_app} -d ${DATABASE_NAME:-lifeos_staging} || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+networks:
+  staging-frontend-net:
+    driver: bridge
+  staging-backend-net:
+    driver: bridge
+  staging-db-net:
+    driver: bridge
+    internal: true
+
+volumes:
+  lifeos-staging-postgres-data:
+    name: lifeos-staging-postgres-data
+  caddy-staging-data:
+    name: lifeos-caddy-staging-data
+  caddy-staging-config:
+    name: lifeos-caddy-staging-config
