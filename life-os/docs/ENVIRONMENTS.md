@@ -72,7 +72,7 @@ These values are not secrets and may appear in the client bundle.
 | Cloudflare zone/API/origin path | Partha | Resolved by LOS-1606: Proxied records (apex/www/staging), Full (strict) TLS, 15-year Origin CA, Cache bypass matrix (/life-os/api/*, /life-os/app/*, auth/session headers), WAF rate limiting rules (10 req/min on auth), and host UFW origin firewall restriction (80/443 inbound restricted to Cloudflare IPs); see [`40-CLOUDFLARE-DNS-PROXY-AND-TLS.md`](./40-CLOUDFLARE-DNS-PROXY-AND-TLS.md) |
 | Automated deployment pipeline | Engineering owner / Partha | Resolved by LOS-1607: Automated release pipeline with build/test/scan, SBOM generation, immutable container image tagging, staging deployment & smoke verification, manual release approval gate, production deployment from tagged master, database migration ordering, deployment logging & secret-safe logs; see [`41-DEPLOYMENT-PIPELINE.md`](./41-DEPLOYMENT-PIPELINE.md) |
 | SMTP provider/sending domain | Partha | Before LOS-0503 staging verification |
-| Backup destination/retention/RPO/RTO | Partha | LOS-1608 |
+| Backup destination/retention/RPO/RTO | Partha / Engineering owner | Resolved by LOS-1608: Automated encrypted nightly PostgreSQL backups (AES-256 GPG), 30-day nightly retention, 35-day backup expiry ceiling matching account deletion grace, off-VPS replication hook, recovery runbooks (RPO 24h, RTO < 15m), failure alerting, and deletion-ledger replay policy; see [`42-POSTGRESQL-BACKUP-AND-RESTORE.md`](./42-POSTGRESQL-BACKUP-AND-RESTORE.md) |
 | Monitoring/alert destination | Partha | LOS-1610 |
 
 ## Secret lifecycle

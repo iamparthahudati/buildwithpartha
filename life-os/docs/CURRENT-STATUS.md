@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-03 (LOS-1607 Create deployment pipeline)
+Last updated: 2026-09-03 (LOS-1608 Implement PostgreSQL backup/restore)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1608 — Authored PostgreSQL backup and restore specification (`docs/42-POSTGRESQL-BACKUP-AND-RESTORE.md`), created automated database backup execution script (`life-os/scripts/backup-postgres.sh`), created automated database restoration execution script (`life-os/scripts/restore-postgres-backup.sh`), established AES-256 GPG symmetric encryption standard, SHA-256 checksum verification, structured JSON metadata manifests, off-VPS copy replication hooks, 30-day nightly retention and 35-day backup expiry ceiling matching user account deletion grace, deletion-ledger replay policy post-restoration, backup status JSON recording (`/var/log/life-os/postgres-backup-status.json`), failure alert dispatching schema, full/partial disaster recovery runbooks, secret-safe non-logging contract, and created automated verification script (`life-os/scripts/validate-postgres-backups.sh`). See `docs/42-POSTGRESQL-BACKUP-AND-RESTORE.md` and `docs/handoffs/LOS-1608.md`.
 
 - LOS-1607 — Authored deployment pipeline specification (`docs/41-DEPLOYMENT-PIPELINE.md`), created executable deployment pipeline script (`life-os/scripts/deploy-pipeline.sh`), created declarative GitHub Actions deployment workflow (`.github/workflows/lifeos-deploy.yml`), established immutable container image tagging (`lifeos-web:<git-sha>`, `lifeos-api:<git-sha>`), image digest verification (`@sha256:...`), SPDX/CycloneDX SBOM artifact generation, staging candidate deployment and smoke verification contract, manual release approval gate for tagged `master` production releases, pre-rollout Flyway database migration ordering, deployment audit record logging (`/var/log/life-os/deployments.json`), secret-safe logging redaction rules, and created automated verification script (`life-os/scripts/validate-deployment-pipeline.sh`). See `docs/41-DEPLOYMENT-PIPELINE.md` and `docs/handoffs/LOS-1607.md`.
 
