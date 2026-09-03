@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-03 (LOS-1605 Create staging environment)
+Last updated: 2026-09-03 (LOS-1606 Configure Cloudflare DNS/proxy/TLS)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1606 — Authored Cloudflare DNS, proxy, TLS, and WAF specification (`docs/40-CLOUDFLARE-DNS-PROXY-AND-TLS.md`), created declarative Cloudflare ruleset (`life-os/infra/cloudflare/cloudflare-ruleset.json`), created host UFW origin firewall restriction script (`life-os/infra/cloudflare/configure-cloudflare-origin-firewall.sh`), established Full (strict) TLS with Cloudflare Origin CA certificate standard, configured cache bypass matrix for `/life-os/api/*`, `/life-os/app/*`, and authentication headers, configured WAF rate limiting rules (10 req/min on auth), and created automated verification script (`life-os/scripts/validate-cloudflare-configuration.sh`). See `docs/40-CLOUDFLARE-DNS-PROXY-AND-TLS.md` and `docs/handoffs/LOS-1606.md`.
 
 - LOS-1605 — Authored staging environment specification (`docs/39-STAGING-ENVIRONMENT.md`), created staging multi-container Compose definition (`life-os/infra/compose/compose.staging.yml`) with caddy-staging, web-staging, api-staging, and postgres-staging services, private network isolation (`staging-frontend-net`, `staging-backend-net`, `staging-db-net`), volume persistence (`lifeos-staging-postgres-data`), resource boundaries (1.5GB RAM total for VPS co-existence), security options (user 10001, read_only, no-new-privileges), staging Caddy ingress routing (`life-os/infra/caddy/Caddyfile.staging` and `deploy/caddy/Caddyfile`), domain `staging.buildwithpartha.tech`, security headers, `X-Robots-Tag` noindex header, safe test mail/files sandbox, synthetic data policy, `.env.staging` secrets injection, and automated verification script (`life-os/scripts/validate-staging-environment.sh`). See `docs/39-STAGING-ENVIRONMENT.md` and `docs/handoffs/LOS-1605.md`.
 
