@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json.schemastore.org/cloudflare-ruleset.json",
+  "zone": "buildwithpartha.tech",
+  "ticket": "LOS-1606",
+  "version": "1.0.0",
+  "settings": {
+    "ssl_tls": {
+      "mode": "full_strict",
+      "min_tls_version": "1.2",
+      "tls_1_3": "zrt",
+      "always_use_https": true,
+      "automatic_https_rewrites": true,
+      "origin_ca_certificate": {
+        "enabled": true,
+        "validity_years": 15,
+        "cert_path": "/etc/life-os/certs/origin.crt",
+        "key_path": "/etc/life-os/certs/origin.key"
+      },
+      "authenticated_origin_pulls": true
+    },
+    "security": {
+      "security_level": "medium",
+      "hsts": {
+        "enabled": true,
+        "max_age": 31536000,
+        "include_subdomains": true,
+        "preload": true
+      },
+      "waf_managed_rules": true,
+      "bot_fight_mode": true
+    }
+  },
+  "dns_records": [
+    {
+      "name": "buildwithpartha.tech",
+      "type": "A",
+      "content": "147.93.107.135",
+      "proxied": true,
+      "ttl": 1
+    },
+    {
+      "name": "www.buildwithpartha.tech",
+      "type": "CNAME",
+      "content": "buildwithpartha.tech",
+      "proxied": true,
+      "ttl": 1
+    },
+    {
+      "name": "staging.buildwithpartha.tech",
+      "type": "A",
+      "content": "147.93.107.135",
+      "proxied": true,
+      "ttl": 1
+    }
+  ],
+  "cache_rules": [
+    {
+      "name": "Bypass Cache for API Endpoints",
+      "description": "Ensure dynamic API endpoints and authenticated REST queries bypass Cloudflare edge cache",
+      "expression": "(http.request.uri.path matches \"^/life-os/api/.*\") or (http.request.uri.path matches \"^/api/.*\")",
+      "action": "bypass_cache"
+    },
+    {
+      "name": "Bypass Cache for Private Application Routes",
+      "description": "Bypass cache for authenticated SPA application routes and session-dependent views",
+      "expression": "(http.request.uri.path matches \"^/life-os/app/.*\")",
+      "action": "bypass_cache"
+    },
+    {
+      "name": "Bypass Cache for Staging Host",
+      "description": "Ensure all staging environment traffic bypasses edge cache for immediate validation",
+      "expression": "(http.host eq \"staging.buildwithpartha.tech\")",
+      "action": "bypass_cache"
+    },
+    {
+      "name": "Bypass Cache on Authorization Header or Session Cookie",
+      "description": "Bypass cache when requests carry authentication tokens or session state",
+      "expression": "(http.request.headers[\"authorization\"] ne \"\") or (http.request.cookies[\"lifeos_session\"] ne \"\") or (http.request.cookies[\"lifeos_staging_session\"] ne \"\") or (http.request.cookies[\"JSESSIONID\"] ne \"\")",
+      "action": "bypass_cache"
+    },
+    {
+      "name": "Cache Static SPA Assets",
+      "description": "Cache content-hashed frontend bundles and assets at edge for performance",
+      "expression": "(http.request.uri.path matches \"^/life-os/assets/.*\") or (http.request.uri.path matches \"^/assets/.*\")",
+      "action": "cache_everything",
+      "edge_ttl": 2592000,
+      "browser_ttl": 31536000
+    }
+  ],
+  "rate_limiting_rules": [
+    {
+      "name": "Auth Endpoint Rate Limiting",
+      "description": "Restrict authentication endpoint abuse to 10 requests per minute per IP",
+      "expression": "(http.request.uri.path matches \"^/life-os/api/v1/auth/.*\")",
+      "requests_per_period": 10,
+      "period_seconds": 60,
+      "action": "block",
+      "block_duration_seconds": 900
+    },
+    {
+      "name": "General API Rate Limiting",
+      "description": "Restrict rapid API scraping attempts to 120 requests per minute per IP",
+      "expression": "(http.request.uri.path matches \"^/life-os/api/.*\")",
+      "requests_per_period": 120,
+      "period_seconds": 60,
+      "action": "challenge"
+    }
+  ],
+  "origin_firewall": {
+    "ips_v4_url": "https://www.cloudflare.com/ips-v4",
+    "ips_v6_url": "https://www.cloudflare.com/ips-v6",
+    "allowed_ports": ["80/tcp", "443/tcp"],
+    "ufw_script": "life-os/infra/cloudflare/configure-cloudflare-origin-firewall.sh"
+  }
+}
