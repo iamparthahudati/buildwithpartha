@@ -1,0 +1,56 @@
+# Build with Partha & LifeOS — Staging Caddy Configuration
+# Specification reference: life-os/docs/39-STAGING-ENVIRONMENT.md
+
+staging.buildwithpartha.tech {
+	encode zstd gzip
+
+	# --- Logging ---
+	log {
+		output stdout
+		format json
+	}
+
+	# --- Request limits ---
+	request_body {
+		max_size 10MB
+	}
+
+	# --- Security headers policy & Noindex search restriction ---
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'self';"
+		X-Robots-Tag "noindex, nofollow, noarchive, nosnippet"
+	}
+
+	# --- Path-first routing matrix for Staging ---
+
+	# 1. Staging LifeOS API Proxy (/life-os/api/*) -> Staging Backend API Container
+	handle /life-os/api/* {
+		reverse_proxy api-staging:8080 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# 2. Staging LifeOS SPA Frontend (/life-os/*) -> Staging Static Web Nginx Container
+	handle /life-os/* {
+		reverse_proxy web-staging:8080 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	# 3. Default Staging Fallback
+	handle {
+		respond "LifeOS Staging Environment - Restricted Access" 200
+	}
+}

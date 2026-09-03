@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-03 (LOS-1604 Build production Compose and Caddy routing)
+Last updated: 2026-09-03 (LOS-1605 Create staging environment)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1605 — Authored staging environment specification (`docs/39-STAGING-ENVIRONMENT.md`), created staging multi-container Compose definition (`life-os/infra/compose/compose.staging.yml`) with caddy-staging, web-staging, api-staging, and postgres-staging services, private network isolation (`staging-frontend-net`, `staging-backend-net`, `staging-db-net`), volume persistence (`lifeos-staging-postgres-data`), resource boundaries (1.5GB RAM total for VPS co-existence), security options (user 10001, read_only, no-new-privileges), staging Caddy ingress routing (`life-os/infra/caddy/Caddyfile.staging` and `deploy/caddy/Caddyfile`), domain `staging.buildwithpartha.tech`, security headers, `X-Robots-Tag` noindex header, safe test mail/files sandbox, synthetic data policy, `.env.staging` secrets injection, and automated verification script (`life-os/scripts/validate-staging-environment.sh`). See `docs/39-STAGING-ENVIRONMENT.md` and `docs/handoffs/LOS-1605.md`.
 
 - LOS-1604 — Authored production Compose and Caddy routing specification (`docs/38-PRODUCTION-COMPOSE-AND-CADDY.md`), created production multi-container Compose definition (`life-os/infra/compose/compose.prod.yml`) with caddy, web, api, and postgres services, private network isolation (`frontend-net`, `backend-net`, `db-net`), volume persistence (`lifeos-prod-postgres-data`), resource boundaries (3.5 vCPU / 3GB RAM total), security options (user 10001, read_only, no-new-privileges), production Caddy ingress routing (`life-os/infra/caddy/Caddyfile.prod` and `deploy/caddy/Caddyfile`), security headers, request body size limits, zstd/gzip compression, structured JSON logging, and automated verification script (`life-os/scripts/validate-production-compose.sh`). See `docs/38-PRODUCTION-COMPOSE-AND-CADDY.md` and `docs/handoffs/LOS-1604.md`.
 

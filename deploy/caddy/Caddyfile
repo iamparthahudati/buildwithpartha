@@ -47,3 +47,42 @@ buildwithpartha.tech {
 	try_files {path} /index.html
 	file_server
 }
+
+# ------------------------------------------------------------------
+# LifeOS Staging Environment (LOS-1605) — staging.buildwithpartha.tech
+# ------------------------------------------------------------------
+staging.buildwithpartha.tech {
+	encode zstd gzip
+
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+		X-Robots-Tag "noindex, nofollow, noarchive, nosnippet"
+	}
+
+	handle /life-os/api/* {
+		reverse_proxy 127.0.0.1:8090 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	handle /life-os/* {
+		reverse_proxy 127.0.0.1:8091 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	handle {
+		respond "LifeOS Staging Environment - Restricted Access" 200
+	}
+}
+
