@@ -19,6 +19,7 @@ import tech.buildwithpartha.lifeos.common.error.CsrfTokenInvalidException;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.FocusSessionConflictException;
+import tech.buildwithpartha.lifeos.common.error.IdempotencyKeyReusedException;
 import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
@@ -128,6 +129,18 @@ public final class ApiExceptionHandler {
             exception.code(),
             "Conflict",
             "The resource was updated by another request."));
+  }
+
+  @ExceptionHandler(IdempotencyKeyReusedException.class)
+  ResponseEntity<ApiProblem> handleIdempotencyKeyReused(
+      IdempotencyKeyReusedException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.CONFLICT,
+            exception.code(),
+            "Idempotency Key Reused",
+            exception.getMessage()));
   }
 
   @ExceptionHandler(ObjectOptimisticLockingFailureException.class)

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.idempotency.api.Idempotent;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
 import tech.buildwithpartha.lifeos.common.pagination.PaginationParams;
 import tech.buildwithpartha.lifeos.common.pagination.PaginationUtils;
@@ -114,6 +115,7 @@ public class GoalController {
   @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
   @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
   @PostMapping
+  @Idempotent(operation = "CREATE_GOAL")
   public ResponseEntity<GoalResponse> createGoal(
       @AuthenticationPrincipal UUID userId, @Valid @RequestBody CreateGoalRequest request) {
 

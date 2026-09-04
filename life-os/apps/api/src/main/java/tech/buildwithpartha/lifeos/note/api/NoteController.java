@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tech.buildwithpartha.lifeos.common.idempotency.api.Idempotent;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
 import tech.buildwithpartha.lifeos.common.pagination.PaginationParams;
 import tech.buildwithpartha.lifeos.common.pagination.PaginationUtils;
@@ -90,6 +91,7 @@ public class NoteController {
   @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
   @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
   @PostMapping
+  @Idempotent(operation = "CREATE_NOTE")
   public ResponseEntity<NoteResponse> createNote(
       @AuthenticationPrincipal UUID userId, @Valid @RequestBody CreateNoteRequest request) {
     Note created = noteService.createNote(userId, request.toCommand());
