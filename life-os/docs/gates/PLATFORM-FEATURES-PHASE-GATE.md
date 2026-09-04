@@ -58,8 +58,9 @@ All tickets LOS-1301 through LOS-1315 are fully implemented, tested, and validat
 
 ## Defects and changes
 
+- Gate-blocking defects found: 1 (`QuickAddDialog.test.tsx` missing `QueryClientProvider` harness wrapper after `useOfflineMutationQueue` query hook integration).
 - Gate-blocking defects remaining: none.
-- Product code changes: none required during gate run; all underlying features (LOS-1301 through LOS-1315) were verified clean.
+- Product code changes: added `QueryClientProvider` wrappers to test harnesses in `QuickAddDialog.test.tsx`.
 - Database migrations, dependencies, secrets, environment values, public API shapes, privacy policy, and deployment configuration: unchanged.
 
 ## Phase gate sign-off

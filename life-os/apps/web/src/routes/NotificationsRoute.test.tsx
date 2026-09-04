@@ -44,4 +44,21 @@ describe("NotificationsRoute", () => {
     await user.click(screen.getByRole("button", { name: "Open Target Task" }));
     expect(screen.getByText("Task Screen")).toBeInTheDocument();
   });
+
+  it("navigates to settings when onOpenSettings is triggered", async () => {
+    const { user } = renderWithUser(
+      <MemoryRouter initialEntries={["/life-os/app/notifications"]}>
+        <Routes>
+          <Route path="/life-os/app/notifications" element={<NotificationsRoute />} />
+          <Route
+            path="/life-os/app/settings/notifications"
+            element={<div>Notification Settings Screen</div>}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open Notification Settings" }));
+    expect(screen.getByText("Notification Settings Screen")).toBeInTheDocument();
+  });
 });

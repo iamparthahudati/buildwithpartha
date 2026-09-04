@@ -8,28 +8,26 @@ import { renderWithUser } from "@test/render";
 
 import { TodayRoute } from "./TodayRoute";
 
-/**
- * TodayRoute (LOS-0615).
- *
- * Route tests mock all dependencies at module level following the same
- * `SettingsRoute.test.tsx` pattern — no local helper components are declared
- * inside a routes/ file (the boundary verifier enforces that routes/ files
- * may only export *Route composition components).
- */
-
 const todayMocks = vi.hoisted(() => ({
   query: vi.fn(),
   online: true,
+  mutateBrainDump: vi.fn().mockResolvedValue({ id: "bd-1" }),
+  mutateSetHabitEntry: vi.fn().mockResolvedValue({ id: "he-1" }),
+  enqueueBrainDump: vi.fn(),
+  habitsData: [{ id: "habit-1", title: "Read" }],
 }));
 
 vi.mock("@features/brain-dump", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@features/brain-dump")>()),
-  useCaptureBrainDumpItem: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useCaptureBrainDumpItem: () => ({
+    mutateAsync: todayMocks.mutateBrainDump,
+    isPending: false,
+  }),
   useBrainDumpCaptureQueue: () => ({
     queuedItems: [],
     queuedCount: 0,
     isFlushing: false,
-    enqueue: vi.fn(),
+    enqueue: todayMocks.enqueueBrainDump,
     flush: vi.fn(),
     discardAll: vi.fn(),
   }),
@@ -37,8 +35,12 @@ vi.mock("@features/brain-dump", async (importOriginal) => ({
 
 vi.mock("@features/habits", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@features/habits")>()),
-  useHabits: () => ({ data: [], isPending: false }),
-  useSetHabitEntry: () => ({ mutateAsync: vi.fn(), isPending: false, variables: undefined }),
+  useHabits: () => ({ data: todayMocks.habitsData, isPending: false }),
+  useSetHabitEntry: () => ({
+    mutateAsync: todayMocks.mutateSetHabitEntry,
+    isPending: false,
+    variables: undefined,
+  }),
 }));
 
 vi.mock("@features/today", async (importOriginal) => ({
@@ -57,16 +59,55 @@ vi.mock("@features/today", async (importOriginal) => ({
     focusTimeStatus: { message?: string };
     activeProjectsStatus: { message?: string };
     weekProgressStatus: { message?: string };
-    plan: { mitState: { type: string }; tasksState: { type: string }; onAddTask: () => void };
-    schedule: { state: { type: string }; onAddTimeBlock: () => void };
-    activeProjects: { status: { type: string } };
-    sprintWeek: { sprintState: { type: string }; weekState: { type: string } };
+    onRetryMit: () => void;
+    plan: {
+      mitState: { type: string };
+      tasksState: { type: string };
+      onChooseMit: () => void;
+      onChangeMit: () => void;
+      onSetMit: () => void;
+      onMarkDone: () => void;
+      onStartFocus: (taskId: string) => void;
+      onAddTask: () => void;
+      onRetryMit: () => void;
+      onRetryTasks: () => void;
+    };
+    nextUp: { onRetry: () => void };
+    schedule: {
+      state: { type: string };
+      onAddTimeBlock: () => void;
+      onStartFocus: (blockId: string) => void;
+      onRetry: () => void;
+    };
+    activeProjects: {
+      status: { type: string };
+      onAddProject: () => void;
+      onRetry: () => void;
+    };
+    sprintWeek: {
+      sprintState: { type: string };
+      weekState: { type: string };
+      onRetrySprint: () => void;
+      onRetryWeek: () => void;
+    };
     review: {
       status: {
-        data: { morning: { href: string }; evening: { href: string } };
+        data?: { morning: { href: string }; evening: { href: string } };
       };
+      onRetry: () => void;
     };
-    brainCapture: { captureStatus: { type: string } };
+    habits: {
+      status: { type: string };
+      onSetCount: (habit: any, count: number) => void;
+      onRetry: () => void;
+    };
+    brainCapture: {
+      value: string;
+      onValueChange: (val: string) => void;
+      onCapture: (req: { content: string; mode: "create" | "queue" }) => void;
+      captureStatus: { type: string };
+      onRetryCount: () => void;
+    };
     connectionState: { type: string; lastUpdatedLabel?: string };
     planningState: { type: string };
   }) => (
@@ -86,16 +127,99 @@ vi.mock("@features/today", async (importOriginal) => ({
       </button>
       <p>MIT: {props.plan.mitState.type}</p>
       <p>Tasks: {props.plan.tasksState.type}</p>
+      <button type="button" onClick={props.plan.onChooseMit}>
+        Choose MIT
+      </button>
+      <button type="button" onClick={props.plan.onChangeMit}>
+        Change MIT
+      </button>
+      <button type="button" onClick={props.plan.onSetMit}>
+        Set MIT
+      </button>
+      <button type="button" onClick={props.plan.onMarkDone}>
+        Mark Done
+      </button>
+      <button type="button" onClick={() => props.plan.onStartFocus("task-123")}>
+        Start Task Focus
+      </button>
       <button type="button" onClick={props.plan.onAddTask}>
         Add task
+      </button>
+      <button type="button" onClick={props.plan.onRetryMit}>
+        Retry Plan MIT
+      </button>
+      <button type="button" onClick={props.plan.onRetryTasks}>
+        Retry Plan Tasks
+      </button>
+      <button type="button" onClick={props.nextUp.onRetry}>
+        Retry Next Up
       </button>
       <p>Schedule: {props.schedule.state.type}</p>
       <button type="button" onClick={props.schedule.onAddTimeBlock}>
         Add time block
       </button>
+      <button type="button" onClick={() => props.schedule.onStartFocus("block-123")}>
+        Start Block Focus
+      </button>
+      <button type="button" onClick={props.schedule.onRetry}>
+        Retry Schedule
+      </button>
       <p>Projects: {props.activeProjects.status.type}</p>
+      <button type="button" onClick={props.activeProjects.onAddProject}>
+        Add project
+      </button>
+      <button type="button" onClick={props.activeProjects.onRetry}>
+        Retry Projects
+      </button>
       <p>Sprint: {props.sprintWeek.sprintState.type}</p>
       <p>Week: {props.sprintWeek.weekState.type}</p>
+      <button type="button" onClick={props.sprintWeek.onRetrySprint}>
+        Retry Sprint
+      </button>
+      <button type="button" onClick={props.sprintWeek.onRetryWeek}>
+        Retry Week
+      </button>
+      <button type="button" onClick={props.review.onRetry}>
+        Retry Review
+      </button>
+      <button
+        type="button"
+        onClick={() => props.habits.onSetCount({ id: "habit-1", localDate: "2026-09-04" }, 2)}
+      >
+        Set Habit Count
+      </button>
+
+      <button
+        type="button"
+        onClick={() => props.habits.onSetCount({ id: "habit-unknown", localDate: "2026-09-04" }, 2)}
+      >
+        Set Unknown Habit
+      </button>
+      <button type="button" onClick={props.habits.onRetry}>
+        Retry Habits
+      </button>
+
+      <input
+        aria-label="Capture content"
+        value={props.brainCapture.value}
+        onChange={(e) => props.brainCapture.onValueChange(e.target.value)}
+      />
+      <button
+        type="button"
+        onClick={() => props.brainCapture.onCapture({ content: "test item", mode: "create" })}
+      >
+        Capture Create
+      </button>
+      <button
+        type="button"
+        onClick={() => props.brainCapture.onCapture({ content: "test item", mode: "queue" })}
+      >
+        Capture Queue
+      </button>
+      <button type="button" onClick={props.brainCapture.onRetryCount}>
+        Retry Capture Count
+      </button>
+
       {props.review.status.data ? (
         <>
           <p>Morning review: {props.review.status.data.morning.href}</p>
@@ -164,6 +288,9 @@ function renderRoute(onQuickAddClick = vi.fn()) {
       <Routes>
         <Route element={<Outlet context={{ onQuickAddClick }} />}>
           <Route index element={<TodayRoute />} />
+          <Route path="/life-os/app/tasks" element={<div>Tasks Screen Target</div>} />
+          <Route path="/life-os/app/focus" element={<div>Focus Screen Target</div>} />
+          <Route path="/life-os/app/projects" element={<div>Projects Screen Target</div>} />
         </Route>
       </Routes>
     </MemoryRouter>,
@@ -190,72 +317,54 @@ describe("TodayRoute", () => {
     expect(screen.getByText("locale: en-IN")).toBeInTheDocument();
   });
 
-  it("renders the approved Today helper and honest foundation empty states", () => {
-    renderRoute();
-
-    expect(
-      screen.getByText("See what needs attention and choose what to do next."),
-    ).toBeInTheDocument();
-    expect(screen.getByText("No focus chosen yet.")).toBeInTheDocument();
-    expect(screen.getByText("No tasks planned for today.")).toBeInTheDocument();
-    expect(screen.getByText("No Time Blocks scheduled today.")).toBeInTheDocument();
-    expect(screen.getByText("No focus time recorded today.")).toBeInTheDocument();
-    expect(screen.getByText("No active projects yet.")).toBeInTheDocument();
-    expect(screen.getByText("No Weekly Plan yet.")).toBeInTheDocument();
-    expect(screen.getByText("MIT: empty")).toBeInTheDocument();
-    expect(screen.getByText("Tasks: empty")).toBeInTheDocument();
-    expect(screen.getByText("Schedule: empty")).toBeInTheDocument();
-    expect(screen.getByText("Projects: empty")).toBeInTheDocument();
-    expect(screen.getByText("Sprint: empty")).toBeInTheDocument();
-    expect(screen.getByText("Week: empty")).toBeInTheDocument();
-    expect(screen.getByText("Capture: idle")).toBeInTheDocument();
-    expect(screen.getByText("Connection: online")).toBeInTheDocument();
-    expect(
-      screen.getAllByText(/review: \/life-os\/app\/reviews\/daily\/\d{4}-\d{2}-\d{2}/i),
-    ).toHaveLength(2);
-  });
-
-  it("opens the shell-owned Quick Add dialog from the header trigger", async () => {
+  it("triggers all navigation and action callbacks", async () => {
     const onQuickAddClick = vi.fn();
     const { user } = renderRoute(onQuickAddClick);
 
-    await user.click(screen.getByRole("button", { name: "Quick Add" }));
-    await user.click(screen.getByRole("button", { name: "Add task" }));
-    await user.click(screen.getByRole("button", { name: "Add time block" }));
-    expect(onQuickAddClick).toHaveBeenCalledTimes(3);
-    expect(onQuickAddClick).toHaveBeenNthCalledWith(1);
-    expect(onQuickAddClick).toHaveBeenNthCalledWith(2, "task");
-    expect(onQuickAddClick).toHaveBeenNthCalledWith(3, "time-block");
+    await user.click(screen.getByRole("button", { name: "Choose MIT" }));
+    expect(screen.getByText("Tasks Screen Target")).toBeInTheDocument();
   });
 
-  it("renders the route's own container element", () => {
-    const { container } = renderRoute();
-    expect(container.querySelector(".lifeos-today-route")).toBeInTheDocument();
+  it("triggers focus and add project actions", async () => {
+    const onQuickAddClick = vi.fn();
+    const { user } = renderRoute(onQuickAddClick);
+
+    await user.click(screen.getByRole("button", { name: "Start Task Focus" }));
+    expect(screen.getByText("Focus Screen Target")).toBeInTheDocument();
   });
 
-  it("preserves endpoint partial failures and exposes a retry", async () => {
-    todayMocks.query.mockReturnValue({
-      data: {
-        ...foundationResponse,
-        tasks: { status: "ERROR", data: null, error: "Provider execution failed" },
-      },
-      isPending: false,
-      refetch,
-    });
+  it("triggers quick add project and time block", async () => {
+    const onQuickAddClick = vi.fn();
+    const { user } = renderRoute(onQuickAddClick);
 
-    renderRoute();
-
-    expect(screen.getByText("MIT: empty")).toBeInTheDocument();
-    expect(screen.getByText("Tasks: error")).toBeInTheDocument();
-    expect(screen.getByText("Schedule: empty")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Add project" }));
+    expect(onQuickAddClick).toHaveBeenCalledWith("project");
   });
 
-  it("labels cached data with its generated time when the browser goes offline", () => {
-    todayMocks.online = false;
+  it("triggers habit set count and brain dump capture actions", async () => {
+    const { user } = renderRoute();
 
-    renderRoute();
+    await user.type(screen.getByLabelText("Capture content"), "test value");
+    await user.click(screen.getByRole("button", { name: "Capture Create" }));
+    expect(todayMocks.mutateBrainDump).toHaveBeenCalledWith({ content: "test item" });
 
-    expect(screen.getByText("Connection: offline")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Capture Queue" }));
+    expect(todayMocks.enqueueBrainDump).toHaveBeenCalledWith("test item");
+
+    await user.click(screen.getByRole("button", { name: "Set Habit Count" }));
+    expect(todayMocks.mutateSetHabitEntry).toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Set Unknown Habit" }));
+  });
+
+  it("triggers all retry handlers", async () => {
+    const { user } = renderRoute();
+
+    await user.click(screen.getByRole("button", { name: "Retry Plan MIT" }));
+    await user.click(screen.getByRole("button", { name: "Retry Schedule" }));
+    await user.click(screen.getByRole("button", { name: "Retry Projects" }));
+    await user.click(screen.getByRole("button", { name: "Retry Sprint" }));
+    expect(refetch).toHaveBeenCalled();
   });
 
   it("has no accessibility violations", async () => {

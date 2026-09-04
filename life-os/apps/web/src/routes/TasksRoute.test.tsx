@@ -11,6 +11,20 @@ import { ToastProvider } from "@state/ToastProvider";
 
 import { TasksRoute } from "./TasksRoute";
 
+const routeMocks = vi.hoisted(() => ({
+  createMutate: vi.fn().mockResolvedValue({ id: "task-1" }),
+  createSeriesMutate: vi.fn().mockResolvedValue({ id: "series-1" }),
+  updateMutate: vi.fn().mockResolvedValue({ id: "task-1" }),
+  completeMutate: vi.fn().mockResolvedValue({ id: "task-1" }),
+  changeStatusMutate: vi.fn().mockResolvedValue({ id: "task-1" }),
+  archiveMutate: vi.fn().mockResolvedValue({ id: "task-1" }),
+  restoreMutate: vi.fn().mockResolvedValue({ id: "task-1" }),
+  deleteMutate: vi.fn().mockResolvedValue(undefined),
+  duplicateMutate: vi.fn().mockResolvedValue({ id: "task-2" }),
+  mitMutate: vi.fn().mockResolvedValue({ id: "task-1" }),
+  bulkMutate: vi.fn().mockResolvedValue({ succeeded: 2, failed: [], outcome: "UPDATED" }),
+}));
+
 vi.mock("@features/projects", async () => {
   const actual = await vi.importActual<typeof projectsFeature>("@features/projects");
   return {
@@ -25,21 +39,29 @@ vi.mock("@features/tasks", async () => {
     ...actual,
     useTasks: vi.fn(),
     useTaskLabels: vi.fn(),
-    useCreateTask: vi.fn(),
-    useUpdateTask: vi.fn(),
-    useCompleteTask: vi.fn(),
-    useChangeTaskStatus: vi.fn(),
-    useArchiveTask: vi.fn(),
-    useRestoreTask: vi.fn(),
-    useDeleteTask: vi.fn(),
-    useDuplicateTask: vi.fn(),
-    useToggleTaskMit: vi.fn(),
-    useBulkTaskAction: vi.fn(),
-    useCreateRecurringSeries: vi.fn(),
+    useCreateTask: () => ({ mutateAsync: routeMocks.createMutate, isPending: false, error: null }),
+    useCreateRecurringSeries: () => ({
+      mutateAsync: routeMocks.createSeriesMutate,
+      isPending: false,
+      error: null,
+    }),
+    useUpdateTask: () => ({ mutateAsync: routeMocks.updateMutate, isPending: false, error: null }),
+    useCompleteTask: () => ({ mutateAsync: routeMocks.completeMutate }),
+    useChangeTaskStatus: () => ({ mutateAsync: routeMocks.changeStatusMutate }),
+    useArchiveTask: () => ({ mutateAsync: routeMocks.archiveMutate }),
+    useRestoreTask: () => ({ mutateAsync: routeMocks.restoreMutate }),
+    useDeleteTask: () => ({ mutateAsync: routeMocks.deleteMutate }),
+    useDuplicateTask: () => ({ mutateAsync: routeMocks.duplicateMutate }),
+    useToggleTaskMit: () => ({ mutateAsync: routeMocks.mitMutate }),
+    useBulkTaskAction: () => ({ mutateAsync: routeMocks.bulkMutate }),
     IntegratedTaskDetails: (props: {
       readonly taskId: string;
       readonly backHref: string;
       readonly selectedTab: string;
+      readonly onClose: () => void;
+      readonly onTabChange: (tab: string) => void;
+      readonly onDeleted: () => void;
+      readonly onMutationSuccess: (msg: string) => void;
     }) => (
       <div
         role="dialog"
@@ -47,7 +69,20 @@ vi.mock("@features/tasks", async () => {
         data-task-id={props.taskId}
         data-back-href={props.backHref}
         data-selected-tab={props.selectedTab}
-      />
+      >
+        <button type="button" onClick={props.onClose}>
+          Close Details
+        </button>
+        <button type="button" onClick={() => props.onTabChange("activity")}>
+          Switch Tab Activity
+        </button>
+        <button type="button" onClick={props.onDeleted}>
+          Notify Deleted
+        </button>
+        <button type="button" onClick={() => props.onMutationSuccess("Mutation success message")}>
+          Notify Success
+        </button>
+      </div>
     ),
   };
 });
@@ -55,17 +90,6 @@ vi.mock("@features/tasks", async () => {
 const mockUseProjects = vi.mocked(projectsFeature.useProjects);
 const mockUseTasks = vi.mocked(tasksFeature.useTasks);
 const mockUseTaskLabels = vi.mocked(tasksFeature.useTaskLabels);
-const mockUseCreateTask = vi.mocked(tasksFeature.useCreateTask);
-const mockUseCreateRecurringSeries = vi.mocked(tasksFeature.useCreateRecurringSeries);
-const mockUseUpdateTask = vi.mocked(tasksFeature.useUpdateTask);
-const mockUseCompleteTask = vi.mocked(tasksFeature.useCompleteTask);
-const mockUseChangeTaskStatus = vi.mocked(tasksFeature.useChangeTaskStatus);
-const mockUseArchiveTask = vi.mocked(tasksFeature.useArchiveTask);
-const mockUseRestoreTask = vi.mocked(tasksFeature.useRestoreTask);
-const mockUseDeleteTask = vi.mocked(tasksFeature.useDeleteTask);
-const mockUseDuplicateTask = vi.mocked(tasksFeature.useDuplicateTask);
-const mockUseToggleTaskMit = vi.mocked(tasksFeature.useToggleTaskMit);
-const mockUseBulkTaskAction = vi.mocked(tasksFeature.useBulkTaskAction);
 
 const MOCK_USER = {
   id: "user-1",
@@ -128,12 +152,14 @@ function renderTasksRoute(initialEntries = ["/life-os/app/tasks"]) {
 }
 
 describe("TasksRoute", () => {
-  const mutateAsync = vi.fn();
-
   beforeEach(() => {
     vi.resetAllMocks();
     mockUseProjects.mockReturnValue({
-      data: { items: [], page: null, summary: null },
+      data: {
+        items: [{ id: "project-life-os", name: "LifeOS" }],
+        page: null,
+        summary: null,
+      },
       isPending: false,
       isError: false,
       error: null,
@@ -156,21 +182,6 @@ describe("TasksRoute", () => {
       error: null,
       refetch: vi.fn(),
     } as never);
-    mockUseCreateTask.mockReturnValue({ mutateAsync, isPending: false, error: null } as never);
-    mockUseCreateRecurringSeries.mockReturnValue({
-      mutateAsync,
-      isPending: false,
-      error: null,
-    } as never);
-    mockUseUpdateTask.mockReturnValue({ mutateAsync, isPending: false, error: null } as never);
-    mockUseCompleteTask.mockReturnValue({ mutateAsync } as never);
-    mockUseChangeTaskStatus.mockReturnValue({ mutateAsync } as never);
-    mockUseArchiveTask.mockReturnValue({ mutateAsync } as never);
-    mockUseRestoreTask.mockReturnValue({ mutateAsync } as never);
-    mockUseDeleteTask.mockReturnValue({ mutateAsync } as never);
-    mockUseDuplicateTask.mockReturnValue({ mutateAsync } as never);
-    mockUseToggleTaskMit.mockReturnValue({ mutateAsync } as never);
-    mockUseBulkTaskAction.mockReturnValue({ mutateAsync } as never);
   });
 
   it("renders the Tasks screen from API data", () => {
@@ -231,17 +242,33 @@ describe("TasksRoute", () => {
     );
   });
 
-  it("opens the list-context sheet without replacing list state", async () => {
+  it("handles details sheet tab changes, close, and deletion notifications", async () => {
     const user = userEvent.setup();
-    renderTasksRoute(["/life-os/app/tasks?priority=P1"]);
+    renderTasksRoute(["/life-os/app/tasks?selected=task-weekly-review"]);
 
-    await user.click(screen.getByRole("button", { name: "Prepare weekly review" }));
+    expect(screen.getByRole("dialog", { name: "Integrated task details" })).toBeInTheDocument();
 
-    expect(await screen.findByRole("dialog", { name: "Integrated task details" })).toHaveAttribute(
-      "data-back-href",
-      "/life-os/app/tasks?priority=P1",
-    );
-    expect(screen.getByRole("heading", { name: "Tasks", level: 1 })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Switch Tab Activity" }));
+    await user.click(screen.getByRole("button", { name: "Notify Success" }));
+    await user.click(screen.getByRole("button", { name: "Notify Deleted" }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("dialog", { name: "Integrated task details" }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  it("handles details sheet close button", async () => {
+    const user = userEvent.setup();
+    renderTasksRoute(["/life-os/app/tasks?selected=task-weekly-review"]);
+
+    await user.click(screen.getByRole("button", { name: "Close Details" }));
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("dialog", { name: "Integrated task details" }),
+      ).not.toBeInTheDocument();
+    });
   });
 
   it("renders the loading state while the query is pending", () => {
@@ -276,6 +303,20 @@ describe("TasksRoute", () => {
     expect(refetch).toHaveBeenCalled();
   });
 
+  it("creates a non-recurring task when task form submits normal task", async () => {
+    const user = userEvent.setup();
+    renderTasksRoute();
+
+    await user.click(screen.getAllByRole("button", { name: /Add task/i })[0]!);
+    await user.type(screen.getByLabelText("Task title"), "One-off Task");
+    const dialog = screen.getByRole("dialog", { name: "Create task" });
+    await user.click(within(dialog).getByRole("button", { name: "Add task" }));
+
+    expect(routeMocks.createMutate).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "One-off Task" }),
+    );
+  });
+
   it("creates a recurring task series when task form submits recurring rule", async () => {
     const user = userEvent.setup();
     renderTasksRoute();
@@ -286,7 +327,7 @@ describe("TasksRoute", () => {
     const dialog = screen.getByRole("dialog", { name: "Create task" });
     await user.click(within(dialog).getByRole("button", { name: "Add task" }));
 
-    expect(mutateAsync).toHaveBeenCalledWith(
+    expect(routeMocks.createSeriesMutate).toHaveBeenCalledWith(
       expect.objectContaining({
         title: "Daily Review",
         frequency: "DAILY",

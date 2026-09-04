@@ -357,4 +357,63 @@ describe("NotesRoute", () => {
       onlineSpy.mockRestore();
     }
   });
+
+  it("creates a new note when accessing /notes/new and submitting form", async () => {
+    renderNotesRoute(["/life-os/app/notes/new"]);
+
+    await userEvent.type(screen.getByLabelText("Title"), "Brand New Note");
+    await userEvent.type(screen.getByLabelText("Body"), "New note body content");
+    await userEvent.click(screen.getByRole("button", { name: "Save note" }));
+
+    expect(spyCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Brand New Note",
+        body: "New note body content",
+      }),
+    );
+  });
+
+  it("unpins a pinned note and restores an archived note", async () => {
+    const pinnedNote = { ...MOCK_NOTE_1, pinned: true, archived: false };
+    mockUseNote.mockReturnValue({
+      data: pinnedNote,
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: spyRefetch,
+    } as any);
+
+    renderNotesRoute(["/life-os/app/notes/note-1"]);
+
+    const unpinBtns = screen.getAllByRole("button", { name: /Unpin note/ });
+    await userEvent.click(unpinBtns[unpinBtns.length - 1]!);
+    expect(spyUnpin).toHaveBeenCalledWith({ id: "note-1", version: 1 });
+
+    const archivedNote = { ...MOCK_NOTE_1, pinned: false, archived: true };
+    mockUseNote.mockReturnValue({
+      data: archivedNote,
+      isPending: false,
+      isError: false,
+      error: null,
+      refetch: spyRefetch,
+    } as any);
+
+    renderNotesRoute(["/life-os/app/notes/note-1"]);
+    const restoreBtns = screen.getAllByRole("button", { name: /Restore note/ });
+    await userEvent.click(restoreBtns[restoreBtns.length - 1]!);
+    expect(spyRestore).toHaveBeenCalledWith({ id: "note-1", version: 1 });
+  });
+
+  it("handles label filter and status tab change", async () => {
+    renderNotesRoute(["/life-os/app/notes"]);
+
+    await userEvent.click(screen.getAllByRole("button", { name: "Create Note" })[0]!);
+    expect(screen.getByLabelText("Title")).toBeInTheDocument();
+
+    const labelSelect = screen.getByRole("combobox", { name: "Label" });
+    await userEvent.selectOptions(labelSelect, "label-1");
+
+    const archivedTab = screen.getByRole("tab", { name: "Archived" });
+    await userEvent.click(archivedTab);
+  });
 });

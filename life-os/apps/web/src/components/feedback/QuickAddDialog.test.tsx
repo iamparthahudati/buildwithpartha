@@ -2,6 +2,7 @@ import { useState } from "react";
 import { screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { expectNoAccessibilityViolations } from "@test/accessibility";
 import { renderWithUser } from "@test/render";
@@ -10,6 +11,15 @@ import { ToastViewport } from "./ToastViewport";
 
 import { QuickAddDialog, type QuickAddDialogProps, type QuickAddType } from "./QuickAddDialog";
 import { useQuickAddShortcut } from "./useQuickAddShortcut";
+
+function createTestQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+}
 
 function QuickAddHarness({
   initialOpen = true,
@@ -21,37 +31,43 @@ function QuickAddHarness({
   readonly dialogProps?: Partial<QuickAddDialogProps>;
 }) {
   const [open, setOpen] = useState(initialOpen);
+  const [queryClient] = useState(() => createTestQueryClient());
   return (
-    <ToastProvider>
-      <MemoryRouter>
-        <button type="button" onClick={() => setOpen(true)}>
-          Open trigger
-        </button>
-        <QuickAddDialog
-          open={open}
-          onClose={() => setOpen(false)}
-          timeZone="Asia/Kolkata"
-          {...(initialType ? { initialType } : {})}
-          {...dialogProps}
-        />
-        <ToastViewport />
-      </MemoryRouter>
-    </ToastProvider>
+    <QueryClientProvider client={queryClient}>
+      <ToastProvider>
+        <MemoryRouter>
+          <button type="button" onClick={() => setOpen(true)}>
+            Open trigger
+          </button>
+          <QuickAddDialog
+            open={open}
+            onClose={() => setOpen(false)}
+            timeZone="Asia/Kolkata"
+            {...(initialType ? { initialType } : {})}
+            {...dialogProps}
+          />
+          <ToastViewport />
+        </MemoryRouter>
+      </ToastProvider>
+    </QueryClientProvider>
   );
 }
 
 function ShortcutHarness() {
   const [open, setOpen] = useState(false);
+  const [queryClient] = useState(() => createTestQueryClient());
   useQuickAddShortcut(() => setOpen(true), { enabled: !open });
   return (
-    <ToastProvider>
-      <MemoryRouter>
-        <input data-testid="test-input" type="text" />
-        <textarea data-testid="test-textarea" />
-        <QuickAddDialog open={open} onClose={() => setOpen(false)} timeZone="Asia/Kolkata" />
-        <ToastViewport />
-      </MemoryRouter>
-    </ToastProvider>
+    <QueryClientProvider client={queryClient}>
+      <ToastProvider>
+        <MemoryRouter>
+          <input data-testid="test-input" type="text" />
+          <textarea data-testid="test-textarea" />
+          <QuickAddDialog open={open} onClose={() => setOpen(false)} timeZone="Asia/Kolkata" />
+          <ToastViewport />
+        </MemoryRouter>
+      </ToastProvider>
+    </QueryClientProvider>
   );
 }
 

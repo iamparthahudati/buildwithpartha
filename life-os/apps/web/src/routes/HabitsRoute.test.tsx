@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -66,10 +66,23 @@ function renderRoute(initialEntry: string) {
 describe("HabitsRoute", () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    mockApiRequest.mockImplementation((path) => {
+    mockApiRequest.mockImplementation((path, options) => {
+      if (path === "/habits" && options?.method === "POST") return Promise.resolve(HABIT_DTO);
       if (path === "/habits?archived=false") return Promise.resolve([HABIT_DTO]);
       if (path === "/habits?archived=true") return Promise.resolve([]);
       if (path === "/habits/habit-1") return Promise.resolve(HABIT_DTO);
+      if (path.startsWith("/habits/habit-1/entries?") && options?.method === "PUT") {
+        return Promise.resolve({
+          id: "entry-1",
+          habitId: "habit-1",
+          userId: "user-1",
+          localDate: "2026-08-30",
+          completedCount: 2,
+          createdAt: "2026-08-30T00:00:00Z",
+          updatedAt: "2026-08-30T00:00:00Z",
+          version: 0,
+        });
+      }
       if (path.startsWith("/habits/habit-1/entries?")) {
         return Promise.resolve([
           {
@@ -128,5 +141,42 @@ describe("HabitsRoute", () => {
     await waitFor(() =>
       expect(screen.getByRole("tab", { name: "Statistics", selected: true })).toBeInTheDocument(),
     );
+  });
+
+  it("opens create habit dialog and submits form", async () => {
+    const user = userEvent.setup();
+    renderRoute("/life-os/app/habits");
+
+    expect(await screen.findByText("Read")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Add Habit" }));
+
+    const dialog = screen.getByRole("dialog", { name: "Add Habit" });
+    expect(dialog).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText("Habit name"), "Exercise");
+    await user.click(within(dialog).getByRole("button", { name: "Add Habit" }));
+
+    await waitFor(() => {
+      expect(mockApiRequest).toHaveBeenCalledWith(
+        "/habits",
+        expect.objectContaining({ method: "POST" }),
+      );
+    });
+  });
+
+  it("increments habit completion count from row action", async () => {
+    const user = userEvent.setup();
+    renderRoute("/life-os/app/habits");
+
+    expect(await screen.findByText("Read")).toBeInTheDocument();
+    const incBtn = screen.getByRole("button", { name: "Log habit" });
+    await user.click(incBtn);
+
+    await waitFor(() => {
+      expect(mockApiRequest).toHaveBeenCalledWith(
+        expect.stringContaining("/habits/habit-1/entries"),
+        expect.objectContaining({ method: "PUT" }),
+      );
+    });
   });
 });
