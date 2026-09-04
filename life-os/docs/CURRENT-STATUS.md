@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-05 (LOS-1407 Standardize pagination/filter/sort)
+Last updated: 2026-09-05 (LOS-1410 Add caching policy)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1410 — Built HTTP caching policy infrastructure: `ApiCachePolicyFilter` enforcing explicit default security and proxy-bypass headers (`Cache-Control: no-store, private, no-cache, max-age=0, must-revalidate`, `Pragma`, `Expires`, `Vary`, `CDN-Cache-Control: no-store`, `Cloudflare-CDN-Cache-Control: no-store`), `@CachePolicy` annotation and `CachePolicyInterceptor` for custom cache-control directives, `CacheConfiguration` registering `ShallowEtagHeaderFilter` for GET response ETags and HTTP 304 `Not Modified` processing, `ETagUtils` helper class, and comprehensive unit/integration test suite covering account isolation, ETag validation, and cache invalidation on resource mutations. See `docs/handoffs/LOS-1410.md`.
 
 - LOS-1407 — Standardized pagination, filter, and sort capabilities across domain APIs: implemented shared `PaginationParams` and `PaginationUtils` primitives (`tech.buildwithpartha.lifeos.common.pagination`) enforcing page size caps (100) and bounds, refactored Task, Project, Note, Goal, Brain Dump, Comment, Activity, and Notification controllers and services to use uniform `INVALID` problem codes, and added stable secondary `n.id DESC` tie-breaker to `NotificationJpaRepository`. See `docs/handoffs/LOS-1407.md`.
 
