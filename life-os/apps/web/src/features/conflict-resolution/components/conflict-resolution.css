@@ -4,22 +4,22 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-3, 0.75rem);
-  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
-  background-color: var(--color-warning-bg, #fffbe6);
-  border: 1px solid var(--color-warning-border, #ffe58f);
-  border-radius: var(--radius-md, 0.375rem);
-  margin-bottom: var(--space-4, 1rem);
+  gap: var(--lifeos-space-3);
+  padding: var(--lifeos-space-3) var(--lifeos-space-4);
+  background-color: var(--lifeos-color-warning-soft);
+  border: 1px solid var(--lifeos-color-warning);
+  border-radius: var(--lifeos-radius-md);
+  margin-bottom: var(--lifeos-space-4);
 }
 
 .lifeos-conflict-banner__content {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--lifeos-space-2);
 }
 
 .lifeos-conflict-banner__icon {
-  color: var(--color-warning-icon, #d48806);
+  color: var(--lifeos-color-warning);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -27,82 +27,82 @@
 .lifeos-conflict-banner__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--lifeos-space-2);
   flex-shrink: 0;
 }
 
 .lifeos-conflict-modal {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4, 1rem);
+  gap: var(--lifeos-space-4);
 }
 
 .lifeos-conflict-modal__header-badge {
-  margin-bottom: var(--space-2, 0.5rem);
+  margin-bottom: var(--lifeos-space-2);
 }
 
 .lifeos-conflict-modal__diff-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: var(--space-3, 0.75rem);
-  font-size: var(--font-size-xs, 0.75rem);
+  margin-top: var(--lifeos-space-3);
+  font-size: var(--lifeos-font-size-xs);
 }
 
 .lifeos-conflict-modal__diff-table th,
 .lifeos-conflict-modal__diff-table td {
-  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  border: 1px solid var(--color-border-subtle, #e8e8e8);
+  padding: var(--lifeos-space-2) var(--lifeos-space-3);
+  border: 1px solid var(--lifeos-color-border);
   text-align: left;
   vertical-align: top;
 }
 
 .lifeos-conflict-modal__diff-table th {
-  background-color: var(--color-bg-secondary, #fafafa);
+  background-color: var(--lifeos-color-surface-muted);
   font-weight: 600;
 }
 
 .lifeos-conflict-modal__diff-row--different {
-  background-color: var(--color-warning-bg-subtle, #fffef0);
+  background-color: var(--lifeos-color-warning-soft);
 }
 
 .lifeos-conflict-modal__diff-row--different td:nth-child(2) {
-  color: var(--color-success-text, #389e0d);
+  color: var(--lifeos-color-success);
   font-weight: 500;
 }
 
 .lifeos-conflict-modal__diff-row--different td:nth-child(3) {
-  color: var(--color-text-secondary, #595959);
+  color: var(--lifeos-color-text-secondary);
 }
 
 .lifeos-conflict-modal__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3, 0.75rem);
-  padding-top: var(--space-3, 0.75rem);
-  border-top: 1px solid var(--color-border-subtle, #e8e8e8);
-  margin-top: var(--space-3, 0.75rem);
+  gap: var(--lifeos-space-3);
+  padding-top: var(--lifeos-space-3);
+  border-top: 1px solid var(--lifeos-color-border);
+  margin-top: var(--lifeos-space-3);
 }
 
 .lifeos-conflict-modal__footer-group {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--lifeos-space-2);
 }
 
 .lifeos-queued-conflict {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, 0.75rem);
+  gap: var(--lifeos-space-3);
 }
 
 .lifeos-queued-conflict__payload {
-  background-color: var(--color-bg-secondary, #fafafa);
-  border: 1px solid var(--color-border-subtle, #e8e8e8);
-  border-radius: var(--radius-sm, 0.25rem);
-  padding: var(--space-3, 0.75rem);
-  font-family: monospace;
-  font-size: var(--font-size-xs, 0.75rem);
+  background-color: var(--lifeos-color-surface-muted);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-sm);
+  padding: var(--lifeos-space-3);
+  font-family: var(--lifeos-font-mono);
+  font-size: var(--lifeos-font-size-xs);
   white-space: pre-wrap;
   word-break: break-all;
   max-height: 200px;

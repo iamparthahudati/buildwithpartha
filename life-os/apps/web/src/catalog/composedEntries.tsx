@@ -1407,7 +1407,7 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
           "Inline notification banner with quick compare, use server, and overwrite actions.",
         render: () => (
           <ConflictResolutionBanner
-            message="Stale version: Task #101 was updated on the server."
+            message="Stale version: Task ID 101 was updated on the server."
             onOpenCompare={() => alert("Open compare modal")}
             onUseServer={() => alert("Used server version")}
             onOverwriteLocal={() => alert("Overwrote server version")}

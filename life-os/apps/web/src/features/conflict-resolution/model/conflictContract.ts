@@ -96,7 +96,7 @@ export function buildConflictCopyText<T extends Record<string, unknown>>(
   const lines: string[] = [];
   lines.push(`=== CONFLICT RESOLUTION BACKUP (${details.conflictTimestamp}) ===`);
   if (details.entityType || details.entityId) {
-    lines.push(`Entity: ${details.entityType ?? "Record"} #${details.entityId ?? "Unknown"}`);
+    lines.push(`Entity: ${details.entityType ?? "Record"} ID ${details.entityId ?? "Unknown"}`);
   }
   if (details.localVersion !== undefined || details.serverVersion !== undefined) {
     lines.push(

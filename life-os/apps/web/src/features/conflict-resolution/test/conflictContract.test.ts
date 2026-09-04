@@ -63,7 +63,7 @@ describe("conflictContract model", () => {
 
     const copyText = buildConflictCopyText(details);
     expect(copyText).toContain("=== CONFLICT RESOLUTION BACKUP");
-    expect(copyText).toContain("Entity: Note #123");
+    expect(copyText).toContain("Entity: Note ID 123");
     expect(copyText).toContain("Local Title");
     expect(copyText).toContain("(Server had: Server Title)");
   });
