@@ -24,6 +24,7 @@ import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
+import tech.buildwithpartha.lifeos.common.pagination.PaginationUtils;
 
 /** User-scoped Task/Project Comment lifecycle service. */
 @Service
@@ -171,12 +172,6 @@ public class CommentService implements CommentCountPort {
   }
 
   private static void validatePage(int page, int size) {
-    if (page < 0) {
-      throw new FieldValidationException("Invalid page", List.of(new FieldProblem("page", "MIN")));
-    }
-    if (size < 1 || size > MAX_PAGE_SIZE) {
-      throw new FieldValidationException(
-          "Invalid size", List.of(new FieldProblem("size", "RANGE")));
-    }
+    PaginationUtils.validatePageAndSize(page, size);
   }
 }

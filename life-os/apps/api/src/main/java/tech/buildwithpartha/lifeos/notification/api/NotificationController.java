@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
+import tech.buildwithpartha.lifeos.common.pagination.PaginationParams;
+import tech.buildwithpartha.lifeos.common.pagination.PaginationUtils;
 import tech.buildwithpartha.lifeos.notification.application.NotificationService;
 import tech.buildwithpartha.lifeos.notification.domain.Notification;
 import tech.buildwithpartha.lifeos.notification.domain.NotificationCategory;
@@ -39,6 +41,7 @@ public class NotificationController {
       summary = "List notifications",
       description = "User-scoped list of in-app notifications.")
   @ApiResponse(responseCode = "200", description = "Notifications page.")
+  @ApiResponse(responseCode = "400", ref = "#/components/responses/BadRequest")
   @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
   @GetMapping
   public PageResponse<NotificationResponse> listNotifications(
@@ -49,9 +52,11 @@ public class NotificationController {
       @RequestParam(name = "page", required = false, defaultValue = "0") int page,
       @RequestParam(name = "size", required = false, defaultValue = "20") int size) {
 
+    PaginationParams pagination = PaginationUtils.validatePageAndSize(page, size);
     Set<NotificationCategory> categories = parseCategories(categoriesParam, categoryParam);
     PageResponse<Notification> pageResult =
-        notificationService.getNotifications(userId, unreadOnly, categories, page, size);
+        notificationService.getNotifications(
+            userId, unreadOnly, categories, pagination.page(), pagination.size());
 
     return new PageResponse<>(
         pageResult.items().stream().map(NotificationResponse::fromDomain).toList(),

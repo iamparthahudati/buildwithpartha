@@ -20,7 +20,7 @@ public interface NotificationJpaRepository extends JpaRepository<NotificationEnt
       "SELECT n FROM NotificationEntity n WHERE n.userId = :userId "
           + "AND (:unreadOnly = FALSE OR n.readAt IS NULL) "
           + "AND (:hasCategories = FALSE OR n.category IN :categories) "
-          + "ORDER BY n.createdAt DESC")
+          + "ORDER BY n.createdAt DESC, n.id DESC")
   Page<NotificationEntity> findByUserIdFiltered(
       @Param("userId") UUID userId,
       @Param("unreadOnly") boolean unreadOnly,
