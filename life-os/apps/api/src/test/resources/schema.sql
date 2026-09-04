@@ -634,5 +634,15 @@ CREATE TABLE IF NOT EXISTS attachments (
     deleted_at                 TIMESTAMP WITH TIME ZONE
 );
 
-
-
+CREATE TABLE IF NOT EXISTS idempotency_records (
+    id                UUID                     NOT NULL PRIMARY KEY,
+    user_id           UUID                     NOT NULL,
+    idempotency_key   VARCHAR(64)              NOT NULL,
+    operation_type    VARCHAR(100)             NOT NULL,
+    status            VARCHAR(32)              NOT NULL,
+    response_code     INTEGER,
+    response_body     TEXT,
+    created_at        TIMESTAMP WITH TIME ZONE NOT NULL,
+    expires_at        TIMESTAMP WITH TIME ZONE NOT NULL,
+    CONSTRAINT uq_idempotency_records_user_key UNIQUE (user_id, idempotency_key)
+);

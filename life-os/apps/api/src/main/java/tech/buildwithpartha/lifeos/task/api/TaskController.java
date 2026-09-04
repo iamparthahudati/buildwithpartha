@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.idempotency.api.Idempotent;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
 import tech.buildwithpartha.lifeos.common.pagination.PaginationParams;
 import tech.buildwithpartha.lifeos.common.pagination.PaginationUtils;
@@ -170,6 +171,7 @@ public class TaskController {
   @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @Idempotent(operation = "CREATE_TASK")
   public TaskResponse createTask(
       @AuthenticationPrincipal UUID userId, @Valid @RequestBody CreateTaskRequest request) {
 

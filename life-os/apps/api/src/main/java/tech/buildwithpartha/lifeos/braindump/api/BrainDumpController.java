@@ -26,6 +26,7 @@ import tech.buildwithpartha.lifeos.braindump.domain.BrainDumpItemQueryResult;
 import tech.buildwithpartha.lifeos.braindump.domain.BrainDumpItemStatus;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
+import tech.buildwithpartha.lifeos.common.idempotency.api.Idempotent;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
 import tech.buildwithpartha.lifeos.common.pagination.PaginationParams;
 import tech.buildwithpartha.lifeos.common.pagination.PaginationUtils;
@@ -100,6 +101,7 @@ public class BrainDumpController {
   @ApiResponse(responseCode = "401", ref = "#/components/responses/Unauthorized")
   @ApiResponse(responseCode = "500", ref = "#/components/responses/InternalError")
   @PostMapping
+  @Idempotent(operation = "CREATE_BRAIN_DUMP_ITEM")
   public ResponseEntity<BrainDumpItemResponse> capture(
       @AuthenticationPrincipal UUID userId, @Valid @RequestBody CaptureBrainDumpRequest request) {
     BrainDumpItem created = brainDumpService.capture(userId, request.toCommand());
