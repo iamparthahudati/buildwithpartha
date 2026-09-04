@@ -57,13 +57,17 @@ public final class ApiExceptionHandler {
   @ExceptionHandler(RateLimitedException.class)
   ResponseEntity<ApiProblem> handleRateLimited(
       RateLimitedException exception, HttpServletRequest request) {
-    return response(
+    ApiProblem problem =
         problemFactory.create(
             request,
             HttpStatus.TOO_MANY_REQUESTS,
             exception.code(),
             "Too many requests",
-            "Try again later."));
+            "Try again later.");
+    return ResponseEntity.status(problem.status())
+        .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+        .header("Retry-After", String.valueOf(exception.retryAfterSeconds()))
+        .body(problem);
   }
 
   @ExceptionHandler(InvalidCredentialsException.class)

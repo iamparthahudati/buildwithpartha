@@ -2,7 +2,7 @@
 
 | ID | Ticket | Description and acceptance contract | Depends on | Estimate | Status |
 | --- | --- | --- | --- | --- | --- |
-| LOS-1401 | Implement rate limiting | Per-IP/account/endpoint policies for auth, search, exports and writes with proxy-aware trusted IP handling, standard response/retry, metrics and tests. | LOS-0213 | S | Backlog |
+| LOS-1401 | Implement rate limiting | Per-IP/account/endpoint policies for auth, search, exports and writes with proxy-aware trusted IP handling, standard response/retry, metrics and tests. | LOS-0213 | S | Done |
 | LOS-1402 | Implement transactional outbox and mail worker | Transactionally enqueue verification/reset/security mail, retry/backoff/dead-letter, templates, safe logs and local mail catcher. Duplicate delivery is harmless. | LOS-0205 | M | Backlog |
 | LOS-1403 | Implement background job framework | Persistent scheduled/async jobs for recurrence, export, cleanup, notifications; leasing/idempotency/retry/dead letter/metrics/admin-safe inspection. | LOS-0205 | M | Done |
 | LOS-1404 | Implement product activity and security audit services | Structured event APIs, safe metadata, retention/access, correlation and tests. Sensitive content/token/cookie values are impossible through typed interface. | LOS-0213 | S | Done |
