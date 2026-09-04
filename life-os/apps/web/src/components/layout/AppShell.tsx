@@ -13,6 +13,7 @@ import {
 import { useAnnouncer } from "@hooks/useAnnouncer";
 import { useMediaQuery } from "@hooks/useMediaQuery";
 import { FocusMiniPlayer } from "@features/focus";
+import { UpdatePromptToast } from "@features/offline-shell";
 
 import "./app-shell.css";
 
@@ -239,6 +240,7 @@ export function AppShell({
 
       <div id="lifeos-overlay-root" className="lifeos-app-shell__overlay-root">
         <ToastViewport />
+        <UpdatePromptToast />
       </div>
 
       <div aria-live="polite" role="status" className="lifeos-visually-hidden">

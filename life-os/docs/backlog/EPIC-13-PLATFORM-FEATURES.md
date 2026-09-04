@@ -16,6 +16,6 @@
 | LOS-1312 | Implement offline draft storage | User/session-scoped encrypted-where-practical local drafts for notes/brain/forms; clear on logout/account switch; expiry/size handling and explicit labels. | LOS-0508, LOS-1202 | M | Done |
 | LOS-1313 | Implement offline mutation queue | Stable client IDs/idempotency/dependencies/retry/expiry/status for allowed creates only; unsafe actions disabled. Replay and lost-response cases tested. | LOS-1312, LOS-0802, LOS-1201, LOS-1204 | L | Done |
 | LOS-1314 | Implement conflict resolution UI | Standard 409/version contract plus compare/copy/reload/restore flows for forms/text and queued mutations; local data never silently lost. | LOS-0414, LOS-1313 | M | Backlog |
-| LOS-1315 | Add service-worker shell caching | Cache versioned static app shell only, safe update prompt, no private API response leakage across accounts, clear on logout where needed. Offline claims match reality. | LOS-1312 | M | Backlog |
+| LOS-1315 | Add service-worker shell caching | Cache versioned static app shell only, safe update prompt, no private API response leakage across accounts, clear on logout where needed. Offline claims match reality. | LOS-1312 | M | Done |
 | LOS-1316 | Run platform feature gate | Search isolation, notification consistency, recurrence DST/idempotency, attachment security if enabled, offline queue/conflict/account switching and a11y pass. | LOS-1301–LOS-1315 | S | Backlog |
 

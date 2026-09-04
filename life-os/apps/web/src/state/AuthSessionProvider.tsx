@@ -7,6 +7,7 @@ import { buildLoginPathWithReturnTo, currentPathForReturnTo } from "@lib/returnP
 import { getSession } from "@features/auth";
 import { clearAllDrafts, clearUserDrafts } from "@features/offline-drafts";
 import { clearAllMutationQueues, clearUserMutationQueue } from "@features/offline-mutation-queue";
+import { clearShellCaches } from "@features/offline-shell";
 
 import { AuthSessionContext, type AuthSessionValue, type AuthUser } from "./authSession";
 
@@ -86,6 +87,7 @@ export function AuthSessionProvider({
     }
     clearAllDrafts();
     clearAllMutationQueues();
+    void clearShellCaches();
     setSessionState(LOGGED_OUT_STATE);
     queryClient.clear();
   }, [queryClient]);
@@ -96,6 +98,7 @@ export function AuthSessionProvider({
         if (current.user !== null && current.user.id !== user.id) {
           clearUserDrafts(current.user.id);
           clearUserMutationQueue(current.user.id);
+          void clearShellCaches();
           queryClient.clear();
         }
         return { user, csrfToken };

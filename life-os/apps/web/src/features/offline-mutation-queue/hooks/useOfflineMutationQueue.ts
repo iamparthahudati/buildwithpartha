@@ -59,12 +59,7 @@ export function useOfflineMutationQueue(
   const session = useContext(AuthSessionContext);
   const activeUserId = options.userId ?? session?.user?.id ?? "";
   const autoReplay = options.autoReplayOnOnline ?? true;
-  let queryClient: ReturnType<typeof useQueryClient> | undefined;
-  try {
-    queryClient = useQueryClient();
-  } catch {
-    queryClient = undefined;
-  }
+  const queryClient = useQueryClient();
 
   const [isOnline, setIsOnline] = useState<boolean>(
     typeof navigator !== "undefined" ? navigator.onLine : true,

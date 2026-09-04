@@ -1,0 +1,42 @@
+/* UpdatePromptToast (LOS-1315). */
+
+.lifeos-update-prompt-toast {
+  position: fixed;
+  bottom: var(--lifeos-spacing-6);
+  right: var(--lifeos-spacing-6);
+  z-index: 1000;
+  width: calc(100% - (var(--lifeos-spacing-6) * 2));
+  max-width: 26rem;
+  box-shadow: var(--lifeos-shadow-xl);
+  border-radius: var(--lifeos-radius-lg);
+  animation: lifeos-update-prompt-enter var(--lifeos-motion-duration-normal)
+    var(--lifeos-motion-ease-entrance);
+}
+
+@keyframes lifeos-update-prompt-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lifeos-update-prompt-toast {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .lifeos-update-prompt-toast {
+    bottom: var(--lifeos-spacing-4);
+    right: var(--lifeos-spacing-4);
+    left: var(--lifeos-spacing-4);
+    width: auto;
+    max-width: none;
+  }
+}
