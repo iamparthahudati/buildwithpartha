@@ -35,4 +35,23 @@ describe("OfflineQueueBadge (LOS-1313)", () => {
 
     expect(handleRetry).toHaveBeenCalledTimes(1);
   });
+
+  it("renders conflict warning and handles onResolveConflicts when conflictCount > 0", async () => {
+    const user = userEvent.setup();
+    const handleResolve = vi.fn();
+
+    render(
+      <OfflineQueueBadge
+        pendingCount={0}
+        conflictCount={1}
+        isOffline={false}
+        onResolveConflicts={handleResolve}
+      />,
+    );
+
+    expect(screen.getByText("1 sync conflict")).toBeInTheDocument();
+    const resolveButton = screen.getByRole("button", { name: /resolve sync conflicts/i });
+    await user.click(resolveButton);
+    expect(handleResolve).toHaveBeenCalledTimes(1);
+  });
 });

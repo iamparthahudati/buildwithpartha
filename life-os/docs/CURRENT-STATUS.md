@@ -403,6 +403,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 - LOS-1008 — Connected Week Planner REST APIs (`/weekly-plans`), TanStack Query hooks (`useWeekPlanner`, `useWeekPlannerMutations`), version reconciliation, idempotent task allocations, conflict mapping, query invalidations (`weekly-plans`, `today`, `calendar`, `tasks`, `time-blocks`, `daily-time-summary`), and route integration with 100% test suite pass. See `docs/handoffs/LOS-1008.md`.
 
+- LOS-1314 — Implemented conflict resolution UI domain module `@features/conflict-resolution` (`conflictContract.ts`, `useConflictResolution.ts`, `ConflictResolutionBanner.tsx`, `ConflictResolutionModal.tsx`, `QueuedConflictResolver.tsx`), standard 409/version conflict contract, field-by-field side-by-side compare view, local backup copy formatting, local overwrite and server reload actions, queued mutation conflict resolution, `OfflineQueueBadge` conflict status indicator, catalog specimens, and full test suite pass. See `docs/handoffs/LOS-1314.md`.
+
 ## Next recommended ticket
 
 LOS-1009 (`docs/backlog/EPIC-10-PLANNING-REVIEWS.md`) — Model review records and snapshots.

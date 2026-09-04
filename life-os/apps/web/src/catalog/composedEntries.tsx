@@ -1,5 +1,6 @@
 import { TextInput } from "@components/ui";
 import { FormField } from "@components/forms";
+import { ConflictResolutionBanner, ConflictResolutionModal } from "@features/conflict-resolution";
 
 import {
   ComboboxMultiCreateDemo,
@@ -1389,6 +1390,60 @@ export const COMPOSED_CATALOG_ENTRIES: readonly CatalogEntry[] = Object.freeze([
         name: "Edit scope modal",
         description: "Scope selector for updating or deleting recurring task series.",
         render: () => <RecurrenceEditScopeDialogDemo />,
+      },
+    ],
+  },
+  {
+    id: "conflict-resolution",
+    name: "ConflictResolution",
+    group: "Composed",
+    summary:
+      "Standardized 409 and version conflict resolution components including inline warning banner, field-by-field compare modal, local backup copy, and queued mutation conflict resolver.",
+    states: [
+      {
+        id: "conflict-resolution-banner",
+        name: "ConflictResolutionBanner",
+        description:
+          "Inline notification banner with quick compare, use server, and overwrite actions.",
+        render: () => (
+          <ConflictResolutionBanner
+            message="Stale version: Task #101 was updated on the server."
+            onOpenCompare={() => alert("Open compare modal")}
+            onUseServer={() => alert("Used server version")}
+            onOverwriteLocal={() => alert("Overwrote server version")}
+          />
+        ),
+      },
+      {
+        id: "conflict-resolution-modal",
+        name: "ConflictResolutionModal",
+        description:
+          "Side-by-side field comparison modal with local backup copy and version selection.",
+        render: () => (
+          <ConflictResolutionModal
+            open={true}
+            onClose={() => {}}
+            details={{
+              entityId: "task-101",
+              entityType: "Task",
+              localVersion: 1,
+              serverVersion: 2,
+              localPayload: {
+                title: "Refactor API (Local)",
+                priority: "URGENT",
+                estimateMinutes: 60,
+              },
+              serverPayload: {
+                title: "Refactor API (Server)",
+                priority: "NORMAL",
+                estimateMinutes: 60,
+              },
+              conflictTimestamp: "2026-09-05T01:00:00Z",
+            }}
+            onUseServer={() => alert("Use server")}
+            onOverwriteLocal={() => alert("Overwrite local")}
+          />
+        ),
       },
     ],
   },

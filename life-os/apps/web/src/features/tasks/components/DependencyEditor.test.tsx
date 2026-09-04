@@ -106,7 +106,7 @@ describe("DependencyEditor", () => {
 
     deferred.resolve();
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
     expect(screen.getByRole("status")).toHaveTextContent(`Blocker added: ${BLOCKER.title}.`);
 
     await expectNoAccessibilityViolations(container);
