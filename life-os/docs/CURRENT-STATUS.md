@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-03 (LOS-1609 Implement application data/file backup)
+Last updated: 2026-09-04 (LOS-1316 Run platform feature gate)
 
 ## Phase
 
@@ -11,6 +11,9 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1316 — Passed the Epic 13 Platform Features phase gate across global search isolation, notification center & preferences, recurring tasks model/engine/UX, attachment security pipeline, offline draft storage, offline mutation queue, Service Worker shell caching, accessibility compliance, and responsive viewports. Authored `docs/gates/PLATFORM-FEATURES-PHASE-GATE.md` and `docs/handoffs/LOS-1316.md`.
+
 
 - LOS-1609 — Authored application data and file backup specification (`docs/43-APPLICATION-DATA-AND-FILE-BACKUP.md`), created automated file backup execution script (`life-os/scripts/backup-app-files.sh`), created automated file restoration execution script (`life-os/scripts/restore-app-files-backup.sh`), established persistent versus transient data categorization taxonomy, AES-256 GPG symmetric encryption standard, SHA-256 checksum verification, structured JSON metadata manifests (`<backup>.json`), database-file restore ordering protocols (DB first, files second), post-restoration orphan reconciliation, 30-day nightly retention and 35-day backup expiry ceiling matching privacy lifecycle rules, file backup status JSON recording (`/var/log/life-os/app-files-backup-status.json`), failure alert notification schema, disaster recovery runbooks, secret-safe non-logging contract, and created automated verification script (`life-os/scripts/validate-app-files-backups.sh`). See `docs/43-APPLICATION-DATA-AND-FILE-BACKUP.md` and `docs/handoffs/LOS-1609.md`.
 
