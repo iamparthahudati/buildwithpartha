@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-04 (LOS-1401 Implement rate limiting)
+Last updated: 2026-09-05 (LOS-1407 Standardize pagination/filter/sort)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1407 — Standardized pagination, filter, and sort capabilities across domain APIs: implemented shared `PaginationParams` and `PaginationUtils` primitives (`tech.buildwithpartha.lifeos.common.pagination`) enforcing page size caps (100) and bounds, refactored Task, Project, Note, Goal, Brain Dump, Comment, Activity, and Notification controllers and services to use uniform `INVALID` problem codes, and added stable secondary `n.id DESC` tie-breaker to `NotificationJpaRepository`. See `docs/handoffs/LOS-1407.md`.
 
 - LOS-1401 — Implemented backend rate limiting capability: proxy-aware `ClientIpResolver` (`lifeos.security.trusted-proxies`, `X-Forwarded-For`), `RateLimiterService` with fixed/sliding window counters, `@Scheduled` memory eviction, Micrometer metrics (`lifeos.rate_limit.evaluations`), `RateLimitingInterceptor` across Search (30 req/min), Export (10 req/min), and non-auth Write-burst (60 req/min) operations, refactored Auth rate limiters, and HTTP 429 `Retry-After` header handling with safe Problem Details. See `docs/handoffs/LOS-1401.md`.
 

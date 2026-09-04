@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import tech.buildwithpartha.lifeos.common.error.FieldProblem;
-import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
+import tech.buildwithpartha.lifeos.common.pagination.PaginationParams;
+import tech.buildwithpartha.lifeos.common.pagination.PaginationUtils;
 import tech.buildwithpartha.lifeos.note.application.NoteService;
 import tech.buildwithpartha.lifeos.note.domain.Note;
 import tech.buildwithpartha.lifeos.note.domain.NoteQuery;
@@ -60,34 +60,28 @@ public class NoteController {
       @RequestParam(name = "sortDirection", required = false, defaultValue = "DESC")
           String sortDirection) {
 
-    if (page < 0) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("page", "INVALID")));
-    }
-    if (size < 1 || size > 100) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("size", "INVALID")));
-    }
-    if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("sortBy", "INVALID")));
-    }
-    if (!"ASC".equalsIgnoreCase(sortDirection) && !"DESC".equalsIgnoreCase(sortDirection)) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("sortDirection", "INVALID")));
-    }
+    PaginationParams pagination =
+        PaginationUtils.validate(page, size, ALLOWED_SORT_FIELDS, sortBy, sortDirection);
 
     Set<UUID> targetLabelIds = labelIds != null ? labelIds : Set.of();
 
     NoteQuery query =
         new NoteQuery(
-            userId, q, pinned, archived, targetLabelIds, page, size, sortBy, sortDirection);
+            userId,
+            q,
+            pinned,
+            archived,
+            targetLabelIds,
+            pagination.page(),
+            pagination.size(),
+            pagination.sortBy(),
+            pagination.sortDirection());
 
     NoteQueryResult queryResult = noteService.queryNotes(query);
 
     List<NoteResponse> items = queryResult.notes().stream().map(NoteResponse::fromDomain).toList();
 
-    return PageResponse.of(items, page, size, queryResult.totalItems());
+    return PageResponse.of(items, pagination.page(), pagination.size(), queryResult.totalItems());
   }
 
   @Operation(summary = "Create note", description = "Creates a new user-owned Note.")

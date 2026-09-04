@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
+import tech.buildwithpartha.lifeos.common.pagination.PaginationParams;
+import tech.buildwithpartha.lifeos.common.pagination.PaginationUtils;
 import tech.buildwithpartha.lifeos.project.application.CreateProjectCommand;
 import tech.buildwithpartha.lifeos.project.application.ProjectService;
 import tech.buildwithpartha.lifeos.project.application.UpdateProjectCommand;
@@ -79,23 +81,8 @@ public class ProjectController {
       @RequestParam(name = "sortDirection", required = false, defaultValue = "DESC")
           String sortDirection) {
 
-    // Validations
-    if (page < 0) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("page", "INVALID")));
-    }
-    if (size < 1 || size > 100) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("size", "INVALID")));
-    }
-    if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("sortBy", "INVALID")));
-    }
-    if (!"ASC".equalsIgnoreCase(sortDirection) && !"DESC".equalsIgnoreCase(sortDirection)) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("sortDirection", "INVALID")));
-    }
+    PaginationParams pagination =
+        PaginationUtils.validate(page, size, ALLOWED_SORT_FIELDS, sortBy, sortDirection);
 
     Set<ProjectStatus> statuses = parseStatuses(statusStrings);
     Set<ProjectPriority> priorities = parsePriorities(priorityStrings);
@@ -112,10 +99,10 @@ public class ProjectController {
             deadlineBefore,
             deadlineAfter,
             archived,
-            page,
-            size,
-            sortBy,
-            sortDirection);
+            pagination.page(),
+            pagination.size(),
+            pagination.sortBy(),
+            pagination.sortDirection());
 
     ProjectQueryResult queryResult = projectService.queryProjects(query);
     ProjectSummaryCounts summary = projectService.getSummaryCounts(userId);

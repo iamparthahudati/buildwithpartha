@@ -27,6 +27,8 @@ import tech.buildwithpartha.lifeos.braindump.domain.BrainDumpItemStatus;
 import tech.buildwithpartha.lifeos.common.error.FieldProblem;
 import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.pagination.PageResponse;
+import tech.buildwithpartha.lifeos.common.pagination.PaginationParams;
+import tech.buildwithpartha.lifeos.common.pagination.PaginationUtils;
 
 /** REST controller exposing Brain Dump Item endpoints (LOS-1204). */
 @RestController
@@ -62,22 +64,8 @@ public class BrainDumpController {
       @RequestParam(name = "sortDirection", required = false, defaultValue = "DESC")
           String sortDirection) {
 
-    if (page < 0) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("page", "INVALID")));
-    }
-    if (size < 1 || size > 100) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("size", "INVALID")));
-    }
-    if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("sortBy", "INVALID")));
-    }
-    if (!"ASC".equalsIgnoreCase(sortDirection) && !"DESC".equalsIgnoreCase(sortDirection)) {
-      throw new FieldValidationException(
-          "Validation failed", List.of(new FieldProblem("sortDirection", "INVALID")));
-    }
+    PaginationParams pagination =
+        PaginationUtils.validate(page, size, ALLOWED_SORT_FIELDS, sortBy, sortDirection);
 
     BrainDumpItemStatus parsedStatus = null;
     if (status != null) {
@@ -91,12 +79,19 @@ public class BrainDumpController {
 
     BrainDumpItemQuery query =
         new BrainDumpItemQuery(
-            userId, q, parsedStatus, archived, page, size, sortBy, sortDirection);
+            userId,
+            q,
+            parsedStatus,
+            archived,
+            pagination.page(),
+            pagination.size(),
+            pagination.sortBy(),
+            pagination.sortDirection());
     BrainDumpItemQueryResult result = brainDumpService.listItems(query);
 
     List<BrainDumpItemResponse> items =
         result.items().stream().map(BrainDumpItemResponse::fromDomain).toList();
-    return PageResponse.of(items, page, size, result.totalItems());
+    return PageResponse.of(items, pagination.page(), pagination.size(), result.totalItems());
   }
 
   @Operation(summary = "Capture item", description = "Captures a new Brain Dump item.")
