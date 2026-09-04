@@ -1,17 +1,33 @@
 package tech.buildwithpartha.lifeos.common.error;
 
+import java.time.Duration;
+
 /**
  * A request rejected because the caller exceeded a rate-limit policy. Always carries {@link
  * StandardErrorCodes#RATE_LIMITED} and maps to HTTP 429 in {@code ApiExceptionHandler}.
- *
- * <p>This is a self-contained, per-endpoint limiter's failure (for example {@code
- * auth.application.SignupService}'s signup limiter), not yet the general policy/metrics
- * infrastructure {@code LOS-1401} will introduce; that ticket may want a richer type carrying a
- * retry-after hint.
  */
 public final class RateLimitedException extends CodedException {
 
+  private final Duration retryAfter;
+
   public RateLimitedException(String message) {
+    this(message, null);
+  }
+
+  public RateLimitedException(String message, Duration retryAfter) {
     super(StandardErrorCodes.RATE_LIMITED, message);
+    this.retryAfter = retryAfter;
+  }
+
+  public Duration retryAfter() {
+    return retryAfter;
+  }
+
+  public long retryAfterSeconds() {
+    if (retryAfter == null || retryAfter.isNegative()) {
+      return 60L;
+    }
+    long seconds = retryAfter.toSeconds();
+    return seconds > 0 ? seconds : 1L;
   }
 }

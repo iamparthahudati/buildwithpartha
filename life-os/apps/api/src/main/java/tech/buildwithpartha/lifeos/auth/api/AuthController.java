@@ -35,6 +35,7 @@ import tech.buildwithpartha.lifeos.auth.application.SignupService;
 import tech.buildwithpartha.lifeos.auth.application.VerifyEmailCommand;
 import tech.buildwithpartha.lifeos.auth.domain.RawPassword;
 import tech.buildwithpartha.lifeos.auth.domain.Session;
+import tech.buildwithpartha.lifeos.common.ratelimit.ClientIpResolver;
 import tech.buildwithpartha.lifeos.config.LifeOsEnvironmentProperties;
 
 /** Unauthenticated identity endpoints. */
@@ -55,6 +56,7 @@ public class AuthController {
   private final ResetPasswordService resetPasswordService;
   private final CancelAccountDeletionService cancelAccountDeletionService;
   private final LifeOsEnvironmentProperties environmentProperties;
+  private final ClientIpResolver clientIpResolver;
 
   public AuthController(
       SignupService signupService,
@@ -65,7 +67,8 @@ public class AuthController {
       ForgotPasswordService forgotPasswordService,
       ResetPasswordService resetPasswordService,
       CancelAccountDeletionService cancelAccountDeletionService,
-      LifeOsEnvironmentProperties environmentProperties) {
+      LifeOsEnvironmentProperties environmentProperties,
+      ClientIpResolver clientIpResolver) {
     this.signupService = signupService;
     this.emailVerificationService = emailVerificationService;
     this.resendVerificationService = resendVerificationService;
@@ -75,6 +78,7 @@ public class AuthController {
     this.resetPasswordService = resetPasswordService;
     this.cancelAccountDeletionService = cancelAccountDeletionService;
     this.environmentProperties = environmentProperties;
+    this.clientIpResolver = clientIpResolver;
   }
 
   @Operation(
@@ -98,7 +102,7 @@ public class AuthController {
             request.displayName(),
             request.termsVersion(),
             request.privacyVersion(),
-            servletRequest.getRemoteAddr()));
+            clientIpResolver.resolveClientIp(servletRequest)));
     return SignupResponse.pendingVerification();
   }
 
@@ -133,7 +137,8 @@ public class AuthController {
   public ResendVerificationResponse resendVerification(
       @Valid @RequestBody ResendVerificationRequest request, HttpServletRequest servletRequest) {
     resendVerificationService.resend(
-        new ResendVerificationCommand(request.email(), servletRequest.getRemoteAddr()));
+        new ResendVerificationCommand(
+            request.email(), clientIpResolver.resolveClientIp(servletRequest)));
     return ResendVerificationResponse.pendingVerification();
   }
 
@@ -156,7 +161,7 @@ public class AuthController {
             new LoginCommand(
                 request.email(),
                 RawPassword.of(request.password()),
-                servletRequest.getRemoteAddr(),
+                clientIpResolver.resolveClientIp(servletRequest),
                 deviceHint(servletRequest)));
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, sessionCookie(result.sessionToken().value()).toString())
@@ -212,7 +217,8 @@ public class AuthController {
   public ForgotPasswordResponse forgotPassword(
       @Valid @RequestBody ForgotPasswordRequest request, HttpServletRequest servletRequest) {
     forgotPasswordService.request(
-        new ForgotPasswordCommand(request.email(), servletRequest.getRemoteAddr()));
+        new ForgotPasswordCommand(
+            request.email(), clientIpResolver.resolveClientIp(servletRequest)));
     return ForgotPasswordResponse.requested();
   }
 

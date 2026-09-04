@@ -1,16 +1,18 @@
 # Current status
 
-Last updated: 2026-09-04 (LOS-1316 Run platform feature gate)
+Last updated: 2026-09-04 (LOS-1401 Implement rate limiting)
 
 ## Phase
 
-Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), Epic 10 (Sprints, week planning, and reviews), Epic 11 (Goals, progress, reports, and analytics), Epic 12 (Notes, Brain Dump, and Habits), Epic 13 (Platform features), and Epic 16 (VPS, Cloudflare, deployment, and launch) in progress.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), Epic 10 (Sprints, week planning, and reviews), Epic 11 (Goals, progress, reports, and analytics), Epic 12 (Notes, Brain Dump, and Habits), Epic 13 (Platform features), Epic 14 (Backend operations), and Epic 16 (VPS, Cloudflare, deployment, and launch) in progress.
 
 ## In review
 
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1401 — Implemented backend rate limiting capability: proxy-aware `ClientIpResolver` (`lifeos.security.trusted-proxies`, `X-Forwarded-For`), `RateLimiterService` with fixed/sliding window counters, `@Scheduled` memory eviction, Micrometer metrics (`lifeos.rate_limit.evaluations`), `RateLimitingInterceptor` across Search (30 req/min), Export (10 req/min), and non-auth Write-burst (60 req/min) operations, refactored Auth rate limiters, and HTTP 429 `Retry-After` header handling with safe Problem Details. See `docs/handoffs/LOS-1401.md`.
 
 - LOS-1316 — Passed the Epic 13 Platform Features phase gate across global search isolation, notification center & preferences, recurring tasks model/engine/UX, attachment security pipeline, offline draft storage, offline mutation queue, Service Worker shell caching, accessibility compliance, and responsive viewports. Authored `docs/gates/PLATFORM-FEATURES-PHASE-GATE.md` and `docs/handoffs/LOS-1316.md`.
 
