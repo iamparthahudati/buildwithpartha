@@ -134,4 +134,77 @@ class StructuredLoggingTests {
     assertThat(MDC.get("password")).isNull();
     assertThat(MDC.get("token")).isNull();
   }
+
+  @Test
+  @DisplayName("StructuredJsonLayout handles null event and null/blank MDC values")
+  void layoutHandlesNullsAndEscapes() {
+    assertThat(layout.doLayout(null)).isEmpty();
+
+    ILoggingEvent event = mock(ILoggingEvent.class);
+    when(event.getTimeStamp()).thenReturn(1700000000000L);
+    when(event.getLevel()).thenReturn(null);
+    when(event.getThreadName()).thenReturn("test-thread");
+    when(event.getLoggerName()).thenReturn("TestLogger");
+    when(event.getFormattedMessage())
+        .thenReturn("Line 1\nLine 2\r\t\"quoted\" \\ slash \b \f \u0007");
+
+    Map<String, String> mdc = new HashMap<>();
+    mdc.put("correlationId", "   ");
+    mdc.put("traceId", null);
+    when(event.getMDCPropertyMap()).thenReturn(mdc);
+
+    String json = layout.doLayout(event);
+
+    assertThat(json).contains("\"level\":\"INFO\"");
+    assertThat(json).contains("\\nLine 2\\r\\t\\\"quoted\\\" \\\\ slash \\b \\f \\u0007");
+  }
+
+  @Test
+  @DisplayName("StructuredJsonLayout handles exception with stack trace array")
+  void layoutHandlesExceptionWithStackTrace() {
+    ILoggingEvent event = mock(ILoggingEvent.class);
+    when(event.getTimeStamp()).thenReturn(1700000000000L);
+    when(event.getLevel()).thenReturn(Level.ERROR);
+
+    IThrowableProxy throwable = mock(IThrowableProxy.class);
+    when(throwable.getClassName()).thenReturn("java.lang.RuntimeException");
+    when(throwable.getMessage()).thenReturn("Boom");
+    ch.qos.logback.classic.spi.StackTraceElementProxy ste1 =
+        new ch.qos.logback.classic.spi.StackTraceElementProxy(
+            new StackTraceElement("TestClass", "testMethod", "TestClass.java", 42));
+    ch.qos.logback.classic.spi.StackTraceElementProxy[] st =
+        new ch.qos.logback.classic.spi.StackTraceElementProxy[] {ste1};
+    when(throwable.getStackTraceElementProxyArray()).thenReturn(st);
+    when(event.getThrowableProxy()).thenReturn(throwable);
+
+    String json = layout.doLayout(event);
+
+    assertThat(json).contains("\"stackTrace\":[");
+    assertThat(json).contains("TestClass.testMethod");
+  }
+
+  @Test
+  @DisplayName("CorrelationIdFilter handles custom trace headers and fallback generation")
+  void correlationIdFilterHandlesCustomTraceHeaders() throws Exception {
+    CorrelationIdFilter filter = new CorrelationIdFilter();
+    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/life-os/api/v1/tasks");
+    request.addHeader("X-Trace-ID", "custom-trace-id-123");
+    request.addHeader("X-Span-ID", "custom-span-id-456");
+
+    MockHttpServletResponse response = new MockHttpServletResponse();
+    MockFilterChain filterChain =
+        new MockFilterChain() {
+          @Override
+          public void doFilter(
+              jakarta.servlet.ServletRequest req, jakarta.servlet.ServletResponse res)
+              throws IOException, jakarta.servlet.ServletException {
+            assertThat(MDC.get("traceId")).isEqualTo("custom-trace-id-123");
+            assertThat(MDC.get("spanId")).isEqualTo("custom-span-id-456");
+            super.doFilter(req, res);
+          }
+        };
+
+    filter.doFilter(request, response, filterChain);
+    assertThat(response.getHeader("X-Correlation-ID")).isNotNull();
+  }
 }

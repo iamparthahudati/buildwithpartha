@@ -85,11 +85,6 @@ public class IdempotencyAspect {
           && args[i] instanceof UUID uuid) {
         return uuid;
       }
-      if (UUID.class.isAssignableFrom(parameters[i].getType()) && args[i] instanceof UUID uuid) {
-        if ("userId".equals(parameters[i].getName())) {
-          return uuid;
-        }
-      }
     }
     for (Object arg : args) {
       if (arg instanceof UUID uuid) {
