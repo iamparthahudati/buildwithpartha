@@ -62,38 +62,45 @@ public class BackgroundJobWorker {
 
   private void executeOne(BackgroundJob job, Instant now) {
     BackgroundJob running = repository.save(job.markRunning(now));
-    log.info(
-        "job started id={} kind={} attempt={}",
-        running.id(),
-        running.kind(),
-        running.attemptCount());
-
-    try {
-      JobHandler handler = handlerRegistry.handlerFor(job.kind());
-      handler.execute(
-          new JobHandler.JobContext(
-              running.id(),
-              running.userId(),
-              running.kind(),
-              running.payload(),
-              running.createdAt()));
-      BackgroundJob succeeded = repository.save(running.recordSuccess(clock.instant()));
+    try (var ignored =
+        tech.buildwithpartha.lifeos.common.logging.JobCorrelationContext.withJobCorrelation(
+            running.id(), running.kind())) {
       log.info(
-          "job succeeded id={} kind={} attempt={}",
-          succeeded.id(),
-          succeeded.kind(),
-          succeeded.attemptCount());
-    } catch (RuntimeException e) {
-      String sanitizedErrorClass = rootCauseClassName(e);
-      BackgroundJob updated =
-          repository.save(running.recordFailure(clock.instant(), sanitizedErrorClass, retryPolicy));
-      log.warn(
-          "job {} id={} kind={} attempt={} errorClass={}",
-          updated.isTerminal() ? "dead-lettered" : "will-retry",
-          updated.id(),
-          updated.kind(),
-          updated.attemptCount(),
-          sanitizedErrorClass);
+          "job started id={} kind={} attempt={}",
+          running.id(),
+          running.kind(),
+          running.attemptCount());
+
+      try {
+        JobHandler handler = handlerRegistry.handlerFor(job.kind());
+        handler.execute(
+            new JobHandler.JobContext(
+                running.id(),
+                running.userId(),
+                running.kind(),
+                running.payload(),
+                running.createdAt()));
+        BackgroundJob succeeded = repository.save(running.recordSuccess(clock.instant()));
+        log.info(
+            "job succeeded id={} kind={} attempt={}",
+            succeeded.id(),
+            succeeded.kind(),
+            succeeded.attemptCount());
+      } catch (RuntimeException e) {
+        String sanitizedErrorClass = rootCauseClassName(e);
+        BackgroundJob updated =
+            repository.save(
+                running.recordFailure(clock.instant(), sanitizedErrorClass, retryPolicy));
+        log.warn(
+            "job {} id={} kind={} attempt={} errorClass={}",
+            updated.isTerminal() ? "dead-lettered" : "will-retry",
+            updated.id(),
+            updated.kind(),
+            updated.attemptCount(),
+            sanitizedErrorClass);
+      }
+    } finally {
+      tech.buildwithpartha.lifeos.common.logging.JobCorrelationContext.clearJobContext();
     }
   }
 

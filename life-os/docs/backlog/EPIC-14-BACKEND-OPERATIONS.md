@@ -12,7 +12,7 @@
 | LOS-1408 | Add idempotency infrastructure | Header/key storage and replay semantics for approved creates/jobs; user+operation scope, expiry, response replay and concurrent duplicate tests. | LOS-0205 | S | Done |
 | LOS-1409 | Add optimistic concurrency infrastructure | Version/ETag helpers, standard 409/412 problem, safe current-version metadata and integration tests across mutable aggregates. | LOS-0213 | S | Backlog |
 | LOS-1410 | Add caching policy | Explicit HTTP/private/no-store rules, query cache headers, ETags where safe, Cloudflare bypass for private API, invalidation and account-isolation tests. | LOS-1409 | S | Done |
-| LOS-1411 | Add structured logging and tracing | Correlation IDs through proxy/API/jobs, JSON logs, redaction tests, trace/span integration if selected and environment-appropriate sampling. | LOS-0213 | S | Backlog |
+| LOS-1411 | Add structured logging and tracing | Correlation IDs through proxy/API/jobs, JSON logs, redaction tests, trace/span integration if selected and environment-appropriate sampling. | LOS-0213 | S | Done |
 | LOS-1412 | Add metrics and alerts contract | Auth/job/API/DB pool/cache/mail/export/business-health metrics with labels that avoid user data and documented alert thresholds. | LOS-1411 | S | Backlog |
 | LOS-1413 | Tune database queries and indexes | Capture representative plans for dashboards/search/reports/lists, remove N+1, add measured indexes, set timeouts/pool and performance regression thresholds. | LOS-0607, LOS-1301, LOS-1109 | M | Backlog |
 | LOS-1414 | Run backend operations gate | Failure-inject mail/job/DB/cache/storage, verify retries/idempotency/redaction/metrics/OpenAPI/performance, completed Today aggregation and safe degradation. | LOS-1401–LOS-1413, LOS-1415 | M | Backlog |

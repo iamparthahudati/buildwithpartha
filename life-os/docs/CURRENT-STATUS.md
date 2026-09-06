@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-05 (LOS-1410 Add caching policy)
+Last updated: 2026-09-05 (LOS-1408 Add generic idempotency infrastructure)
 
 ## Phase
 
@@ -11,6 +11,10 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1408 — Built generic Spring MVC idempotency infrastructure using `Idempotency-Key` header (8-64 safe ASCII characters) and `@Idempotent(operation = "...")` annotation: `IdempotencyRecord` entity and Flyway migration `V33__idempotency_schema.sql` (and H2 test `schema.sql`), 7-day retention, `IdempotencyAspect` transparent payload caching and HTTP status replay, 409 `IDEMPOTENCY_KEY_REUSED` key reuse protection across operations, atomic concurrent request locking, `@Scheduled` `IdempotencyCleanupJob` daily purge, annotated core create endpoints (`CREATE_TASK`, `CREATE_PROJECT`, `CREATE_NOTE`, `CREATE_GOAL`, `CREATE_BRAIN_DUMP_ITEM`), and full test coverage (`IdempotencyIntegrationTests`, `IdempotencyAspectTests`, `IdempotencyServiceTests`). See `docs/handoffs/LOS-1408.md`.
+
+- LOS-1411 — Implemented structured logging, MDC correlation ID propagation, W3C traceparent tracing context, and sensitive data redaction: `StructuredJsonLayout` Logback layout formatting log events as structured single-line JSON objects, `JobCorrelationContext` for background and scheduled job MDC context scopes (`job-<uuid>` and `jobKind`), `CorrelationIdFilter` extracting W3C `traceparent` headers into MDC `traceId` and `spanId`, `BackgroundJobWorker` wrapping execution with correlation IDs, `logback-spring.xml` configuring JSON logging for production, and unit/redaction test suite (`StructuredLoggingTests`) verifying JSON formatting, MDC propagation, and credential redaction. See `docs/handoffs/LOS-1411.md`.
 
 - LOS-1410 — Built HTTP caching policy infrastructure: `ApiCachePolicyFilter` enforcing explicit default security and proxy-bypass headers (`Cache-Control: no-store, private, no-cache, max-age=0, must-revalidate`, `Pragma`, `Expires`, `Vary`, `CDN-Cache-Control: no-store`, `Cloudflare-CDN-Cache-Control: no-store`), `@CachePolicy` annotation and `CachePolicyInterceptor` for custom cache-control directives, `CacheConfiguration` registering `ShallowEtagHeaderFilter` for GET response ETags and HTTP 304 `Not Modified` processing, `ETagUtils` helper class, and comprehensive unit/integration test suite covering account isolation, ETag validation, and cache invalidation on resource mutations. See `docs/handoffs/LOS-1410.md`.
 
