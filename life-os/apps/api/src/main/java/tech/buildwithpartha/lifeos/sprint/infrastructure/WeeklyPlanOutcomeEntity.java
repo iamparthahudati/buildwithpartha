@@ -33,6 +33,10 @@ class WeeklyPlanOutcomeEntity {
     return id;
   }
 
+  UUID getWeeklyPlanId() {
+    return weeklyPlanId;
+  }
+
   String getTitle() {
     return title;
   }

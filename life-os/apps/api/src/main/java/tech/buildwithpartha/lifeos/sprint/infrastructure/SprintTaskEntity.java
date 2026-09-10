@@ -63,6 +63,10 @@ class SprintTaskEntity {
     return id;
   }
 
+  UUID getSprintId() {
+    return sprintId;
+  }
+
   UUID getTaskId() {
     return taskId;
   }

@@ -3,9 +3,11 @@ package tech.buildwithpartha.lifeos.sprint.infrastructure;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.sprint.domain.WeeklyPlan;
@@ -42,9 +44,8 @@ public class JpaWeeklyPlanRepository implements WeeklyPlanRepository {
 
   @Override
   public WeeklyPlan save(WeeklyPlan plan) {
-    WeeklyPlanEntity saved = plans.saveAndFlush(toEntity(plan));
-    items.deleteByWeeklyPlanId(plan.id());
-    outcomes.deleteByWeeklyPlanId(plan.id());
+    WeeklyPlanEntity entity = toEntity(plan);
+    WeeklyPlanEntity saved = plans.saveAndFlush(entity);
     capacities.deleteByWeeklyPlanId(plan.id());
     capacities.saveAllAndFlush(
         plan.capacities().stream()
@@ -53,13 +54,15 @@ public class JpaWeeklyPlanRepository implements WeeklyPlanRepository {
                     new WeeklyPlanCapacityEntity(
                         UUID.randomUUID(), plan.id(), item.localDate(), item.availableMinutes()))
             .toList());
+    outcomes.deleteByWeeklyPlanId(plan.id());
     outcomes.saveAllAndFlush(
         plan.outcomes().stream()
             .map(
-                outcome ->
+                item ->
                     new WeeklyPlanOutcomeEntity(
-                        outcome.id(), plan.id(), outcome.title(), outcome.position()))
+                        item.id(), plan.id(), item.title(), item.position()))
             .toList());
+    items.deleteByWeeklyPlanId(plan.id());
     items.saveAllAndFlush(
         plan.items().stream()
             .map(
@@ -86,16 +89,12 @@ public class JpaWeeklyPlanRepository implements WeeklyPlanRepository {
 
   @Override
   public List<WeeklyPlan> findByUserId(UUID userId) {
-    return plans.findByUserIdOrderByWeekStartDateDescRevisionDesc(userId).stream()
-        .map(this::load)
-        .toList();
+    return loadBatch(plans.findByUserIdOrderByWeekStartDateDescRevisionDesc(userId));
   }
 
   @Override
   public List<WeeklyPlan> findByUserIdAndWeekStartDate(UUID userId, LocalDate weekStartDate) {
-    return plans.findByUserIdAndWeekStartDateOrderByRevisionAsc(userId, weekStartDate).stream()
-        .map(this::load)
-        .toList();
+    return loadBatch(plans.findByUserIdAndWeekStartDateOrderByRevisionAsc(userId, weekStartDate));
   }
 
   @Override
@@ -131,6 +130,70 @@ public class JpaWeeklyPlanRepository implements WeeklyPlanRepository {
                         item.getTaskTitleSnapshot(),
                         item.getTaskStatusSnapshot()))
             .toList();
+    return loadWithAssociations(entity, capacity, outcome, planItems);
+  }
+
+  private List<WeeklyPlan> loadBatch(List<WeeklyPlanEntity> planEntities) {
+    if (planEntities.isEmpty()) {
+      return List.of();
+    }
+    List<UUID> planIds = planEntities.stream().map(WeeklyPlanEntity::getId).toList();
+
+    Map<UUID, List<WeeklyPlanCapacity>> capacityMap =
+        capacities.findByWeeklyPlanIdInOrderByLocalDateAsc(planIds).stream()
+            .collect(
+                Collectors.groupingBy(
+                    WeeklyPlanCapacityEntity::getWeeklyPlanId,
+                    Collectors.mapping(
+                        item ->
+                            new WeeklyPlanCapacity(item.getLocalDate(), item.getAvailableMinutes()),
+                        Collectors.toList())));
+
+    Map<UUID, List<WeeklyPlanOutcome>> outcomeMap =
+        outcomes.findByWeeklyPlanIdInOrderByPositionAscIdAsc(planIds).stream()
+            .collect(
+                Collectors.groupingBy(
+                    WeeklyPlanOutcomeEntity::getWeeklyPlanId,
+                    Collectors.mapping(
+                        item ->
+                            new WeeklyPlanOutcome(
+                                item.getId(), item.getTitle(), item.getPosition()),
+                        Collectors.toList())));
+
+    Map<UUID, List<WeeklyPlanItem>> itemMap =
+        items.findByWeeklyPlanIdInOrderByPositionAscIdAsc(planIds).stream()
+            .collect(
+                Collectors.groupingBy(
+                    WeeklyPlanItemEntity::getWeeklyPlanId,
+                    Collectors.mapping(
+                        item ->
+                            new WeeklyPlanItem(
+                                item.getId(),
+                                item.getTaskId(),
+                                Optional.ofNullable(item.getOutcomeId()),
+                                Optional.ofNullable(item.getPlannedDate()),
+                                item.getPlannedMinutes(),
+                                item.getPosition(),
+                                item.getTaskTitleSnapshot(),
+                                item.getTaskStatusSnapshot()),
+                        Collectors.toList())));
+
+    return planEntities.stream()
+        .map(
+            entity ->
+                loadWithAssociations(
+                    entity,
+                    capacityMap.getOrDefault(entity.getId(), List.of()),
+                    outcomeMap.getOrDefault(entity.getId(), List.of()),
+                    itemMap.getOrDefault(entity.getId(), List.of())))
+        .toList();
+  }
+
+  private WeeklyPlan loadWithAssociations(
+      WeeklyPlanEntity entity,
+      List<WeeklyPlanCapacity> capacity,
+      List<WeeklyPlanOutcome> outcome,
+      List<WeeklyPlanItem> planItems) {
     return new WeeklyPlan(
         entity.getId(),
         entity.getUserId(),

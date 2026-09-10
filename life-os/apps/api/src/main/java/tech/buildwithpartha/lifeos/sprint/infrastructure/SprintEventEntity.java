@@ -56,6 +56,10 @@ class SprintEventEntity {
     return id;
   }
 
+  UUID getSprintId() {
+    return sprintId;
+  }
+
   SprintEventType getEventType() {
     return eventType;
   }
