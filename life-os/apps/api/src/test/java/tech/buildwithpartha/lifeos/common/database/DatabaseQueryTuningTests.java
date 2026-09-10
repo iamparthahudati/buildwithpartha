@@ -69,8 +69,6 @@ class DatabaseQueryTuningTests {
       assertThat(script).contains("CREATE INDEX IF NOT EXISTS ix_notes_user_pinned_updated");
       assertThat(script).contains("CREATE INDEX IF NOT EXISTS ix_habit_entries_user_date");
       assertThat(script).contains("CREATE INDEX IF NOT EXISTS ix_time_blocks_user_status_start");
-      assertThat(script).contains("CREATE INDEX IF NOT EXISTS ix_sprints_user_status");
-      assertThat(script).contains("CREATE INDEX IF NOT EXISTS ix_comments_entity");
     }
   }
 

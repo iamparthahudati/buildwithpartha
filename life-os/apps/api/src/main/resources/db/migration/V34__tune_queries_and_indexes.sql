@@ -14,7 +14,3 @@ CREATE INDEX IF NOT EXISTS ix_notes_user_pinned_updated ON public.notes (user_id
 CREATE INDEX IF NOT EXISTS ix_habit_entries_user_date ON public.habit_entries (user_id, local_date);
 
 CREATE INDEX IF NOT EXISTS ix_time_blocks_user_status_start ON public.time_blocks (user_id, status, start_at);
-
-CREATE INDEX IF NOT EXISTS ix_sprints_user_status ON public.sprints (user_id, status);
-
-CREATE INDEX IF NOT EXISTS ix_comments_entity ON public.comments (entity_type, entity_id, created_at ASC);
