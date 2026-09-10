@@ -21,6 +21,7 @@ import tech.buildwithpartha.lifeos.common.error.FieldValidationException;
 import tech.buildwithpartha.lifeos.common.error.FocusSessionConflictException;
 import tech.buildwithpartha.lifeos.common.error.IdempotencyKeyReusedException;
 import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
+import tech.buildwithpartha.lifeos.common.error.PreconditionFailedException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.common.error.ReviewStateConflictException;
@@ -153,6 +154,18 @@ public final class ApiExceptionHandler {
             StandardErrorCodes.CONCURRENCY_CONFLICT,
             "Conflict",
             "The resource was updated by another request."));
+  }
+
+  @ExceptionHandler(PreconditionFailedException.class)
+  ResponseEntity<ApiProblem> handlePreconditionFailed(
+      PreconditionFailedException exception, HttpServletRequest request) {
+    return response(
+        problemFactory.create(
+            request,
+            HttpStatus.PRECONDITION_FAILED,
+            exception.code(),
+            "Precondition Failed",
+            exception.getMessage()));
   }
 
   @ExceptionHandler(TimeBlockOverlapConflictException.class)

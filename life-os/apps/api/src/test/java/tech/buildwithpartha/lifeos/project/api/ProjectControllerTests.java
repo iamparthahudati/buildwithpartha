@@ -537,6 +537,10 @@ class ProjectControllerTests {
       Set<UUID> labelIds,
       LocalDate deadline,
       Instant archivedAt) {
+    Optional<LocalDate> start =
+        deadline != null
+            ? Optional.of(deadline.minusDays(5))
+            : Optional.of(LocalDate.now().minusDays(5));
     return projectRepository.save(
         new Project(
             UUID.randomUUID(),
@@ -549,7 +553,7 @@ class ProjectControllerTests {
             Optional.of("blue"),
             Optional.of("star"),
             Optional.empty(),
-            Optional.of(LocalDate.now().minusDays(5)),
+            start,
             Optional.ofNullable(deadline),
             Optional.of(60),
             Optional.ofNullable(archivedAt),

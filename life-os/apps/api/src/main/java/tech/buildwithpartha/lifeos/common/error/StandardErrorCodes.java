@@ -29,6 +29,7 @@ public final class StandardErrorCodes {
   public static final ErrorCode REVIEW_STATE_CONFLICT = ErrorCode.of("REVIEW_STATE_CONFLICT");
   public static final ErrorCode NOTIFICATION_NOT_CLEARABLE =
       ErrorCode.of("NOTIFICATION_NOT_CLEARABLE");
+  public static final ErrorCode PRECONDITION_FAILED = ErrorCode.of("PRECONDITION_FAILED");
 
   private StandardErrorCodes() {}
 }
