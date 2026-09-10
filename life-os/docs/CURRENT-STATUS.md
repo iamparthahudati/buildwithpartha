@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-10 (LOS-1414 Run backend operations gate)
+Last updated: 2026-09-10 (LOS-1415 Complete real-data Today aggregation)
 
 ## Phase
 
@@ -12,7 +12,10 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-1415 — Completed real-data Today aggregation: replaced all stub Today widget providers with domain aggregations across Most Important Task (`DefaultMitWidgetProvider`), Today Tasks (`DefaultTasksWidgetProvider`), Schedule & Timeline with pairwise conflict detection (`DefaultScheduleWidgetProvider`), Current & Next Block (`DefaultCurrentNextBlockWidgetProvider`), Overdue Tasks (`DefaultOverdueWidgetProvider`), Active Sprint with native SQL point aggregation (`DefaultSprintWidgetProvider`), Weekly Plan (`DefaultWeekWidgetProvider`), Active Projects with batch task count aggregation (`DefaultActiveProjectsWidgetProvider`), Daily Reviews (`DefaultReviewWidgetProvider`), and Today Metrics Strip (`DefaultMetricsWidgetProvider`). Implemented domain-neutral ports in `common` and infrastructure adapters across `task`, `project`, `focus`, `timeblock`, and `sprint` preserving strict ArchUnit package isolation, error isolation, zero N+1 queries, and 100% test pass. See `docs/handoffs/LOS-1415.md`.
+
 - LOS-1414 — Executed and passed the backend operations phase gate (`docs/gates/BACKEND-OPERATIONS-PHASE-GATE.md`): failure injection resilience, retries & dead-lettering, idempotency header replay & 409 reuse protection, PII redaction & structured JSON logging with MDC trace correlation, Micrometer metrics & alerts contract, database query tuning & composite indexes (`V34__tune_queries_and_indexes.sql`), OpenAPI response security headers (`Cache-Control: no-store, private`), and Today aggregation safe degradation with section-level error isolation. Test suite `BackendOperationsGateIntegrationTests` (`tech.buildwithpartha.lifeos.common.ops`) created and verified. See `docs/gates/BACKEND-OPERATIONS-PHASE-GATE.md` and `docs/handoffs/LOS-1414.md`.
+
 
 - LOS-1413 — Tuned database queries and indexes, configured connection pool & statement timeouts, eliminated N+1 queries, established query regression thresholds, and published database query tuning specification (`docs/45-DATABASE-QUERY-TUNING-AND-INDEXES.md`): Flyway migration `V34__tune_queries_and_indexes.sql` creating composite indexes across domain tables (`tasks`, `projects`, `notes`, `brain_dump_items`, `habit_entries`, `time_blocks`, `focus_sessions`, `product_activity_events`, `security_audit_events`, `sprints`, and `comments`), HikariCP connection pool settings in `application.yml` (`maximum-pool-size: 10`, `connection-timeout: 10000ms`, `leak-detection-threshold: 5000ms`) and query statement timeout ceiling (`jakarta.persistence.query.timeout: 5000ms`), batch-loading associations in `JpaTaskRepository`, `JpaSprintRepository`, `JpaWeeklyPlanRepository`, and `JpaReviewRepository`, native SQL aggregation in `JpaGoalRepository.getSummaryCounts`, `DatabaseQueryPerformanceMonitor` (500ms warning threshold & Micrometer `lifeos.db.query.duration`), and test suite `DatabaseQueryTuningTests`. See `docs/45-DATABASE-QUERY-TUNING-AND-INDEXES.md` and `docs/handoffs/LOS-1413.md`.
 

@@ -30,18 +30,6 @@ import tech.buildwithpartha.lifeos.report.application.provider.SprintWidgetProvi
 import tech.buildwithpartha.lifeos.report.application.provider.TasksWidgetProvider;
 import tech.buildwithpartha.lifeos.report.application.provider.WeekWidgetProvider;
 import tech.buildwithpartha.lifeos.report.domain.WidgetStatus;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultActiveProjectsWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultBrainDumpWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultCurrentNextBlockWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultHabitsWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultMetricsWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultMitWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultOverdueWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultReviewWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultScheduleWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultSprintWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultTasksWidgetProvider;
-import tech.buildwithpartha.lifeos.report.infrastructure.provider.DefaultWeekWidgetProvider;
 
 class TodayServiceTests {
 
@@ -71,21 +59,57 @@ class TodayServiceTests {
     Instant fixedInstant = Instant.parse("2026-08-20T22:00:00Z");
     clock = Clock.fixed(fixedInstant, ZoneId.of("UTC"));
 
-    mitWidgetProvider = new DefaultMitWidgetProvider();
-    currentNextBlockWidgetProvider = new DefaultCurrentNextBlockWidgetProvider();
-    tasksWidgetProvider = new DefaultTasksWidgetProvider();
-    scheduleWidgetProvider = new DefaultScheduleWidgetProvider();
-    overdueWidgetProvider = new DefaultOverdueWidgetProvider();
+    mitWidgetProvider = mock(MitWidgetProvider.class);
+    given(mitWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.MitWidget.empty());
+
+    currentNextBlockWidgetProvider = mock(CurrentNextBlockWidgetProvider.class);
+    given(currentNextBlockWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.CurrentNextBlockWidget.empty());
+
+    tasksWidgetProvider = mock(TasksWidgetProvider.class);
+    given(tasksWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.TasksWidget.empty());
+
+    scheduleWidgetProvider = mock(ScheduleWidgetProvider.class);
+    given(scheduleWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.ScheduleWidget.empty());
+
+    overdueWidgetProvider = mock(OverdueWidgetProvider.class);
+    given(overdueWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.OverdueWidget.empty());
+
     focusSummaryWidgetProvider = mock(FocusSummaryWidgetProvider.class);
     given(focusSummaryWidgetProvider.getWidget(any(), any(), any()))
         .willReturn(TodayQueryResult.FocusSummaryWidget.empty());
-    sprintWidgetProvider = new DefaultSprintWidgetProvider();
-    weekWidgetProvider = new DefaultWeekWidgetProvider();
-    activeProjectsWidgetProvider = new DefaultActiveProjectsWidgetProvider();
-    reviewWidgetProvider = new DefaultReviewWidgetProvider();
-    brainDumpWidgetProvider = new DefaultBrainDumpWidgetProvider(userId -> 0);
-    habitsWidgetProvider = new DefaultHabitsWidgetProvider(userId -> List.of());
-    metricsWidgetProvider = new DefaultMetricsWidgetProvider();
+
+    sprintWidgetProvider = mock(SprintWidgetProvider.class);
+    given(sprintWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.SprintWidget.empty());
+
+    weekWidgetProvider = mock(WeekWidgetProvider.class);
+    given(weekWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.WeekWidget.empty());
+
+    activeProjectsWidgetProvider = mock(ActiveProjectsWidgetProvider.class);
+    given(activeProjectsWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.ActiveProjectsWidget.empty());
+
+    reviewWidgetProvider = mock(ReviewWidgetProvider.class);
+    given(reviewWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.ReviewWidget.empty());
+
+    brainDumpWidgetProvider = mock(BrainDumpWidgetProvider.class);
+    given(brainDumpWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.BrainDumpWidget.empty());
+
+    habitsWidgetProvider = mock(HabitsWidgetProvider.class);
+    given(habitsWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.HabitsWidget.empty());
+
+    metricsWidgetProvider = mock(MetricsWidgetProvider.class);
+    given(metricsWidgetProvider.getWidget(any(), any(), any()))
+        .willReturn(TodayQueryResult.MetricsWidget.empty());
 
     todayService =
         new TodayService(
