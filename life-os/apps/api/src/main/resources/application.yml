@@ -45,7 +45,7 @@ management:
       default: none
     web:
       exposure:
-        include: health
+        include: health, prometheus, metrics
   endpoint:
     health:
       access: read-only
@@ -58,6 +58,10 @@ management:
           include: livenessState
         readiness:
           include: readinessState,db
+    prometheus:
+      access: read-only
+    metrics:
+      access: read-only
 
 springdoc:
   api-docs:

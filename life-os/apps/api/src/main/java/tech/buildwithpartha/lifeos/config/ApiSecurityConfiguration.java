@@ -55,7 +55,12 @@ public class ApiSecurityConfiguration {
             requests ->
                 requests
                     .requestMatchers(
-                        HttpMethod.GET, "/actuator/health/liveness", "/actuator/health/readiness")
+                        HttpMethod.GET,
+                        "/actuator/health/liveness",
+                        "/actuator/health/readiness",
+                        "/actuator/prometheus",
+                        "/actuator/metrics",
+                        "/actuator/metrics/**")
                     .permitAll()
                     .requestMatchers("/actuator/**")
                     .denyAll()

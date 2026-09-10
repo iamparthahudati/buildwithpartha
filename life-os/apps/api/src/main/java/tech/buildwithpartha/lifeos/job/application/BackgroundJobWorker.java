@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import tech.buildwithpartha.lifeos.common.job.JobHandler;
+import tech.buildwithpartha.lifeos.common.metrics.MetricsService;
 import tech.buildwithpartha.lifeos.job.domain.BackgroundJob;
 import tech.buildwithpartha.lifeos.job.domain.BackgroundJobRepository;
 import tech.buildwithpartha.lifeos.job.domain.JobRetryPolicy;
@@ -28,11 +29,12 @@ public class BackgroundJobWorker {
   private final JobHandlerRegistry handlerRegistry;
   private final JobRetryPolicy retryPolicy;
   private final Clock clock;
+  private final MetricsService metricsService;
 
   @Autowired
   public BackgroundJobWorker(
       BackgroundJobRepository repository, JobHandlerRegistry handlerRegistry, Clock clock) {
-    this(repository, handlerRegistry, new JobRetryPolicy(), clock);
+    this(repository, handlerRegistry, new JobRetryPolicy(), clock, null);
   }
 
   BackgroundJobWorker(
@@ -40,10 +42,20 @@ public class BackgroundJobWorker {
       JobHandlerRegistry handlerRegistry,
       JobRetryPolicy retryPolicy,
       Clock clock) {
+    this(repository, handlerRegistry, retryPolicy, clock, null);
+  }
+
+  BackgroundJobWorker(
+      BackgroundJobRepository repository,
+      JobHandlerRegistry handlerRegistry,
+      JobRetryPolicy retryPolicy,
+      Clock clock,
+      MetricsService metricsService) {
     this.repository = repository;
     this.handlerRegistry = handlerRegistry;
     this.retryPolicy = retryPolicy;
     this.clock = clock;
+    this.metricsService = metricsService != null ? metricsService : new MetricsService(null);
   }
 
   /** Polls due pending jobs every 30 seconds. */
@@ -62,6 +74,7 @@ public class BackgroundJobWorker {
 
   private void executeOne(BackgroundJob job, Instant now) {
     BackgroundJob running = repository.save(job.markRunning(now));
+    long startTime = System.currentTimeMillis();
     try (var ignored =
         tech.buildwithpartha.lifeos.common.logging.JobCorrelationContext.withJobCorrelation(
             running.id(), running.kind())) {
@@ -81,16 +94,21 @@ public class BackgroundJobWorker {
                 running.payload(),
                 running.createdAt()));
         BackgroundJob succeeded = repository.save(running.recordSuccess(clock.instant()));
+        long duration = System.currentTimeMillis() - startTime;
         log.info(
             "job succeeded id={} kind={} attempt={}",
             succeeded.id(),
             succeeded.kind(),
             succeeded.attemptCount());
+        metricsService.recordJobExecution(running.kind().name(), "SUCCESS");
+        metricsService.recordJobDuration(running.kind().name(), "SUCCESS", duration);
       } catch (RuntimeException e) {
+        long duration = System.currentTimeMillis() - startTime;
         String sanitizedErrorClass = rootCauseClassName(e);
         BackgroundJob updated =
             repository.save(
                 running.recordFailure(clock.instant(), sanitizedErrorClass, retryPolicy));
+        String status = updated.isTerminal() ? "DEAD_LETTER" : "RETRY";
         log.warn(
             "job {} id={} kind={} attempt={} errorClass={}",
             updated.isTerminal() ? "dead-lettered" : "will-retry",
@@ -98,6 +116,8 @@ public class BackgroundJobWorker {
             updated.kind(),
             updated.attemptCount(),
             sanitizedErrorClass);
+        metricsService.recordJobExecution(running.kind().name(), status);
+        metricsService.recordJobDuration(running.kind().name(), "FAILURE", duration);
       }
     } finally {
       tech.buildwithpartha.lifeos.common.logging.JobCorrelationContext.clearJobContext();
