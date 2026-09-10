@@ -30,6 +30,10 @@ class WeeklyPlanCapacityEntity {
     this.availableMinutes = availableMinutes;
   }
 
+  UUID getWeeklyPlanId() {
+    return weeklyPlanId;
+  }
+
   LocalDate getLocalDate() {
     return localDate;
   }

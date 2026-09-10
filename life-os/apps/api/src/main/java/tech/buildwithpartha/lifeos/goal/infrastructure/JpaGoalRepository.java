@@ -1,6 +1,7 @@
 package tech.buildwithpartha.lifeos.goal.infrastructure;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -121,25 +122,28 @@ public class JpaGoalRepository implements GoalRepository {
   public GoalSummaryCounts getSummaryCounts(UUID userId) {
     Objects.requireNonNull(userId, "userId must not be null");
 
-    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-    CriteriaQuery<GoalEntity> cq = cb.createQuery(GoalEntity.class);
-    Root<GoalEntity> root = cq.from(GoalEntity.class);
-    cq.where(cb.equal(root.get("userId"), userId));
+    String sql =
+        """
+        SELECT
+            COUNT(*),
+            COUNT(CASE WHEN archived = false
+                  AND status NOT IN ('COMPLETED', 'CANCELLED') THEN 1 END),
+            COUNT(CASE WHEN status = 'COMPLETED' THEN 1 END),
+            COUNT(CASE WHEN status = 'PAUSED' THEN 1 END),
+            COUNT(CASE WHEN archived = true THEN 1 END)
+        FROM public.goals
+        WHERE user_id = :userId
+        """;
 
-    List<GoalEntity> allGoals = entityManager.createQuery(cq).getResultList();
+    Query query = entityManager.createNativeQuery(sql);
+    query.setParameter("userId", userId);
+    Object[] result = (Object[]) query.getSingleResult();
 
-    long total = allGoals.size();
-    long active =
-        allGoals.stream()
-            .filter(
-                g ->
-                    !g.isArchived()
-                        && g.getStatus() != GoalStatus.COMPLETED
-                        && g.getStatus() != GoalStatus.CANCELLED)
-            .count();
-    long completed = allGoals.stream().filter(g -> g.getStatus() == GoalStatus.COMPLETED).count();
-    long paused = allGoals.stream().filter(g -> g.getStatus() == GoalStatus.PAUSED).count();
-    long archived = allGoals.stream().filter(GoalEntity::isArchived).count();
+    long total = ((Number) result[0]).longValue();
+    long active = ((Number) result[1]).longValue();
+    long completed = ((Number) result[2]).longValue();
+    long paused = ((Number) result[3]).longValue();
+    long archived = ((Number) result[4]).longValue();
 
     return new GoalSummaryCounts(total, active, completed, paused, archived);
   }

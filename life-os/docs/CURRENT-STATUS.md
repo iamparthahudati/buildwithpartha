@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-05 (LOS-1408 Add generic idempotency infrastructure)
+Last updated: 2026-09-10 (LOS-1413 Tune database queries and indexes)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1413 — Tuned database queries and indexes, configured connection pool & statement timeouts, eliminated N+1 queries, established query regression thresholds, and published database query tuning specification (`docs/45-DATABASE-QUERY-TUNING-AND-INDEXES.md`): Flyway migration `V34__tune_queries_and_indexes.sql` creating composite indexes across domain tables (`tasks`, `projects`, `notes`, `brain_dump_items`, `habit_entries`, `time_blocks`, `focus_sessions`, `product_activity_events`, `security_audit_events`, `sprints`, and `comments`), HikariCP connection pool settings in `application.yml` (`maximum-pool-size: 10`, `connection-timeout: 10000ms`, `leak-detection-threshold: 5000ms`) and query statement timeout ceiling (`jakarta.persistence.query.timeout: 5000ms`), batch-loading associations in `JpaTaskRepository`, `JpaSprintRepository`, `JpaWeeklyPlanRepository`, and `JpaReviewRepository`, native SQL aggregation in `JpaGoalRepository.getSummaryCounts`, `DatabaseQueryPerformanceMonitor` (500ms warning threshold & Micrometer `lifeos.db.query.duration`), and test suite `DatabaseQueryTuningTests`. See `docs/45-DATABASE-QUERY-TUNING-AND-INDEXES.md` and `docs/handoffs/LOS-1413.md`.
 
 - LOS-1412 — Implemented backend Micrometer metrics instrumentation and published metrics and alerts contract (`docs/44-METRICS-AND-ALERTS-CONTRACT.md`): `MetricsService` providing typed Micrometer instruments for Auth, Job, API HTTP, Cache, Mail, Export, and Business Health metrics with tag privacy sanitization, `ApiMetricsFilter` for HTTP API request volume and latency, instrumented `LoginService`, `BackgroundJobWorker`, `DataExportJobHandler`, permitted `/actuator/prometheus` and `/actuator/metrics` endpoints, and test suite `MetricsContractTests`. See `docs/44-METRICS-AND-ALERTS-CONTRACT.md` and `docs/handoffs/LOS-1412.md`.
 

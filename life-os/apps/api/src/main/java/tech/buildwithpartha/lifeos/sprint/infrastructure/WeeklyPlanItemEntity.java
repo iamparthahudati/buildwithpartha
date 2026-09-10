@@ -68,6 +68,10 @@ class WeeklyPlanItemEntity {
     return id;
   }
 
+  UUID getWeeklyPlanId() {
+    return weeklyPlanId;
+  }
+
   UUID getTaskId() {
     return taskId;
   }

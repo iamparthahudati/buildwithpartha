@@ -2,8 +2,10 @@ package tech.buildwithpartha.lifeos.sprint.infrastructure;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 import tech.buildwithpartha.lifeos.common.error.ResourceNotFoundException;
 import tech.buildwithpartha.lifeos.sprint.domain.Sprint;
@@ -48,7 +50,54 @@ public class JpaSprintRepository implements SprintRepository {
 
   @Override
   public List<Sprint> findByUserId(UUID userId) {
-    return sprints.findByUserIdOrderByStartDateAsc(userId).stream().map(this::load).toList();
+    List<SprintEntity> sprintEntities = sprints.findByUserIdOrderByStartDateAsc(userId);
+    if (sprintEntities.isEmpty()) {
+      return List.of();
+    }
+    List<UUID> sprintIds = sprintEntities.stream().map(SprintEntity::getId).toList();
+
+    Map<UUID, List<SprintTask>> sprintTaskMap =
+        tasks.findBySprintIdInOrderByPositionAscIdAsc(sprintIds).stream()
+            .collect(
+                Collectors.groupingBy(
+                    SprintTaskEntity::getSprintId,
+                    Collectors.mapping(
+                        task ->
+                            new SprintTask(
+                                task.getId(),
+                                task.getTaskId(),
+                                task.getStoryPoints(),
+                                task.getPosition(),
+                                task.isAddedAfterStart(),
+                                task.getCommittedAt(),
+                                Optional.ofNullable(task.getRemovedAt()),
+                                Optional.ofNullable(task.getCarriedOverToSprintId())),
+                        Collectors.toList())));
+
+    Map<UUID, List<SprintEvent>> sprintEventMap =
+        events.findBySprintIdInOrderByOccurredAtAscIdAsc(sprintIds).stream()
+            .collect(
+                Collectors.groupingBy(
+                    SprintEventEntity::getSprintId,
+                    Collectors.mapping(
+                        event ->
+                            new SprintEvent(
+                                event.getId(),
+                                event.getEventType(),
+                                Optional.ofNullable(event.getTaskId()),
+                                Optional.ofNullable(event.getPointsDelta()),
+                                Optional.ofNullable(event.getReason()),
+                                event.getOccurredAt()),
+                        Collectors.toList())));
+
+    return sprintEntities.stream()
+        .map(
+            entity ->
+                loadWithAssociations(
+                    entity,
+                    sprintTaskMap.getOrDefault(entity.getId(), List.of()),
+                    sprintEventMap.getOrDefault(entity.getId(), List.of())))
+        .toList();
   }
 
   @Override
@@ -88,6 +137,11 @@ public class JpaSprintRepository implements SprintRepository {
                         Optional.ofNullable(event.getReason()),
                         event.getOccurredAt()))
             .toList();
+    return loadWithAssociations(entity, sprintTasks, sprintEvents);
+  }
+
+  private Sprint loadWithAssociations(
+      SprintEntity entity, List<SprintTask> sprintTasks, List<SprintEvent> sprintEvents) {
     return new Sprint(
         entity.getId(),
         entity.getUserId(),

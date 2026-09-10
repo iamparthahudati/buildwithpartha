@@ -12,8 +12,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 import tech.buildwithpartha.lifeos.task.domain.Subtask;
 import tech.buildwithpartha.lifeos.task.domain.Task;
@@ -68,28 +70,22 @@ public class JpaTaskRepository implements TaskRepository {
 
   @Override
   public List<Task> findByUserId(UUID userId) {
-    return taskJpaRepository.findByUserId(userId).stream().map(this::loadTaskWithSubtasks).toList();
+    return loadTasksWithSubtasksBatch(taskJpaRepository.findByUserId(userId));
   }
 
   @Override
   public List<Task> findByProjectId(UUID projectId) {
-    return taskJpaRepository.findByProjectId(projectId).stream()
-        .map(this::loadTaskWithSubtasks)
-        .toList();
+    return loadTasksWithSubtasksBatch(taskJpaRepository.findByProjectId(projectId));
   }
 
   @Override
   public List<Task> findByRecurringSeriesId(UUID recurringSeriesId) {
-    return taskJpaRepository.findByRecurringSeriesId(recurringSeriesId).stream()
-        .map(this::loadTaskWithSubtasks)
-        .toList();
+    return loadTasksWithSubtasksBatch(taskJpaRepository.findByRecurringSeriesId(recurringSeriesId));
   }
 
   @Override
   public List<Task> findByUserIdAndMitDate(UUID userId, LocalDate mitDate) {
-    return taskJpaRepository.findByUserIdAndMitDate(userId, mitDate).stream()
-        .map(this::loadTaskWithSubtasks)
-        .toList();
+    return loadTasksWithSubtasksBatch(taskJpaRepository.findByUserIdAndMitDate(userId, mitDate));
   }
 
   @Override
@@ -131,7 +127,7 @@ public class JpaTaskRepository implements TaskRepository {
     typedQuery.setFirstResult(query.page() * query.size());
     typedQuery.setMaxResults(query.size());
 
-    List<Task> tasks = typedQuery.getResultList().stream().map(this::loadTaskWithSubtasks).toList();
+    List<Task> tasks = loadTasksWithSubtasksBatch(typedQuery.getResultList());
 
     return new TaskQueryResult(tasks, totalItems);
   }
@@ -240,6 +236,21 @@ public class JpaTaskRepository implements TaskRepository {
             .map(JpaTaskRepository::toSubtaskDomain)
             .toList();
     return toDomain(entity, subtasks);
+  }
+
+  private List<Task> loadTasksWithSubtasksBatch(List<TaskEntity> entities) {
+    if (entities.isEmpty()) {
+      return List.of();
+    }
+    List<UUID> taskIds = entities.stream().map(TaskEntity::getId).toList();
+    Map<UUID, List<Subtask>> subtaskMap =
+        subtaskJpaRepository.findByTaskIdInOrderByPositionAsc(taskIds).stream()
+            .map(JpaTaskRepository::toSubtaskDomain)
+            .collect(Collectors.groupingBy(Subtask::taskId));
+
+    return entities.stream()
+        .map(entity -> toDomain(entity, subtaskMap.getOrDefault(entity.getId(), List.of())))
+        .toList();
   }
 
   static Task toDomain(TaskEntity entity, List<Subtask> subtasks) {

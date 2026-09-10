@@ -1,8 +1,10 @@
 package tech.buildwithpartha.lifeos.sprint.infrastructure;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import tech.buildwithpartha.lifeos.sprint.domain.Review;
@@ -81,19 +83,14 @@ public class JpaReviewRepository implements ReviewRepository {
   @Override
   @Transactional(readOnly = true)
   public List<Review> findByUserIdAndType(UUID userId, ReviewType reviewType) {
-    return reviewJpaRepository
-        .findByUserIdAndReviewTypeOrderByStartDateDesc(userId, reviewType)
-        .stream()
-        .map(this::loadDomain)
-        .toList();
+    return loadDomainBatch(
+        reviewJpaRepository.findByUserIdAndReviewTypeOrderByStartDateDesc(userId, reviewType));
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<Review> findByUserId(UUID userId) {
-    return reviewJpaRepository.findByUserIdOrderByStartDateDesc(userId).stream()
-        .map(this::loadDomain)
-        .toList();
+    return loadDomainBatch(reviewJpaRepository.findByUserIdOrderByStartDateDesc(userId));
   }
 
   private Review loadDomain(ReviewEntity entity) {
@@ -102,6 +99,30 @@ public class JpaReviewRepository implements ReviewRepository {
     List<ReviewItemDecisionEntity> decisionEntities =
         reviewItemDecisionJpaRepository.findByReviewId(entity.getId());
     return toDomain(entity, answerEntities, decisionEntities);
+  }
+
+  private List<Review> loadDomainBatch(List<ReviewEntity> entities) {
+    if (entities.isEmpty()) {
+      return List.of();
+    }
+    List<UUID> reviewIds = entities.stream().map(ReviewEntity::getId).toList();
+
+    Map<UUID, List<ReviewAnswerEntity>> answerMap =
+        reviewAnswerJpaRepository.findByReviewIdIn(reviewIds).stream()
+            .collect(Collectors.groupingBy(ReviewAnswerEntity::getReviewId));
+
+    Map<UUID, List<ReviewItemDecisionEntity>> decisionMap =
+        reviewItemDecisionJpaRepository.findByReviewIdIn(reviewIds).stream()
+            .collect(Collectors.groupingBy(ReviewItemDecisionEntity::getReviewId));
+
+    return entities.stream()
+        .map(
+            entity ->
+                toDomain(
+                    entity,
+                    answerMap.getOrDefault(entity.getId(), List.of()),
+                    decisionMap.getOrDefault(entity.getId(), List.of())))
+        .toList();
   }
 
   private ReviewEntity toEntity(Review review) {

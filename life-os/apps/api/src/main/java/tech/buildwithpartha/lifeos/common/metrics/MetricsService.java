@@ -160,6 +160,18 @@ public class MetricsService {
     }
   }
 
+  // --- DATABASE METRICS ---
+
+  public void recordDatabaseQueryDuration(String queryType, long durationMs, boolean slow) {
+    if (meterRegistry != null) {
+      Timer.builder("lifeos.db.query.duration")
+          .tag("type", sanitizeTag(queryType))
+          .tag("slow", String.valueOf(slow))
+          .register(meterRegistry)
+          .record(durationMs, TimeUnit.MILLISECONDS);
+    }
+  }
+
   // --- BUSINESS HEALTH METRICS ---
 
   public void registerBusinessGauge(String name, String description, Supplier<Number> supplier) {

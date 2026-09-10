@@ -1,5 +1,6 @@
 package tech.buildwithpartha.lifeos.sprint.infrastructure;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -10,6 +11,9 @@ import org.springframework.data.repository.query.Param;
 
 interface WeeklyPlanItemJpaRepository extends JpaRepository<WeeklyPlanItemEntity, UUID> {
   List<WeeklyPlanItemEntity> findByWeeklyPlanIdOrderByPositionAscIdAsc(UUID weeklyPlanId);
+
+  List<WeeklyPlanItemEntity> findByWeeklyPlanIdInOrderByPositionAscIdAsc(
+      Collection<UUID> weeklyPlanIds);
 
   @Modifying(flushAutomatically = true, clearAutomatically = true)
   @Query("DELETE FROM WeeklyPlanItemEntity item WHERE item.weeklyPlanId = :weeklyPlanId")
