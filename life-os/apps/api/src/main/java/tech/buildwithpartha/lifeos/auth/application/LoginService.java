@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.buildwithpartha.lifeos.auth.domain.AccountStatus;
@@ -21,6 +22,7 @@ import tech.buildwithpartha.lifeos.auth.domain.User;
 import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
 import tech.buildwithpartha.lifeos.common.error.InvalidCredentialsException;
 import tech.buildwithpartha.lifeos.common.error.RateLimitedException;
+import tech.buildwithpartha.lifeos.common.metrics.MetricsService;
 
 /**
  * Authenticates a verified, active user and issues a fresh {@link Session} (LOS-0505).
@@ -54,6 +56,7 @@ public class LoginService {
   private final SessionRepository sessionRepository;
   private final SecureTokenGenerator tokenGenerator;
   private final Clock clock;
+  private final MetricsService metricsService;
 
   public LoginService(
       LoginRateLimiter rateLimiter,
@@ -63,6 +66,27 @@ public class LoginService {
       SessionRepository sessionRepository,
       SecureTokenGenerator tokenGenerator,
       Clock clock) {
+    this(
+        rateLimiter,
+        userRepository,
+        credentialRepository,
+        passwordAuthenticationService,
+        sessionRepository,
+        tokenGenerator,
+        clock,
+        null);
+  }
+
+  @Autowired
+  public LoginService(
+      LoginRateLimiter rateLimiter,
+      UserRepository userRepository,
+      CredentialRepository credentialRepository,
+      PasswordAuthenticationService passwordAuthenticationService,
+      SessionRepository sessionRepository,
+      SecureTokenGenerator tokenGenerator,
+      Clock clock,
+      @Autowired(required = false) MetricsService metricsService) {
     this.rateLimiter = rateLimiter;
     this.userRepository = userRepository;
     this.credentialRepository = credentialRepository;
@@ -70,11 +94,13 @@ public class LoginService {
     this.sessionRepository = sessionRepository;
     this.tokenGenerator = tokenGenerator;
     this.clock = clock;
+    this.metricsService = metricsService != null ? metricsService : new MetricsService(null);
   }
 
   @Transactional
   public LoginResult login(LoginCommand command) {
     if (!rateLimiter.tryAcquire(command.clientAddress())) {
+      metricsService.recordLoginAttempt("FAILURE", "RATE_LIMITED");
       throw new RateLimitedException("login rate limit exceeded");
     }
 
@@ -111,11 +137,13 @@ public class LoginService {
             command.deviceHint()));
 
     AUDIT_LOGGER.info("event=login_succeeded");
+    metricsService.recordLoginAttempt("SUCCESS", "NONE");
     return new LoginResult(user, sessionToken, csrfToken);
   }
 
   private InvalidCredentialsException invalidCredentials() {
     AUDIT_LOGGER.info("event=login_failed reason=invalid_credentials");
+    metricsService.recordLoginAttempt("FAILURE", "INVALID_CREDENTIALS");
     return new InvalidCredentialsException("invalid email or password");
   }
 }
