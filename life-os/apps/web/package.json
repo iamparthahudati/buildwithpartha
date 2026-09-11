@@ -20,10 +20,11 @@
     "test:unit": "vitest run",
     "typecheck": "tsc --noEmit",
     "verify:boundaries": "node scripts/verify-module-boundaries.mjs",
+    "verify:budgets": "node scripts/verify-bundle-budgets.mjs",
     "verify:dependencies": "node ../../scripts/validate-dependency-locks.mjs",
     "verify:gateway": "node --test tests/local-gateway.test.mjs",
     "verify:quality": "npm run format:check && npm run lint && npm run typecheck && npm run verify:boundaries && npm run verify:tokens",
-    "test": "npm run verify:quality && npm run test:coverage && npm run build:test && node --test tests/*.test.mjs",
+    "test": "npm run verify:quality && npm run test:coverage && npm run build:test && node scripts/verify-bundle-budgets.mjs && node --test tests/*.test.mjs",
     "test:e2e": "playwright test",
     "verify:tokens": "node scripts/verify-design-tokens.mjs"
   },

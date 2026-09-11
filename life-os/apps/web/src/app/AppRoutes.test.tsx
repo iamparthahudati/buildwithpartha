@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 
-import { screen } from "@testing-library/react";
+import { cleanup, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 
@@ -9,6 +9,7 @@ import { useAuthSession, type AuthUser } from "@state/authSession";
 
 import { AppProviders } from "./AppProviders";
 import { AppRoutes } from "./AppRouter";
+import { ROUTE_LOADERS } from "./routeLoaders";
 
 /**
  * The router table itself is the unit under test here — every leaf screen
@@ -73,6 +74,7 @@ function SessionSeeder({ children }: { readonly children: ReactNode }) {
 }
 
 function renderAt(path: string, options: { readonly signedIn?: boolean } = {}) {
+  cleanup();
   const routed = (
     <MemoryRouter initialEntries={[path]}>
       <AppRoutes />
@@ -87,39 +89,39 @@ function renderAt(path: string, options: { readonly signedIn?: boolean } = {}) {
 }
 
 describe("AppRoutes", () => {
-  it("renders public routes with no authentication required", () => {
+  it("renders public routes with no authentication required", async () => {
     renderAt("/life-os/signup");
-    expect(screen.getByText("Signup screen")).toBeInTheDocument();
+    expect(await screen.findByText("Signup screen")).toBeInTheDocument();
 
     renderAt("/life-os/login");
-    expect(screen.getByText("Login screen")).toBeInTheDocument();
+    expect(await screen.findByText("Login screen")).toBeInTheDocument();
 
     renderAt("/life-os/verify-email");
-    expect(screen.getByText("Verify email screen")).toBeInTheDocument();
+    expect(await screen.findByText("Verify email screen")).toBeInTheDocument();
 
     renderAt("/life-os/forgot-password");
-    expect(screen.getByText("Forgot password screen")).toBeInTheDocument();
+    expect(await screen.findByText("Forgot password screen")).toBeInTheDocument();
 
     renderAt("/life-os/reset-password");
-    expect(screen.getByText("Reset password screen")).toBeInTheDocument();
+    expect(await screen.findByText("Reset password screen")).toBeInTheDocument();
 
     renderAt("/life-os/cancel-deletion");
-    expect(screen.getByText("Cancel deletion screen")).toBeInTheDocument();
+    expect(await screen.findByText("Cancel deletion screen")).toBeInTheDocument();
 
     renderAt("/life-os/unavailable");
-    expect(screen.getByText("LifeOS is temporarily unavailable")).toBeInTheDocument();
+    expect(await screen.findByText("LifeOS is temporarily unavailable")).toBeInTheDocument();
   });
 
-  it("shows a public Not Found page for an unmatched public path", () => {
+  it("shows a public Not Found page for an unmatched public path", async () => {
     renderAt("/life-os/this-page-does-not-exist");
 
-    expect(screen.getByText("Page not found")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Go to entry" })).toBeInTheDocument();
+    expect(await screen.findByText("Page not found")).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Go to entry" })).toBeInTheDocument();
   });
 
-  it("redirects an unmatched top-level path into the LifeOS public entry", () => {
+  it("redirects an unmatched top-level path into the LifeOS public entry", async () => {
     renderAt("/somewhere-outside-life-os");
-    expect(screen.getByRole("heading", { level: 1, name: "LifeOS" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 1, name: "LifeOS" })).toBeInTheDocument();
   });
 
   it("renders no protected content for a signed-out visitor", () => {
@@ -131,39 +133,57 @@ describe("AppRoutes", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders a protected route inside AppShell for a signed-in visitor", () => {
+  it("renders a protected route inside AppShell for a signed-in visitor", async () => {
     renderAt("/life-os/app/today", { signedIn: true });
 
-    expect(screen.getByRole("heading", { level: 1, name: "Today" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 1, name: "Today" })).toBeInTheDocument();
     expect(screen.getByRole("complementary", { name: "Sidebar navigation" })).toBeInTheDocument();
     expect(screen.getByRole("banner")).toBeInTheDocument();
   });
 
-  it("redirects the default /app path to Today", () => {
+  it("redirects the default /app path to Today", async () => {
     renderAt("/life-os/app", { signedIn: true });
-    expect(screen.getByRole("heading", { level: 1, name: "Today" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 1, name: "Today" })).toBeInTheDocument();
   });
 
-  it("shows a private Not Found page inside the shell for an unmatched protected path", () => {
+  it("shows a private Not Found page inside the shell for an unmatched protected path", async () => {
     renderAt("/life-os/app/this-does-not-exist", { signedIn: true });
 
-    expect(screen.getByText("Page not found")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Go to Today" })).toBeInTheDocument();
+    expect(await screen.findByText("Page not found")).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Go to Today" })).toBeInTheDocument();
     expect(screen.getByRole("complementary", { name: "Sidebar navigation" })).toBeInTheDocument();
   });
 
-  it("renders Onboarding as a protected route without the shell chrome", () => {
+  it("renders Onboarding as a protected route without the shell chrome", async () => {
     renderAt("/life-os/app/onboarding", { signedIn: true });
 
-    expect(screen.getByText("Onboarding screen")).toBeInTheDocument();
+    expect(await screen.findByText("Onboarding screen")).toBeInTheDocument();
     expect(
       screen.queryByRole("complementary", { name: "Sidebar navigation" }),
     ).not.toBeInTheDocument();
     expect(screen.queryByRole("banner")).not.toBeInTheDocument();
   });
 
-  it("wires the :section param through to Settings", () => {
+  it("wires the :section param through to Settings", async () => {
     renderAt("/life-os/app/settings/security", { signedIn: true });
-    expect(screen.getByText("Settings screen: security")).toBeInTheDocument();
+    expect(await screen.findByText("Settings screen: security")).toBeInTheDocument();
+  });
+
+  it.each(["/life-os/privacy", "/life-os/terms"])(
+    "renders placeholder route for %s",
+    async (path) => {
+      renderAt(path);
+      expect(await screen.findByText("This screen has not been built yet.")).toBeInTheDocument();
+    },
+  );
+
+  it("executes all route lazy loaders correctly and resolves valid component functions", async () => {
+    const loaderPromises = Object.entries(ROUTE_LOADERS).map(async ([name, loader]) => {
+      const module = await loader();
+      expect(typeof module.default).toBe("function");
+      return name;
+    });
+    const loadedRouteNames = await Promise.all(loaderPromises);
+    expect(loadedRouteNames.length).toBe(Object.keys(ROUTE_LOADERS).length);
   });
 });

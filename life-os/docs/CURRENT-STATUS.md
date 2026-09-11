@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-11 (LOS-1509 Perform application security testing)
+Last updated: 2026-09-11 (LOS-1510 Establish performance budgets)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1510 — Established performance budgets, latency SLAs, resource allocations, and volume scalability benchmarks across the entire LifeOS stack: implemented frontend lazy route code-splitting for all 30 application routes via `src/app/routeLoaders.ts` and `src/app/AppRouter.tsx` using `React.lazy` and `<Suspense>`, vendor chunk partitioning (`vendor-react`, `vendor-query`, `vendor-icons`), dropping the initial entry JS bundle from 1.16MB to ~21 kB with 0 build warnings; created client-side Core Web Vitals (LCP, INP, CLS, FCP, TTFB) measurement module `src/lib/performance.ts` and unit tests; created automated bundle budget verifier `verify-bundle-budgets.mjs` and test suite `bundle-budgets.test.mjs`; implemented comprehensive backend performance integration test suite `PerformanceBudgetsIntegrationTests.java` covering Tier 1 Fast SLAs (health/profile), Tier 2 CRUD SLAs (tasks), Tier 3 Aggregation SLAs (habits), database query monitoring, large-data task scaling (50+ tasks), habit streak scaling (100+ logs), and JVM memory bounds; created automated verification script `validate-performance-budgets.sh`; published specification in `docs/54-PERFORMANCE-BUDGETS-AND-BENCHMARKS.md`. See `docs/handoffs/LOS-1510.md`.
 
 - LOS-1509 — Executed dynamic application security testing (DAST), automated fuzzing, and manual/automated penetration testing across 8 vulnerability classes: Insecure Direct Object References (IDOR / BOLA) across nested resources and query filters, Cross-Site Request Forgery (CSRF) on state-changing requests, session lifecycle & rotation (cryptographic token hashing, immediate single/all-device logout revocation), password reset single-use token consumption and anti-enumeration generic responses, malicious file upload defenses (MIME allowlist, dangerous extension `.sh`/`.exe`/`.svg` blocking, path traversal prevention), data export isolation and restrictive caching headers (`Cache-Control: private, no-cache, max-age=0, must-revalidate`), and Actuator lockdown & RFC 7807 problem detail sanitization. Implemented automated Spring Boot integration test suite (`ApplicationSecurityTestingIntegrationTests.java` — 19 tests), published findings register and formal risk acceptance sign-off, and created automated verification script (`validate-application-security.sh`). Published full specification in `docs/53-APPLICATION-SECURITY-TESTING.md`. See `docs/handoffs/LOS-1509.md`.
 

@@ -61,10 +61,33 @@ export function createViteConfig({ mode }: ConfigEnv): UserConfig {
       outDir: "dist",
       emptyOutDir: true,
       sourcemap: false,
+      chunkSizeWarningLimit: 500,
       rollupOptions: {
         // Named explicitly so `catalog.html` can never become a build input.
         // The component catalog is a development tool and must not ship.
         input: new URL("./index.html", import.meta.url).pathname,
+        output: {
+          manualChunks(id) {
+            if (id.includes("node_modules")) {
+              if (id.includes("lucide-react")) {
+                return "vendor-icons";
+              }
+              if (id.includes("@tanstack")) {
+                return "vendor-query";
+              }
+              if (
+                id.includes("/react/") ||
+                id.includes("/react-dom/") ||
+                id.includes("/react-router/") ||
+                id.includes("/react-router-dom/") ||
+                id.includes("scheduler")
+              ) {
+                return "vendor-react";
+              }
+              return "vendor";
+            }
+          },
+        },
       },
     },
   };

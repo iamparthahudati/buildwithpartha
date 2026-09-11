@@ -36,3 +36,16 @@ export {
   loginPath,
   resolveReturnTarget,
 } from "./returnPath";
+export {
+  captureNavigationTimings,
+  createPerformanceMetric,
+  evaluateMetric,
+  formatMetricValue,
+  observePerformanceMetrics,
+  PERFORMANCE_BUDGETS,
+  type MetricBudgetThreshold,
+  type MetricName,
+  type MetricRating,
+  type NavigationTimingSummary,
+  type PerformanceMetric,
+} from "./performance";

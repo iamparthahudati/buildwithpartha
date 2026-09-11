@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "@components/layout";
@@ -12,38 +12,39 @@ import { todayLocalDate } from "@lib/localDateTime";
 import { useAuthSession } from "@state/authSession";
 import { GlobalCommandPalette } from "@features/search";
 import { useNotificationUnreadCount } from "@features/notifications";
-import {
-  CancelDeletionRoute,
-  CalendarRoute,
-  ComingSoonRoute,
-  ForgotPasswordRoute,
-  FocusRoute,
-  GoalsRoute,
-  GoalDetailsRoute,
-  LoginRoute,
-  NotFoundRoute,
-  NotificationsRoute,
-  OnboardingRoute,
-  NotesRoute,
-  BrainDumpRoute,
-  HabitsRoute,
-  ProgressRoute,
-  ProjectsRoute,
-  ProjectDetailsRoute,
-  ReportsRoute,
-  ResetPasswordRoute,
-  SearchRoute,
-  SettingsRoute,
-  SprintsRoute,
-  SignupRoute,
-  TodayRoute,
-  TasksRoute,
-  TaskDetailsRoute,
-  TimeBlocksRoute,
-  UnavailableRoute,
-  VerifyEmailRoute,
-  WeekPlannerRoute,
-} from "@routes/index";
+
+import { ROUTE_LOADERS } from "./routeLoaders";
+
+const CancelDeletionRoute = lazy(ROUTE_LOADERS.CancelDeletionRoute);
+const CalendarRoute = lazy(ROUTE_LOADERS.CalendarRoute);
+const ComingSoonRoute = lazy(ROUTE_LOADERS.ComingSoonRoute);
+const ForgotPasswordRoute = lazy(ROUTE_LOADERS.ForgotPasswordRoute);
+const FocusRoute = lazy(ROUTE_LOADERS.FocusRoute);
+const GoalsRoute = lazy(ROUTE_LOADERS.GoalsRoute);
+const GoalDetailsRoute = lazy(ROUTE_LOADERS.GoalDetailsRoute);
+const LoginRoute = lazy(ROUTE_LOADERS.LoginRoute);
+const NotFoundRoute = lazy(ROUTE_LOADERS.NotFoundRoute);
+const NotificationsRoute = lazy(ROUTE_LOADERS.NotificationsRoute);
+const OnboardingRoute = lazy(ROUTE_LOADERS.OnboardingRoute);
+const NotesRoute = lazy(ROUTE_LOADERS.NotesRoute);
+const BrainDumpRoute = lazy(ROUTE_LOADERS.BrainDumpRoute);
+const HabitsRoute = lazy(ROUTE_LOADERS.HabitsRoute);
+const ProgressRoute = lazy(ROUTE_LOADERS.ProgressRoute);
+const ProjectsRoute = lazy(ROUTE_LOADERS.ProjectsRoute);
+const ProjectDetailsRoute = lazy(ROUTE_LOADERS.ProjectDetailsRoute);
+const ReportsRoute = lazy(ROUTE_LOADERS.ReportsRoute);
+const ResetPasswordRoute = lazy(ROUTE_LOADERS.ResetPasswordRoute);
+const SearchRoute = lazy(ROUTE_LOADERS.SearchRoute);
+const SettingsRoute = lazy(ROUTE_LOADERS.SettingsRoute);
+const SprintsRoute = lazy(ROUTE_LOADERS.SprintsRoute);
+const SignupRoute = lazy(ROUTE_LOADERS.SignupRoute);
+const TodayRoute = lazy(ROUTE_LOADERS.TodayRoute);
+const TasksRoute = lazy(ROUTE_LOADERS.TasksRoute);
+const TaskDetailsRoute = lazy(ROUTE_LOADERS.TaskDetailsRoute);
+const TimeBlocksRoute = lazy(ROUTE_LOADERS.TimeBlocksRoute);
+const UnavailableRoute = lazy(ROUTE_LOADERS.UnavailableRoute);
+const VerifyEmailRoute = lazy(ROUTE_LOADERS.VerifyEmailRoute);
+const WeekPlannerRoute = lazy(ROUTE_LOADERS.WeekPlannerRoute);
 
 /**
  * ProtectedShell (LOS-0603).
@@ -158,71 +159,73 @@ function ProtectedShell() {
  */
 export function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/life-os">
-        <Route index element={<ComingSoonRoute />} />
-        <Route path="signup" element={<SignupRoute />} />
-        <Route path="login" element={<LoginRoute />} />
-        <Route path="verify-email" element={<VerifyEmailRoute />} />
-        <Route path="forgot-password" element={<ForgotPasswordRoute />} />
-        <Route path="reset-password" element={<ResetPasswordRoute />} />
-        <Route path="cancel-deletion" element={<CancelDeletionRoute />} />
-        <Route path="privacy" element={<ComingSoonRoute />} />
-        <Route path="terms" element={<ComingSoonRoute />} />
-        <Route path="unavailable" element={<UnavailableRoute />} />
+    <Suspense fallback={null}>
+      <Routes>
+        <Route path="/life-os">
+          <Route index element={<ComingSoonRoute />} />
+          <Route path="signup" element={<SignupRoute />} />
+          <Route path="login" element={<LoginRoute />} />
+          <Route path="verify-email" element={<VerifyEmailRoute />} />
+          <Route path="forgot-password" element={<ForgotPasswordRoute />} />
+          <Route path="reset-password" element={<ResetPasswordRoute />} />
+          <Route path="cancel-deletion" element={<CancelDeletionRoute />} />
+          <Route path="privacy" element={<ComingSoonRoute />} />
+          <Route path="terms" element={<ComingSoonRoute />} />
+          <Route path="unavailable" element={<UnavailableRoute />} />
 
-        <Route
-          path="app/onboarding"
-          element={
-            <RequireAuth>
-              <OnboardingRoute />
-            </RequireAuth>
-          }
-        />
+          <Route
+            path="app/onboarding"
+            element={
+              <RequireAuth>
+                <OnboardingRoute />
+              </RequireAuth>
+            }
+          />
 
-        <Route
-          path="app"
-          element={
-            <RequireAuth>
-              <ProtectedShell />
-            </RequireAuth>
-          }
-        >
-          <Route index element={<Navigate to="today" replace />} />
-          <Route path="today" element={<TodayRoute />} />
-          <Route path="tasks" element={<TasksRoute />} />
-          <Route path="tasks/:taskId" element={<TaskDetailsRoute />} />
-          <Route path="time-blocks" element={<TimeBlocksRoute />} />
-          <Route path="calendar" element={<CalendarRoute />} />
-          <Route path="focus" element={<FocusRoute />} />
-          <Route path="projects" element={<ProjectsRoute />} />
-          <Route path="projects/:projectId" element={<ProjectDetailsRoute />} />
-          <Route path="sprints" element={<SprintsRoute />} />
-          <Route path="sprints/:sprintId" element={<SprintsRoute />} />
-          <Route path="week-planner" element={<WeekPlannerRoute />} />
-          <Route path="goals" element={<GoalsRoute />} />
-          <Route path="goals/:goalId" element={<GoalDetailsRoute />} />
-          <Route path="notes" element={<NotesRoute />} />
-          <Route path="notes/:noteId" element={<NotesRoute />} />
-          <Route path="brain-dump" element={<BrainDumpRoute />} />
-          <Route path="habits" element={<HabitsRoute />} />
-          <Route path="habits/:habitId" element={<HabitsRoute />} />
-          <Route path="progress" element={<ProgressRoute />} />
-          <Route path="reports" element={<ReportsRoute />} />
-          <Route path="reviews" element={<ComingSoonRoute />} />
-          <Route path="reviews/daily/:date" element={<ComingSoonRoute />} />
-          <Route path="reviews/weekly/:weekStart" element={<ComingSoonRoute />} />
-          <Route path="reviews/monthly/:month" element={<ComingSoonRoute />} />
-          <Route path="search" element={<SearchRoute />} />
-          <Route path="notifications" element={<NotificationsRoute />} />
-          <Route path="settings/:section?" element={<SettingsRoute />} />
-          <Route path="*" element={<NotFoundRoute variant="private" />} />
+          <Route
+            path="app"
+            element={
+              <RequireAuth>
+                <ProtectedShell />
+              </RequireAuth>
+            }
+          >
+            <Route index element={<Navigate to="today" replace />} />
+            <Route path="today" element={<TodayRoute />} />
+            <Route path="tasks" element={<TasksRoute />} />
+            <Route path="tasks/:taskId" element={<TaskDetailsRoute />} />
+            <Route path="time-blocks" element={<TimeBlocksRoute />} />
+            <Route path="calendar" element={<CalendarRoute />} />
+            <Route path="focus" element={<FocusRoute />} />
+            <Route path="projects" element={<ProjectsRoute />} />
+            <Route path="projects/:projectId" element={<ProjectDetailsRoute />} />
+            <Route path="sprints" element={<SprintsRoute />} />
+            <Route path="sprints/:sprintId" element={<SprintsRoute />} />
+            <Route path="week-planner" element={<WeekPlannerRoute />} />
+            <Route path="goals" element={<GoalsRoute />} />
+            <Route path="goals/:goalId" element={<GoalDetailsRoute />} />
+            <Route path="notes" element={<NotesRoute />} />
+            <Route path="notes/:noteId" element={<NotesRoute />} />
+            <Route path="brain-dump" element={<BrainDumpRoute />} />
+            <Route path="habits" element={<HabitsRoute />} />
+            <Route path="habits/:habitId" element={<HabitsRoute />} />
+            <Route path="progress" element={<ProgressRoute />} />
+            <Route path="reports" element={<ReportsRoute />} />
+            <Route path="reviews" element={<ComingSoonRoute />} />
+            <Route path="reviews/daily/:date" element={<ComingSoonRoute />} />
+            <Route path="reviews/weekly/:weekStart" element={<ComingSoonRoute />} />
+            <Route path="reviews/monthly/:month" element={<ComingSoonRoute />} />
+            <Route path="search" element={<SearchRoute />} />
+            <Route path="notifications" element={<NotificationsRoute />} />
+            <Route path="settings/:section?" element={<SettingsRoute />} />
+            <Route path="*" element={<NotFoundRoute variant="private" />} />
+          </Route>
+
+          <Route path="*" element={<NotFoundRoute variant="public" />} />
         </Route>
-
-        <Route path="*" element={<NotFoundRoute variant="public" />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/life-os" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/life-os" replace />} />
+      </Routes>
+    </Suspense>
   );
 }
 

@@ -72,3 +72,7 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 - QA-OPS-002: Backup restore meets recorded RPO/RTO and restored data passes ownership/relationship checks.
 - QA-OPS-003: Cloudflare cache never serves private/auth/API data between users; origin bypass is blocked.
 - QA-OPS-004: Mail/job/storage/database failure emits safe logs/metrics/alerts and retries/degrades according to policy.
+- QA-PERF-001: Frontend initial bundle ($\le 200\text{ kB}$ entry JS, $\le 50\text{ kB}$ CSS) and 30 route chunks ($\le 100\text{ kB}$) meet budgets with zero Rollup bundle warnings per [54-PERFORMANCE-BUDGETS-AND-BENCHMARKS.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/54-PERFORMANCE-BUDGETS-AND-BENCHMARKS.md).
+- QA-PERF-002: Real-user metrics evaluate Core Web Vitals targets (LCP $\le 1500\text{ ms}$, INP $\le 100\text{ ms}$, CLS $\le 0.05$, FCP $\le 1000\text{ ms}$, TTFB $\le 400\text{ ms}$).
+- QA-PERF-003: Backend API latency SLAs (Tier 1 $\le 100\text{ ms}$, Tier 2 $\le 250\text{ ms}$, Tier 3 $\le 500\text{ ms}$ p95) and large-data volume scalability (50+ tasks, 100+ habit logs) execute under budget.
+
