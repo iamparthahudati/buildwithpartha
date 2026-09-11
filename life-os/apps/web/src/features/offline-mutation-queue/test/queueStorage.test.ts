@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createQueuedMutation } from "../model/mutationQueue";
 import {
@@ -15,7 +15,13 @@ import {
 
 describe("queueStorage", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-09-02T10:00:00Z"));
     window.localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("encrypts and decrypts payload with salt", () => {

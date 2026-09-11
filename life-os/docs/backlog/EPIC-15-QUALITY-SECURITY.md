@@ -4,7 +4,7 @@
 | --- | --- | --- | --- | --- | --- |
 | LOS-1501 | Build critical Playwright suite | Automate identity, project→task→schedule→focus→complete, reviews, recurrence, offline queue, export/delete using isolated users/data and deterministic time. | Core feature gates | L | Done |
 | LOS-1502 | Build cross-user authorization matrix | For every user-owned endpoint/resource/action, user B cannot read/infer/mutate user A data, including IDs in nested/filter/export/file/search paths. | Core feature gates | M | Done |
-| LOS-1503 | Run frontend accessibility audit | Axe plus keyboard, focus, screen-reader smoke, 200% zoom, 320px reflow, contrast/forced colors/reduced motion across routes; fix critical/serious. | UI feature gates | M | Backlog |
+| LOS-1503 | Run frontend accessibility audit | Axe plus keyboard, focus, screen-reader smoke, 200% zoom, 320px reflow, contrast/forced colors/reduced motion across routes; fix critical/serious. | UI feature gates | M | Done |
 | LOS-1504 | Run responsive/browser matrix | Current supported Chrome/Firefox/Safari/Edge and mobile/touch layouts; record support policy and fix blocking inconsistencies. | UI feature gates | M | Backlog |
 | LOS-1505 | Validate timezone and recurrence matrix | Automated/manual zones with DST/no-DST/half-hour, midnight/week/month/year/leap boundaries and timezone changes across tasks/blocks/reviews/habits/reports. | LOS-0918, LOS-1015, LOS-1214, LOS-1308 | M | Backlog |
 | LOS-1506 | Run threat model | Data-flow/STRIDE-style review of auth, API, DB, files, mail, Cloudflare, offline cache, exports and admin/ops; every high risk has owner/mitigation/test. | LOS-1414 | S | Backlog |

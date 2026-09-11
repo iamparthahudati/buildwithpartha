@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiError } from "@lib/apiClient";
 import * as brainDumpModule from "@features/brain-dump";
@@ -35,8 +35,14 @@ vi.mock("@features/brain-dump", async (importOriginal) => {
 
 describe("queueReplayer", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-09-02T10:00:00Z"));
     window.localStorage.clear();
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("replays single TASK create mutation attaching Idempotency-Key header", async () => {

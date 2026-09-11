@@ -1337,6 +1337,32 @@ export class MockBackendState {
         });
       }
 
+      // Sprints
+      if (pathname === "/sprints" && method === "GET") {
+        return route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(this.sprints),
+        });
+      }
+
+      if (pathname.startsWith("/sprints/") && method === "GET") {
+        const sprintId = pathname.replace("/sprints/", "");
+        const sprint = this.sprints.find((s) => s.id === sprintId);
+        if (sprint) {
+          return route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify(sprint),
+          });
+        }
+        return route.fulfill({
+          status: 404,
+          contentType: "application/json",
+          body: JSON.stringify({ message: "Sprint not found" }),
+        });
+      }
+
       // Notifications
       if (pathname === "/notifications/unread-count" && method === "GET") {
         const count = this.notifications.filter((n) => !n.read).length;

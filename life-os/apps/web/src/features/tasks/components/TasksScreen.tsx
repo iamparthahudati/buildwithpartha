@@ -462,7 +462,7 @@ export function TasksScreen({
       render: (task) =>
         task.project ? (
           <Link href={task.project.href ?? `/life-os/app/projects/${task.project.id}`} quiet>
-            {task.project.name}
+            {task.project.name || "Project"}
           </Link>
         ) : (
           <Text size="sm" tone="muted">

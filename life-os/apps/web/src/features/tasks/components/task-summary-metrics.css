@@ -17,6 +17,10 @@
   background: var(--lifeos-color-primary-soft);
 }
 
+.lifeos-task-summary-metrics__item--active .lifeos-metric__label {
+  color: var(--lifeos-color-on-primary-soft);
+}
+
 @media (min-width: 72rem) {
   .lifeos-task-summary-metrics {
     grid-template-columns: repeat(6, minmax(0, 1fr));

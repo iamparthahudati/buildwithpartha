@@ -40,6 +40,9 @@
   font-weight: var(--lifeos-font-weight-semibold);
   font-variant-numeric: var(--lifeos-font-numeric);
   mask: none;
+  background: var(--lifeos-color-surface);
+  border-radius: var(--lifeos-radius-pill);
+  padding: 0 var(--lifeos-space-1);
 }
 
 .lifeos-progress-ring__label {

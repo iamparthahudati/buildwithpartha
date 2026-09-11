@@ -113,7 +113,7 @@ export function TaskCard({
         </Link>
         {task.project ? (
           <Link href={task.project.href ?? `/life-os/app/projects/${task.project.id}`} quiet>
-            {task.project.name}
+            {task.project.name || "Project"}
           </Link>
         ) : (
           <Text size="xs" tone="muted">

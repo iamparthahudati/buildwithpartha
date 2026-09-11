@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-11 (LOS-1502 Build cross-user authorization matrix)
+Last updated: 2026-09-11 (LOS-1503 Run frontend accessibility audit)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1503 — Executed comprehensive WCAG 2.2 AA frontend accessibility audit across all public and protected routes, dialogs, 320px reflow, 200% zoom, reduced motion, and forced colors. Remediated active task summary metric preset label contrast (5.5:1 on `--lifeos-color-on-primary-soft`), progress ring value background (15.3:1 on `--lifeos-color-surface`), and task project link fallback names. Created 37 automated Playwright accessibility audit scenarios passing 100% on desktop and mobile viewports. Published audit specification in `docs/47-FRONTEND-ACCESSIBILITY-AUDIT.md`. See `docs/handoffs/LOS-1503.md`.
 
 - LOS-1502 — Built comprehensive cross-user authorization matrix and endpoint isolation suite (`CrossUserAuthorizationMatrixIntegrationTests.java`) testing 21 integration scenarios across Identity/Profiles/Sessions, Projects/Milestones, Tasks/Subtasks/MIT/Dependencies/Recurring Series, Time Blocks/Calendar, Focus Sessions, Goals/Check-ins/Links, Habits/Entries/Pauses/Stats, Notes/Brain Dump, Sprints/Weekly Plans/Reviews, Labels/Comments/Activity, Search/Reports/Exports/Notifications. Verified row-level user scoping, indistinguishability principle (404 RESOURCE_NOT_FOUND / empty collections), and cross-user foreign reference rejection (400 BAD_REQUEST). Published authorization matrix specification in `docs/46-CROSS-USER-AUTHORIZATION-MATRIX.md`. See `docs/handoffs/LOS-1502.md`.
 
