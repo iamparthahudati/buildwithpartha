@@ -50,6 +50,13 @@ class JpaCommentRepository implements CommentRepository {
   }
 
   @Override
+  public List<Comment> findByUserId(UUID userId) {
+    return jpa.findByUserIdOrderByCreatedAtDescIdDesc(userId).stream()
+        .map(JpaCommentRepository::toDomain)
+        .toList();
+  }
+
+  @Override
   public long count(UUID userId, CommentParentType parentType, UUID parentId) {
     return switch (parentType) {
       case TASK -> jpa.countByUserIdAndTaskId(userId, parentId);

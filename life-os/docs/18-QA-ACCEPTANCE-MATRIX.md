@@ -87,4 +87,16 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 - QA-FAIL-007: Background and asynchronous job failures display honest failure status badges, error summaries, and retry actions without blocking application navigation.
 - QA-FAIL-008: Composite Today dashboard isolates single widget failure with inline retryable error state while surrounding healthy widgets and shell remain fully interactive.
 
+## Data privacy, export, and deletion lifecycle
+
+- QA-PRIV-001: Data export ZIP archive contains all 19 domain models (`manifest.json`, `account.json`, `terms.json`, `preferences.json`, `tasks.json`, `projects.json`, `labels.json`, `timeblocks.json`, `focus_sessions.json`, `sprints.json`, `weekly_plans.json`, `reviews.json`, `goals.json`, `notes.json`, `braindump.json`, `habits.json`, `notifications.json`, `activity.json`, `comments.json`, `attachments.json`, `README.md`) and conforms to `data-export.schema.json`.
+- QA-PRIV-002: Export archives strictly exclude Argon2 password hashes, session tokens, verification/reset hashes, and CSRF secrets.
+- QA-PRIV-003: Multi-tenant export isolation guarantees zero foreign user records are captured in any export archive file.
+- QA-PRIV-004: Account deletion request requires re-authentication, enters 30-day grace period, and immediately revokes all active sessions across devices (401 Unauthorized).
+- QA-PRIV-005: Deletion cancellation token restores account status to ACTIVE within the 30-day grace period.
+- QA-PRIV-006: Grace period expiry triggers automated purge sweep, deleting primary user row and cascading through all foreign-keyed child entities.
+- QA-PRIV-007: Account deletion retains only minimal non-PII audit record (`account_deletion_requests` with `PURGED` status) per R6/R8 retention policy.
+- QA-PRIV-008: Automated data privacy audit script (`validate-data-privacy.sh`) passes in CI.
+
+
 

@@ -1,8 +1,5 @@
 package tech.buildwithpartha.lifeos.common.ops;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -23,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import tech.buildwithpartha.lifeos.auth.domain.AccountStatus;
 import tech.buildwithpartha.lifeos.auth.domain.EmailAddress;
 import tech.buildwithpartha.lifeos.auth.domain.RawToken;
 import tech.buildwithpartha.lifeos.auth.domain.SecureTokenGenerator;
@@ -94,7 +90,8 @@ public class FailureRecoveryUxIntegrationTests {
   }
 
   @Test
-  @DisplayName("RFC 7807 problem details: Sanitized error response without stack trace or internals")
+  @DisplayName(
+      "RFC 7807 problem details: Sanitized error response without stack trace or internals")
   void errorResponsesAreSanitizedAndCompliant() throws Exception {
     mockMvc
         .perform(
@@ -158,7 +155,8 @@ public class FailureRecoveryUxIntegrationTests {
   }
 
   @Test
-  @DisplayName("Idempotency replay: Retried request with same Idempotency-Key returns cached response")
+  @DisplayName(
+      "Idempotency replay: Retried request with same Idempotency-Key returns cached response")
   void retriedRequestWithSameIdempotencyKeyReturnsCachedResponse() throws Exception {
     String idempotencyKey = "idemp-" + UUID.randomUUID();
     String taskPayload =

@@ -13,6 +13,8 @@ interface ProductActivityEventJpaRepository
       findByUserIdAndSubjectTypeAndSubjectIdOrderByOccurredAtDescIdDesc(
           UUID userId, ActivitySubjectType subjectType, UUID subjectId, Pageable pageable);
 
+  java.util.List<ProductActivityEventEntity> findByUserIdOrderByOccurredAtDescIdDesc(UUID userId);
+
   long countByUserIdAndSubjectTypeAndSubjectId(
       UUID userId, ActivitySubjectType subjectType, UUID subjectId);
 }

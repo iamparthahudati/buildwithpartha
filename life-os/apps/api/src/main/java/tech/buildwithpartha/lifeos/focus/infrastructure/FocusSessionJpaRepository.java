@@ -24,6 +24,8 @@ interface FocusSessionJpaRepository extends JpaRepository<FocusSessionEntity, UU
           + " tech.buildwithpartha.lifeos.focus.domain.FocusSessionStatus.PAUSED)")
   Optional<FocusSessionEntity> findActiveByUserId(@Param("userId") UUID userId);
 
+  List<FocusSessionEntity> findByUserIdOrderByStartedAtAsc(UUID userId);
+
   List<FocusSessionEntity>
       findByUserIdAndStartedAtGreaterThanEqualAndStartedAtLessThanOrderByStartedAtAsc(
           UUID userId, Instant rangeStart, Instant rangeEnd);

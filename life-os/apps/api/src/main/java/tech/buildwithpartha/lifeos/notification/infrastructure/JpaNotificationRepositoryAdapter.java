@@ -54,6 +54,13 @@ public class JpaNotificationRepositoryAdapter implements NotificationRepository 
   }
 
   @Override
+  public List<Notification> findAllByUserId(UUID userId) {
+    return jpaRepository.findByUserIdOrderByCreatedAtDescIdDesc(userId).stream()
+        .map(NotificationEntity::toDomain)
+        .toList();
+  }
+
+  @Override
   public long countUnreadByUserId(UUID userId) {
     return jpaRepository.countUnreadByUserId(userId);
   }

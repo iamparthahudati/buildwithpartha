@@ -1,6 +1,7 @@
 package tech.buildwithpartha.lifeos.notification.domain;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -15,6 +16,8 @@ public interface NotificationRepository {
 
   PageResponse<Notification> findByUserId(
       UUID userId, Boolean unreadOnly, Set<NotificationCategory> categories, int page, int size);
+
+  List<Notification> findAllByUserId(UUID userId);
 
   long countUnreadByUserId(UUID userId);
 

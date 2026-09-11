@@ -118,9 +118,7 @@ class PerformanceBudgetsIntegrationTests {
 
     // 2. Authenticated /user/profile identity check
     start = System.currentTimeMillis();
-    mockMvc
-        .perform(get("/user/profile").cookie(sessionCookie))
-        .andExpect(status().isOk());
+    mockMvc.perform(get("/user/profile").cookie(sessionCookie)).andExpect(status().isOk());
     duration = System.currentTimeMillis() - start;
     assertThat(duration).isLessThan(250L);
   }
@@ -155,9 +153,7 @@ class PerformanceBudgetsIntegrationTests {
     }
 
     long start = System.currentTimeMillis();
-    mockMvc
-        .perform(get("/tasks").cookie(sessionCookie))
-        .andExpect(status().isOk());
+    mockMvc.perform(get("/tasks").cookie(sessionCookie)).andExpect(status().isOk());
     long duration = System.currentTimeMillis() - start;
     assertThat(duration).isLessThan(350L);
   }
@@ -166,9 +162,7 @@ class PerformanceBudgetsIntegrationTests {
   @DisplayName("Tier 3 Aggregation SLAs: Complex Today and Habit queries respond within 400ms")
   void aggregationTierLatencyUnderBudget() throws Exception {
     long start = System.currentTimeMillis();
-    mockMvc
-        .perform(get("/habits").cookie(sessionCookie))
-        .andExpect(status().isOk());
+    mockMvc.perform(get("/habits").cookie(sessionCookie)).andExpect(status().isOk());
     long duration = System.currentTimeMillis() - start;
     assertThat(duration).isLessThan(450L);
   }
@@ -255,9 +249,7 @@ class PerformanceBudgetsIntegrationTests {
     }
 
     long start = System.currentTimeMillis();
-    mockMvc
-        .perform(get("/habits").cookie(sessionCookie))
-        .andExpect(status().isOk());
+    mockMvc.perform(get("/habits").cookie(sessionCookie)).andExpect(status().isOk());
     long duration = System.currentTimeMillis() - start;
     assertThat(duration).isLessThan(600L);
   }

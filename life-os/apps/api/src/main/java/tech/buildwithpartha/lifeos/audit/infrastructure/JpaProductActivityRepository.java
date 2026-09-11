@@ -32,6 +32,13 @@ class JpaProductActivityRepository implements ProductActivityRepository {
   }
 
   @Override
+  public List<ProductActivityEvent> findByUserId(UUID userId) {
+    return jpa.findByUserIdOrderByOccurredAtDescIdDesc(userId).stream()
+        .map(JpaProductActivityRepository::toDomain)
+        .toList();
+  }
+
+  @Override
   public long countBySubject(UUID userId, ActivitySubjectType subjectType, UUID subjectId) {
     return jpa.countByUserIdAndSubjectTypeAndSubjectId(userId, subjectType, subjectId);
   }

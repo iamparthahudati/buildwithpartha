@@ -41,6 +41,13 @@ class JpaFocusSessionRepository implements FocusSessionRepository {
   }
 
   @Override
+  public List<FocusSession> findByUserId(UUID userId) {
+    return jpaRepository.findByUserIdOrderByStartedAtAsc(userId).stream()
+        .map(FocusSessionEntity::toDomain)
+        .toList();
+  }
+
+  @Override
   public List<FocusSession> findByUserIdAndStartedAtBetween(
       UUID userId, Instant rangeStart, Instant rangeEnd) {
     if (!rangeEnd.isAfter(rangeStart)) {

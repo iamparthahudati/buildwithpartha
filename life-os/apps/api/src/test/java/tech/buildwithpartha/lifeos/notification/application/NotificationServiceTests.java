@@ -276,6 +276,14 @@ class NotificationServiceTests {
     }
 
     @Override
+    public List<Notification> findAllByUserId(UUID userId) {
+      return list.stream()
+          .filter(n -> n.userId().equals(userId))
+          .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
+          .toList();
+    }
+
+    @Override
     public long countUnreadByUserId(UUID userId) {
       return list.stream().filter(n -> n.userId().equals(userId) && !n.isRead()).count();
     }

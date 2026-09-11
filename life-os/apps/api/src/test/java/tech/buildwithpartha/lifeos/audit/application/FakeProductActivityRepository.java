@@ -35,6 +35,17 @@ final class FakeProductActivityRepository implements ProductActivityRepository {
   }
 
   @Override
+  public List<ProductActivityEvent> findByUserId(UUID userId) {
+    return events.stream()
+        .filter(event -> event.userId().equals(userId))
+        .sorted(
+            Comparator.comparing(ProductActivityEvent::occurredAt)
+                .thenComparing(ProductActivityEvent::id)
+                .reversed())
+        .toList();
+  }
+
+  @Override
   public long countBySubject(UUID userId, ActivitySubjectType subjectType, UUID subjectId) {
     return events.stream()
         .filter(event -> event.userId().equals(userId))

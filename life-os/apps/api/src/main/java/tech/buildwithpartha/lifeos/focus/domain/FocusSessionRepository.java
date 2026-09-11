@@ -17,6 +17,8 @@ public interface FocusSessionRepository {
 
   Optional<FocusSession> findActiveByUserId(UUID userId);
 
+  List<FocusSession> findByUserId(UUID userId);
+
   List<FocusSession> findByUserIdAndStartedAtBetween(
       UUID userId, Instant rangeStart, Instant rangeEnd);
 }

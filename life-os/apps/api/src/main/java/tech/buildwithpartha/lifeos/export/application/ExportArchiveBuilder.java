@@ -50,12 +50,29 @@ public class ExportArchiveBuilder {
     List<String> includedFiles = new ArrayList<>();
 
     try (ZipOutputStream zip = new ZipOutputStream(baos, StandardCharsets.UTF_8)) {
+      String timeZone = "UTC";
+      String locale = "en-IN";
+
       // Write all contributor files
       for (UserDataExportContributor contributor : contributors) {
         String fileName = contributor.exportFileName();
         byte[] fileBytes = contributor.exportDataForUser(userId);
         writeZipEntry(zip, fileName, fileBytes);
         includedFiles.add(fileName);
+
+        if ("account.json".equals(fileName) && fileBytes != null && fileBytes.length > 0) {
+          try {
+            var node = objectMapper.readTree(fileBytes);
+            if (node.hasNonNull("timeZone")) {
+              timeZone = node.get("timeZone").asText();
+            }
+            if (node.hasNonNull("locale")) {
+              locale = node.get("locale").asText();
+            }
+          } catch (Exception ignored) {
+            // fallback to defaults
+          }
+        }
       }
 
       // Write README.md
@@ -82,6 +99,8 @@ public class ExportArchiveBuilder {
       manifest.put("exportVersion", EXPORT_VERSION);
       manifest.put("accountId", userId.toString());
       manifest.put("generatedAt", DateTimeFormatter.ISO_INSTANT.format(now));
+      manifest.put("timeZone", timeZone);
+      manifest.put("locale", locale);
       manifest.put("files", includedFiles);
       writeZipEntry(zip, "manifest.json", objectMapper.writeValueAsBytes(manifest));
 

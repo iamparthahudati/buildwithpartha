@@ -56,6 +56,14 @@ public class JpaBrainDumpItemRepository implements BrainDumpItemRepository {
   }
 
   @Override
+  public List<BrainDumpItem> findByUserId(UUID userId) {
+    Objects.requireNonNull(userId, "userId must not be null");
+    return jpaRepository.findByUserIdOrderByCreatedAtDescIdDesc(userId).stream()
+        .map(BrainDumpItemEntity::toDomain)
+        .toList();
+  }
+
+  @Override
   public int countUnprocessedByUserId(UUID userId) {
     Objects.requireNonNull(userId, "userId must not be null");
     return jpaRepository.countUnprocessedByUserId(userId);

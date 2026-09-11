@@ -12,5 +12,7 @@ public interface ProductActivityRepository {
   List<ProductActivityEvent> findBySubject(
       UUID userId, ActivitySubjectType subjectType, UUID subjectId, int page, int size);
 
+  List<ProductActivityEvent> findByUserId(UUID userId);
+
   long countBySubject(UUID userId, ActivitySubjectType subjectType, UUID subjectId);
 }

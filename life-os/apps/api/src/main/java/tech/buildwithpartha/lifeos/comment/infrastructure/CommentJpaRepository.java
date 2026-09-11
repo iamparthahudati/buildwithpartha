@@ -18,6 +18,8 @@ interface CommentJpaRepository extends JpaRepository<CommentEntity, UUID> {
   Page<CommentEntity> findByUserIdAndProjectIdOrderByCreatedAtDescIdDesc(
       UUID userId, UUID projectId, Pageable pageable);
 
+  java.util.List<CommentEntity> findByUserIdOrderByCreatedAtDescIdDesc(UUID userId);
+
   long countByUserIdAndTaskId(UUID userId, UUID taskId);
 
   long countByUserIdAndProjectId(UUID userId, UUID projectId);

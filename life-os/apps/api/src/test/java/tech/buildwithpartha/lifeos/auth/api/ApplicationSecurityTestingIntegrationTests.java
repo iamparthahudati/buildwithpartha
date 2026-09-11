@@ -1,12 +1,9 @@
 package tech.buildwithpartha.lifeos.auth.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,7 +25,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import tech.buildwithpartha.lifeos.attachment.application.AttachmentDownloadService;
 import tech.buildwithpartha.lifeos.attachment.application.AttachmentService;
 import tech.buildwithpartha.lifeos.attachment.domain.Attachment;
 import tech.buildwithpartha.lifeos.attachment.domain.AttachmentEntityType;
@@ -54,21 +50,23 @@ import tools.jackson.databind.ObjectMapper;
 /**
  * Dynamic Application Security Testing (DAST) and Penetration Testing Suite (LOS-1509).
  *
- * <p>Validates runtime security controls and exploit defenses across all 8 core vulnerability classes:
+ * <p>Validates runtime security controls and exploit defenses across all 8 core vulnerability
+ * classes:
  *
  * <ul>
- *   <li><b>1. DAST Probes & Fuzzing</b>: Unexpected HTTP verbs, malformed content types, SQL injection
- *       payloads, XSS script injection payloads, and header fuzzing.
- *   <li><b>2. IDOR / BOLA</b>: Strict tenant isolation and indistinguishable 404 responses for foreign
- *       resources across tasks, projects, time blocks, habits, goals, notes, and attachments.
- *   <li><b>3. CSRF & State Mutation Gating</b>: Required {@code X-CSRF-TOKEN} validation on all state
- *       mutations and exemption of safe read requests.
+ *   <li><b>1. DAST Probes & Fuzzing</b>: Unexpected HTTP verbs, malformed content types, SQL
+ *       injection payloads, XSS script injection payloads, and header fuzzing.
+ *   <li><b>2. IDOR / BOLA</b>: Strict tenant isolation and indistinguishable 404 responses for
+ *       foreign resources across tasks, projects, time blocks, habits, goals, notes, and
+ *       attachments.
+ *   <li><b>3. CSRF & State Mutation Gating</b>: Required {@code X-CSRF-TOKEN} validation on all
+ *       state mutations and exemption of safe read requests.
  *   <li><b>4. Session Lifecycle & Hardening</b>: Session rotation, immediate logout revocation,
  *       all-device session invalidation, and secure cookie properties.
- *   <li><b>5. Password Reset & Verification</b>: Single-use token consumption, expired token rejection,
- *       session revocation upon reset, and anti-enumeration timing.
- *   <li><b>6. File Upload Security</b>: MIME allowlist enforcement, executable / script upload rejection,
- *       path traversal prevention, and download headers.
+ *   <li><b>5. Password Reset & Verification</b>: Single-use token consumption, expired token
+ *       rejection, session revocation upon reset, and anti-enumeration timing.
+ *   <li><b>6. File Upload Security</b>: MIME allowlist enforcement, executable / script upload
+ *       rejection, path traversal prevention, and download headers.
  *   <li><b>7. Data Export Isolation & Caching</b>: Tenant isolation of export streams and mandatory
  *       restrictive {@code Cache-Control} and proxy bypass headers.
  *   <li><b>8. Information Disclosure & Actuator</b>: Actuator surface lockdown and RFC 7807 Problem
@@ -169,8 +167,7 @@ class ApplicationSecurityTestingIntegrationTests {
     Instant now = Instant.now();
     UUID userId = UUID.randomUUID();
     String email = emailPrefix + "@example.test";
-    User user =
-        User.signup(userId, EmailAddress.of(email), "AppSec Test User", now).verify(now);
+    User user = User.signup(userId, EmailAddress.of(email), "AppSec Test User", now).verify(now);
     userRepository.save(user);
     credentialRepository.save(
         Credential.issue(
@@ -202,21 +199,20 @@ class ApplicationSecurityTestingIntegrationTests {
   }
 
   @Test
-  @DisplayName("AST-02: SQL injection probe in query filter returns safe result without SQL disclosure")
+  @DisplayName(
+      "AST-02: SQL injection probe in query filter returns safe result without SQL disclosure")
   void testSqlInjectionInQueryParameter() throws Exception {
     String sqliPayload = "' OR '1'='1' -- ";
     mockMvc
-        .perform(
-            get("/tasks")
-                .cookie(sessionCookieA)
-                .param("search", sqliPayload))
+        .perform(get("/tasks").cookie(sessionCookieA).param("search", sqliPayload))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.page.items").isArray())
         .andExpect(jsonPath("$.page.items").isEmpty());
   }
 
   @Test
-  @DisplayName("AST-03: XSS and script payloads in JSON body are accepted as literal text without execution")
+  @DisplayName(
+      "AST-03: XSS and script payloads in JSON body are accepted as literal text without execution")
   void testXssPayloadHandlingInResourceCreation() throws Exception {
     String xssName = "<script>alert('XSS')</script>";
     String payload =
@@ -262,7 +258,8 @@ class ApplicationSecurityTestingIntegrationTests {
         .andExpect(status().isOk())
         .andExpect(header().exists("X-Correlation-Id"))
         .andExpect(header().string("X-Correlation-Id", Matchers.not(Matchers.containsString("\r"))))
-        .andExpect(header().string("X-Correlation-Id", Matchers.not(Matchers.containsString("\n"))));
+        .andExpect(
+            header().string("X-Correlation-Id", Matchers.not(Matchers.containsString("\n"))));
   }
 
   // =========================================================================
@@ -293,10 +290,14 @@ class ApplicationSecurityTestingIntegrationTests {
             .andExpect(status().isOk())
             .andReturn();
 
-    UUID projectId = UUID.fromString(objectMapper.readTree(result.getResponse().getContentAsString()).get("id").asText());
+    UUID projectId =
+        UUID.fromString(
+            objectMapper.readTree(result.getResponse().getContentAsString()).get("id").asText());
 
     // User A accesses successfully
-    mockMvc.perform(get("/projects/" + projectId).cookie(sessionCookieA)).andExpect(status().isOk());
+    mockMvc
+        .perform(get("/projects/" + projectId).cookie(sessionCookieA))
+        .andExpect(status().isOk());
 
     // User B receives 404 RESOURCE_NOT_FOUND (not 403, preventing resource enumeration)
     mockMvc
@@ -328,7 +329,9 @@ class ApplicationSecurityTestingIntegrationTests {
             .andExpect(status().isCreated())
             .andReturn();
 
-    UUID taskId = UUID.fromString(objectMapper.readTree(result.getResponse().getContentAsString()).get("id").asText());
+    UUID taskId =
+        UUID.fromString(
+            objectMapper.readTree(result.getResponse().getContentAsString()).get("id").asText());
 
     // User B attempts to delete task -> 404
     mockMvc
@@ -347,7 +350,8 @@ class ApplicationSecurityTestingIntegrationTests {
   @Test
   @DisplayName("AST-07: State mutation (POST) without CSRF token is rejected with 403 Forbidden")
   void testCsrfTokenRequiredOnMutations() throws Exception {
-    String payload = "{\"name\":\"CSRF Project Attempt\",\"status\":\"PLANNED\",\"priority\":\"P1\"}";
+    String payload =
+        "{\"name\":\"CSRF Project Attempt\",\"status\":\"PLANNED\",\"priority\":\"P1\"}";
     mockMvc
         .perform(
             post("/projects")
@@ -360,7 +364,8 @@ class ApplicationSecurityTestingIntegrationTests {
   @Test
   @DisplayName("AST-08: State mutation with mismatched CSRF token is rejected with 403 Forbidden")
   void testMismatchedCsrfTokenRejected() throws Exception {
-    String payload = "{\"name\":\"CSRF Tampered Attempt\",\"status\":\"PLANNED\",\"priority\":\"P1\"}";
+    String payload =
+        "{\"name\":\"CSRF Tampered Attempt\",\"status\":\"PLANNED\",\"priority\":\"P1\"}";
     mockMvc
         .perform(
             post("/projects")
@@ -394,7 +399,9 @@ class ApplicationSecurityTestingIntegrationTests {
         .andExpect(jsonPath("$.status").value("LOGGED_OUT"));
 
     // Subsequent call with same session cookie fails with 401
-    mockMvc.perform(get("/user/profile").cookie(sessionCookieA)).andExpect(status().isUnauthorized());
+    mockMvc
+        .perform(get("/user/profile").cookie(sessionCookieA))
+        .andExpect(status().isUnauthorized());
   }
 
   @Test
@@ -432,7 +439,9 @@ class ApplicationSecurityTestingIntegrationTests {
 
     // Session 1 is active, Session 2 is revoked -> 401
     mockMvc.perform(get("/user/profile").cookie(sessionCookieA)).andExpect(status().isOk());
-    mockMvc.perform(get("/user/profile").cookie(sessionCookieA2)).andExpect(status().isUnauthorized());
+    mockMvc
+        .perform(get("/user/profile").cookie(sessionCookieA2))
+        .andExpect(status().isUnauthorized());
   }
 
   // =========================================================================
@@ -440,7 +449,9 @@ class ApplicationSecurityTestingIntegrationTests {
   // =========================================================================
 
   @Test
-  @DisplayName("AST-12: Password reset request returns generic 202 Accepted for both valid and invalid email")
+  @DisplayName(
+      "AST-12: Password reset request returns generic 202 Accepted for both valid and invalid"
+          + " email")
   void testAntiEnumerationPasswordReset() throws Exception {
     // Valid email
     mockMvc
@@ -478,7 +489,8 @@ class ApplicationSecurityTestingIntegrationTests {
         Exception.class,
         () ->
             resetPasswordService.reset(
-                new ResetPasswordCommand(resetToken.value(), RawPassword.of("AnotherPassword2026!"))));
+                new ResetPasswordCommand(
+                    resetToken.value(), RawPassword.of("AnotherPassword2026!"))));
   }
 
   // =========================================================================
@@ -490,10 +502,7 @@ class ApplicationSecurityTestingIntegrationTests {
   void testExecutableFileUploadRejected() throws Exception {
     MockMultipartFile dangerousFile =
         new MockMultipartFile(
-            "file",
-            "exploit.sh",
-            "application/x-sh",
-            "#!/bin/bash\nrm -rf /".getBytes());
+            "file", "exploit.sh", "application/x-sh", "#!/bin/bash\nrm -rf /".getBytes());
 
     mockMvc
         .perform(
@@ -511,10 +520,7 @@ class ApplicationSecurityTestingIntegrationTests {
   void testSvgUploadRejected() throws Exception {
     MockMultipartFile svgFile =
         new MockMultipartFile(
-            "file",
-            "xss.svg",
-            "image/svg+xml",
-            "<svg><script>alert(1)</script></svg>".getBytes());
+            "file", "xss.svg", "image/svg+xml", "<svg><script>alert(1)</script></svg>".getBytes());
 
     mockMvc
         .perform(
@@ -534,7 +540,12 @@ class ApplicationSecurityTestingIntegrationTests {
     UUID entityId = UUID.randomUUID();
     Attachment created =
         attachmentService.uploadAttachment(
-            userAId, AttachmentEntityType.TASK, entityId, "safe-doc.pdf", "application/pdf", pdfHeader);
+            userAId,
+            AttachmentEntityType.TASK,
+            entityId,
+            "safe-doc.pdf",
+            "application/pdf",
+            pdfHeader);
     created.markClean(Instant.now());
     attachmentRepository.save(created);
 
@@ -542,7 +553,9 @@ class ApplicationSecurityTestingIntegrationTests {
         .perform(get("/attachments/{id}/download", created.getId()).cookie(sessionCookieA))
         .andExpect(status().isOk())
         .andExpect(header().string("X-Content-Type-Options", "nosniff"))
-        .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"safe-doc.pdf\""));
+        .andExpect(
+            header()
+                .string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"safe-doc.pdf\""));
   }
 
   // =========================================================================
@@ -565,7 +578,8 @@ class ApplicationSecurityTestingIntegrationTests {
   // =========================================================================
 
   @Test
-  @DisplayName("AST-18: Actuator sensitive endpoints are blocked from unauthenticated/public access")
+  @DisplayName(
+      "AST-18: Actuator sensitive endpoints are blocked from unauthenticated/public access")
   void testActuatorEndpointsLockedDown() throws Exception {
     mockMvc.perform(get("/actuator/env")).andExpect(status().isUnauthorized());
     mockMvc.perform(get("/actuator/heapdump")).andExpect(status().isUnauthorized());
@@ -573,7 +587,8 @@ class ApplicationSecurityTestingIntegrationTests {
   }
 
   @Test
-  @DisplayName("AST-19: Public health probes provide minimal liveness/readiness without component details")
+  @DisplayName(
+      "AST-19: Public health probes provide minimal liveness/readiness without component details")
   void testActuatorPublicHealthProbes() throws Exception {
     mockMvc
         .perform(get("/actuator/health/liveness"))

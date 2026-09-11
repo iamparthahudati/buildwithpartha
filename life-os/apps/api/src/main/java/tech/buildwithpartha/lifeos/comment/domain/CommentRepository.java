@@ -15,6 +15,8 @@ public interface CommentRepository {
   List<Comment> findPage(
       UUID userId, CommentParentType parentType, UUID parentId, int page, int size);
 
+  List<Comment> findByUserId(UUID userId);
+
   long count(UUID userId, CommentParentType parentType, UUID parentId);
 
   void delete(Comment comment);

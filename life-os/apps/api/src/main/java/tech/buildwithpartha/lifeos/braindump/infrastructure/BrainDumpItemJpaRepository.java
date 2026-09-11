@@ -10,6 +10,8 @@ interface BrainDumpItemJpaRepository extends JpaRepository<BrainDumpItemEntity, 
 
   Optional<BrainDumpItemEntity> findByIdAndUserId(UUID id, UUID userId);
 
+  java.util.List<BrainDumpItemEntity> findByUserIdOrderByCreatedAtDescIdDesc(UUID userId);
+
   @Query(
       "SELECT COUNT(b) FROM BrainDumpItemEntity b "
           + "WHERE b.userId = :userId "

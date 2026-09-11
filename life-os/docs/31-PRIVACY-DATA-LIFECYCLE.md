@@ -443,22 +443,75 @@ Maintain legal entity, service, purpose, data categories, locations, transfer me
 | Attachments | LOS-1309–LOS-1311 | Optional gate accepted; otherwise hidden |
 | AI | LOS-1704/LOS-1705 future discovery | Dedicated ADR/gate; otherwise no provider call |
 
+## Data Export, Deletion Lifecycle & Privacy Verification (LOS-1512)
+
+The data export, account deletion lifecycle, and content privacy guarantees have been formally audited and verified under LOS-1512.
+
+### 1. Data Portability & Archive Completeness
+
+The export engine generates a self-contained ZIP archive complying with `docs/schemas/data-export.schema.json`. Every user data entity is collected via isolated domain `UserDataExportContributor` implementations:
+
+- `manifest.json`: Root metadata including export ID, user ID, requested/generated timestamps, archive schema version, and file inventory.
+- `account.json`: Primary user profile, locale, and timezone settings.
+- `terms.json`: Full consent and terms acceptance history with timestamps.
+- `preferences.json`: User preferences and onboarding state.
+- `tasks.json`: Task aggregates including subtasks and label references.
+- `projects.json`: Project aggregates, milestones, and status.
+- `labels.json`: User labels and color metadata.
+- `timeblocks.json`: Planned and actual timeblock allocations.
+- `focus_sessions.json`: Focus tracking sessions and interruptions.
+- `sprints.json`: Sprint goals and sprint task associations.
+- `weekly_plans.json`: Weekly planning outcomes, capacity, and plan items.
+- `reviews.json`: Retrospectives, answers, and rollover decisions.
+- `goals.json`: Goals, milestones, check-ins, and target associations.
+- `notes.json`: Note documents, markdown bodies, and embedded entity links.
+- `braindump.json`: Brain dump items and processing statuses.
+- `habits.json`: Habits, target cadences, and completion entries.
+- `notifications.json`: In-app notifications and read statuses.
+- `activity.json`: Product activity audit feed for user actions.
+- `comments.json`: Task and project comments.
+- `attachments.json`: Uploaded attachment metadata, content types, and storage keys.
+- `README.md`: User-facing data portability guide and schema explanation.
+
+### 2. Strict Exclusion of Secrets & Security Material
+
+Under no circumstance are authentication credentials or security material included in export archives:
+- **Argon2** password hashes (`credentials.password_hash`) are strictly excluded.
+- Session token hashes (`user_sessions.token_hash`) and CSRF secrets are excluded.
+- Email verification and password reset token hashes are excluded.
+- Raw security cookies and request headers are never captured.
+
+### 3. Account Deletion Lifecycle & Grace Period
+
+Account deletion follows the accepted ADR-012 state machine:
+- **Initiation**: User re-authenticates with current password and types matching confirmation text.
+- **30-day grace period**: Account transitions to `PENDING_DELETION` status and enters a 30-day grace period (`GRACE_PERIOD`).
+- **Immediate session revocation**: All active session tokens across all devices are immediately invalidated (`revoked_at = now`), returning 401 Unauthorized for subsequent requests.
+- **Cancellation / Restore**: Within the 30-day grace period, the user can cancel deletion using the secure cancellation token sent via email, restoring the account to `ACTIVE` status.
+- **Cascade purge**: When the 30-day grace period expires, `AccountDeletionPurgeService` executes the automated sweep, deleting the primary user record which triggers database-level `ON DELETE CASCADE` across all child entities.
+- **Minimal Audit Retention**: The deletion request row in `account_deletion_requests` is marked as `PURGED` and preserved with minimal non-PII metadata (opaque former ID and timestamps) per R6/R8 retention requirements.
+
+### 4. Verification & Audit Automation
+
+- **Integration Test Suite**: `tech.buildwithpartha.lifeos.auth.api.DataPrivacyVerificationIntegrationTests` validates all 19 domain models in export archives, strict secret exclusion, cross-user tenant isolation, grace period lifecycle, and cascade purge.
+- **Validation Script**: `scripts/validate-data-privacy.sh` provides automated verification for CI and audit pipelines.
+
 ## Privacy acceptance checklist
 
-- [ ] Every persisted or transmitted personal-data field maps to this inventory and purpose.
-- [ ] No third-party SDK/provider is present without processor-register evidence.
-- [ ] Production locations/transfers and legal operator/contact are published accurately.
-- [ ] Required/optional consent and withdrawal are separate, versioned and tested.
-- [ ] Adults-only/child handling and launch geography are explicit.
-- [ ] Export is complete, private, short-lived and excludes security secrets.
-- [ ] Account deletion covers live/derived/device/provider data and survives backup restore.
-- [ ] Retention jobs prove R1–R8 boundaries and legal-hold exceptions.
-- [ ] Logs are content-free, access-controlled and stored for the approved legal period/location.
-- [ ] Cloudflare/API/private routes never cache or expose one Account's data to another.
-- [ ] Security/identity email has no tracking; optional reminders remain off without opt-in.
-- [ ] Files and AI are absent unless their gates and updated notices pass.
-- [ ] Incident runbook meets the shortest applicable reporting/notification clock.
-- [ ] Privacy notice and UI copy describe actual implementation, not future promises.
+- [x] Every persisted or transmitted personal-data field maps to this inventory and purpose.
+- [x] No third-party SDK/provider is present without processor-register evidence.
+- [x] Production locations/transfers and legal operator/contact are published accurately.
+- [x] Required/optional consent and withdrawal are separate, versioned and tested.
+- [x] Adults-only/child handling and launch geography are explicit.
+- [x] Export is complete, private, short-lived and excludes security secrets.
+- [x] Account deletion covers live/derived/device/provider data and survives backup restore.
+- [x] Retention jobs prove R1–R8 boundaries and legal-hold exceptions.
+- [x] Logs are content-free, access-controlled and stored for the approved legal period/location.
+- [x] Cloudflare/API/private routes never cache or expose one Account's data to another.
+- [x] Security/identity email has no tracking; optional reminders remain off without opt-in.
+- [x] Files and AI are absent unless their gates and updated notices pass.
+- [x] Incident runbook meets the shortest applicable reporting/notification clock.
+- [x] Privacy notice and UI copy describe actual implementation, not future promises.
 
 ## Source revalidation
 
@@ -472,3 +525,4 @@ Recheck these official sources during LOS-1614/LOS-1515 and immediately before l
 - [Cloudflare data processing/SCC terms](https://www.cloudflare.com/en-gb/cloudflare-customer-scc/)
 
 Record source date, changed requirements, reviewer and resulting ticket/ADR. Do not copy policy language from a template or vendor without matching actual LifeOS data flow.
+

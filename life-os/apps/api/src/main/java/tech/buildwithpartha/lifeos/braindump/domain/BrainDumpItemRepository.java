@@ -10,6 +10,8 @@ public interface BrainDumpItemRepository {
 
   Optional<BrainDumpItem> findByIdAndUserId(UUID id, UUID userId);
 
+  java.util.List<BrainDumpItem> findByUserId(UUID userId);
+
   int countUnprocessedByUserId(UUID userId);
 
   void delete(BrainDumpItem item);

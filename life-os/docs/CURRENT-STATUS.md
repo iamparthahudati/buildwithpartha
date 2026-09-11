@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-12 (LOS-1511 Test failure and recovery UX)
+Last updated: 2026-09-12 (LOS-1512 Verify data export, deletion lifecycle, and privacy)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1512 — Verified data export completeness across all 19 domain models (`manifest.json`, `account.json`, `terms.json`, `preferences.json`, `tasks.json`, `projects.json`, `labels.json`, `timeblocks.json`, `focus_sessions.json`, `sprints.json`, `weekly_plans.json`, `reviews.json`, `goals.json`, `notes.json`, `braindump.json`, `habits.json`, `notifications.json`, `activity.json`, `comments.json`, `attachments.json`, `README.md`), strict exclusion of Argon2 password hashes and authentication tokens, multi-tenant export isolation, 30-day deletion grace period lifecycle with immediate multi-device session revocation, uncancelled deletion cascade purge with minimal non-PII audit ledger retention; implemented 16 domain `UserDataExportContributor` providers, automated Spring Boot verification suite (`DataPrivacyVerificationIntegrationTests.java`), and automated verification script (`validate-data-privacy.sh`); updated privacy specification (`docs/31-PRIVACY-DATA-LIFECYCLE.md`). See `docs/handoffs/LOS-1512.md`.
 
 - LOS-1511 — Validated failure and recovery UX across 8 core failure dimensions: Mode 1 Offline mode & network loss (top offline banner, last synced timestamp, disabled unsafe actions, offline mutation queue with UUID v4 idempotency keys, offline drafts, and reconnect auto-sync); Mode 2 Network timeouts & 504 drops (DOM form input retention, non-blocking retry with stable idempotency keys preventing duplicate creations); Mode 3 Server 5xx downtime (sanitized RFC 7807 problem details, zero stack trace / internal disclosure, safe `Reference ID: <correlationId>` display, page/region ErrorState boundaries, retry actions); Mode 4 HTTP 429 rate limiting (`Retry-After` headers, cooldown feedback, multi-click prevention, preserved input); Mode 5 Expired authentication (401 session expiry, form draft caching, redirect to login with `returnTo`, post-auth route & draft restoration, previous user cache destruction); Mode 6 Stale version 409 optimistic concurrency conflict (conflict resolution choices, non-destructive edit retention); Mode 7 Asynchronous background job failure (honest `Failed` status badge, error explanation, retry flow); Mode 8 Partial composite widget failure (Today dashboard isolation of failing widget in inline `Alert` / `ErrorState` with retry while surrounding healthy widgets render normally). Implemented Playwright E2E suite `failure-recovery-ux.spec.ts` (8 scenarios), Spring Boot resilience integration suite `FailureRecoveryUxIntegrationTests.java` (5 scenarios), and automated audit script `validate-failure-and-recovery-ux.sh`. Published specification in `docs/55-FAILURE-AND-RECOVERY-UX.md`. See `docs/handoffs/LOS-1511.md`.
 

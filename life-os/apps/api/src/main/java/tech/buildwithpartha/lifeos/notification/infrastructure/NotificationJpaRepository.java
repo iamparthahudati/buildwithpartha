@@ -16,6 +16,8 @@ public interface NotificationJpaRepository extends JpaRepository<NotificationEnt
 
   Optional<NotificationEntity> findByIdAndUserId(UUID id, UUID userId);
 
+  java.util.List<NotificationEntity> findByUserIdOrderByCreatedAtDescIdDesc(UUID userId);
+
   @Query(
       "SELECT n FROM NotificationEntity n WHERE n.userId = :userId "
           + "AND (:unreadOnly = FALSE OR n.readAt IS NULL) "

@@ -47,6 +47,7 @@ public class AccountDeletionPurgeService {
    *
    * @return the number of accounts purged
    */
+  @Transactional
   public int purgeDueAccounts() {
     Instant now = clock.instant();
     List<AccountDeletionGracePeriod> due = gracePeriodRepository.findDueForPurge(now);

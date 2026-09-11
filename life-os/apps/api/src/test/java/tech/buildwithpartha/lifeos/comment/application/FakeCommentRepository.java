@@ -48,6 +48,14 @@ final class FakeCommentRepository implements CommentRepository {
   }
 
   @Override
+  public List<Comment> findByUserId(UUID userId) {
+    return comments.stream()
+        .filter(comment -> comment.userId().equals(userId))
+        .sorted(Comparator.comparing(Comment::createdAt).thenComparing(Comment::id).reversed())
+        .toList();
+  }
+
+  @Override
   public long count(UUID userId, CommentParentType parentType, UUID parentId) {
     return comments.stream()
         .filter(comment -> comment.userId().equals(userId))
