@@ -1,16 +1,18 @@
 # Current status
 
-Last updated: 2026-09-10 (LOS-1415 Complete real-data Today aggregation)
+Last updated: 2026-09-10 (LOS-1501 Build critical Playwright suite)
 
 ## Phase
 
-Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), Epic 10 (Sprints, week planning, and reviews), Epic 11 (Goals, progress, reports, and analytics), Epic 12 (Notes, Brain Dump, and Habits), Epic 13 (Platform features), Epic 14 (Backend operations), and Epic 16 (VPS, Cloudflare, deployment, and launch) in progress.
+Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and project details), Phase 8 (Epic 08 — Tasks and task details), Epic 09 (Time Blocks, Calendar, and Focus), Epic 10 (Sprints, week planning, and reviews), Epic 11 (Goals, progress, reports, and analytics), Epic 12 (Notes, Brain Dump, and Habits), Epic 13 (Platform features), Epic 14 (Backend operations), Epic 15 (Quality, accessibility, security, and resilience), and Epic 16 (VPS, Cloudflare, deployment, and launch) in progress.
 
 ## In review
 
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1501 — Built critical Playwright E2E suite covering all 7 core user journeys across Desktop Chromium (1280x800) and Mobile Chromium (Pixel 5 375x667): identity & onboarding (`01-identity-onboarding.spec.ts`), project to focused completion (`02-project-task-focus-complete.spec.ts`), fast capture brain dump & conversion (`03-brain-dump-offline-queue.spec.ts`), week planning & daily reviews (`04-planning-and-reviews.spec.ts`), recurring tasks across time boundaries (`05-recurring-tasks.spec.ts`), account privacy/export/delete lifecycle (`06-privacy-export-delete.spec.ts`), and global search (`07-global-search.spec.ts`). Implemented in-memory stateful API mock router (`mockApi.ts`) covering all LifeOS REST contracts, exact dependency locking (`@playwright/test` pinned to `1.51.0`), and automated test runner script (`scripts/run-playwright-suite.sh`) with 100% test pass. See `docs/handoffs/LOS-1501.md`.
 
 - LOS-1415 — Completed real-data Today aggregation: replaced all stub Today widget providers with domain aggregations across Most Important Task (`DefaultMitWidgetProvider`), Today Tasks (`DefaultTasksWidgetProvider`), Schedule & Timeline with pairwise conflict detection (`DefaultScheduleWidgetProvider`), Current & Next Block (`DefaultCurrentNextBlockWidgetProvider`), Overdue Tasks (`DefaultOverdueWidgetProvider`), Active Sprint with native SQL point aggregation (`DefaultSprintWidgetProvider`), Weekly Plan (`DefaultWeekWidgetProvider`), Active Projects with batch task count aggregation (`DefaultActiveProjectsWidgetProvider`), Daily Reviews (`DefaultReviewWidgetProvider`), and Today Metrics Strip (`DefaultMetricsWidgetProvider`). Implemented domain-neutral ports in `common` and infrastructure adapters across `task`, `project`, `focus`, `timeblock`, and `sprint` preserving strict ArchUnit package isolation, error isolation, zero N+1 queries, and 100% test pass. See `docs/handoffs/LOS-1415.md`.
 

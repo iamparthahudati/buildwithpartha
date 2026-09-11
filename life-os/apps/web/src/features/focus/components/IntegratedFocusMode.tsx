@@ -24,8 +24,8 @@ export function IntegratedFocusMode({ locale, taskId, timeBlockId }: IntegratedF
   const focus = useFocusSession();
   const preferences = useUserPreferences();
   const defaultSettings: FocusModeSettings = {
-    focusMinutes: preferences.data?.planningDefaults.focusDurationMinutes ?? 25,
-    breakMinutes: preferences.data?.planningDefaults.breakDurationMinutes ?? 5,
+    focusMinutes: preferences.data?.planningDefaults?.focusDurationMinutes ?? 25,
+    breakMinutes: preferences.data?.planningDefaults?.breakDurationMinutes ?? 5,
   };
   const [settings, setSettings] = useState(defaultSettings);
   const [previousDefaults, setPreviousDefaults] = useState(defaultSettings);
