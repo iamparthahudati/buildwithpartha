@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-11 (LOS-1508 Add dependency/secret/container scans)
+Last updated: 2026-09-11 (LOS-1509 Perform application security testing)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1509 — Executed dynamic application security testing (DAST), automated fuzzing, and manual/automated penetration testing across 8 vulnerability classes: Insecure Direct Object References (IDOR / BOLA) across nested resources and query filters, Cross-Site Request Forgery (CSRF) on state-changing requests, session lifecycle & rotation (cryptographic token hashing, immediate single/all-device logout revocation), password reset single-use token consumption and anti-enumeration generic responses, malicious file upload defenses (MIME allowlist, dangerous extension `.sh`/`.exe`/`.svg` blocking, path traversal prevention), data export isolation and restrictive caching headers (`Cache-Control: private, no-cache, max-age=0, must-revalidate`), and Actuator lockdown & RFC 7807 problem detail sanitization. Implemented automated Spring Boot integration test suite (`ApplicationSecurityTestingIntegrationTests.java` — 19 tests), published findings register and formal risk acceptance sign-off, and created automated verification script (`validate-application-security.sh`). Published full specification in `docs/53-APPLICATION-SECURITY-TESTING.md`. See `docs/handoffs/LOS-1509.md`.
 
 - LOS-1508 — Established multi-tier automated security scanning (dependencies, secrets, container images), severity classification & remediation SLAs (Critical/High release-blocking), time-bound vulnerability exception registry (`scan-exceptions.json`) with owner accountability and automated expiry enforcement, SPDX/CycloneDX SBOM generation and SLSA Level 3 build provenance attestations (`generate-sbom-and-provenance.sh`), CI scanner integration (Gitleaks, Trivy, locked dependency verification) with nightly scheduled scanning (`0 2 * * *`), and automated verification script (`validate-security-scans.sh`). Published full specification in `docs/52-DEPENDENCY-SECRET-CONTAINER-SCANS.md`. See `docs/handoffs/LOS-1508.md`.
 

@@ -43,6 +43,6 @@
 
 - Automated unit/integration/E2E security cases.
 - Dependency, secret, container vulnerability scanning, and SBOM/provenance verification per [52-DEPENDENCY-SECRET-CONTAINER-SCANS.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/52-DEPENDENCY-SECRET-CONTAINER-SCANS.md).
-- OWASP ZAP baseline against staging plus manual auth/IDOR/CSRF checks.
+- OWASP ZAP baseline and active staging penetration checks plus IDOR/CSRF/session/reset/upload/export/cache tests per [53-APPLICATION-SECURITY-TESTING.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/53-APPLICATION-SECURITY-TESTING.md). Fix or formally accept all findings.
 - Cloudflare and origin TLS configuration review.
 - Backup restoration and rollback rehearsal.
