@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-11 (LOS-1503 Run frontend accessibility audit)
+Last updated: 2026-09-11 (LOS-1504 Run responsive/browser matrix)
 
 ## Phase
 
@@ -12,7 +12,10 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 
 ## Completed
 
+- LOS-1504 — Executed responsive/browser matrix across Chrome, Firefox, WebKit/Safari, and Edge on desktop, mobile, and tablet viewports. Expanded Playwright configuration from 2 to 8 browser projects (`desktop-chromium`, `mobile-chromium`, `desktop-firefox`, `mobile-firefox`, `desktop-webkit`, `mobile-webkit`, `desktop-edge`, `tablet-chromium`). Created 44 automated browser-matrix scenarios across 7 sections: public route rendering (no horizontal overflow, design token resolution), authenticated shell rendering, touch target minimum size (≥ 44×44 CSS px on viewports ≤ 600 px), quick-add interaction (zero console errors), service worker registration, viewport breakpoints (320/375/768/1024/1280/1440 px), and HTML lang/title validity. All scenarios pass 100% across all 8 browser targets. Published browser support policy and tier classification in `docs/48-BROWSER-SUPPORT-POLICY.md` covering Tier-1 fully-supported (Chrome, Firefox, Safari, Edge), Tier-2 best-effort (Samsung Internet, Chrome/Firefox for iOS, Brave), and Tier-3 explicitly unsupported (IE, legacy EdgeHTML, Opera Mini) browsers, cross-browser CSS/JS baseline, browserslist target, and 5 known cross-browser inconsistencies with documented mitigations. See `docs/handoffs/LOS-1504.md`.
+
 - LOS-1503 — Executed comprehensive WCAG 2.2 AA frontend accessibility audit across all public and protected routes, dialogs, 320px reflow, 200% zoom, reduced motion, and forced colors. Remediated active task summary metric preset label contrast (5.5:1 on `--lifeos-color-on-primary-soft`), progress ring value background (15.3:1 on `--lifeos-color-surface`), and task project link fallback names. Created 37 automated Playwright accessibility audit scenarios passing 100% on desktop and mobile viewports. Published audit specification in `docs/47-FRONTEND-ACCESSIBILITY-AUDIT.md`. See `docs/handoffs/LOS-1503.md`.
+
 
 - LOS-1502 — Built comprehensive cross-user authorization matrix and endpoint isolation suite (`CrossUserAuthorizationMatrixIntegrationTests.java`) testing 21 integration scenarios across Identity/Profiles/Sessions, Projects/Milestones, Tasks/Subtasks/MIT/Dependencies/Recurring Series, Time Blocks/Calendar, Focus Sessions, Goals/Check-ins/Links, Habits/Entries/Pauses/Stats, Notes/Brain Dump, Sprints/Weekly Plans/Reviews, Labels/Comments/Activity, Search/Reports/Exports/Notifications. Verified row-level user scoping, indistinguishability principle (404 RESOURCE_NOT_FOUND / empty collections), and cross-user foreign reference rejection (400 BAD_REQUEST). Published authorization matrix specification in `docs/46-CROSS-USER-AUTHORIZATION-MATRIX.md`. See `docs/handoffs/LOS-1502.md`.
 

@@ -23,12 +23,10 @@ export default defineConfig({
     timezoneId: "UTC",
     launchOptions: {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      ...(process.platform === "darwin" && {
-        channel: "chrome",
-      }),
     },
   },
   projects: [
+    // ── Chrome / Chromium ────────────────────────────────────────────────────
     {
       name: "desktop-chromium",
       use: {
@@ -41,6 +39,56 @@ export default defineConfig({
       use: {
         ...devices["Pixel 5"],
         viewport: { width: 375, height: 667 },
+      },
+    },
+
+    // ── Firefox ──────────────────────────────────────────────────────────────
+    {
+      name: "desktop-firefox",
+      use: {
+        ...devices["Desktop Firefox"],
+        viewport: { width: 1280, height: 800 },
+      },
+    },
+    {
+      name: "mobile-firefox",
+      use: {
+        ...devices["Desktop Firefox"],
+        viewport: { width: 375, height: 667 },
+        isMobile: false,
+      },
+    },
+
+    // ── WebKit / Safari ──────────────────────────────────────────────────────
+    {
+      name: "desktop-webkit",
+      use: {
+        ...devices["Desktop Safari"],
+        viewport: { width: 1280, height: 800 },
+      },
+    },
+    {
+      name: "mobile-webkit",
+      use: {
+        ...devices["iPhone 14"],
+      },
+    },
+
+    // ── Edge (Chromium) ──────────────────────────────────────────────────────
+    {
+      name: "desktop-edge",
+      use: {
+        ...devices["Desktop Edge"],
+        viewport: { width: 1280, height: 800 },
+      },
+    },
+
+    // ── Tablet ───────────────────────────────────────────────────────────────
+    {
+      name: "tablet-chromium",
+      use: {
+        ...devices["Galaxy Tab S4"],
+        viewport: { width: 800, height: 1280 },
       },
     },
   ],
