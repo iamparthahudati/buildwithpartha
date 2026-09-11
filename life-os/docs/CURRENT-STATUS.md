@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-12 (LOS-1512 Verify data export, deletion lifecycle, and privacy)
+Last updated: 2026-09-12 (LOS-1513 Run backup restoration rehearsal)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1513 — Executed end-to-end disaster recovery and backup restoration rehearsal: verified AES-256 GPG encrypted database dump and application file archive restoration into an isolated test environment, validated Flyway schema migrations, verified 100% data fidelity and relational integrity across sampled multi-domain entities, verified RPO (24h target, 0h snapshot) and RTO (< 15 min target, < 5s automated / ~3 min drill) SLA thresholds, replayed post-restoration deletion ledger for DPDP/GDPR compliance, and executed safe cryptographic teardown; implemented Spring Boot integration suite (`BackupRestorationRehearsalIntegrationTests.java`), rehearsal runner (`run-backup-restoration-rehearsal.sh`), and audit script (`validate-backup-restoration-rehearsal.sh`); published specification (`docs/56-BACKUP-RESTORATION-REHEARSAL.md`). See `docs/handoffs/LOS-1513.md`.
 
 - LOS-1512 — Verified data export completeness across all 19 domain models (`manifest.json`, `account.json`, `terms.json`, `preferences.json`, `tasks.json`, `projects.json`, `labels.json`, `timeblocks.json`, `focus_sessions.json`, `sprints.json`, `weekly_plans.json`, `reviews.json`, `goals.json`, `notes.json`, `braindump.json`, `habits.json`, `notifications.json`, `activity.json`, `comments.json`, `attachments.json`, `README.md`), strict exclusion of Argon2 password hashes and authentication tokens, multi-tenant export isolation, 30-day deletion grace period lifecycle with immediate multi-device session revocation, uncancelled deletion cascade purge with minimal non-PII audit ledger retention; implemented 16 domain `UserDataExportContributor` providers, automated Spring Boot verification suite (`DataPrivacyVerificationIntegrationTests.java`), and automated verification script (`validate-data-privacy.sh`); updated privacy specification (`docs/31-PRIVACY-DATA-LIFECYCLE.md`). See `docs/handoffs/LOS-1512.md`.
 
