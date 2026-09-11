@@ -13,7 +13,7 @@
 
 - Same-origin architecture; production CORS disabled.
 - CSRF token on every mutation; reject missing/mismatched origin on sensitive requests.
-- Strict CSP, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and anti-framing policy at Caddy/Cloudflare.
+- Strict CSP, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, COOP/CORP, and anti-framing policy across Caddy, Nginx, and Spring Boot API tiers per [51-SECURITY-HEADERS-AND-CSP.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/51-SECURITY-HEADERS-AND-CSP.md).
 - Validate all input server-side; encode output; sanitize any future rich text using an allowlist.
 - Rate limit login, signup, verification resend, reset, search, exports, and write bursts.
 - Generic auth recovery responses prevent account enumeration.

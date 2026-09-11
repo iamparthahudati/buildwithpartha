@@ -117,6 +117,38 @@ public class ApiSecurityConfiguration {
                                 StandardErrorCodes.ACCESS_DENIED,
                                 "Access denied",
                                 "You do not have permission to perform this action.")))
+        .headers(
+            headers -> {
+              headers.contentTypeOptions(
+                  org.springframework.security.config.Customizer.withDefaults());
+              headers.frameOptions(
+                  org.springframework.security.config.annotation.web.configurers.HeadersConfigurer
+                          .FrameOptionsConfig
+                      ::deny);
+              headers.httpStrictTransportSecurity(
+                  hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000).preload(true));
+              headers.referrerPolicy(
+                  referrer ->
+                      referrer.policy(
+                          org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter
+                              .ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN));
+              headers.addHeaderWriter(
+                  new org.springframework.security.web.header.writers.StaticHeadersWriter(
+                      "Permissions-Policy",
+                      "camera=(), microphone=(), geolocation=(), payment=(), usb=(),"
+                          + " screen-wake-lock=()"));
+              headers.contentSecurityPolicy(
+                  csp -> csp.policyDirectives("default-src 'none'; frame-ancestors 'none'"));
+              headers.addHeaderWriter(
+                  new org.springframework.security.web.header.writers.StaticHeadersWriter(
+                      "X-XSS-Protection", "0"));
+              headers.addHeaderWriter(
+                  new org.springframework.security.web.header.writers.StaticHeadersWriter(
+                      "Cross-Origin-Opener-Policy", "same-origin"));
+              headers.addHeaderWriter(
+                  new org.springframework.security.web.header.writers.StaticHeadersWriter(
+                      "Cross-Origin-Resource-Policy", "same-origin"));
+            })
         .requestCache(cache -> cache.disable())
         .httpBasic(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable);
