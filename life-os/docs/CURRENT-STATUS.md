@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-10 (LOS-1501 Build critical Playwright suite)
+Last updated: 2026-09-11 (LOS-1502 Build cross-user authorization matrix)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1502 — Built comprehensive cross-user authorization matrix and endpoint isolation suite (`CrossUserAuthorizationMatrixIntegrationTests.java`) testing 21 integration scenarios across Identity/Profiles/Sessions, Projects/Milestones, Tasks/Subtasks/MIT/Dependencies/Recurring Series, Time Blocks/Calendar, Focus Sessions, Goals/Check-ins/Links, Habits/Entries/Pauses/Stats, Notes/Brain Dump, Sprints/Weekly Plans/Reviews, Labels/Comments/Activity, Search/Reports/Exports/Notifications. Verified row-level user scoping, indistinguishability principle (404 RESOURCE_NOT_FOUND / empty collections), and cross-user foreign reference rejection (400 BAD_REQUEST). Published authorization matrix specification in `docs/46-CROSS-USER-AUTHORIZATION-MATRIX.md`. See `docs/handoffs/LOS-1502.md`.
 
 - LOS-1501 — Built critical Playwright E2E suite covering all 7 core user journeys across Desktop Chromium (1280x800) and Mobile Chromium (Pixel 5 375x667): identity & onboarding (`01-identity-onboarding.spec.ts`), project to focused completion (`02-project-task-focus-complete.spec.ts`), fast capture brain dump & conversion (`03-brain-dump-offline-queue.spec.ts`), week planning & daily reviews (`04-planning-and-reviews.spec.ts`), recurring tasks across time boundaries (`05-recurring-tasks.spec.ts`), account privacy/export/delete lifecycle (`06-privacy-export-delete.spec.ts`), and global search (`07-global-search.spec.ts`). Implemented in-memory stateful API mock router (`mockApi.ts`) covering all LifeOS REST contracts, exact dependency locking (`@playwright/test` pinned to `1.51.0`), and automated test runner script (`scripts/run-playwright-suite.sh`) with 100% test pass. See `docs/handoffs/LOS-1501.md`.
 
