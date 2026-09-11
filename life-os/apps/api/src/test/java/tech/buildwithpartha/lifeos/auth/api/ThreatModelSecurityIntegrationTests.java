@@ -12,6 +12,7 @@ import jakarta.servlet.http.Cookie;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import tech.buildwithpartha.lifeos.auth.domain.Session;
 import tech.buildwithpartha.lifeos.auth.domain.SessionRepository;
 import tech.buildwithpartha.lifeos.auth.domain.User;
 import tech.buildwithpartha.lifeos.auth.domain.UserRepository;
+import tech.buildwithpartha.lifeos.common.ratelimit.RateLimiterService;
 import tools.jackson.databind.ObjectMapper;
 
 /**
@@ -43,16 +45,15 @@ import tools.jackson.databind.ObjectMapper;
  *       tampering are blocked.
  *   <li><b>Repudiation</b>: Security audit records and deterministic trace IDs correlate all
  *       requests.
- *   <li><b>Information Disclosure</b>: Actuator surface is locked down, anti-enumeration produces
- *       uniform errors, and IDOR lookups return indistinguishable 404s.
- *   <li><b>Denial of Service</b>: Malicious / dangerous MIME uploads are blocked.
- *   <li><b>Elevation of Privilege</b>: Direct object modification outside tenant context is
- *       forbidden.
+ *   <li><b>Information Disclosure</b>: Non-existent/foreign resource 404 indistinguishability,
+ *       actuator lockdown, and anti-enumeration generic responses.
+ *   <li><b>Denial of Service</b>: Dangerous executable file extensions are rejected.
+ *   <li><b>Elevation of Privilege</b>: Cross-tenant modification/deletion is strictly prohibited.
  * </ul>
  */
-@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 @DisplayName("STRIDE Threat Model Verification Suite (LOS-1506)")
 class ThreatModelSecurityIntegrationTests {
 
@@ -64,6 +65,7 @@ class ThreatModelSecurityIntegrationTests {
   private final SessionRepository sessionRepository;
   private final SecureTokenGenerator tokenGenerator;
   private final ObjectMapper objectMapper;
+  private final RateLimiterService rateLimiterService;
 
   @Autowired
   ThreatModelSecurityIntegrationTests(
@@ -71,12 +73,21 @@ class ThreatModelSecurityIntegrationTests {
       UserRepository userRepository,
       SessionRepository sessionRepository,
       SecureTokenGenerator tokenGenerator,
-      ObjectMapper objectMapper) {
+      ObjectMapper objectMapper,
+      @Autowired(required = false) RateLimiterService rateLimiterService) {
     this.mockMvc = mockMvc;
     this.userRepository = userRepository;
     this.sessionRepository = sessionRepository;
     this.tokenGenerator = tokenGenerator;
     this.objectMapper = objectMapper;
+    this.rateLimiterService = rateLimiterService;
+  }
+
+  @BeforeEach
+  void setUp() {
+    if (rateLimiterService != null) {
+      rateLimiterService.resetAll();
+    }
   }
 
   private record UserContext(

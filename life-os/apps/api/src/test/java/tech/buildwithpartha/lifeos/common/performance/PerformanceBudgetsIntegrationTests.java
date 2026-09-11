@@ -176,6 +176,7 @@ class PerformanceBudgetsIntegrationTests {
   @Test
   @DisplayName("Database query performance monitor records latencies without regression warning")
   void databaseQueryExecutionLatencyUnderBudget() {
+    queryPerformanceMonitor.resetSlowQueryCount();
     long recorded = queryPerformanceMonitor.recordQueryExecution("perf_test_query", 25L);
     assertThat(recorded).isEqualTo(25L);
     assertThat(queryPerformanceMonitor.getSlowQueryCount()).isEqualTo(0L);

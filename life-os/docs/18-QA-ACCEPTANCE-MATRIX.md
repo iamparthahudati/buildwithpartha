@@ -76,3 +76,15 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 - QA-PERF-002: Real-user metrics evaluate Core Web Vitals targets (LCP $\le 1500\text{ ms}$, INP $\le 100\text{ ms}$, CLS $\le 0.05$, FCP $\le 1000\text{ ms}$, TTFB $\le 400\text{ ms}$).
 - QA-PERF-003: Backend API latency SLAs (Tier 1 $\le 100\text{ ms}$, Tier 2 $\le 250\text{ ms}$, Tier 3 $\le 500\text{ ms}$ p95) and large-data volume scalability (50+ tasks, 100+ habit logs) execute under budget.
 
+## Failure and recovery UX
+
+- QA-FAIL-001: Offline mode displays honest disconnected banner and last sync time, gates unsafe remote actions, enqueues mutations with idempotency keys, preserves drafts, and replays on reconnect.
+- QA-FAIL-002: Network timeouts (504/aborted requests) retain in-flight form inputs and allow non-blocking retry with the same idempotency key without duplicate creation.
+- QA-FAIL-003: 5xx server downtime and unexpected errors return sanitized RFC 7807 problem details with correlation ID (`Reference ID: <id>`) and zero stack trace/internal disclosure in UI.
+- QA-FAIL-004: HTTP 429 rate limiting returns `Retry-After` header, communicates cooldown guidance, prevents rapid duplicate clicks, and preserves form inputs.
+- QA-FAIL-005: Expired authentication (401) preserves in-progress draft, redirects to login with `returnTo`, restores target destination and draft upon re-auth, and purges previous user cache on account switch.
+- QA-FAIL-006: Stale version (409) optimistic concurrency conflict presents clear resolution choices (keep changes, reload server) and never silently overwrites local edits.
+- QA-FAIL-007: Background and asynchronous job failures display honest failure status badges, error summaries, and retry actions without blocking application navigation.
+- QA-FAIL-008: Composite Today dashboard isolates single widget failure with inline retryable error state while surrounding healthy widgets and shell remain fully interactive.
+
+
