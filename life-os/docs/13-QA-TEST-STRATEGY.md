@@ -7,7 +7,7 @@
 - Backend integration: Spring Boot + Testcontainers PostgreSQL; Flyway runs exactly as production.
 - Contract: OpenAPI/schema compatibility and frontend API boundary validation.
 - End to end: Playwright against the composed stack for critical journeys.
-- Non-functional: dependency/secret/container scans, performance budgets, accessibility automation, backup/restore scripts.
+- Non-functional: dynamic application security testing (OWASP ZAP / penetration testing), dependency/secret/container scans, performance budgets, accessibility automation, backup/restore scripts.
 
 The frontend unit baseline enforces 80% statements, branches, functions and lines through Vitest's V8 provider. Shared Testing Library render/user-event support and the axe helper live under `apps/web/src/test`. JSDOM cannot calculate layout-dependent color contrast, so that axe rule is disabled only in unit tests and must be covered by later browser automation plus manual WCAG 2.2 AA review.
 
