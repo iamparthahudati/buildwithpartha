@@ -134,10 +134,13 @@ Caddy functions as the primary edge reverse proxy for domain `buildwithpartha.te
 ### Security Headers Policy:
 - `Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"`
 - `X-Content-Type-Options "nosniff"`
-- `X-Frame-Options "SAMEORIGIN"`
+- `X-Frame-Options "DENY"`
 - `Referrer-Policy "strict-origin-when-cross-origin"`
-- `Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"`
-- `Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'self';"`
+- `Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), screen-wake-lock=()"`
+- `X-XSS-Protection "0"`
+- `Cross-Origin-Opener-Policy "same-origin"`
+- `Cross-Origin-Resource-Policy "same-origin"`
+- `Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;"` (per [docs/51-SECURITY-HEADERS-AND-CSP.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/51-SECURITY-HEADERS-AND-CSP.md))
 
 ### Compression & Logging:
 - HTTP response compression enabled using `zstd` and `gzip`.

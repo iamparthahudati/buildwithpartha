@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-11 (LOS-1506 Run threat model)
+Last updated: 2026-09-11 (LOS-1507 Add security headers and CSP)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1507 — Established defense-in-depth HTTP security headers and strict Content Security Policy (CSP) enforcement across Edge reverse proxy (Caddy / Cloudflare), Static Web container (Nginx), and REST API service (Spring Boot). Removed unsafe broad exceptions (`unsafe-inline`, `unsafe-eval`) from `script-src`; restricted framing via `X-Frame-Options: DENY` and `frame-ancestors 'none'`; enforced 1-year HSTS with subdomains and preload; restricted sensitive hardware APIs via `Permissions-Policy`; disabled legacy XSS auditors with `X-XSS-Protection: 0`; and configured cross-origin isolation (`COOP`/`CORP`). Implemented automated backend integration test suite (`SecurityHeadersIntegrationTests.java` — 10 tests), frontend Playwright E2E test suite (`security-headers.spec.ts`), and static infrastructure verification script (`validate-security-headers.sh`). Published full specification in `docs/51-SECURITY-HEADERS-AND-CSP.md`. See `docs/handoffs/LOS-1507.md`.
 
 - LOS-1506 — Executed comprehensive data-flow and STRIDE threat model review across all 9 system boundaries (auth, API, DB, files, mail, Cloudflare, offline cache, exports, admin/ops). Formalized trust boundaries, entry points, data flows, and risk assessment matrix; mapped all 10 core High/Critical risks (HR-01 through HR-10) to explicit owners, architectural mitigations, and test suites. Implemented automated STRIDE integration test suite (`ThreatModelSecurityIntegrationTests.java` — 13 tests) verifying spoofing defenses (forged/expired cookies, session revocation), tampering defenses (CSRF enforcement, cross-user reference rejection), repudiation defenses (correlation ID propagation, session audit metadata), information disclosure defenses (actuator endpoint denial, anti-enumeration, IDOR indistinguishability), denial of service defenses (executable file upload blocking), and privilege elevation defenses (cross-tenant mutation rejection). Published threat model specification in `docs/50-THREAT-MODEL.md`. See `docs/handoffs/LOS-1506.md`.
 
