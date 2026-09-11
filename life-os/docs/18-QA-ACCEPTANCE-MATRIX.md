@@ -98,5 +98,13 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 - QA-PRIV-007: Account deletion retains only minimal non-PII audit record (`account_deletion_requests` with `PURGED` status) per R6/R8 retention policy.
 - QA-PRIV-008: Automated data privacy audit script (`validate-data-privacy.sh`) passes in CI.
 
+## Backup restoration rehearsal
 
-
+- QA-BKP-001: Automated restoration rehearsal decrypts AES-256 encrypted production-like database backup with SHA-256 checksum verification.
+- QA-BKP-002: Restored PostgreSQL database executes Flyway migration validation successfully with zero pending migrations and valid schema checksums.
+- QA-BKP-003: Restored database passes 100% data integrity and relational consistency checks across sampled domain entities (Users, Tasks, Projects, TimeBlocks, Habits, Notes, Reviews, Goals, Focus Sessions, Notifications, Audit Ledger).
+- QA-BKP-004: Restored application file archive correctly extracts attachments and user exports with relational mapping and orphan reconciliation.
+- QA-BKP-005: Restoration rehearsal execution meets the RTO target ($< 15\text{ minutes}$ / $900\text{ s}$) and satisfies RPO target ($24\text{ hours}$).
+- QA-BKP-006: Post-restoration deletion-ledger replay successfully identifies and purges accounts deleted between backup snapshot timestamp and restoration time.
+- QA-BKP-007: Safe teardown and destruction policy completely destroys temporary decrypted dumps, isolated database schemas/instances, and test file fixtures without data leakage.
+- QA-BKP-008: Automated verification audit script (`validate-backup-restoration-rehearsal.sh`) and rehearsal script (`run-backup-restoration-rehearsal.sh`) pass cleanly with `--dry-run`.
