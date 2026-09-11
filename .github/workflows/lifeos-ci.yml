@@ -9,6 +9,8 @@ on:
     branches:
       - develop
       - master
+  schedule:
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -49,6 +51,8 @@ jobs:
         run: node life-os/scripts/validate-dependency-locks.mjs
       - name: Validate CI policy
         run: node life-os/scripts/validate-ci-workflow.mjs
+      - name: Validate security scans and gating
+        run: sh life-os/scripts/validate-security-scans.sh --dry-run
 
   frontend:
     name: LifeOS / Frontend
@@ -122,3 +126,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_ENABLE_COMMENTS: "false"
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
+
+  container-scan:
+    name: LifeOS / Container scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Validate container build configurations
+        run: sh life-os/scripts/validate-container-builds.sh --dry-run
+      - name: Scan repository and container configurations for vulnerabilities
+        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # 0.29.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'

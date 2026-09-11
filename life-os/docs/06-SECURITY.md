@@ -37,12 +37,12 @@
 - Containers run unprivileged, use read-only filesystems where practical, and expose only Caddy ports.
 - PostgreSQL stays on a private network and uses a least-privilege application role.
 - Nightly encrypted backups, off-VPS copies, retention policy, and quarterly restore drill.
-- Dependency, image, and secret scans run in CI. Production deploy requires clean high/critical findings or an explicit documented exception.
+- Dependency, image, and secret scans run in CI and nightly schedules per [52-DEPENDENCY-SECRET-CONTAINER-SCANS.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/52-DEPENDENCY-SECRET-CONTAINER-SCANS.md). Production deploy requires clean high/critical findings or an explicit documented exception.
 
 ## Verification before launch
 
 - Automated unit/integration/E2E security cases.
-- Dependency and container scan.
+- Dependency, secret, container vulnerability scanning, and SBOM/provenance verification per [52-DEPENDENCY-SECRET-CONTAINER-SCANS.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/52-DEPENDENCY-SECRET-CONTAINER-SCANS.md).
 - OWASP ZAP baseline against staging plus manual auth/IDOR/CSRF checks.
 - Cloudflare and origin TLS configuration review.
 - Backup restoration and rollback rehearsal.

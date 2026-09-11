@@ -56,7 +56,7 @@ The security change must:
 5. receive review before merge, except when the owner records an emergency exception and performs retrospective review within one business day;
 6. publish through the normal tagged release/rollback process and confirm the vulnerable version is no longer deployed.
 
-Security urgency changes cadence, not evidence requirements. Dependabot alerts and security updates must be enabled in repository settings once the remote repository is connected. Broader scheduled scanning, severity gates, allowlist expiry, SBOM and provenance remain owned by LOS-1508.
+Security urgency changes cadence, not evidence requirements. Dependabot alerts and security updates must be enabled in repository settings once the remote repository is connected. Broader scheduled scanning, severity gates, allowlist expiry, SBOM, and provenance are specified in [52-DEPENDENCY-SECRET-CONTAINER-SCANS.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/52-DEPENDENCY-SECRET-CONTAINER-SCANS.md) ([LOS-1508](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/backlog/EPIC-15-QUALITY-SECURITY.md)).
 
 ## Review and rollback
 
