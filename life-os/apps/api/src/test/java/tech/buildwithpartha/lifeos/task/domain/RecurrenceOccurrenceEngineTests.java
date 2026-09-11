@@ -223,6 +223,63 @@ class RecurrenceOccurrenceEngineTests {
             LocalDate.of(2026, 9, 1), LocalDate.of(2026, 9, 2), LocalDate.of(2026, 9, 3));
   }
 
+  // LOS-1505 additional boundary cases ─────────────────────────────────────
+
+  @Test
+  @DisplayName("Monthly day-28 across Feb 2024 (leap year) and Feb 2025 (non-leap)")
+  void monthlyDay28AcrossLeapAndNonLeapFeb() {
+    RecurringTaskSeries series =
+        createSeries(
+            RecurrenceFrequency.MONTHLY,
+            1,
+            null,
+            28,
+            RecurrenceEndMode.NEVER,
+            null,
+            null,
+            LocalDate.of(2024, 1, 28));
+
+    List<LocalDate> dates =
+        RecurrenceOccurrenceEngine.generateOccurrenceDates(series, LocalDate.of(2025, 3, 28));
+
+    // day-28 always exists in every month; no clamping needed
+    assertThat(dates)
+        .contains(LocalDate.of(2024, 1, 28))
+        .contains(LocalDate.of(2024, 2, 28)) // leap year but day 28 is valid as-is
+        .contains(LocalDate.of(2024, 3, 28))
+        .contains(LocalDate.of(2025, 2, 28)) // non-leap year; day 28 still valid
+        .contains(LocalDate.of(2025, 3, 28));
+    // Verify no date is Feb 29 (day-28 series must never produce Feb 29)
+    assertThat(dates).doesNotContain(LocalDate.of(2024, 2, 29));
+  }
+
+  @Test
+  @DisplayName("Monthly day-31 UNTIL_DATE ending exactly on Mar 31 includes last occurrence")
+  void monthlyDay31UntilDateEndingOnMar31IncludesLast() {
+    RecurringTaskSeries series =
+        createSeries(
+            RecurrenceFrequency.MONTHLY,
+            1,
+            null,
+            31,
+            RecurrenceEndMode.UNTIL_DATE,
+            LocalDate.of(2026, 3, 31),
+            null,
+            LocalDate.of(2026, 1, 31));
+
+    List<LocalDate> dates =
+        RecurrenceOccurrenceEngine.generateOccurrenceDates(
+            series, LocalDate.of(2026, 5, 31)); // horizon beyond end date
+
+    // Feb 28 (non-leap clamping), then Mar 31 exactly at the end date
+    assertThat(dates)
+        .containsExactly(
+            LocalDate.of(2026, 1, 31),
+            LocalDate.of(2026, 2, 28), // clamped
+            LocalDate.of(2026, 3, 31)) // exactly at UNTIL_DATE boundary — must be included
+        .doesNotContain(LocalDate.of(2026, 4, 30)); // April occurrence must be excluded
+  }
+
   private RecurringTaskSeries createSeries(
       RecurrenceFrequency frequency,
       int intervalValue,

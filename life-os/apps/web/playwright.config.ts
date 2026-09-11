@@ -32,6 +32,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 800 },
+        ...(process.platform === "darwin" && { channel: "chrome" }),
       },
     },
     {
@@ -39,6 +40,7 @@ export default defineConfig({
       use: {
         ...devices["Pixel 5"],
         viewport: { width: 375, height: 667 },
+        ...(process.platform === "darwin" && { channel: "chrome" }),
       },
     },
 
