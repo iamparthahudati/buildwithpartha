@@ -12,7 +12,7 @@
 | LOS-1508 | Add dependency/secret/container scans | CI/Scheduled scanning, severity policy, allowlist expiry/owner and SBOM/provenance artifacts. High/critical block release unless documented exception. | LOS-0212, LOS-1603 | S | Done |
 | LOS-1509 | Perform application security testing | ZAP baseline/targeted active staging checks plus manual IDOR/CSRF/session/reset/upload/export/cache tests. Fix or formally accept all findings. | LOS-1502, LOS-1506–LOS-1508 | M | Done |
 | LOS-1510 | Establish performance budgets | Route bundle, LCP/INP/CLS, API p95, DB query, memory/CPU and large-data budgets; automate representative checks and remediate failures. | LOS-1413 | S | Done |
-| LOS-1511 | Test failure and recovery UX | Inject offline/timeouts/5xx/429/expired auth/stale version/job failure/partial widget failure; verify preserved work, honest state and recovery. | LOS-1501 | M | Backlog |
+| LOS-1511 | Test failure and recovery UX | Inject offline/timeouts/5xx/429/expired auth/stale version/job failure/partial widget failure; verify preserved work, honest state and recovery. | LOS-1501 | M | Done |
 | LOS-1512 | Verify data export/deletion/privacy | Export completeness/portability, deletion/grace/purge/backup policy, session revoke, logs/redaction and policy copy match implementation. | LOS-0519 | S | Backlog |
 | LOS-1513 | Run backup restoration rehearsal | Restore production-like encrypted backup into isolated environment, verify migrations and sampled user data, measure RPO/RTO, destroy restored copy safely. | LOS-1608 | S | Backlog |
 | LOS-1514 | Prepare launch QA report | Consolidate automated/manual evidence, defects, accepted risks, browser/a11y/security/performance/restore results and explicit go/no-go. | LOS-1501–LOS-1513 | S | Backlog |

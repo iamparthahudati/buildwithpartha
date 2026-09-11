@@ -67,6 +67,10 @@ public class RateLimiterService {
     return windows.size();
   }
 
+  public void resetAll() {
+    windows.clear();
+  }
+
   private void recordMetric(RateLimitCategory category, boolean allowed) {
     if (meterRegistry != null) {
       Counter.builder("lifeos.rate_limit.evaluations")
