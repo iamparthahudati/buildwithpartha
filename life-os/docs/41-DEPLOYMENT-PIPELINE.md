@@ -86,7 +86,7 @@ Container image immutability and software bill of materials (SBOM) generation en
 - **Prohibited Tags**: `latest`, `dev`, `master`, and floating timestamps are strictly forbidden for production container references.
 
 ### 2. SBOM Generation Standards:
-- SBOM artifacts are generated during container build execution using `syft` or Docker Buildx SBOM attestations.
+- SBOM artifacts are generated during container build execution using `syft` or Docker Buildx SBOM attestations per [52-DEPENDENCY-SECRET-CONTAINER-SCANS.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/52-DEPENDENCY-SECRET-CONTAINER-SCANS.md) ([LOS-1508](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/backlog/EPIC-15-QUALITY-SECURITY.md)).
 - Supported Formats:
   - **SPDX JSON**: `artifacts/sbom/lifeos-web-<tag>.spdx.json`, `artifacts/sbom/lifeos-api-<tag>.spdx.json`.
   - **CycloneDX JSON**: `artifacts/sbom/lifeos-web-<tag>.cdx.json`, `artifacts/sbom/lifeos-api-<tag>.cdx.json`.

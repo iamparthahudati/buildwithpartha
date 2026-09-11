@@ -27,7 +27,7 @@ All production container images MUST be built using multi-stage builds sourced f
 ### Base Image Rules:
 1. **Zero Untagged or `latest` Dependencies**: Floating tags such as `latest`, `alpine`, or `21-jre` are strictly forbidden in production Dockerfiles.
 2. **Digest Verification Support**: Container builds support pinning image digests (`@sha256:...`) during release tagging in [LOS-1607](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/backlog/EPIC-16-INFRA-LAUNCH.md).
-3. **Weekly Security Audits**: Base image security updates are audited weekly via Dependabot and automated container scans per [DEPENDENCY-POLICY.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/DEPENDENCY-POLICY.md) and [LOS-1508](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/backlog/EPIC-15-QUALITY-SECURITY.md).
+3. **Weekly Security Audits**: Base image security updates are audited weekly via Dependabot and automated container scans per [DEPENDENCY-POLICY.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/DEPENDENCY-POLICY.md) and [52-DEPENDENCY-SECRET-CONTAINER-SCANS.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/52-DEPENDENCY-SECRET-CONTAINER-SCANS.md) ([LOS-1508](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/backlog/EPIC-15-QUALITY-SECURITY.md)).
 
 ---
 

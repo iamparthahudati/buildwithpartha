@@ -31,8 +31,8 @@ Only `Ready` tickets may start. A ticket becomes Ready when its description, con
 ## Merge rules
 
 - Pull the latest `develop` before opening the PR and resolve conflicts on the feature branch.
-- Required checks: formatting, lint, typecheck, unit tests, relevant integration/contract tests, build, secret scan.
-- Required hosted contexts: `LifeOS / Documentation`, `LifeOS / Frontend`, `LifeOS / Backend`, and `LifeOS / Secret scan`.
+- Required checks: formatting, lint, typecheck, unit tests, relevant integration/contract tests, build, secret scan, container scan.
+- Required hosted contexts: `LifeOS / Documentation`, `LifeOS / Frontend`, `LifeOS / Backend`, `LifeOS / Secret scan`, and `LifeOS / Container scan`.
 - At least one approval when another reviewer exists.
 - Squash merge feature branches; the squash message keeps the ticket ID.
 - Delete merged feature branches.

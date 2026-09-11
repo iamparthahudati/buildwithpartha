@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-11 (LOS-1507 Add security headers and CSP)
+Last updated: 2026-09-11 (LOS-1508 Add dependency/secret/container scans)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1508 — Established multi-tier automated security scanning (dependencies, secrets, container images), severity classification & remediation SLAs (Critical/High release-blocking), time-bound vulnerability exception registry (`scan-exceptions.json`) with owner accountability and automated expiry enforcement, SPDX/CycloneDX SBOM generation and SLSA Level 3 build provenance attestations (`generate-sbom-and-provenance.sh`), CI scanner integration (Gitleaks, Trivy, locked dependency verification) with nightly scheduled scanning (`0 2 * * *`), and automated verification script (`validate-security-scans.sh`). Published full specification in `docs/52-DEPENDENCY-SECRET-CONTAINER-SCANS.md`. See `docs/handoffs/LOS-1508.md`.
 
 - LOS-1507 — Established defense-in-depth HTTP security headers and strict Content Security Policy (CSP) enforcement across Edge reverse proxy (Caddy / Cloudflare), Static Web container (Nginx), and REST API service (Spring Boot). Removed unsafe broad exceptions (`unsafe-inline`, `unsafe-eval`) from `script-src`; restricted framing via `X-Frame-Options: DENY` and `frame-ancestors 'none'`; enforced 1-year HSTS with subdomains and preload; restricted sensitive hardware APIs via `Permissions-Policy`; disabled legacy XSS auditors with `X-XSS-Protection: 0`; and configured cross-origin isolation (`COOP`/`CORP`). Implemented automated backend integration test suite (`SecurityHeadersIntegrationTests.java` — 10 tests), frontend Playwright E2E test suite (`security-headers.spec.ts`), and static infrastructure verification script (`validate-security-headers.sh`). Published full specification in `docs/51-SECURITY-HEADERS-AND-CSP.md`. See `docs/handoffs/LOS-1507.md`.
 

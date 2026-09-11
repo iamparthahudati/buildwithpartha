@@ -18,7 +18,8 @@ for branch in develop master; do
       "LifeOS / Documentation",
       "LifeOS / Frontend",
       "LifeOS / Backend",
-      "LifeOS / Secret scan"
+      "LifeOS / Secret scan",
+      "LifeOS / Container scan"
     ]
   },
   "enforce_admins": true,

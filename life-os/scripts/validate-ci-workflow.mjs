@@ -16,6 +16,7 @@ const requiredChecks = [
   "LifeOS / Frontend",
   "LifeOS / Backend",
   "LifeOS / Secret scan",
+  "LifeOS / Container scan",
 ];
 const failures = [];
 
@@ -39,6 +40,7 @@ const requiredFragments = [
   "pull_request:",
   "push:",
   "workflow_dispatch:",
+  "schedule:",
   "permissions:\n  contents: read",
   "cancel-in-progress: true",
   "npm ci --ignore-scripts",
@@ -47,6 +49,8 @@ const requiredFragments = [
   "life-os/apps/api/build/openapi/life-os-openapi.json",
   "if-no-files-found: error",
   "GITLEAKS_ENABLE_COMMENTS: \"false\"",
+  "validate-security-scans.sh",
+  "aquasecurity/trivy-action",
 ];
 
 for (const fragment of requiredFragments) {

@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-11",
+  "description": "LifeOS Vulnerability Exceptions Registry per docs/52-DEPENDENCY-SECRET-CONTAINER-SCANS.md",
+  "exceptions": []
+}
