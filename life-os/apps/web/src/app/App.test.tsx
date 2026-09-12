@@ -9,6 +9,11 @@ describe("App", () => {
   it("composes AppProviders and the real route table, landing on the public entry", async () => {
     renderWithUser(<App />);
 
-    expect(await screen.findByRole("heading", { level: 1, name: "LifeOS" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /A private place to plan work, focus, and reflect/i,
+      }),
+    ).toBeInTheDocument();
   });
 });
