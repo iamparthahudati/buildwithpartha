@@ -46,15 +46,22 @@ public class BackupStatusMetricsProvider implements MeterBinder {
   private final String appFilesBackupStatusPath;
   private final ObjectMapper objectMapper;
 
+  @org.springframework.beans.factory.annotation.Autowired
   public BackupStatusMetricsProvider(
       @Value("${lifeos.monitoring.backup.postgres-status-path:"
           + "/var/log/life-os/postgres-backup-status.json}") String postgresBackupStatusPath,
       @Value("${lifeos.monitoring.backup.app-files-status-path:"
-          + "/var/log/life-os/app-files-backup-status.json}") String appFilesBackupStatusPath,
+          + "/var/log/life-os/app-files-backup-status.json}") String appFilesBackupStatusPath) {
+    this(postgresBackupStatusPath, appFilesBackupStatusPath, new ObjectMapper());
+  }
+
+  public BackupStatusMetricsProvider(
+      String postgresBackupStatusPath,
+      String appFilesBackupStatusPath,
       ObjectMapper objectMapper) {
     this.postgresBackupStatusPath = postgresBackupStatusPath;
     this.appFilesBackupStatusPath = appFilesBackupStatusPath;
-    this.objectMapper = objectMapper;
+    this.objectMapper = objectMapper != null ? objectMapper : new ObjectMapper();
   }
 
   @Override
