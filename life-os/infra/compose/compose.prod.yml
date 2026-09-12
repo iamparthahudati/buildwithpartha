@@ -43,6 +43,13 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "14"
+        compress: "true"
+        labels: "service"
 
   web:
     image: life-os-web:prod
@@ -79,6 +86,13 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "14"
+        compress: "true"
+        labels: "service"
 
   api:
     image: life-os-api:prod
@@ -119,6 +133,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "14"
+        compress: "true"
+        labels: "service"
 
   postgres:
     image: postgres:18.4-alpine
@@ -155,6 +176,13 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "14"
+        compress: "true"
+        labels: "service"
 
 networks:
   frontend-net:
