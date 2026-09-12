@@ -108,3 +108,14 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 - QA-BKP-006: Post-restoration deletion-ledger replay successfully identifies and purges accounts deleted between backup snapshot timestamp and restoration time.
 - QA-BKP-007: Safe teardown and destruction policy completely destroys temporary decrypted dumps, isolated database schemas/instances, and test file fixtures without data leakage.
 - QA-BKP-008: Automated verification audit script (`validate-backup-restoration-rehearsal.sh`) and rehearsal script (`run-backup-restoration-rehearsal.sh`) pass cleanly with `--dry-run`.
+
+## Launch QA report
+
+- QA-REP-001: Consolidated launch QA report ([57-LAUNCH-QA-REPORT.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/57-LAUNCH-QA-REPORT.md)) compiles test execution results, a11y sweeps, browser matrices, security evaluations, performance benchmarks, and restore rehearsal metrics across Epics 01 through 16.
+- QA-REP-002: Defect registry records zero open P0 (Blocker) and zero open P1 (Critical) defects, with all discovered pre-launch findings triaged and resolved.
+- QA-REP-003: Formal accepted risks registry explicitly documents non-blocking edge cases (yearly recurrence gap, half-hour display rounding, timezone change non-retroactivity, single-node recovery interval) with business justifications, mitigations, review dates, and assigned owners.
+- QA-REP-004: All 7 critical Playwright user journeys pass 100% on both Desktop and Mobile Chromium viewports.
+- QA-REP-005: Cross-user authorization matrix confirms 100% row-level tenant isolation and 404/empty indistinguishability across all 19 domain entity aggregates.
+- QA-REP-006: Frontend accessibility audit satisfies WCAG 2.2 AA standards with zero critical/serious violations across public and authenticated routes.
+- QA-REP-007: Security header policies, dependency vulnerability scans, and dynamic application security testing (DAST) pass with zero unaccepted risks.
+- QA-REP-008: Automated Launch QA report audit script (`validate-launch-qa-report.sh`) passes cleanly in CI/dry-run mode with an explicit GO decision sign-off.
