@@ -1,0 +1,20 @@
+# robots.txt for https://buildwithpartha.tech
+User-agent: *
+Allow: /
+Allow: /life-os$
+Allow: /life-os/$
+Allow: /life-os/privacy
+Allow: /life-os/terms
+Allow: /.well-known/security.txt
+Allow: /life-os/.well-known/security.txt
+
+# Disallow private application routes
+Disallow: /life-os/app/
+Disallow: /life-os/api/
+Disallow: /life-os/login
+Disallow: /life-os/signup
+Disallow: /life-os/verify-email
+Disallow: /life-os/forgot-password
+Disallow: /life-os/reset-password
+Disallow: /life-os/cancel-deletion
+Disallow: /life-os/unavailable

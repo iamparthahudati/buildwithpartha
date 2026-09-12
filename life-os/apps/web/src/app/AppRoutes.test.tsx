@@ -121,7 +121,36 @@ describe("AppRoutes", () => {
 
   it("redirects an unmatched top-level path into the LifeOS public entry", async () => {
     renderAt("/somewhere-outside-life-os");
-    expect(await screen.findByRole("heading", { level: 1, name: "LifeOS" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /a private place to plan work, focus, and reflect/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders public LandingRoute at /life-os", async () => {
+    renderAt("/life-os");
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: /a private place to plan work, focus, and reflect/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders public PrivacyRoute at /life-os/privacy", async () => {
+    renderAt("/life-os/privacy");
+    expect(
+      await screen.findByRole("heading", { level: 1, name: /privacy notice/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders public TermsRoute at /life-os/terms", async () => {
+    renderAt("/life-os/terms");
+    expect(
+      await screen.findByRole("heading", { level: 1, name: /terms of service/i }),
+    ).toBeInTheDocument();
   });
 
   it("renders no protected content for a signed-out visitor", () => {
@@ -168,14 +197,6 @@ describe("AppRoutes", () => {
     renderAt("/life-os/app/settings/security", { signedIn: true });
     expect(await screen.findByText("Settings screen: security")).toBeInTheDocument();
   });
-
-  it.each(["/life-os/privacy", "/life-os/terms"])(
-    "renders placeholder route for %s",
-    async (path) => {
-      renderAt(path);
-      expect(await screen.findByText("This screen has not been built yet.")).toBeInTheDocument();
-    },
-  );
 
   it("executes all route lazy loaders correctly and resolves valid component functions", async () => {
     const loaderPromises = Object.entries(ROUTE_LOADERS).map(async ([name, loader]) => {

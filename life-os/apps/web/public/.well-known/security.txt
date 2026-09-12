@@ -1,0 +1,7 @@
+# security.txt for https://buildwithpartha.tech / LifeOS (RFC 9116)
+Contact: mailto:security@buildwithpartha.tech
+Expires: 2027-09-12T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://buildwithpartha.tech/.well-known/security.txt
+Policy: https://buildwithpartha.tech/life-os/privacy
+Hiring: https://buildwithpartha.tech

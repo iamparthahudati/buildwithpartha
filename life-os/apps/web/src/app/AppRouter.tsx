@@ -22,6 +22,7 @@ const ForgotPasswordRoute = lazy(ROUTE_LOADERS.ForgotPasswordRoute);
 const FocusRoute = lazy(ROUTE_LOADERS.FocusRoute);
 const GoalsRoute = lazy(ROUTE_LOADERS.GoalsRoute);
 const GoalDetailsRoute = lazy(ROUTE_LOADERS.GoalDetailsRoute);
+const LandingRoute = lazy(ROUTE_LOADERS.LandingRoute);
 const LoginRoute = lazy(ROUTE_LOADERS.LoginRoute);
 const NotFoundRoute = lazy(ROUTE_LOADERS.NotFoundRoute);
 const NotificationsRoute = lazy(ROUTE_LOADERS.NotificationsRoute);
@@ -29,6 +30,7 @@ const OnboardingRoute = lazy(ROUTE_LOADERS.OnboardingRoute);
 const NotesRoute = lazy(ROUTE_LOADERS.NotesRoute);
 const BrainDumpRoute = lazy(ROUTE_LOADERS.BrainDumpRoute);
 const HabitsRoute = lazy(ROUTE_LOADERS.HabitsRoute);
+const PrivacyRoute = lazy(ROUTE_LOADERS.PrivacyRoute);
 const ProgressRoute = lazy(ROUTE_LOADERS.ProgressRoute);
 const ProjectsRoute = lazy(ROUTE_LOADERS.ProjectsRoute);
 const ProjectDetailsRoute = lazy(ROUTE_LOADERS.ProjectDetailsRoute);
@@ -38,6 +40,7 @@ const SearchRoute = lazy(ROUTE_LOADERS.SearchRoute);
 const SettingsRoute = lazy(ROUTE_LOADERS.SettingsRoute);
 const SprintsRoute = lazy(ROUTE_LOADERS.SprintsRoute);
 const SignupRoute = lazy(ROUTE_LOADERS.SignupRoute);
+const TermsRoute = lazy(ROUTE_LOADERS.TermsRoute);
 const TodayRoute = lazy(ROUTE_LOADERS.TodayRoute);
 const TasksRoute = lazy(ROUTE_LOADERS.TasksRoute);
 const TaskDetailsRoute = lazy(ROUTE_LOADERS.TaskDetailsRoute);
@@ -162,15 +165,15 @@ export function AppRoutes() {
     <Suspense fallback={null}>
       <Routes>
         <Route path="/life-os">
-          <Route index element={<ComingSoonRoute />} />
+          <Route index element={<LandingRoute />} />
           <Route path="signup" element={<SignupRoute />} />
           <Route path="login" element={<LoginRoute />} />
           <Route path="verify-email" element={<VerifyEmailRoute />} />
           <Route path="forgot-password" element={<ForgotPasswordRoute />} />
           <Route path="reset-password" element={<ResetPasswordRoute />} />
           <Route path="cancel-deletion" element={<CancelDeletionRoute />} />
-          <Route path="privacy" element={<ComingSoonRoute />} />
-          <Route path="terms" element={<ComingSoonRoute />} />
+          <Route path="privacy" element={<PrivacyRoute />} />
+          <Route path="terms" element={<TermsRoute />} />
           <Route path="unavailable" element={<UnavailableRoute />} />
 
           <Route
