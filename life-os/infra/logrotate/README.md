@@ -1,6 +1,6 @@
 # LifeOS Log Rotation — Deployment Guide
 
-Specification: [`docs/59-CENTRALIZED-SAFE-LOGS.md`](../docs/59-CENTRALIZED-SAFE-LOGS.md)
+Specification: [`docs/59-CENTRALIZED-SAFE-LOGS.md`](../../docs/59-CENTRALIZED-SAFE-LOGS.md)
 
 ## Overview
 
