@@ -1,6 +1,6 @@
 # Current status
 
-Last updated: 2026-09-12 (LOS-1515 Run final quality/security gate)
+Last updated: 2026-09-12 (LOS-1610 Add monitoring and alerting)
 
 ## Phase
 
@@ -11,6 +11,8 @@ Phase 2 — Identity and application shell. Phase 7 (Epic 07 — Projects and pr
 - LOS-0903 — Responsive, accessible TimeBlockRow component with category swatch/icon resolution, local time range/duration, status/current/conflict badges, project/task context links, start focus/complete buttons, and dropdown action menu. See `docs/handoffs/LOS-0903.md`.
 
 ## Completed
+
+- LOS-1610 — Implemented end-to-end monitoring and alerting for LifeOS production: authored comprehensive specification (`docs/58-MONITORING-AND-ALERTING.md`) covering external uptime (Blackbox Exporter probing `https://buildwithpartha.tech/life-os`), origin/API readiness (Spring Boot Actuator liveness/readiness), TLS certificate expiry (< 14 days warning, < 3 days critical), 5xx error rate (> 1% / 5 min) and API p95 latency (> 1.5s / 5 min) alerts, authentication failure spike detection (> 50/min), database connection pool saturation and PostgreSQL down alerts, VPS system resource alerts (CPU > 85%, memory > 90%, disk > 85%/95%), and job/mail/backup age alerts (backup age > 26h critical); created Prometheus scrape configuration (`infra/monitoring/prometheus/prometheus.yml`) with 6 scrape jobs, 5 alert rule files (`rules/uptime.yml`, `rules/api.yml`, `rules/database.yml`, `rules/system.yml`, `rules/jobs.yml`) defining 17 named alert rules with severity labels and runbook_url annotations; created Blackbox Exporter probe config (`infra/monitoring/blackbox/blackbox.yml`) with HTTP 2xx and TLS connect modules; created Alertmanager routing configuration (`infra/monitoring/alertmanager/alertmanager.yml`) with critical/warning routing tree, 2 inhibition rules, and owner email receivers; implemented `BackupStatusMetricsProvider` Micrometer MeterBinder exposing `lifeos.backup.last_success_timestamp_seconds{backup_type}` gauges from backup status JSON files; created monitoring compose overlay (`infra/compose/compose.monitoring.yml`) with Prometheus, Alertmanager, Blackbox Exporter, Node Exporter, and postgres-exporter containers (all non-root, no external ports); created monitoring secrets template (`infra/monitoring/.env.monitoring.example`); created unit test suite `BackupStatusMetricsProviderTests.java` (7 scenarios); and automated verification script (`scripts/validate-monitoring-and-alerting.sh`). See `docs/58-MONITORING-AND-ALERTING.md` and `docs/handoffs/LOS-1610.md`.
 
 - LOS-1515 — Executed and approved the final Quality, Accessibility, Security, and Resilience Phase Gate (`docs/gates/QUALITY-SECURITY-PHASE-GATE.md`) closing Epic 15: owner approved zero open launch-blocking defects (0 P0, 0 P1, 0 P2), zero Critical/High CVEs/secrets, 34 tested Flyway migrations, verified non-destructive disaster recovery rollback, 100% accessible critical Playwright journeys, and unanimous GO verdict for production release readiness. See `docs/gates/QUALITY-SECURITY-PHASE-GATE.md` and `docs/handoffs/LOS-1515.md`.
 

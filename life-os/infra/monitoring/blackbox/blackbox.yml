@@ -1,0 +1,44 @@
+# Blackbox Exporter configuration for LifeOS — LOS-1610
+# Specification: life-os/docs/58-MONITORING-AND-ALERTING.md §5
+
+modules:
+  # HTTP 2xx probe — follows redirects (for Cloudflare-fronted public URLs)
+  http_2xx_follow_redirects:
+    prober: http
+    timeout: 15s
+    http:
+      valid_http_versions:
+        - "HTTP/1.1"
+        - "HTTP/2.0"
+      valid_status_codes:
+        - 200
+      method: GET
+      follow_redirects: true
+      preferred_ip_protocol: "ip4"
+      fail_if_ssl: false
+      fail_if_not_ssl: false
+      tls_config:
+        insecure_skip_verify: false
+
+  # HTTP 2xx probe — direct (for internal container health endpoints)
+  http_2xx:
+    prober: http
+    timeout: 10s
+    http:
+      valid_http_versions:
+        - "HTTP/1.1"
+        - "HTTP/2.0"
+      valid_status_codes:
+        - 200
+      method: GET
+      follow_redirects: false
+      preferred_ip_protocol: "ip4"
+
+  # TCP TLS connect probe — for certificate expiry checking
+  tls_connect:
+    prober: tcp
+    timeout: 10s
+    tcp:
+      tls: true
+      tls_config:
+        insecure_skip_verify: false

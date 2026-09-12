@@ -1,0 +1,60 @@
+# Database alert rules — LOS-1610
+# Specification: life-os/docs/58-MONITORING-AND-ALERTING.md §6.3
+# Depends on: HikariCP metrics (LOS-1412), postgres-exporter
+
+groups:
+  - name: database
+    interval: 15s
+    rules:
+
+      # DB connection pool saturated
+      - alert: DbPoolSaturation
+        expr: >
+          hikaricp_connections_pending{pool="LifeOsPool"} > 5
+          or
+          (
+            hikaricp_connections_active{pool="LifeOsPool"}
+            /
+            hikaricp_connections_max{pool="LifeOsPool"}
+          ) > 0.85
+        for: 3m
+        labels:
+          severity: critical
+          app: lifeos
+        annotations:
+          summary: "LifeOS DB connection pool is saturated"
+          description: >
+            Either more than 5 threads are waiting for a DB connection, or more than
+            85% of the HikariCP connection pool is in use. This may cause request
+            timeouts and cascading failures. Identify long-running transactions and
+            check for batch job contention.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#87-dbpoolsaturation--database-connection-pool-saturated"
+
+      # PostgreSQL completely unreachable
+      - alert: DbConnectionsDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          app: lifeos
+        annotations:
+          summary: "LifeOS PostgreSQL is down"
+          description: >
+            The postgres-exporter cannot reach the PostgreSQL instance (pg_up=0).
+            The database container may be stopped, crashing, or the volume may be full.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#88-dbconnectionsdown--postgresql-unreachable"
+
+      # PostgreSQL production database approaching 3 GB
+      - alert: DbDiskHighUsage
+        expr: pg_database_size_bytes{datname="lifeos_prod"} > 3000000000
+        for: 15m
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "LifeOS production database size exceeds 3 GB ({{ $value | humanize1024 }}B)"
+          description: >
+            The lifeos_prod PostgreSQL database has grown beyond 3 GB. Review table sizes,
+            dead tuple accumulation, and audit/activity event retention. Apply VACUUM and
+            consider archiving old records per the privacy lifecycle policy.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#89-dbdiskhighusage--postgresql-database-size--3-gb"
