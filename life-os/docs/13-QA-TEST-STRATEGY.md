@@ -33,6 +33,9 @@ The backup restoration rehearsal specification ([56-BACKUP-RESTORATION-REHEARSAL
 
 The consolidated launch QA report ([57-LAUNCH-QA-REPORT.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/57-LAUNCH-QA-REPORT.md)) consolidates automated and manual verification evidence, defect resolution metrics, accepted risk registers, cross-browser and accessibility audits, threat modeling, security header enforcement, vulnerability scans, performance benchmarks, and backup restoration rehearsal metrics into an explicit Go/No-Go release gate decision. Automated audit verification runs in `validate-launch-qa-report.sh`.
 
+The final quality, accessibility, security, and resilience phase gate ([QUALITY-SECURITY-PHASE-GATE.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/gates/QUALITY-SECURITY-PHASE-GATE.md)) establishes owner-approved closure of Epic 15, confirming zero open launch-blocking defects, zero critical/high vulnerabilities, zero untested migrations, validated backup restoration, and 100% accessible critical journeys with unanimous GO verdict. Automated phase gate audit verification runs in `validate-quality-security-gate.sh`.
+
+
 The hosted `LifeOS CI` workflow runs for every pull request and push targeting a permanent branch. Its required jobs validate documentation/dependency/CI policy, execute the complete frontend gate plus a production environment build, execute the clean backend build (including formatting, static analysis, unit/architecture tests, coverage and the validated OpenAPI artifact), and scan complete Git history for secrets. Third-party actions are pinned to full commit SHAs; npm caching is lockfile-scoped and Gradle cache writes are limited to permanent-branch runs.
 
 ## Required test dimensions

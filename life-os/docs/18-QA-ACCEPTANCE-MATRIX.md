@@ -119,3 +119,15 @@ These are release-level cases in addition to ticket tests. IDs stay stable for t
 - QA-REP-006: Frontend accessibility audit satisfies WCAG 2.2 AA standards with zero critical/serious violations across public and authenticated routes.
 - QA-REP-007: Security header policies, dependency vulnerability scans, and dynamic application security testing (DAST) pass with zero unaccepted risks.
 - QA-REP-008: Automated Launch QA report audit script (`validate-launch-qa-report.sh`) passes cleanly in CI/dry-run mode with an explicit GO decision sign-off.
+
+## Quality and security phase gate
+
+- QA-GATE-001: Quality, accessibility, security, and resilience phase gate ([QUALITY-SECURITY-PHASE-GATE.md](file:///Users/parthahudati/Workspace/Website/buildwithpartha/life-os/docs/gates/QUALITY-SECURITY-PHASE-GATE.md)) compiles multi-discipline verification and unanimous GO release approval across all Epic 15 tickets (LOS-1501 through LOS-1515).
+- QA-GATE-002: Zero open launch-blocking defects (0 P0, 0 P1, 0 P2) confirmed across all backend, frontend, infrastructure, and cross-cutting subsystems.
+- QA-GATE-003: Zero open Critical or High security findings across SAST/DAST, dependency vulnerabilities, container images, and Git secret scans.
+- QA-GATE-004: All 34 Flyway database schema migrations (`V1` through `V34`) verified with zero pending migrations and proven non-destructive rollback / backup restoration capability.
+- QA-GATE-005: All 7 critical Playwright user journeys and WCAG 2.2 AA accessibility requirements pass 100% on desktop and mobile viewports with zero critical/serious violations.
+- QA-GATE-006: Tenant isolation and authorization matrix guarantee 100% row-level scoping and 404/empty indistinguishability across all 19 domain models.
+- QA-GATE-007: Formal accepted risks registry (`RISK-01` through `RISK-04`) explicitly signed off by assigned leads with documented mitigations and scheduled review dates.
+- QA-GATE-008: Automated Quality and Security phase gate audit script (`validate-quality-security-gate.sh`) passes cleanly in CI/dry-run mode.
+

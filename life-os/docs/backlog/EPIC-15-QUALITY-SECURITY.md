@@ -16,5 +16,5 @@
 | LOS-1512 | Verify data export/deletion/privacy | Export completeness/portability, deletion/grace/purge/backup policy, session revoke, logs/redaction and policy copy match implementation. | LOS-0519 | S | Done |
 | LOS-1513 | Run backup restoration rehearsal | Restore production-like encrypted backup into isolated environment, verify migrations and sampled user data, measure RPO/RTO, destroy restored copy safely. | LOS-1608 | S | Done |
 | LOS-1514 | Prepare launch QA report | Consolidate automated/manual evidence, defects, accepted risks, browser/a11y/security/performance/restore results and explicit go/no-go. | LOS-1501–LOS-1513 | S | Done |
-| LOS-1515 | Run final quality/security gate | Owner approves no open launch-blocking defects, critical/high findings, untested migrations, broken rollback or inaccessible core journeys. | LOS-1514 | S | Backlog |
+| LOS-1515 | Run final quality/security gate | Owner approves no open launch-blocking defects, critical/high findings, untested migrations, broken rollback or inaccessible core journeys. | LOS-1514 | S | Done |
 
