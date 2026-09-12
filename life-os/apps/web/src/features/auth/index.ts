@@ -36,6 +36,7 @@ export {
   type ChangePasswordField,
 } from "./model/securityValidation";
 export { resolveChangePasswordFieldErrors } from "./model/securityFieldErrors";
+export { TERMS_VERSION, PRIVACY_VERSION } from "./model/legalVersions";
 export type {
   ChangePasswordRequest,
   ChangePasswordResponse,

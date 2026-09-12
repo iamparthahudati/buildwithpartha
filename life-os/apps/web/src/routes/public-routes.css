@@ -1,0 +1,185 @@
+/* Public routes stylesheet (LOS-1614) — Landing, Privacy, Terms */
+
+.lifeos-public-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--lifeos-color-canvas);
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-public-header {
+  border-bottom: 1px solid var(--lifeos-color-border);
+  background-color: var(--lifeos-color-surface);
+  position: sticky;
+  top: 0;
+  z-index: var(--lifeos-z-sticky);
+}
+
+.lifeos-public-header-inner {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: var(--lifeos-space-6);
+  padding-block: var(--lifeos-space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-public-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+  text-decoration: none;
+  color: var(--lifeos-color-text);
+}
+
+.lifeos-public-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-public-main {
+  flex: 1;
+  max-width: 72rem;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--lifeos-space-6);
+  padding-block: var(--lifeos-space-8);
+}
+
+.lifeos-landing-hero {
+  text-align: center;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding-block: var(--lifeos-space-12) var(--lifeos-space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lifeos-space-4);
+}
+
+.lifeos-landing-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lifeos-space-4);
+  margin-block-start: var(--lifeos-space-4);
+  flex-wrap: wrap;
+}
+
+.lifeos-landing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--lifeos-space-6);
+  margin-block: var(--lifeos-space-8);
+}
+
+.lifeos-landing-card {
+  background-color: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-lg);
+  padding: var(--lifeos-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-landing-card-icon {
+  color: var(--lifeos-color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--lifeos-radius-md);
+  background-color: var(--lifeos-color-primary-soft);
+  margin-block-end: var(--lifeos-space-2);
+}
+
+.lifeos-legal-container {
+  max-width: 52rem;
+  margin-inline: auto;
+  background-color: var(--lifeos-color-surface);
+  border: 1px solid var(--lifeos-color-border);
+  border-radius: var(--lifeos-radius-lg);
+  padding: var(--lifeos-space-8);
+}
+
+.lifeos-legal-header {
+  margin-block-end: var(--lifeos-space-6);
+  padding-block-end: var(--lifeos-space-4);
+  border-bottom: 1px solid var(--lifeos-color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-legal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-4);
+  color: var(--lifeos-color-text-secondary);
+  font-size: var(--lifeos-font-size-sm);
+}
+
+.lifeos-legal-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-6);
+  line-height: var(--lifeos-line-height-relaxed);
+}
+
+.lifeos-legal-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-3);
+}
+
+.lifeos-legal-list {
+  padding-inline-start: var(--lifeos-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lifeos-space-2);
+}
+
+.lifeos-public-footer {
+  border-top: 1px solid var(--lifeos-color-border);
+  background-color: var(--lifeos-color-surface);
+  padding-block: var(--lifeos-space-6);
+  margin-block-start: auto;
+}
+
+.lifeos-public-footer-inner {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: var(--lifeos-space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--lifeos-space-4);
+  font-size: var(--lifeos-font-size-sm);
+  color: var(--lifeos-color-text-secondary);
+}
+
+.lifeos-public-footer-links {
+  display: flex;
+  align-items: center;
+  gap: var(--lifeos-space-4);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 48rem) {
+  .lifeos-public-header-inner,
+  .lifeos-public-main,
+  .lifeos-public-footer-inner {
+    padding-inline: var(--lifeos-space-4);
+  }
+
+  .lifeos-legal-container {
+    padding: var(--lifeos-space-5);
+  }
+}

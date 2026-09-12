@@ -15,7 +15,7 @@
 | LOS-1611 | Add centralized safe logs | Rotation/retention, protected access, correlation search, redaction verification and disk-pressure protection. Logs cannot expose user content/secrets. | LOS-1411, LOS-1604 | S | Done |
 | LOS-1612 | Write deployment/rollback runbooks | Normal deploy, failed migration, bad app, DB restore, Cloudflare bypass/emergency, certificate, secrets rotation and owner/contact paths. Commands have target checks. | LOS-1607–LOS-1611 | S | Done |
 | LOS-1613 | Rehearse release and rollback | Deploy a release candidate to staging, migrate, smoke, roll back app, test compatible DB strategy and record timings/gaps. | LOS-1612 | M | Done |
-| LOS-1614 | Prepare production domain and legal pages | `/life-os`, auth/legal/error routes, canonical/security contact/privacy/terms copy, robots policy for private app and correct asset base. | LOS-0113, LOS-0603 | S | Backlog |
+| LOS-1614 | Prepare production domain and legal pages | `/life-os`, auth/legal/error routes, canonical/security contact/privacy/terms copy, robots policy for private app and correct asset base. | LOS-0113, LOS-0603 | S | Done |
 | LOS-1615 | Execute production launch | Merge approved `develop` to `master`, tag, deploy exact artifact, run non-destructive smoke/security/TLS/monitoring checks and record release. | LOS-1515, LOS-1613, LOS-1614 | M | Backlog |
 | LOS-1616 | Complete post-launch verification | Observe errors/performance/jobs/backups for defined window, fix or rollback per thresholds, verify first backup and owner journeys, close release with known follow-ups. | LOS-1615 | S | Backlog |
 

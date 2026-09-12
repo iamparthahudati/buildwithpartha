@@ -17,6 +17,7 @@ export const ROUTE_LOADERS = Object.freeze({
   GoalDetailsRoute: () =>
     import("@routes/GoalDetailsRoute").then((m) => ({ default: m.GoalDetailsRoute })),
   LoginRoute: () => import("@routes/LoginRoute").then((m) => ({ default: m.LoginRoute })),
+  LandingRoute: () => import("@routes/LandingRoute").then((m) => ({ default: m.LandingRoute })),
   NotFoundRoute: () => import("@routes/NotFoundRoute").then((m) => ({ default: m.NotFoundRoute })),
   NotificationsRoute: () =>
     import("@routes/NotificationsRoute").then((m) => ({ default: m.NotificationsRoute })),
@@ -26,6 +27,7 @@ export const ROUTE_LOADERS = Object.freeze({
   BrainDumpRoute: () =>
     import("@routes/BrainDumpRoute").then((m) => ({ default: m.BrainDumpRoute })),
   HabitsRoute: () => import("@routes/HabitsRoute").then((m) => ({ default: m.HabitsRoute })),
+  PrivacyRoute: () => import("@routes/PrivacyRoute").then((m) => ({ default: m.PrivacyRoute })),
   ProgressRoute: () => import("@routes/ProgressRoute").then((m) => ({ default: m.ProgressRoute })),
   ProjectsRoute: () => import("@routes/ProjectsRoute").then((m) => ({ default: m.ProjectsRoute })),
   ProjectDetailsRoute: () =>
@@ -37,6 +39,7 @@ export const ROUTE_LOADERS = Object.freeze({
   SettingsRoute: () => import("@routes/SettingsRoute").then((m) => ({ default: m.SettingsRoute })),
   SprintsRoute: () => import("@routes/SprintsRoute").then((m) => ({ default: m.SprintsRoute })),
   SignupRoute: () => import("@routes/SignupRoute").then((m) => ({ default: m.SignupRoute })),
+  TermsRoute: () => import("@routes/TermsRoute").then((m) => ({ default: m.TermsRoute })),
   TodayRoute: () => import("@routes/TodayRoute").then((m) => ({ default: m.TodayRoute })),
   TasksRoute: () => import("@routes/TasksRoute").then((m) => ({ default: m.TasksRoute })),
   TaskDetailsRoute: () =>
