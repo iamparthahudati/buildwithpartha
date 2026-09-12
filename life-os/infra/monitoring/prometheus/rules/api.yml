@@ -1,0 +1,63 @@
+# API health alert rules — LOS-1610
+# Specification: life-os/docs/58-MONITORING-AND-ALERTING.md §6.2
+# Depends on: Micrometer metrics from LOS-1412 (docs/44-METRICS-AND-ALERTS-CONTRACT.md)
+
+groups:
+  - name: api
+    interval: 15s
+    rules:
+
+      # High 5xx error rate — > 1% of all API requests
+      - alert: HighApi5xxErrorRate
+        expr: >
+          (
+            rate(lifeos_api_requests_total{status_class="5xx"}[5m])
+            /
+            rate(lifeos_api_requests_total[5m])
+          ) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          app: lifeos
+        annotations:
+          summary: "LifeOS API 5xx error rate exceeds 1% (current: {{ $value | humanizePercentage }})"
+          description: >
+            The ratio of HTTP 5xx responses to total API requests has exceeded 1%
+            over the last 5 minutes. Inspect application logs for trace correlation IDs
+            and check PostgreSQL health.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#84-highapi5xxerrorrate--sustained-5xx-errors"
+
+      # High API latency — p95 > 1.5 seconds
+      - alert: HighApiLatency
+        expr: >
+          histogram_quantile(
+            0.95,
+            rate(lifeos_api_request_duration_seconds_bucket{job="lifeos-api"}[5m])
+          ) > 1.5
+        for: 5m
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "LifeOS API p95 latency exceeds 1.5s (current: {{ $value | humanizeDuration }})"
+          description: >
+            The 95th-percentile API response time has exceeded 1.5 seconds over the
+            last 5 minutes. Check slow query logs, DB connection pool saturation,
+            and VPS CPU/memory utilization.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#85-highapilatency--api-p95-latency--15s"
+
+      # Authentication failure spike — > 50 failures per minute
+      - alert: AuthFailureSpike
+        expr: >
+          rate(lifeos_auth_login_attempts_total{result="FAILURE"}[2m]) * 60 > 50
+        for: 2m
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "LifeOS auth failure spike — {{ $value | humanize }} failures/min"
+          description: >
+            The login failure rate has exceeded 50 per minute for 2 minutes.
+            This may indicate a credential stuffing or brute-force attack.
+            Verify that the rate limiter and Cloudflare WAF rules are operating correctly.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#86-authfailurespike--authentication-failure-rate-spike"

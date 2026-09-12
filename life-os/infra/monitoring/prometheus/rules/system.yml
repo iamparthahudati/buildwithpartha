@@ -1,0 +1,73 @@
+# VPS system resource alert rules — LOS-1610
+# Specification: life-os/docs/58-MONITORING-AND-ALERTING.md §6.4
+# Depends on: node-exporter (prom/node-exporter:v1.8.2)
+
+groups:
+  - name: system
+    interval: 30s
+    rules:
+
+      # High CPU utilization — sustained > 85% for 10 minutes
+      - alert: HostHighCpu
+        expr: >
+          100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 10m
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "VPS CPU utilization is high ({{ $value | humanize }}%)"
+          description: >
+            Average CPU utilization has exceeded 85% for 10 minutes. Identify which
+            container is consuming resources (docker stats), check for batch jobs,
+            and review for any tight retry loops in the API.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#810-hosthighcpu--vps-cpu-utilization--85"
+
+      # High memory utilization — > 90% of total RAM for 5 minutes
+      - alert: HostHighMemory
+        expr: >
+          (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)
+          / node_memory_MemTotal_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "VPS memory utilization is high ({{ $value | humanize }}%)"
+          description: >
+            Available memory has dropped below 10% of total VPS memory for 5 minutes.
+            Check container memory consumption, JVM heap usage in lifeos-api, and any
+            OOM kill events in dmesg.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#811-hosthighmemory--vps-memory-utilization--90"
+
+      # Disk usage warning — > 85%
+      - alert: HostDiskPressure
+        expr: >
+          (node_filesystem_size_bytes{fstype!="tmpfs",mountpoint="/"} - node_filesystem_avail_bytes{fstype!="tmpfs",mountpoint="/"})
+          / node_filesystem_size_bytes{fstype!="tmpfs",mountpoint="/"} * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "VPS disk usage exceeds 85% ({{ $value | humanize }}%)"
+          description: >
+            Root filesystem disk usage has exceeded 85%. Prune unused Docker images,
+            check log sizes, and verify that backup retention cleanup is running.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#812-hostdiskpressure--hostdiskcritical--disk-usage-high"
+
+      # Disk usage critical — > 95%
+      - alert: HostDiskCritical
+        expr: >
+          (node_filesystem_size_bytes{fstype!="tmpfs",mountpoint="/"} - node_filesystem_avail_bytes{fstype!="tmpfs",mountpoint="/"})
+          / node_filesystem_size_bytes{fstype!="tmpfs",mountpoint="/"} * 100 > 95
+        for: 5m
+        labels:
+          severity: critical
+          app: lifeos
+        annotations:
+          summary: "VPS disk usage is CRITICAL — exceeds 95% ({{ $value | humanize }}%)"
+          description: >
+            Root filesystem disk usage is critically high. PostgreSQL may refuse writes
+            and the application may begin failing. Free disk space immediately.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#812-hostdiskpressure--hostdiskcritical--disk-usage-high"

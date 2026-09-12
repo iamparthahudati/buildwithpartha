@@ -1,0 +1,215 @@
+# LifeOS monitoring stack — Docker Compose overlay
+# Specification: life-os/docs/58-MONITORING-AND-ALERTING.md (LOS-1610)
+#
+# Usage (production):
+#   docker compose \
+#     -f life-os/infra/compose/compose.prod.yml \
+#     -f life-os/infra/compose/compose.monitoring.yml \
+#     up -d
+#
+# All monitoring services are internal-only. No ports are exposed externally.
+# Alertmanager credentials are injected via /etc/life-os/secrets/.env.monitoring
+
+name: life-os-monitoring
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.53.1
+    container_name: lifeos-prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--storage.tsdb.retention.size=4GB"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--web.enable-lifecycle"
+      - "--web.listen-address=0.0.0.0:9090"
+    volumes:
+      - ../monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../monitoring/prometheus/rules:/etc/prometheus/rules:ro
+      - lifeos-prometheus-data:/prometheus
+    networks:
+      - monitoring-net
+      - backend-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "65534:65534"
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: 512M
+        reservations:
+          cpus: '0.05'
+          memory: 128M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:9090/-/healthy || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: lifeos-alertmanager
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
+      - "--web.listen-address=0.0.0.0:9093"
+    volumes:
+      - ../monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - lifeos-alertmanager-data:/alertmanager
+    env_file:
+      - /etc/life-os/secrets/.env.monitoring
+    networks:
+      - monitoring-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "65534:65534"
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 64M
+        reservations:
+          cpus: '0.02'
+          memory: 16M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:9093/-/healthy || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: lifeos-blackbox-exporter
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/blackbox/blackbox.yml"
+    volumes:
+      - ../monitoring/blackbox/blackbox.yml:/etc/blackbox/blackbox.yml:ro
+    networks:
+      - monitoring-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "65534:65534"
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 64M
+        reservations:
+          cpus: '0.02'
+          memory: 16M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:9115/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: lifeos-node-exporter
+    restart: unless-stopped
+    pid: host
+    command:
+      - "--path.rootfs=/host"
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+      - "--web.listen-address=0.0.0.0:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host:ro,rslave
+    networks:
+      - monitoring-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 64M
+        reservations:
+          cpus: '0.02'
+          memory: 16M
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.16.0
+    container_name: lifeos-postgres-exporter
+    restart: unless-stopped
+    env_file:
+      - /etc/life-os/secrets/.env.monitoring
+    environment:
+      # DATA_SOURCE_NAME is set from .env.monitoring:
+      # DATA_SOURCE_NAME=postgresql://lifeos_monitor:<password>@lifeos-postgres:5432/lifeos_prod?sslmode=disable
+      PG_EXPORTER_DISABLE_SETTINGS_METRICS: "false"
+      PG_EXPORTER_DISABLE_DEFAULT_METRICS: "false"
+    networks:
+      - monitoring-net
+      - db-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "65534:65534"
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 64M
+        reservations:
+          cpus: '0.02'
+          memory: 16M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:9187/metrics || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  monitoring-net:
+    name: lifeos-monitoring-net
+    driver: bridge
+  # Attach to existing production networks for scrape access
+  backend-net:
+    name: life-os-production_backend-net
+    external: true
+  db-net:
+    name: life-os-production_db-net
+    external: true
+
+volumes:
+  lifeos-prometheus-data:
+    name: lifeos-prometheus-data
+  lifeos-alertmanager-data:
+    name: lifeos-alertmanager-data

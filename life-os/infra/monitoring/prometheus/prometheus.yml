@@ -1,0 +1,115 @@
+# Prometheus configuration for LifeOS
+# Specification: life-os/docs/58-MONITORING-AND-ALERTING.md (LOS-1610)
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+  external_labels:
+    env: production
+    app: lifeos
+
+# Alertmanager connection
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Alert rule files
+rule_files:
+  - "rules/uptime.yml"
+  - "rules/api.yml"
+  - "rules/database.yml"
+  - "rules/system.yml"
+  - "rules/jobs.yml"
+
+# Scrape configurations
+scrape_configs:
+
+  # LifeOS Spring Boot API — Micrometer/Actuator Prometheus endpoint
+  - job_name: "lifeos-api"
+    scrape_interval: 15s
+    metrics_path: "/life-os/api/v1/actuator/prometheus"
+    static_configs:
+      - targets:
+          - "lifeos-api:8080"
+        labels:
+          service: api
+          env: production
+
+  # Internal API health probes via Blackbox Exporter
+  - job_name: "blackbox-internal"
+    scrape_interval: 30s
+    metrics_path: "/probe"
+    params:
+      module:
+        - http_2xx
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: "blackbox-exporter:9115"
+    static_configs:
+      - targets:
+          - "http://lifeos-api:8080/life-os/api/v1/actuator/health/liveness"
+          - "http://lifeos-api:8080/life-os/api/v1/actuator/health/readiness"
+
+  # External uptime probes (hits Cloudflare-fronted public URL)
+  - job_name: "blackbox-external"
+    scrape_interval: 60s
+    metrics_path: "/probe"
+    params:
+      module:
+        - http_2xx_follow_redirects
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: "blackbox-exporter:9115"
+    static_configs:
+      - targets:
+          - "https://buildwithpartha.tech/life-os"
+          - "https://buildwithpartha.tech/life-os/api/v1/actuator/health"
+
+  # TLS certificate expiry probe
+  - job_name: "blackbox-tls"
+    scrape_interval: 300s
+    metrics_path: "/probe"
+    params:
+      module:
+        - tls_connect
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: "blackbox-exporter:9115"
+    static_configs:
+      - targets:
+          - "buildwithpartha.tech:443"
+
+  # VPS host system metrics via Node Exporter
+  - job_name: "node"
+    scrape_interval: 30s
+    static_configs:
+      - targets:
+          - "node-exporter:9100"
+        labels:
+          service: vps-host
+          env: production
+
+  # PostgreSQL metrics via postgres-exporter
+  - job_name: "postgres"
+    scrape_interval: 30s
+    static_configs:
+      - targets:
+          - "postgres-exporter:9187"
+        labels:
+          service: database
+          env: production

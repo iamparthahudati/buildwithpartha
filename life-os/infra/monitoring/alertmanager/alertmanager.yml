@@ -1,0 +1,111 @@
+# Alertmanager configuration for LifeOS — LOS-1610
+# Specification: life-os/docs/58-MONITORING-AND-ALERTING.md §7
+#
+# SECURITY NOTE: This file contains placeholder values for receiver configuration.
+# Real SMTP credentials, webhook URLs, and contact addresses must be supplied
+# via environment variables or mounted secrets at runtime.
+# Never commit real credentials to source control.
+
+global:
+  smtp_smarthost: "${ALERTMANAGER_SMTP_HOST}:587"
+  smtp_from: "monitoring@buildwithpartha.tech"
+  smtp_auth_username: "${ALERTMANAGER_SMTP_USERNAME}"
+  smtp_auth_password: "${ALERTMANAGER_SMTP_PASSWORD}"
+  smtp_require_tls: true
+  resolve_timeout: 5m
+
+# Templates for alert notifications
+templates: []
+
+# Routing tree
+route:
+  # Group alerts by alert name, severity, and environment to reduce noise
+  group_by:
+    - alertname
+    - severity
+    - env
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  receiver: default-null
+
+  routes:
+    # Critical alerts — immediate notification
+    - matchers:
+        - severity = critical
+      receiver: owner-critical
+      group_wait: 10s
+      group_interval: 2m
+      repeat_interval: 1h
+      continue: false
+
+    # Warning alerts — normal notification cadence
+    - matchers:
+        - severity = warning
+      receiver: owner-warning
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+      continue: false
+
+# Inhibition rules — suppress downstream alerts when root cause is already firing
+inhibit_rules:
+  # Suppress API-level alerts when external uptime probe is already down
+  # (if the site is completely unreachable, API-specific alerts add no value)
+  - source_matchers:
+      - alertname = UptimeProbeDown
+      - severity = critical
+    target_matchers:
+      - alertname =~ "HighApi5xxErrorRate|HighApiLatency|ApiReadinessDown"
+    equal:
+      - env
+
+  # Suppress pool/query alerts when DB is completely down
+  - source_matchers:
+      - alertname = DbConnectionsDown
+      - severity = critical
+    target_matchers:
+      - alertname =~ "DbPoolSaturation|DbDiskHighUsage"
+    equal:
+      - env
+
+# Receivers
+receivers:
+  # Default no-op receiver for info/unrouted alerts
+  - name: default-null
+
+  # Critical alert receiver — owner email
+  - name: owner-critical
+    email_configs:
+      - to: "${ALERTMANAGER_OWNER_EMAIL}"
+        send_resolved: true
+        headers:
+          Subject: "[CRITICAL] LifeOS Alert: {{ .GroupLabels.alertname }}"
+        html: |
+          <h2 style="color:#c0392b;">CRITICAL LifeOS Alert</h2>
+          {{ range .Alerts }}
+          <p><strong>Alert:</strong> {{ .Labels.alertname }}<br>
+          <strong>Summary:</strong> {{ .Annotations.summary }}<br>
+          <strong>Description:</strong> {{ .Annotations.description }}<br>
+          <strong>Runbook:</strong> {{ .Annotations.runbook_url }}<br>
+          <strong>Fired at:</strong> {{ .StartsAt.Format "2006-01-02 15:04:05 UTC" }}</p>
+          <hr>
+          {{ end }}
+
+  # Warning alert receiver — owner email
+  - name: owner-warning
+    email_configs:
+      - to: "${ALERTMANAGER_OWNER_EMAIL}"
+        send_resolved: true
+        headers:
+          Subject: "[WARNING] LifeOS Alert: {{ .GroupLabels.alertname }}"
+        html: |
+          <h2 style="color:#e67e22;">WARNING LifeOS Alert</h2>
+          {{ range .Alerts }}
+          <p><strong>Alert:</strong> {{ .Labels.alertname }}<br>
+          <strong>Summary:</strong> {{ .Annotations.summary }}<br>
+          <strong>Description:</strong> {{ .Annotations.description }}<br>
+          <strong>Runbook:</strong> {{ .Annotations.runbook_url }}<br>
+          <strong>Fired at:</strong> {{ .StartsAt.Format "2006-01-02 15:04:05 UTC" }}</p>
+          <hr>
+          {{ end }}

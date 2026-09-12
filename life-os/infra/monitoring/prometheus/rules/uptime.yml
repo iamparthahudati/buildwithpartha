@@ -1,0 +1,67 @@
+# Uptime and TLS alert rules — LOS-1610
+# Specification: life-os/docs/58-MONITORING-AND-ALERTING.md §6.1
+
+groups:
+  - name: uptime
+    interval: 30s
+    rules:
+
+      # External uptime probe failure — Cloudflare-fronted URL
+      - alert: UptimeProbeDown
+        expr: probe_success{job="blackbox-external"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          app: lifeos
+        annotations:
+          summary: "LifeOS external uptime probe is failing ({{ $labels.instance }})"
+          description: >
+            The Blackbox Exporter HTTP probe to {{ $labels.instance }} has returned
+            probe_success=0 for at least 2 minutes. The site may be unreachable via
+            Cloudflare or the origin containers may be down.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#81-uptimeprobedown--external-uptime-probe-failure"
+
+      # Internal API readiness probe failure
+      - alert: ApiReadinessDown
+        expr: probe_success{job="blackbox-internal", instance=~".*/health/readiness"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          app: lifeos
+        annotations:
+          summary: "LifeOS API readiness probe is failing"
+          description: >
+            The Spring Boot Actuator /health/readiness endpoint has returned
+            probe_success=0 for at least 2 minutes. The API container may be
+            unhealthy or the database connection may have failed.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#82-apireadinessdown--api-readiness-probe-failure"
+
+      # TLS certificate approaching expiry — Warning (< 14 days)
+      - alert: TLSExpiryWarning
+        expr: (probe_ssl_earliest_cert_expiry{job="blackbox-tls"} - time()) / 86400 < 14
+        for: 1h
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "LifeOS TLS certificate expires in less than 14 days ({{ $labels.instance }})"
+          description: >
+            The TLS certificate for {{ $labels.instance }} expires in
+            {{ printf "%.1f" $value }} days. Renew the Cloudflare Origin CA
+            certificate before expiry to prevent downtime.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#83-tlsexpirywarning--tlsexpirycritical--certificate-near-expiry"
+
+      # TLS certificate critically near expiry (< 3 days)
+      - alert: TLSExpiryCritical
+        expr: (probe_ssl_earliest_cert_expiry{job="blackbox-tls"} - time()) / 86400 < 3
+        for: 15m
+        labels:
+          severity: critical
+          app: lifeos
+        annotations:
+          summary: "LifeOS TLS certificate expires in less than 3 days — URGENT ({{ $labels.instance }})"
+          description: >
+            The TLS certificate for {{ $labels.instance }} expires in
+            {{ printf "%.1f" $value }} days. Renew immediately to prevent
+            TLS handshake failures and site downtime.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#83-tlsexpirywarning--tlsexpirycritical--certificate-near-expiry"

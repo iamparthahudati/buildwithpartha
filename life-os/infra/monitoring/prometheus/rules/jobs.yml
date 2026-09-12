@@ -1,0 +1,74 @@
+# Job, mail, and backup age alert rules — LOS-1610
+# Specification: life-os/docs/58-MONITORING-AND-ALERTING.md §6.5
+# Depends on: Micrometer metrics (LOS-1412), BackupStatusMetricsProvider
+
+groups:
+  - name: jobs
+    interval: 60s
+    rules:
+
+      # Backup age exceeded — last successful backup > 26 hours ago
+      - alert: BackupAgeExceeded
+        expr: >
+          (time() - lifeos_backup_last_success_timestamp_seconds{backup_type="postgres"}) / 3600 > 26
+        for: 1h
+        labels:
+          severity: critical
+          app: lifeos
+        annotations:
+          summary: "LifeOS PostgreSQL backup has not completed successfully in more than 26 hours"
+          description: >
+            The last successful PostgreSQL backup is {{ $value | humanize }} hours ago,
+            exceeding the 26-hour SLA. Verify cron execution, GPG encryption availability,
+            and backup script logs. Run manually if necessary.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#813-backupageexceeded--last-successful-backup--26-hours-ago"
+
+      # App files backup age exceeded — last successful backup > 26 hours ago
+      - alert: AppFilesBackupAgeExceeded
+        expr: >
+          (time() - lifeos_backup_last_success_timestamp_seconds{backup_type="app_files"}) / 3600 > 26
+        for: 1h
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "LifeOS application file backup has not completed successfully in more than 26 hours"
+          description: >
+            The last successful application file backup is {{ $value | humanize }} hours ago.
+            Verify that backup-app-files.sh cron is executing and check backup logs.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#813-backupageexceeded--last-successful-backup--26-hours-ago"
+
+      # Background job dead-letter rate spike
+      - alert: BackgroundJobDeadLetter
+        expr: >
+          rate(lifeos_job_executions_total{status="DEAD_LETTER"}[15m])
+          /
+          rate(lifeos_job_executions_total[15m]) > 0.05
+        for: 15m
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "LifeOS background job dead-letter rate exceeds 5% ({{ $value | humanizePercentage }})"
+          description: >
+            More than 5% of background jobs have reached dead-letter status over the
+            last 15 minutes. Inspect BackgroundJobWorker logs to identify the failing
+            job kind and root cause.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#814-backgroundjobdeadletter--dead-letter-job-rate--5"
+
+      # Mail send failure spike
+      - alert: MailSendFailureSpike
+        expr: >
+          rate(lifeos_mail_sends_total{status="FAILURE"}[10m])
+          /
+          rate(lifeos_mail_sends_total[10m]) > 0.10
+        for: 10m
+        labels:
+          severity: warning
+          app: lifeos
+        annotations:
+          summary: "LifeOS mail send failure rate exceeds 10% ({{ $value | humanizePercentage }})"
+          description: >
+            More than 10% of transactional mail sends have failed over the last 10 minutes.
+            Check SMTP credentials, provider status, and SPF/DKIM/DMARC DNS records.
+          runbook_url: "file:///life-os/docs/58-MONITORING-AND-ALERTING.md#815-mailsendfailurespike--mail-send-failure-rate--10"
