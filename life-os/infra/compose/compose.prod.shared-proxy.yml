@@ -127,6 +127,10 @@ services:
       - "5432"
     env_file:
       - /etc/life-os/secrets/.env.production
+    environment:
+      # postgres:18 defaults PGDATA to /var/lib/postgresql/<major>/docker; pin it
+      # back to the mounted volume path so the named volume is actually used.
+      PGDATA: /var/lib/postgresql/data
     volumes:
       - lifeos-prod-postgres-data:/var/lib/postgresql/data
     networks:
@@ -140,6 +144,7 @@ services:
       - SETGID
       - SETUID
       - DAC_OVERRIDE
+      - FOWNER
     deploy:
       resources:
         limits:
