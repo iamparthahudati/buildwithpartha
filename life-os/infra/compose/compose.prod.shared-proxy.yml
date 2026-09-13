@@ -33,9 +33,13 @@ services:
     networks:
       - edge
     labels:
-      caddy: buildwithpartha.tech
-      caddy.1_handle: "/life-os/*"
-      caddy.1_handle.reverse_proxy: "{{upstreams 8080}}"
+      # MUST match the marketing container's caddy address list EXACTLY so
+      # caddy-docker-proxy merges our routes into that one site block instead
+      # of creating a competing (catch-all-less) block that blanks the homepage.
+      caddy: buildwithpartha.tech, www.buildwithpartha.tech, vps.buildwithpartha.tech
+      caddy.1_redir: "/life-os /life-os/ 308"
+      caddy.2_handle: "/life-os/*"
+      caddy.2_handle.reverse_proxy: "{{upstreams 8080}}"
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -83,7 +87,8 @@ services:
       - edge
       - db-net
     labels:
-      caddy: buildwithpartha.tech
+      # Same site address as marketing + web so all three merge into one block.
+      caddy: buildwithpartha.tech, www.buildwithpartha.tech, vps.buildwithpartha.tech
       caddy.0_handle: "/life-os/api/*"
       caddy.0_handle.reverse_proxy: "{{upstreams 8080}}"
     security_opt:
