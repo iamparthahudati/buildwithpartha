@@ -40,7 +40,8 @@ curl -sI https://buildwithpartha.tech/            | head -1     # expect 200
 
 # 2. LifeOS routes:
 curl -sI https://buildwithpartha.tech/life-os/    | head -1     # expect 200
-curl -fsS https://buildwithpartha.tech/life-os/api/v1/actuator/health   # expect {"status":"UP"}
+# /actuator/health is auth-gated (401); use the public liveness probe:
+curl -fsS https://buildwithpartha.tech/life-os/api/v1/actuator/health/liveness   # expect {"status":"UP"}
 
 # 3. Inspect the merged proxy config if anything looks off:
 docker exec proxy-caddy-1 wget -qO- http://localhost:2019/config/ | head -c 2000

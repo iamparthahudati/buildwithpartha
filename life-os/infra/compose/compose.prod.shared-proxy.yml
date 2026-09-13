@@ -103,11 +103,12 @@ services:
           cpus: '0.25'
           memory: 512M
     healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/life-os/api/v1/actuator/health || exit 1"]
+      # /actuator/health is auth-gated (returns 401); the liveness probe is public.
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/life-os/api/v1/actuator/health/liveness || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 40s
+      start_period: 60s
     depends_on:
       postgres:
         condition: service_healthy

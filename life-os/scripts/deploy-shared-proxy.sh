@@ -17,7 +17,8 @@ COMPOSE="life-os/infra/compose/compose.prod.shared-proxy.yml"
 REPO="/opt/lifeos"
 HOME_URL="https://buildwithpartha.tech/"
 LIFEOS_URL="https://buildwithpartha.tech/life-os/"
-HEALTH_URL="https://buildwithpartha.tech/life-os/api/v1/actuator/health"
+# /actuator/health is auth-gated (401); liveness is the public readiness signal.
+HEALTH_URL="https://buildwithpartha.tech/life-os/api/v1/actuator/health/liveness"
 
 cd "$REPO"
 
