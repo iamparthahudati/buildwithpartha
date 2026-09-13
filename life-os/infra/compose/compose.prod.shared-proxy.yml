@@ -1,0 +1,177 @@
+# LifeOS production stack for a SHARED VPS that already runs caddy-docker-proxy.
+#
+# Unlike compose.prod.yml (which ships its own Caddy bound to :80/:443 for a
+# dedicated box), this file runs ONLY web + api + postgres and lets the existing
+# `proxy-caddy-1` (caddy-docker-proxy on the external `edge` network) terminate
+# TLS and route by path via container labels. This avoids the :80/:443 collision
+# with the marketing site and rntoolbox already running on the box.
+#
+# Routing (merged into the existing buildwithpartha.tech site block):
+#   /life-os/api/*  -> lifeos-api:8080   (label order 0_ = evaluated first)
+#   /life-os/*      -> lifeos-web:8080   (label order 1_)
+#   everything else -> marketing site (its own container's catch-all, untouched)
+#
+# Rollback is instant and total: `docker compose ... down` removes these
+# containers and their labels, so the proxy reverts to exactly today's config.
+#
+# Apply:
+#   docker compose -f life-os/infra/compose/compose.prod.shared-proxy.yml up -d --build
+# Validate / rollback: see infra/compose/README-shared-proxy.md
+
+name: life-os-production
+
+services:
+  web:
+    image: life-os-web:prod
+    build:
+      context: ../../apps/web
+      dockerfile: Dockerfile
+    container_name: lifeos-web
+    restart: unless-stopped
+    expose:
+      - "8080"
+    networks:
+      - edge
+    labels:
+      caddy: buildwithpartha.tech
+      caddy.1_handle: "/life-os/*"
+      caddy.1_handle.reverse_proxy: "{{upstreams 8080}}"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    user: "10001:10001"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "14"
+        compress: "true"
+        labels: "service"
+
+  api:
+    image: life-os-api:prod
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile
+    container_name: lifeos-api
+    restart: unless-stopped
+    expose:
+      - "8080"
+    env_file:
+      - /etc/life-os/secrets/.env.production
+    networks:
+      - edge
+      - db-net
+    labels:
+      caddy: buildwithpartha.tech
+      caddy.0_handle: "/life-os/api/*"
+      caddy.0_handle.reverse_proxy: "{{upstreams 8080}}"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    user: "10001:10001"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.50'
+          memory: 1536M
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/life-os/api/v1/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "14"
+        compress: "true"
+        labels: "service"
+
+  postgres:
+    image: postgres:18.4-alpine
+    container_name: lifeos-postgres
+    restart: unless-stopped
+    expose:
+      - "5432"
+    env_file:
+      - /etc/life-os/secrets/.env.production
+    volumes:
+      - lifeos-prod-postgres-data:/var/lib/postgresql/data
+    networks:
+      - db-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+          memory: 1024M
+        reservations:
+          cpus: '0.20'
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lifeos_app} -d ${POSTGRES_DB:-lifeos_prod} || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "14"
+        compress: "true"
+        labels: "service"
+
+networks:
+  # The shared caddy-docker-proxy network. Already exists on the VPS (`docker network ls` -> edge).
+  edge:
+    external: true
+    name: edge
+  # Private DB network, not reachable from the proxy or the internet.
+  db-net:
+    driver: bridge
+    internal: true
+
+volumes:
+  lifeos-prod-postgres-data:
+    name: lifeos-prod-postgres-data

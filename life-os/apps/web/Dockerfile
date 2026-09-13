@@ -23,8 +23,11 @@ RUN npm ci
 # Copy source code and build configs
 COPY . .
 
-# Build production bundle with VITE_BASE=/life-os/
-ENV VITE_BASE=/life-os/
+# Bake the public base paths the app validates at build time.
+# Vite's loadEnv() picks up these prefixed process.env vars (src/app/environment.ts),
+# and .env.local is gitignored so it is absent on the VPS build.
+ENV VITE_APP_BASE_PATH=/life-os/
+ENV VITE_API_BASE_PATH=/life-os/api/v1
 RUN npm run build
 
 # ------------------------------------------------------------------------------
