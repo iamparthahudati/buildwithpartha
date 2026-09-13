@@ -133,6 +133,9 @@ services:
       PGDATA: /var/lib/postgresql/data
     volumes:
       - lifeos-prod-postgres-data:/var/lib/postgresql/data
+      # Runs on first (empty-volume) init: creates lifeos_migrator + lifeos_app
+      # roles and the lifeos_internal schema Flyway's default-schema expects.
+      - ../postgres/init:/docker-entrypoint-initdb.d:ro
     networks:
       - db-net
     security_opt:

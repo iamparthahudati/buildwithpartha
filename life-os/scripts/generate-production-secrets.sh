@@ -3,11 +3,17 @@
 # Generate the LifeOS production secrets file for the SHARED-VPS deployment.
 #
 # Writes /etc/life-os/secrets/.env.production (dir 0700, file 0600) with every
-# key the API startup validator (LifeOsEnvironmentValidator) and the postgres
-# container require. Secret values are generated here and never printed.
+# key the API startup validator, Flyway, the postgres container, and the DB init
+# script (infra/postgres/init) require. Secret values are generated here and
+# never printed.
+#
+# Role model (matches infra/postgres/init/001-create-local-app-role.sh):
+#   * POSTGRES_USER  (lifeos_admin) — bootstrap superuser; runs the init script.
+#   * lifeos_migrator — owns schema lifeos_internal; Flyway connects as this.
+#   * lifeos_app      — runtime role the API connects as.
 #
 # Safe to re-run only with --force (refuses to clobber an existing file so a
-# running database's password is never silently rotated out from under it).
+# running database's passwords are never silently rotated out from under it).
 #
 # Usage:
 #   sh life-os/scripts/generate-production-secrets.sh [--force] \
@@ -41,7 +47,7 @@ fi
 
 if [ -f "$SECRETS_FILE" ] && [ "$FORCE" -ne 1 ]; then
   echo "[ERROR] $SECRETS_FILE already exists. Refusing to overwrite without --force." >&2
-  echo "        (Overwriting rotates the DB password; the existing postgres volume would reject it.)" >&2
+  echo "        (Overwriting rotates DB passwords; the existing postgres volume would reject them.)" >&2
   exit 1
 fi
 
@@ -50,8 +56,11 @@ if ! command -v openssl >/dev/null 2>&1; then
   exit 1
 fi
 
-# One DB password, shared by the app role, Flyway, and the postgres superuser.
-DB_PASSWORD="$(openssl rand -base64 30 | tr -d '/+=' | cut -c1-32)"
+gen() { openssl rand -base64 30 | tr -d '/+=' | cut -c1-32; }
+
+ADMIN_PASSWORD="$(gen)"
+MIGRATOR_PASSWORD="$(gen)"
+APP_PASSWORD="$(gen)"
 
 umask 077
 mkdir -p "$SECRETS_DIR"
@@ -65,20 +74,26 @@ cat > "$SECRETS_FILE" <<EOF
 SPRING_PROFILES_ACTIVE=prod
 SERVER_PORT=8080
 
-# --- PostgreSQL container bootstrap (postgres:18.4-alpine) ---
-POSTGRES_USER=lifeos_app
-POSTGRES_PASSWORD=$DB_PASSWORD
+# --- PostgreSQL container bootstrap (postgres:18-alpine superuser) ---
+POSTGRES_USER=lifeos_admin
+POSTGRES_PASSWORD=$ADMIN_PASSWORD
 POSTGRES_DB=lifeos_prod
 
-# --- API database connection ---
+# --- Roles created by infra/postgres/init on first DB init ---
+LIFEOS_MIGRATOR_USERNAME=lifeos_migrator
+LIFEOS_MIGRATOR_PASSWORD=$MIGRATOR_PASSWORD
+LIFEOS_APP_USERNAME=lifeos_app
+LIFEOS_APP_PASSWORD=$APP_PASSWORD
+
+# --- API runtime database connection (lifeos_app) ---
 DATABASE_URL=jdbc:postgresql://lifeos-postgres:5432/lifeos_prod
 DATABASE_USERNAME=lifeos_app
-DATABASE_PASSWORD=$DB_PASSWORD
+DATABASE_PASSWORD=$APP_PASSWORD
 
-# --- Flyway (reuses the app role for the first stand-up) ---
+# --- Flyway migrations (lifeos_migrator; owns schema lifeos_internal) ---
 FLYWAY_DATABASE_URL=jdbc:postgresql://lifeos-postgres:5432/lifeos_prod
-FLYWAY_DATABASE_USERNAME=lifeos_app
-FLYWAY_DATABASE_PASSWORD=$DB_PASSWORD
+FLYWAY_DATABASE_USERNAME=lifeos_migrator
+FLYWAY_DATABASE_PASSWORD=$MIGRATOR_PASSWORD
 
 # --- Application ---
 APP_PUBLIC_URL=$PUBLIC_URL
@@ -94,8 +109,5 @@ EOF
 
 chmod 600 "$SECRETS_FILE"
 
-echo "[OK] Wrote $SECRETS_FILE (0600) with a freshly generated DB password."
-echo "[OK] Keys written: SPRING_PROFILES_ACTIVE, SERVER_PORT, POSTGRES_{USER,PASSWORD,DB},"
-echo "     DATABASE_{URL,USERNAME,PASSWORD}, FLYWAY_DATABASE_{URL,USERNAME,PASSWORD},"
-echo "     APP_PUBLIC_URL, APP_SESSION_COOKIE_SECURE, APP_MAIL_FROM, SMTP_{HOST,PORT,USERNAME,PASSWORD}."
+echo "[OK] Wrote $SECRETS_FILE (0600) with freshly generated admin/migrator/app passwords."
 echo "[NOTE] SMTP is a placeholder ($SMTP_HOST:$SMTP_PORT). Set --smtp-host/--smtp-port for real mail."
