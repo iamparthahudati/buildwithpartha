@@ -103,8 +103,9 @@ services:
           cpus: '0.25'
           memory: 512M
     healthcheck:
-      # /actuator/health is auth-gated (returns 401); the liveness probe is public.
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/life-os/api/v1/actuator/health/liveness || exit 1"]
+      # /actuator/health is auth-gated (401); the liveness probe permits GET only,
+      # so use a GET (wget -O /dev/null), NOT --spider (which sends HEAD -> 401).
+      test: ["CMD-SHELL", "wget --quiet --tries=1 -O /dev/null http://127.0.0.1:8080/life-os/api/v1/actuator/health/liveness || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
