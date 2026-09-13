@@ -74,6 +74,10 @@ cat > "$SECRETS_FILE" <<EOF
 SPRING_PROFILES_ACTIVE=prod
 SERVER_PORT=8080
 
+# TEMPORARY: no SMTP yet, so activate accounts at signup (no verification email).
+# Remove / set to false once real email delivery is configured.
+LIFEOS_FEATURES_AUTO_VERIFY_SIGNUPS=true
+
 # --- PostgreSQL container bootstrap (postgres:18-alpine superuser) ---
 POSTGRES_USER=lifeos_admin
 POSTGRES_PASSWORD=$ADMIN_PASSWORD

@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.buildwithpartha.lifeos.auth.domain.Credential;
@@ -66,6 +67,13 @@ public class SignupService {
   private final LifeOsEnvironmentProperties environmentProperties;
   private final Clock clock;
 
+  /**
+   * When true, new accounts are activated at signup and no verification email is issued. Temporary
+   * escape hatch for when no SMTP server is configured (LIFEOS_FEATURES_AUTO_VERIFY_SIGNUPS). Turn
+   * back off once real email delivery is in place.
+   */
+  private final boolean autoVerifySignups;
+
   public SignupService(
       SignupRateLimiter rateLimiter,
       PasswordService passwordService,
@@ -76,6 +84,7 @@ public class SignupService {
       SecureTokenGenerator tokenGenerator,
       TransactionalMailPort mailPort,
       LifeOsEnvironmentProperties environmentProperties,
+      @Value("${LIFEOS_FEATURES_AUTO_VERIFY_SIGNUPS:false}") boolean autoVerifySignups,
       Clock clock) {
     this.rateLimiter = rateLimiter;
     this.passwordService = passwordService;
@@ -86,6 +95,7 @@ public class SignupService {
     this.tokenGenerator = tokenGenerator;
     this.mailPort = mailPort;
     this.environmentProperties = environmentProperties;
+    this.autoVerifySignups = autoVerifySignups;
     this.clock = clock;
   }
 
@@ -111,7 +121,11 @@ public class SignupService {
     }
 
     UUID userId = UUID.randomUUID();
-    userRepository.save(User.signup(userId, email, displayName, now));
+    User user = User.signup(userId, email, displayName, now);
+    if (autoVerifySignups) {
+      user = user.verify(now);
+    }
+    userRepository.save(user);
 
     String passwordHash = passwordService.hash(command.rawPassword());
     credentialRepository.save(Credential.issue(UUID.randomUUID(), userId, passwordHash, now));
@@ -124,11 +138,15 @@ public class SignupService {
         TermsAcceptance.privacyAcknowledged(
             UUID.randomUUID(), userId, command.privacyVersion(), now, ipSource));
 
-    RawToken token = tokenGenerator.generate();
-    verificationTokenRepository.save(
-        EmailVerificationToken.issue(UUID.randomUUID(), userId, token.hash(), now));
-
-    enqueueVerificationMail(userId, email, displayName, token);
+    if (autoVerifySignups) {
+      // No SMTP configured: the account is already ACTIVE, so skip token + mail.
+      AUDIT_LOGGER.info("event=signup_auto_verified");
+    } else {
+      RawToken token = tokenGenerator.generate();
+      verificationTokenRepository.save(
+          EmailVerificationToken.issue(UUID.randomUUID(), userId, token.hash(), now));
+      enqueueVerificationMail(userId, email, displayName, token);
+    }
 
     AUDIT_LOGGER.info("event=signup_succeeded");
   }

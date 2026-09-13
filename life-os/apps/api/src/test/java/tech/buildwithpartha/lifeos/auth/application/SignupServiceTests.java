@@ -147,6 +147,7 @@ class SignupServiceTests {
               new FakeSecureTokenGenerator(rawToken),
               mailPort,
               ENVIRONMENT_PROPERTIES,
+              false,
               Clock.fixed(NOW, ZoneOffset.UTC));
     }
 
